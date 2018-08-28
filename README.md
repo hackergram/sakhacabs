@@ -4,6 +4,6 @@
 2. Chauffeur on Call
 3. Individual rides
 
-Project being developed in open source by [हैकरgram](http://hackergram.org,"हैकरgram Home Page") team members
+Project being developed in open source by [हैकरgram](http://hackergram.org "हैकरgram Home Page") team members
 
 ## 
