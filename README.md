@@ -6,4 +6,7 @@
 
 Project being developed in open source by [हैकरgram](http://hackergram.org "हैकरgram Home Page") team members
 
+[Requirements document](https://docs.google.com/document/d/1DTBryBIFLBzfttRF7hFAj4w6Pp_xgRu8raRjgPQueZ0/)
+
+
 ## 
