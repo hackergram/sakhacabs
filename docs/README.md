@@ -3,20 +3,27 @@
 
 
 ## Candidate Tools
-1. Odoo CRM
-  1. Fleet Management
-  2. Employee Roster
-  3. CRM
-  4. Invoicing 
-  5. Accounting
-2. LibreTaxi - Desi Fork
-  1. Taxi Booking from Mobile Phone
-  2. Taxi Booking from Web?
+### [Odoo ERP](https://www.odoo.com/) 
+   1. Fleet Management
+   2. Employee Roster
+   3. CRM
+   4. Invoicing 
+   5. Accounting
+### [LibreTaxi - Desi Fork](https://github.com/hackergram/libretaxi-desi) 
+   1. Taxi Booking from Mobile Phone
+   2. Taxi Booking from Web?
   
-3. BootStrap
-  1. Backup plan for taxi booking off the web
+### [BootStrap](https://getbootstrap.com/)
+   1. Backup plan for taxi booking off the web
 
-4. Self Developed Odoo App for Bookings
-  1. Backup #2 for taxi booking off the web
+### [Self Developed Odoo App for Bookings] (https://www.odoo.com/page/studio)
+   1. Backup #2 for taxi booking off the web
   
+  
+  
+## Workflows
+  
+  1. Long term placement
+  2. Chauffeur on Call
+  3. Individual Bookings
   
