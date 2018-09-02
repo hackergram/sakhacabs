@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <meta charset="utf-8">
+  </head>
+<body>
+  <div class="col-sm-4 col-md-4 home-booking-form" id="booking-form">
+    <div class="page-header clearfix">
+      <div class="col-sm-12 small-cols">
+        <h1 class="medium-bold-title">Book A Sakha Cab</h1>
+        </div>
+      </div>
+      <form method="post" id="contact" novalidate="novalidate">
+        <div class="form-group clearfix">
+          <div class="col-sm-12 small-cols"><label>Personal Information</label></div>
+      <div class="col-sm-6 small-cols">
+        <input type="text" name="person_name" id="person_name" class="form-control" placeholder="Your Name">
+      </div>
+      <div class="col-sm-6 small-cols">
+        <input type="email" name="email" id="email" class="form-control" placeholder="Email">
+      </div>
+    </div>
+    <div class="form-group clearfix">
+      <div class="col-sm-12 small-cols">
+        <input type="text" name="ph_no" id="ph_no" class="form-control" placeholder="Phone No." pattern="^\d{10}$" >
+      </div>
+    </div>
+    <div class="form-group clearfix">
+      <div class="col-sm-12 small-cols"><label>Pickup Time</label>
+      </div>
+      <div class="col-sm-6 small-cols date-picker-wrap">
+        <input name="date" type="text" id="date" class="form-control default-datepicker " placeholder="dd/mm/yyyy">
+        <span><i class="fa fa-calendar" aria-hidden="true"></i></span>
+      </div>
+      <div class="col-sm-6 small-cols time-picker-wrap">
+        <input name="time" type="text" id="time" class="form-control default-time-picker" placeholder="Pick up time">
+        <div id="timpicker-drop"></div>
+      </div>
+    </div>
+    <div class="form-group clearfix">
+      <div class="col-sm-12 small-cols"><label>Pickup Location</label>
+      </div>
+    <div class="col-sm-6 small-cols">
+      <select id="city" name="city" class="form-control ">
+        <option value="0">Select City</option>
+        <option data-val="1098" value="Delhi">Delhi</option>
+        <option data-val="1095" value="Jaipur">Jaipur</option>
+      </select>
+    </div>
+    <div class="col-sm-6 small-cols">
+      <input type="text" name="pickup-location" class="form-control" placeholder="Enter pickup location"/>
+    </div>
+  </div>
+  <div class="form-group clearfix">
+    <div class="col-sm-12 small-cols"><label>Cab Category</label>
+    </div>
+    <div class="col-sm-6 small-cols ">
+      <select name ="cab" id="cab" class="form-control">
+        <option value="0">Select Cab</option>
+      </select>
+    </div>
+    <div class="col-sm-6 small-cols ">
+      <select name="no_of_passengers" id="no_of_passengers" class="form-control">
+        <option>No of passengers</option>
+        <option value="1">ONE</option>
+        <option value="2">TWO</option>
+        <option value="3">THREE</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group clearfix">
+    <div class="col-sm-12 small-cols"><label>Drop Location</label>
+    </div>
+    <div class="col-sm-6 small-cols">
+      <select id="drop_city" name="drop_city" class="form-control ">
+        <option value="0">Select City</option>
+        <option data-val="1098" value="Delhi">Delhi</option>
+        <option data-val="1095" value="Jaipur">Jaipur</option>
+      </select>
+    </div>
+    <div class="col-sm-6 small-cols">
+      <input type="text" name="drop-location" class="form-control" placeholder="Enter Drop location"/>
+    </div>
+  </div>
+  <div class="form-group clearfix">
+    <div class="col-sm-7 small-cols ">
+      <input type="hidden" name="admin_email" class="admin_email"/>
+      <input id="num1" class="sum" type="text" name="num1" value="3" readonly="readonly" /> +
+      <input id="num2" class="sum" type="text" name="num2" value="8" readonly="readonly" /> =
+      <input id="captcha" class="captcha" type="text" name="captcha" maxlength="2" />
+      <span id="spambot">(Are you human, or spambot?)</span>
+    </div>
+    <script>
+      function test(){
+        window.open("http://sakhaconsultingwings.com/thank-you","_self");
+      }
+    </script>
+    <div class="col-sm-5 small-cols ">
+      <input class="btn default-btn sakha-booking-btn" type="submit" name="submit_form" value="Book a Cab" onclick="test()" />
+    </div>
+  </div>
+  </form>
+  </div>
+</body>
+</html>
