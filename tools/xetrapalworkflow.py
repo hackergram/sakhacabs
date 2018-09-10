@@ -1,4 +1,4 @@
-import sys
+import sys,os,telegram
 sys.path.append("/opt/xetrapal")
 import xetrapal
 sys.path.append("/opt/mojomailman/mojomail")
@@ -17,3 +17,9 @@ server=Server()
 db=server['sakhacabs']
 
 User.set_db(db)
+LocationUpdate.set_db(db)
+
+#a=telegram.ext.MessageHandler(telegram.ext.Filters.all,messagehandler)
+#driversakhabot.updater.dispatcher.add_handler(a)
+driversakhabotkarta=sakhacabsxpal.start_pykka_karta()
+driversakhabotkarta.tell({'msg':'run','func':xetrapal.telegramkarmas.update_30s,'args':[driversakhabot,"/home/arjun/sakhacabs/driversakhastop" ,drivermessagehandler],'kwargs':{}})

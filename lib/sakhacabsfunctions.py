@@ -13,6 +13,12 @@ sys.path.append("/opt/xetrapal")
 from sakhacabsdatamodel import User,LocationUpdate,DutySlip,Vehicle
 import xetrapal
 from couchdbkit import *
+import telegram
+driver_base_keyboard = [[u'\U0001f44d Check In', u'\U0001f44b Check Out'],[u'\U000025b6 Open Duty Slip']]
+    
+location_keyboard=[[{'text':u'OK','request_location':True}]]
+server=Server()
+db=server['sakhacabs']
 
 def new_user(telegram_id,role,logger=xetrapal.astra.baselogger,**kwargs):    
     meta={}
@@ -61,16 +67,41 @@ def get_customer_by_tgid(tgid):
     else:
         return None
 
-def messagehandler(bot,update,logger=xetrapal.astra.baselogger,xpalbot=None):
-    if xpalbot!=None:
-        logger=xpalbot.logger
-        uids = [user['id'] for user in xpalbot.users]
-        if update.message.from_user.id not in uids:
-            logger.info("Adding user to user list")
-            xpalbot.users.append(json.loads(update.message.from_user.to_json()))
-        else:
-            logger.info("User in list already")
-    try:
-        logger.info(u"Got message  {} from user {}".format(update.message.text,update.message.from_user.id))
+
+def drivermessagehandler(bot,update,logger=xetrapal.astra.baselogger):
+    try: 
+        logger.info(u"{} handling  message  {} from user {}".format(bot.name,update.message.text,update.message.from_user.id))
+        if update.message.text==u'\U0001f44d Check In':
+            bot.logger.info("Sending Checkin button")
+            update.message.reply_text(text="CheckIn",reply_markup=telegram.ReplyKeyboardMarkup(location_keyboard))
+        if update.message.text==u'\U0001f44b Check Out':
+            bot.logger.info("Sending CheckOut button")
+            update.message.reply_text(text="CheckOut",reply_markup=telegram.ReplyKeyboardMarkup(location_keyboard))
+        if not update.message.text:
+            bot.logger.info("Hmm...no text, could this be a location???")
+            if update.message.location:    
+                bot.logger.info("Yup, location it is!")
+                driver=get_driver_by_tgid(update.message.from_user['id'])
+                location=update.message.location.to_json()
+                timestamp=update.message.date
+                reply_markup = telegram.ReplyKeyboardRemove()     
+                if update.message.reply_to_message.text=="CheckIn":
+                    locupdate=new_locationupdate(driver,location,timestamp,logger=bot.logger)
+                    update.message.reply_text(text="Check in from location {} at time {} successfull".format(location,timestamp.strftime("%Y-%m-%d %H:%M:%S")),reply_markup=reply_markup)
+                    
+                if update.message.reply_to_message.text=="CheckOut":
+                    locupdate=new_locationupdate(driver,location,timestamp,checkin=False,logger=bot.logger)
+                    update.message.reply_text(text="Check out from location {} at time {} successfull".format(location,timestamp.strftime("%Y-%m-%d %H:%M:%S")),reply_markup=reply_markup)
+                locupdate.save()
+                send_keyboard(bot,driver_base_keyboard,update.message.chat.id)
+                
+                
+                
+            
+            
     except Exception as e:
         logger.info("Choked! "+repr(e))
+
+def send_keyboard(bot,custom_keyboard,user_id):
+    reply_markup=telegram.ReplyKeyboardMarkup(custom_keyboard)
+    bot.updater.bot.send_message(user_id,"What would you like to do?",reply_markup=reply_markup)    
