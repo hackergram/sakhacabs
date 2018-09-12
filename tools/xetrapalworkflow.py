@@ -13,8 +13,7 @@ sakhahelperconfig=xetrapal.karma.load_config(configfile="/home/arjun/sakhacabs/s
 driversakhabot=xetrapal.telegramastras.XetrapalTelegramBot(config=driverbotconfig,logger=sakhacabsxpal.logger)
 sakhahelper=xetrapal.telegramastras.XetrapalTelegramBot(config=sakhahelperconfig,logger=sakhacabsxpal.logger)
 
-server=Server()
-db=server['sakhacabs']
+
 
 User.set_db(db)
 LocationUpdate.set_db(db)
@@ -22,4 +21,4 @@ LocationUpdate.set_db(db)
 #a=telegram.ext.MessageHandler(telegram.ext.Filters.all,messagehandler)
 #driversakhabot.updater.dispatcher.add_handler(a)
 driversakhabotkarta=sakhacabsxpal.start_pykka_karta()
-driversakhabotkarta.tell({'msg':'run','func':xetrapal.telegramkarmas.update_30s,'args':[driversakhabot,"/home/arjun/sakhacabs/driversakhastop" ,drivermessagehandler],'kwargs':{}})
+driversakhabotkarta.tell({'msg':'run','func':xetrapal.telegramkarmas.poll,'args':[driversakhabot,"/home/arjun/sakhacabs/driversakhastop" ,drivermessagehandler],'kwargs':{}})

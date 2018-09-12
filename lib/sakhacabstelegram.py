@@ -1,4 +1,5 @@
-#!/u*-
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
 """
 Created on Sat Sep  8 21:52:07 2018
 
@@ -18,7 +19,6 @@ driver_base_keyboard = [[u'\U0001f44d Check In', u'\U0001f44b Check Out'],[u'\U0
 location_keyboard=[[{'text':u'OK','request_location':True,'force_reply':True}]]
 server=Server()
 db=server['sakhacabs']
-yes_no_keyboard = [[telegram.InlineKeyboardButton("Yes", callback_data='Yes'),telegram.InlineKeyboardButton("No", callback_data='No')]]
 
 def new_user(telegram_id,role,logger=xetrapal.astra.baselogger,**kwargs):    
     meta={}
@@ -76,23 +76,33 @@ def send_keyboard(bot,custom_keyboard,user_id):
     reply_markup=telegram.ReplyKeyboardMarkup(custom_keyboard)
     bot.updater.bot.send_message(user_id,"What would you like to do?",reply_markup=reply_markup)    
 
-def checkin(bot,update,parsed_update,logger=xetrapal.astra.baselogger):
-    logger.info("Checkin")
-    if parsed_update['response']==u'\U0001f44d Check In':
-        update.message.reply_text(u"\U0001f44d Check In\nVehicle?",reply_markup=telegram.InlineKeyboardMarkup(yes_no_keyboard))
-    if parsed_update['source_message']==u"\U0001f44d Check In\nVehicle?"&&==parsed_update['response']=="Yes":
-        update.message.reply_text(u"\U0001f44d Check In\nVehicle:Yes\nVehicle Num?",reply_markup=telegram.ForceReply())
-    if parsed_update['source_message']==u"\U0001f44d Check In\nVehicle?"&&==parsed_update['response']=="No":
-        update.message.reply_text(u"\U0001f44d Check In\nVehicle:No\nHandoff?",reply_markup==telegram.InlineKeyboardMarkup(yes_no_keyboard))
-    if parsed_update['source_message']==u"\U0001f44d Check In\nVehicle:Yes\nVehicle Num:?"&&==parsed_update['response']!=None:
-        update.message.reply_text(u"\U0001f44d Check In\nVehicle:Yes\nVehicle Num:"+parsed_update['response']+"\nHandoff?",reply_markup=telegram.InlineKeyboardMarkup(yes_no_keyboard))
-        
-def drivermessagehandler(bot,update,parsed_update,logger=xetrapal.astra.baselogger):
-    logger.info(u"{}".format(parsed_update))
-    if parsed_update['response'].startswith(u'\U0001f44d Check In'):
-        logger.info(u"Starting checkin")
-        checkin(bot,update,parsed_update,logger)
-                
+
+def drivermessagehandler(bot,update,logger=xetrapal.astra.baselogger):
+    if update.message:
+        logger.info(u"This looks like a message")
+        if update.message.reply_to_message:
+            source_message=update.message.reply_to_message.text
+        else:
+            source_message=None
+        if update.message.text:
+            response=update.message.text
+        else:
+            response=None
+        if update.message.location:
+            location=update.message.location.to_json()
+        else:
+            location=None
+        logger.info(u"Source Message: {}\nResponse: {}\nLocation: {}".format(source_message,response,location))
+    elif update.callback_query:
+        logger.info(u"This looks like a callback query")
+        source_message=update.callback_query.message.text
+        response=update.callback_query.data
+        location=None
+        logger.info(u"Source Message: {}\nResponse: {}\nLocation: {}".format(source_message,response,location))
+    else:
+        logger.info(u"This makes no sense, a message with no callback and no message")
+    
+    
     
     
     '''
@@ -124,7 +134,6 @@ def drivermessagehandler(bot,update,parsed_update,logger=xetrapal.astra.baselogg
                 update.message.reply_text(text="CheckOut",reply_markup=telegram.ReplyKeyboardMarkup(location_keyboard))
             
             if update.message.text==u'\U000025b6 Open Duty Slip':
-       
                 bot.logger.info(u"Driver {} opened a duty slip".format(driver.meta['first_name']))
                 
             if not update.message.text:
