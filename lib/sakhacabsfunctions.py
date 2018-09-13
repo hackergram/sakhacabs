@@ -13,13 +13,13 @@ from sakhacabsdatamodel import User,LocationUpdate,DutySlip,Vehicle
 import xetrapal
 from couchdbkit import *
 import telegram
-driver_base_keyboard = [[u'\U0001f44d Check In', u'\U0001f44b Check Out'],[u'\U000025b6 Open Duty Slip']]
-    
-location_keyboard=[[{'text':u'OK','request_location':True,'force_reply':True}]]
+from telegram.ext import ConversationHandler, MessageHandler, RegexHandler, CommandHandler, Filters
+
 server=Server()
 db=server['sakhacabs']
-yes_no_keyboard = [[telegram.InlineKeyboardButton("Yes", callback_data='Yes'),telegram.InlineKeyboardButton("No", callback_data='No')]]
 
+
+#DB Functions
 def new_user(telegram_id,role,logger=xetrapal.astra.baselogger,**kwargs):    
     meta={}
     for key in kwargs.keys():
@@ -72,6 +72,122 @@ def get_property_for_id(docid,prop):
     return t
 
 
+
+#Bot Functions
+
+from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
+
+
+
+GENDER, PHOTO, LOCATION, BIO = range(4)
+
+
+def start(bot, update):
+    reply_keyboard = [['Boy', 'Girl', 'Other']]
+
+    update.message.reply_text(
+        'Hi! My name is Professor Bot. I will hold a conversation with you. '
+        'Send /cancel to stop talking to me.\n\n'
+        'Are you a boy or a girl?',
+        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
+
+    return GENDER
+
+
+def gender(bot, update):
+    user = update.message.from_user
+    bot.logger.info("Gender of %s: %s", user.first_name, update.message.text)
+    update.message.reply_text('I see! Please send me a photo of yourself, '
+                              'so I know what you look like, or send /skip if you don\'t want to.',
+                              reply_markup=ReplyKeyboardRemove())
+
+    return PHOTO
+
+
+def photo(bot, update):
+    user = update.message.from_user
+    photo_file = bot.get_file(update.message.photo[-1].file_id)
+    photo_file.download('user_photo.jpg')
+    bot.logger.info("Photo of %s: %s", user.first_name, 'user_photo.jpg')
+    update.message.reply_text('Gorgeous! Now, send me your location please, '
+                              'or send /skip if you don\'t want to.')
+
+    return LOCATION
+
+
+def skip_photo(bot, update):
+    user = update.message.from_user
+    bot.logger.info("User %s did not send a photo.", user.first_name)
+    update.message.reply_text('I bet you look great! Now, send me your location please, '
+                              'or send /skip.')
+
+    return LOCATION
+
+
+def location(bot, update):
+    user = update.message.from_user
+    user_location = update.message.location
+    bot.logger.info("Location of %s: %f / %f", user.first_name, user_location.latitude,
+                user_location.longitude)
+    update.message.reply_text('Maybe I can visit you sometime! '
+                              'At last, tell me something about yourself.')
+
+    return BIO
+
+
+def skip_location(bot, update):
+    user = update.message.from_user
+    bot.logger.info("User %s did not send a location.", user.first_name)
+    update.message.reply_text('You seem a bit paranoid! '
+                              'At last, tell me something about yourself.')
+
+    return BIO
+
+
+def bio(bot, update):
+    user = update.message.from_user
+    bot.logger.info("Bio of %s: %s", user.first_name, update.message.text)
+    bot.update.message.reply_text('Thank you! I hope we can talk again some day.')
+    bot.update.message.reply_text('Thank you! I hope we can talk again some day.')
+
+    return ConversationHandler.END
+
+
+def cancel(bot, update):
+    user = update.message.from_user
+    bot.logger.info("User %s canceled the conversation.", user.first_name)
+    update.message.reply_text('Bye! I hope we can talk again some day.',
+                              reply_markup=ReplyKeyboardRemove())
+
+    return ConversationHandler.END
+
+
+def error(bot, update, error):
+    """Log Errors caused by Updates."""
+    bot.logger.warning('Update "%s" caused error "%s"', update, error)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    '''
+
+
+
+
+
+
+
+
 def send_keyboard(bot,custom_keyboard,user_id):
     reply_markup=telegram.ReplyKeyboardMarkup(custom_keyboard)
     bot.updater.bot.send_message(user_id,"What would you like to do?",reply_markup=reply_markup)    
@@ -79,23 +195,26 @@ def send_keyboard(bot,custom_keyboard,user_id):
 def checkin(bot,update,parsed_update,logger=xetrapal.astra.baselogger):
     logger.info("Checkin")
     if parsed_update['response']==u'\U0001f44d Check In':
-        update.message.reply_text(u"\U0001f44d Check In\nVehicle?",reply_markup=telegram.InlineKeyboardMarkup(yes_no_keyboard))
-    if parsed_update['source_message']==u"\U0001f44d Check In\nVehicle?"&&==parsed_update['response']=="Yes":
-        update.message.reply_text(u"\U0001f44d Check In\nVehicle:Yes\nVehicle Num?",reply_markup=telegram.ForceReply())
-    if parsed_update['source_message']==u"\U0001f44d Check In\nVehicle?"&&==parsed_update['response']=="No":
-        update.message.reply_text(u"\U0001f44d Check In\nVehicle:No\nHandoff?",reply_markup==telegram.InlineKeyboardMarkup(yes_no_keyboard))
-    if parsed_update['source_message']==u"\U0001f44d Check In\nVehicle:Yes\nVehicle Num:?"&&==parsed_update['response']!=None:
-        update.message.reply_text(u"\U0001f44d Check In\nVehicle:Yes\nVehicle Num:"+parsed_update['response']+"\nHandoff?",reply_markup=telegram.InlineKeyboardMarkup(yes_no_keyboard))
+        bot.updater.bot.send_message(parsed_update['reply_id'],u"\U0001f44d Check In\nVehicle?",reply_markup=telegram.InlineKeyboardMarkup(yes_no_keyboard))
         
+    if parsed_update['source_message']==u"\U0001f44d Check In\nVehicle?" and parsed_update['response']==u"Yes":
+        bot.updater.bot.send_message(parsed_update['reply_id'],u"\U0001f44d Check In\nVehicle:Yes\nVehicle Num?",reply_markup=telegram.ForceReply())
+    if parsed_update['source_message']==u"\U0001f44d Check In\nVehicle?" and parsed_update['response']==u"No":
+        bot.updater.bot.send_message(parsed_update['reply_id'],u"\U0001f44d Check In\nVehicle:No\nHandoff?",reply_markup=telegram.InlineKeyboardMarkup(yes_no_keyboard))
+    if parsed_update['source_message']==u"\U0001f44d Check In\nVehicle:Yes\nVehicle Num?" and parsed_update['response']!=None:
+       bot.updater.bot.send_message(parsed_update['reply_id'],u"\U0001f44d Check In\nVehicle:Yes\nVehicle Num:"+parsed_update['response']+"\nHandoff?",reply_markup=telegram.InlineKeyboardMarkup(yes_no_keyboard))
+  
 def drivermessagehandler(bot,update,parsed_update,logger=xetrapal.astra.baselogger):
     logger.info(u"{}".format(parsed_update))
-    if parsed_update['response'].startswith(u'\U0001f44d Check In'):
+    if parsed_update['response'].startswith(u'\U0001f44d Check In') or parsed_update['source_message'].startswith(u'\U0001f44d Check In'):
         logger.info(u"Starting checkin")
         checkin(bot,update,parsed_update,logger)
                 
+        
+        
     
     
-    '''
+
     if update.callback_query:
         query=update.callback_query
         tg_id=update.callback_query.from_user['id']
