@@ -49,23 +49,50 @@ def new_dutyslip(driver,vehicle,logger=xetrapal.astra.baselogger,**kwargs):
     logger.info(u"New dutyslip with id {} created".format(dutyslip.dutyslip_id))
     return dutyslip
 
+
+#Fix to check if vehicle is already  taken. 
 def new_locationupdate(driver,location,timestamp,checkin=True,vehicle=None,handoff=None,logger=xetrapal.astra.baselogger,**kwargs): 
-    
-    if vehicle!=None:
-        driver_id=driver._id
+    driver_id=driver._id
+    if handoff != None:
+        handoff_id=handoff._id
+    else:
+        handoff_id=None
+    if vehicle != None:
         vehicle_id=vehicle._id
-        if checkin==True:
-            driver.vehicle_id=vehicle_id
-            vehicle.driver_id=driver_id
-        if checkin==False:
-            driver.vehicle_id=None
-            vehicle.driver_id=None
-        
-        vehicle.save()
-        driver.save()
     else:
         vehicle_id=None
-    locationupdate=LocationUpdate(driver_id=driver._id,timestamp=timestamp,location=location,checkin=checkin,handoff=handoff,vehicle_id=vehicle_id)
+    if checkin==True:
+        driver.checkedin=True
+        # If the driver is checking in with a vehicle
+        if vehicle!=None:
+            # Associate driver with vehicle
+            driver.vehicle_id=vehicle_id
+            # Associate vehicle with driver
+            vehicle.driver_id=driver_id
+            vehicle.save()
+        
+    if checkin==False:
+        if driver.vehicle_id!=None:
+            # If the driver has a vehicle associated, 
+            # get the vehicle object 
+            # and remove the driver association from the vehicle object
+            # save the vehicle object
+            driver_vehicle=Vehicle(get_object_for_id(driver.vehicle_id))
+            driver_vehicle.driver_id=None
+            driver_vehicle.save()
+            # If the driver has a vehicle associated, 
+            # remove the vehicle association from the driver object
+            driver.vehicle_id=None
+        driver.checkedin=False
+        
+    
+    driver.save()
+    
+    # Get new location update and save it
+    locationupdate=LocationUpdate(driver_id=driver._id,timestamp=timestamp,location=location,checkin=checkin,handoff=handoff_id,vehicle_id=vehicle_id)
+    locationupdate.save()
+    
+    # Tell the user what happened
     if checkin==True:
         logger.info(u"New checkin from driver with id {} at {} from {}".format(locationupdate.driver_id,locationupdate.timestamp,locationupdate.location))
     else:
@@ -96,7 +123,9 @@ def get_vehicle_by_vnum(vnum):
         return [Vehicle(x['value']) for x in t][0]
     else:
         return None
-
+def get_object_for_id(docid):
+    t=db.view("all/by_id",keys=[docid]).all()[0]['value']
+    return t
 
 
 

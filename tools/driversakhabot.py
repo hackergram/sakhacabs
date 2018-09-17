@@ -136,16 +136,17 @@ def cancel_location_update(bot, update, user_data):
     return MENU_CHOICE
 
 def submit_location_update(bot, update, user_data):
+    
     logger.info(u"{}".format(user_data))
+    logger.info(user_data['driver'])
     markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
     
     #del user_data['choice']
-    logger.info(u"{}".format(user_data))
+    
     try:
-        if user_data['location']!=None:
-            location=user_data['location'].to_json()
-        if user_data['handoff']!=None:
-            handoff=user_data['handoff'].to_json()
+        location=user_data['location']
+        handoff=user_data['handoff']
+        logger.info(u"{}".format(user_data))
         location_update=new_locationupdate(user_data['driver'],location,update.message.date,user_data['checkin'],vehicle=user_data['vehicle'],handoff=handoff)
         location_update.save()
         update.message.reply_text(u"Saved!"
