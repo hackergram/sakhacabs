@@ -146,7 +146,7 @@ def submit_location_update(bot, update, user_data):
     try:
         location=user_data['location']
         handoff=user_data['handoff']
-        logger.info(u"{}".format(user_data))
+        logger.info(u"{} {}".format(update.message.date,user_data))
         location_update=new_locationupdate(user_data['driver'],location,update.message.date,user_data['checkin'],vehicle=user_data['vehicle'],handoff=handoff)
         location_update.save()
         update.message.reply_text(u"Saved!"
@@ -178,13 +178,16 @@ def received_location_information(bot, update, user_data):
         if update.message.text:
             text = update.message.text
             vehicle=get_vehicle_by_vnum(text)
-            user_data["vehicle"] = vehicle
+            if vehicle.driver_id==None or vehicle.driver_id==user_data['driver']._id:    
+                user_data["vehicle"] = vehicle
+            else:
+                update.message.reply_text("That vehicle is assigned to someone else")
         else:
             user_data["vehicle"]=None
     if category==send_location_text:
         if update.message.location:
             location = update.message.location
-            user_data["location"] = location
+            user_data["location"] = location.to_json()
         else:
             user_data["location"] = None
     logger.info(u"{}".format(user_data))

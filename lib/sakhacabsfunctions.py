@@ -87,9 +87,10 @@ def new_locationupdate(driver,location,timestamp,checkin=True,vehicle=None,hando
         
     
     driver.save()
-    
+    UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
+    adjtimestamp = timestamp + UTC_OFFSET_TIMEDELTA
     # Get new location update and save it
-    locationupdate=LocationUpdate(driver_id=driver._id,timestamp=timestamp,location=location,checkin=checkin,handoff=handoff_id,vehicle_id=vehicle_id)
+    locationupdate=LocationUpdate(driver_id=driver._id,timestamp=adjtimestamp,location=location,checkin=checkin,handoff=handoff_id,vehicle_id=vehicle_id)
     locationupdate.save()
     
     # Tell the user what happened
