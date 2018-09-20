@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'q4f5ln5t_#kanl7f00*#m#oqncp2z95hc#uv-zc+$r$zq%h*qy'
+SECRET_KEY = 'zo)l6x50+trzk_00of*mciqj-@db8^&^4w^#&b^vh_p^c81hf-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,8 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'couchdbkit.ext.django',
-    'bookings',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -82,10 +81,7 @@ DATABASES = {
     }
 }
 
-# Couch DB Config
-COUCHDB_DATABASES = (
-    ('bookings', 'http://127.0.0.1:5984/sakhacabs'),
-)
+
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
@@ -123,3 +119,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
