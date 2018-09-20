@@ -15,7 +15,7 @@ class User(Document):
     meta = DictProperty()
 class LocationUpdate(Document):
     driver_id=StringProperty()
-    timestamp=DateTimeProperty()
+    timestamp=DateTimeProperty(exact=True)
     location=StringProperty()
     checkin=BooleanProperty()
     vehicle_id=StringProperty()
