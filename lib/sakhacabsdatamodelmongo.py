@@ -20,8 +20,8 @@ class LocationUpdate(Document):
     timestamp=fields.DateTimeField()
     location=fields.StringField()
     checkin=fields.BooleanField()
-    vehicle_id=fields.StringField()
-    handoff=fields.StringField()
+    vehicle_id=fields.DynamicField()
+    handoff=fields.DynamicField()
 class DutySlip(Document):
     driver_id=fields.StringField()
     created_time=fields.DateTimeField()
