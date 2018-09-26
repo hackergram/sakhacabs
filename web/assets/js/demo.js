@@ -317,7 +317,7 @@ demo = {
      
         var table = $('#drivertable').DataTable({
             ajax: {
-                url: 'http://192.168.56.101:5984/sakhacabs/_design/user/_view/drivers_check_in',
+                url: 'http://192.168.56.101:5000/driver/all',
                 dataSrc: 'rows'
             },
             columns: [
