@@ -35,33 +35,3 @@ class DutySlip(Document):
 class Vehicle(Document):
     vehicle_num=fields.StringField()
     vehicle_meta = fields.DynamicField()
-
-
-'''
-class User(jsonobject.JsonObject):
-    role = jsonobject.fields.StringField()
-    telegram_id=jsonobject.fields.IntField()
-    meta = jsonobject.fields.DictField()
-class LocationUpdate(jsonobject.JsonObject):
-    driver_id=jsonobject.fields.StringField()
-    timestamp=jsonobject.fields.DateTimeField()
-    location=jsonobject.fields.StringField()
-    checkin=jsonobject.BooleanProperty()
-    vehicle_id=jsonobject.fields.StringField()
-    handoff=jsonobject.fields.StringField()
-class DutySlip(jsonobject.JsonObject):
-    driver_id=jsonobject.fields.StringField()
-    created_time=jsonobject.fields.DateTimeField()
-    vehicle_id=jsonobject.fields.StringField()
-    dutyslip_id=jsonobject.fields.StringField()
-    open_time=jsonobject.fields.DateTimeField()
-    close_time=jsonobject.fields.DateTimeField()
-    open_kms=jsonobject.fields.IntField()
-    close_kms=jsonobject.fields.IntField()
-    verified_by=jsonobject.fields.DictField()
-class Vehicle(jsonobject.JsonObject):
-    vehicle_num=jsonobject.fields.StringField()
-    vehicle_meta = jsonobject.fields.DictField()
-'''
-
-    
