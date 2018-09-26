@@ -116,6 +116,14 @@ def get_driver_by_tgid(tgid):
         return t[0]
     else:
         return None
+def get_user_by_tgid(tgid):
+    t=User.objects(telegram_id=tgid)
+    xetrapal.astra.baselogger.info(len(t))
+    if len(t)>0:
+        #return[User(x['value']) for x in t][0]
+        return t[0]
+    else:
+        return None
 def get_customer_by_tgid(tgid):
     #t=db.view("user/cust_by_telegram",keys=[tgid]).all()
     t=User.objects(role="customer",telegram_id=tgid)

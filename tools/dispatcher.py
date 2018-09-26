@@ -6,8 +6,9 @@ Created on Sat Sep 22 20:54:42 2018
 @author: arjun
 """
 from driversakhabotmongo import *
-from flask import Flask
+from flask import Flask, jsonify
 app = Flask(__name__)
+
 
 @app.route("/user/all")
 def api_get_users():
@@ -15,14 +16,17 @@ def api_get_users():
 
 @app.route("/user/by_tgid/<tgid>")
 def api_get_user_by_tgid(tgid):
-    return None
+    user=get_user_by_tgid(tgid)
+    return jsonify(json_loads(user.to_json()))
 @app.route("/driver/all")
 def api_get_drivers():
-    return User.objects(role="driver").to_json()
+    return jsonify(json.loads(User.objects(role="driver").to_json()))
 
 @app.route("/driver/by_tgid/<tgid>")
 def api_get_driver_by_tgid(tgid):
-    return None
+    driver=get_driver_by_tgid(tgid)
+    return jsonify(json_loads(driver.to_json()))
+    
 @app.route("/vehicle/all")
 def api_get_vehicles():
     return Vehicle.objects.to_json()
@@ -33,7 +37,7 @@ def api_get_vehicle_by_vnum(vnum):
 
 @app.route("/locupdate/all")
 def api_get_locupdates():
-    return LocationUpdate.objects.to_json()
+    return jsonify(json.loads(LocationUpdate.objects.to_json()))
 
 @app.route("/locupdate/by_driver/<tgid>")
 def api_get_locupdates_for_driver(tgid):
