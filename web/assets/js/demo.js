@@ -317,12 +317,12 @@ demo = {
      
         var table = $('#drivertable').DataTable({
             ajax: {
-                url: 'http://192.168.56.101:5000/driver/all',
+                url: 'http://localhost:5000/driver/all',
                 dataSrc: 'rows'
             },
             columns: [
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }},
-                { data: function (row){return row.value.meta.first_name +" "+ row.value.meta.last_name }},
+                { data: function (row){return row.value.metadata.first_name +" "+ row.value.meta.last_name }},
                 { data: 'value.checkedin' },
                 { data: 'value.checkedin' }
                 
