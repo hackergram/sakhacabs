@@ -83,7 +83,8 @@ def new_locationupdate(driver,location,timestamp,checkin=True,vehicle=None,hando
             # get the vehicle object 
             # and remove the driver association from the vehicle object
             # save the vehicle object
-            driver_vehicle=Vehicle(get_object_for_id(driver.vehicle_id))
+            driver_vehicle=Vehicle(get_
+                                   object_for_id(driver.vehicle_id))
             driver_vehicle.driver_id=None
             driver_vehicle.save()
             # If the driver has a vehicle associated, 
@@ -136,10 +137,9 @@ def get_vehicle_by_vnum(vnum):
         return t[0]
     else:
         return None
-def get_object_for_id(docid):
-    t=db.view("all/by_id",keys=[docid]).all()[0]['value']
-    #t=User.objects(role="driver",telegram_id=tgid)
-    return t
+def get_user_for_id(oid):
+    return User.objects.with_id(oid)
 
-
+def get_vehicle_for_id(oid):
+    return Vehicle.objects.with_id(oid)
 

@@ -8,9 +8,6 @@ Created on Sat Sep  8 21:52:07 2018
 
 from mongoengine import Document, EmbeddedDocument, fields
 
-
-
-
 class User(Document):
     role = fields.StringField()
     telegram_id=fields.IntField()
@@ -35,3 +32,19 @@ class DutySlip(Document):
 class Vehicle(Document):
     vehicle_num=fields.StringField()
     vehicle_meta = fields.DynamicField()
+class Booking(Document):
+    booking_num=fields.StringField()
+    passenger_name=fields.StringField()
+    passenger_phone=fields.StringField()
+    pickup_timestamp=fields.DateTimeField()
+    pickup_location=fields.StringField()
+    num_passengers=fields.IntField()
+    metadata = fields.DynamicField()
+class Trip(Document):
+    trip_num=fields.StringField()
+    trip_from=fields.StringField()
+    trip_to=fields.StringField()    
+    trip_pickup_time=fields.DateTimeField()
+    trip_bookings=fields.ListField(Booking)
+    trip_dutyslips=fields.ListField(DutySlip)
+    
