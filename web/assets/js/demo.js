@@ -283,12 +283,12 @@ demo = {
         */
         var table=$('#locationupdatetable').DataTable({
             ajax: {
-                url: 'http://192.168.56.101:5984/sakhacabs/_design/locationupdate/_view/all_by_ts',
-                dataSrc: 'rows'
+                url: 'http://192.168.56.101:5000/locupdate/all',
+                dataSrc: 'resp'
             },
             columns: [
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }},
-                { data: 'value.driver_id',render: function(data){
+                { data: 'driver_id',render: function(data){
                             /*    
                             var request = new XMLHttpRequest();
                             request.open('GET', 'http://192.168.56.101:5984/sakhacabs/_design/all/_view/by_id?keys=[%22'+data+'%22]', false);  // `false` makes the request synchronous
@@ -299,12 +299,13 @@ demo = {
                                 return p.rows[0].value.meta.first_name;
                             }
                             */
-                            return data.slice(0,10);
+                            
+                            return data['$oid'].slice(0,10);
                 }},
-                { data: 'value.checkin',render: function(data){if(data===true){return "Check In"}else{return "Check Out"}}},
-                { data: 'value.timestamp',render: function(data){return new Date(data)}},
-                { data: 'value.location'},
-                { data: 'value.vehicle_id',render: function(data){return data;}}
+                { data: 'checkin',render: function(data){if(data===true){return "Check In"}else{return "Check Out"}}, defaultContent:"None"},
+                { data: 'timestamp',render: function(data){return new Date(data['$date'])}, defaultContent:"None"},
+                { data: 'location', defaultContent:"None"},
+                { data: 'vehicle_id',render: function(data){if(data){return data['$oid'].slice(0,10);}}, defaultContent:"None"}
             ],
             scrollY: 200
         });
@@ -314,30 +315,63 @@ demo = {
     },
     fillDrivers: function(){
         console.log("Filling driver data");
-     
         var table = $('#drivertable').DataTable({
+            //ajax: 'http://192.168.56.101:5000/driver/all'
+            
             ajax: {
-                url: 'http://localhost:5000/driver/all',
-                dataSrc: 'rows'
+                url: 'http://192.168.56.101:5000/driver/all',
+                dataSrc: "resp" 
             },
             columns: [
-                //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }},
-                { data: function (row){return row.value.metadata.first_name +" "+ row.value.meta.last_name }},
-                { data: 'value.checkedin' },
-                { data: 'value.checkedin' }
+                //{ data: function (row){retturn'metadata.first_name' + "metadata.last_name" }},
+                { data: 'metadata', render: function (data){return data.first_name +" "+ data.last_name }},
+                //{ data: 'checkedin' },
+                { data: 'checkedin', defaultContent: "None", render:function(data){if(data===true){return "Checked In"}else{return "Checked Out"}} },
+                { data: 'checkedin', defaultContent: "None", render:function(data){if(data===true){return "Checked In"}else{return "Checked Out"}}  }
                 
-            ]
+            ],
+            scrollY: 200
+        });
+         
+        setInterval( function () {
+                table.ajax.reload( null, false ); // user paging is not reset on reload
+        }, 8000 );
+       
+    },
+    fillVehicles: function(){
+        console.log("Filling vehicle data");
+        /*
+         $.getJSON('http://192.168.56.101:5000/vehicle/all', function(data) {
+            vehicles = data['resp'];
+            console.log(vehicles);
+        });
+        */
+       
+        
+        var table = $('#vehicletable').DataTable({
+            //ajax: 'http://192.168.56.101:5000/driver/all'
+            
+            ajax: {
+                url: 'http://192.168.56.101:5000/vehicle/all',
+                dataSrc: "resp" 
+            },
+            columns: [
+                //{ data: function (row){retturn'metadata.first_name' + "metadata.last_name" }},
+                //{ data: 'metadata', render: function (data){return data.first_name +" "+ data.last_name }},
+                //{ data: 'checkedin' },
+                { data: 'vehicle_num', defaultContent: "None"},
+                { data: 'checkedin', defaultContent: "None", render:function(data){if(data===true){return "Checked In"}else{return "Checked Out"}}  },
+                { data: 'vehicle_meta.reg_num', defaultContent: "Unknown", render:function(data){return data}  }
+                
+            ],
+            scrollY: 200
+            
         });
         setInterval( function () {
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 8000 );
-    },
-    fillVehicles: function(){
-        console.log("Filling vehicle data");
-        $.getJSON('http://192.168.56.101:5984/sakhacabs/_design/vehicle/_view/all_by_vnum', function(data) {
-            vehicles = data['rows'];
-            console.log(vehicles);
-        });
+       
+        
     },
 
     fillData: function(){

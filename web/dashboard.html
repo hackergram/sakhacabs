@@ -14,7 +14,7 @@
     <!-- Bootstrap core CSS     -->
     <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
 
-    <!-- Animation library for notifications   -->
+    <!-- Animation library for notifications   -- >
     <link href="assets/css/animate.min.css" rel="stylesheet"/>
 
     <!--  Light Bootstrap Table core CSS    -->
@@ -469,13 +469,14 @@
                             </div>
                             <div class="content">
                                 <div class="table-full-width">
-                                   <table class="table table-hover table-striped">
+                                   <table class="table table-hover table-striped" id="vehicletable">
                                         <thead>
                                            <th>Vehicle Num</th>
                                            <th>Driver</th>
                                             <th>Location</th>
                                         </thead>
                                         <tbody>
+                                            <!--
                                             <tr>
                                                 <td>{vehicle num 1}</td>
                                                 <td>{driver name 1}</td>
@@ -488,6 +489,7 @@
                                                 <td>{location 2}</td>
                                                 
                                             </tr>
+                                            -->
                                         </tbody>
                                     </table>
                                 </div>
@@ -581,7 +583,7 @@
             });
             */
             //$('#drivertable').DataTable();
-            demo.initGoogleMaps();
+            //demo.initGoogleMaps();
             demo.fillData();
     	});
 	</script>
