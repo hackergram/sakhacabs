@@ -6,9 +6,9 @@ Created on Sat Sep  8 21:52:07 2018
 @author: arjun
 """
 
-from mongoengine import Document, EmbeddedDocument, fields
+from mongoengine import Document, EmbeddedDocument, fields, DynamicDocument
 
-class User(Document):
+class User(DynamicDocument):
     role = fields.StringField()
     telegram_id=fields.IntField()
     metadata = fields.DynamicField()
@@ -30,7 +30,7 @@ class DutySlip(Document):
     close_kms=fields.IntField()
     verified_by=fields.DictField()
 class Vehicle(Document):
-    vehicle_num=fields.StringField()
+    vehicle_num=fields.StringField() 
     vehicle_meta = fields.DynamicField()
 class Booking(Document):
     booking_num=fields.StringField()
@@ -40,6 +40,7 @@ class Booking(Document):
     pickup_location=fields.StringField()
     num_passengers=fields.IntField()
     metadata = fields.DynamicField()
+    product_code = fields.StringField()
 class Trip(Document):
     trip_num=fields.StringField()
     trip_from=fields.StringField()
@@ -47,4 +48,9 @@ class Trip(Document):
     trip_pickup_time=fields.DateTimeField()
     trip_bookings=fields.ListField(Booking)
     trip_dutyslips=fields.ListField(DutySlip)
+class Product:
+    product_code=fields.StringField()
+    product_price=fields.StringField()
+    product_meta=fields.DynamicField()
+    
     

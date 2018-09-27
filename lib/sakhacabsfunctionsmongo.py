@@ -78,18 +78,20 @@ def new_locationupdate(driver,location,timestamp,checkin=True,vehicle=None,hando
             vehicle.save()
         
     if checkin==False:
-        if driver.vehicle_id!=None:
-            # If the driver has a vehicle associated, 
-            # get the vehicle object 
-            # and remove the driver association from the vehicle object
-            # save the vehicle object
-            driver_vehicle=Vehicle(get_
-                                   object_for_id(driver.vehicle_id))
-            driver_vehicle.driver_id=None
-            driver_vehicle.save()
-            # If the driver has a vehicle associated, 
-            # remove the vehicle association from the driver object
-            driver.vehicle_id=None
+        try:
+            if driver.vehicle_id!=None:
+                # If the driver has a vehicle associated, 
+                # get the vehicle object 
+                # and remove the driver association from the vehicle object
+                # save the vehicle object
+                driver_vehicle=Vehicle(get_object_for_id(driver.vehicle_id))
+                driver_vehicle.driver_id=None
+                driver_vehicle.save()
+                # If the driver has a vehicle associated, 
+                # remove the vehicle association from the driver object
+                driver.vehicle_id=None
+        except Exception as e:
+            logger.info("Could not dissociate vehicle, does this driver have a vehicle associated")
         driver.checkedin=False
         
     
