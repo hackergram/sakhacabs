@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Simple Bot to reply to Telegram messages
@@ -33,11 +32,13 @@ open_duty_slip_text=u'\U000025b6 Open Duty Slip'
 add_handoff_text=u'\U0001F91D Handoff'
 add_vehicle_text=u'\U0001F695 Vehicle'
 send_location_text=u'\U0001F4CD Send Location'
+send_contact_text=u'\U0001F4CD Send Contact'
 submit_text=u'\U00002714 Submit'
 cancel_text=u'\U0000274C Cancel'
 driver_base_keyboard = [[check_in_text, check_out_text ],[open_duty_slip_text]]
 location_update_keyboard = [[add_handoff_text, add_vehicle_text ],[send_location_text],[submit_text,cancel_text]]    
 location_keyboard=[[{'text':send_location_text,'request_location':True}]]
+contact_keyboard=[[{'text':send_contact_text,'request_contact':True}]]
 #yes_no_keyboard = [[telegram.InlineKeyboardButton("Yes", callback_data='Yes'),telegram.InlineKeyboardButton("No", callback_data='No')]]
 
 
@@ -68,7 +69,7 @@ def main_menu(bot, update):
         if user_data['driver']==None:
             update.message.reply_text("Sorry this service is for Sakha Cabs Drivers Only!")
             return ConversationHandler.END
-        logger.info("Main Menu presented to driver {}".format(user_data['driver'].metadata['first_name']))
+        logger.info("Main Menu presented to driver {}".format(user_data['driver'].first_name))
         markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
         update.message.reply_text(
             "Hi! Welcome to the Sakha Driver Assistant."
@@ -149,7 +150,9 @@ def submit_location_update(bot, update, user_data):
         location=user_data['location']
         handoff=user_data['handoff']
         logger.info(u"{} {}".format(update.message.date,user_data))
-        location_update=new_locationupdate(user_data['driver'],location,update.message.date,user_data['checkin'],vehicle=user_data['vehicle'],handoff=handoff)
+        location_update=new_locationupdate(user_data['driver'],update.message.date,
+                                           user_data['checkin'],location=location,
+                                           vehicle=user_data['vehicle'],handoff=handoff)
         location_update.save()
         update.message.reply_text(u"Saved!"
                                   u"{}"

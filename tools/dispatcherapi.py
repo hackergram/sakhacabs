@@ -8,11 +8,36 @@ Created on Sat Sep 22 20:54:42 2018
 from driversakhabotmongo import *
 from flask import Flask, jsonify
 from flask_cors import CORS
+from flask_mongoengine import MongoEngine
+from flask_mongorest import MongoRest
+from flask_mongorest.views import ResourceView
+from flask_mongorest.resources import Resource
+from flask_mongorest import operators as ops
+from flask_mongorest import methods
 
 app = Flask(__name__)
-
+app.config.update(
+    MONGODB_HOST = 'localhost',
+    MONGODB_PORT = '27017',
+    MONGODB_DB = 'sakhacabs',
+)
 CORS(app)
+db = MongoEngine(app)
+api = MongoRest(app)
 
+class UserResource(Resource):
+    document = User
+    filters = {
+        'telegram_id': [ops.Exact],
+        'mobile_num': [ops.Exact],
+    }
+    
+@api.register(name='user', url='/user/')
+class UserView(ResourceView):
+    resource = UserResource
+    methods = [methods.Create, methods.Update, methods.Fetch, methods.List]
+
+'''
 @app.route("/user/all")
 def api_get_users():
     return User.objects.to_json()
@@ -65,7 +90,7 @@ def api_get_locupdates():
 def api_get_locupdates_for_driver(tgid):
     return None
     
-
+'''
 
 
 

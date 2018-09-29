@@ -9,7 +9,7 @@ import sys,os,json
 from uuid import uuid4
 import datetime
 sys.path.append("/opt/xetrapal")
-from sakhacabsdatamodelmongo import User,LocationUpdate,DutySlip,Vehicle
+from sakhacabsdatamodelmongo import User,LocationUpdate,DutySlip,Vehicle,Product,Booking
 import xetrapal
 #from couchdbkit import *
 from mongoengine import *
@@ -29,11 +29,11 @@ mongoengine.connect('sakhacabs', alias='default')
 #DutySlip.set_db(db)
 #Vehicle.set_db(db)
 #DB Functions
-def new_user(telegram_id,role,logger=xetrapal.astra.baselogger,**kwargs):    
-    meta={}
-    for key in kwargs.keys():
-        meta[key]=kwargs[key]
-    user=User(telegram_id=telegram_id,meta=meta,role=role)
+def new_user_from_tg(telegramuserdict,role,logger=xetrapal.astra.baselogger):    
+    telegram_id=telegramuserdict['id']
+    first_name=telegramuserdict['first_name']
+    last_name=telegramuserdict['last_name']
+    user=User(telegram_id=telegram_id,first_name=first_name,last_name=last_name,role=role)
     logger.info(u"New {} created".format(user.role))
     
     return user
@@ -57,56 +57,32 @@ def new_dutyslip(driver,vehicle,logger=xetrapal.astra.baselogger,**kwargs):
 
 
 #Fix to check if vehicle is already  taken. 
-def new_locationupdate(driver,location,timestamp,checkin=True,vehicle=None,handoff=None,logger=xetrapal.astra.baselogger,**kwargs): 
-    driver_id=driver.id
-    if handoff != None:
-        handoff_id=handoff.id
-    else:
-        handoff_id=None
-    if vehicle != None:
-        vehicle_id=vehicle.id
-    else:
-        vehicle_id=None
+def new_locationupdate(driver,timestamp,checkin=True,location=None,vehicle=None,handoff=None,logger=xetrapal.astra.baselogger,**kwargs): 
     if checkin==True:
         driver.checkedin=True
-        # If the driver is checking in with a vehicle
         if vehicle!=None:
-            # Associate driver with vehicle
-            driver.vehicle_id=vehicle_id
-            # Associate vehicle with driver
-            vehicle.driver_id=driver_id
+            vehicle.driver=driver
             vehicle.save()
-        
-    if checkin==False:
-        try:
-            if driver.vehicle_id!=None:
-                # If the driver has a vehicle associated, 
-                # get the vehicle object 
-                # and remove the driver association from the vehicle object
-                # save the vehicle object
-                driver_vehicle=Vehicle(get_object_for_id(driver.vehicle_id))
-                driver_vehicle.driver_id=None
-                driver_vehicle.save()
-                # If the driver has a vehicle associated, 
-                # remove the vehicle association from the driver object
-                driver.vehicle_id=None
-        except Exception as e:
-            logger.info("Could not dissociate vehicle, does this driver have a vehicle associated")
-        driver.checkedin=False
-        
     
+    if checkin==False:
+        driver.checkedin=False
+        if len(Vehicle.objects(driver=driver))>0:
+            v=Vehicle.objects(driver=driver)
+            for vh in v:
+                del vh.driver
+                vh.save()
     driver.save()
     UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
     adjtimestamp = timestamp + UTC_OFFSET_TIMEDELTA
     # Get new location update and save it
-    locationupdate=LocationUpdate(driver_id=driver.id,timestamp=adjtimestamp,location=location,checkin=checkin,handoff=handoff_id,vehicle_id=vehicle_id)
+    locationupdate=LocationUpdate(driver=driver,timestamp=adjtimestamp,location=location,checkin=checkin,handoff=handoff,vehicle=vehicle)
     locationupdate.save()
     
     # Tell the user what happened
     if checkin==True:
-        logger.info(u"New checkin from driver with id {} at {} from {}".format(locationupdate.driver_id,locationupdate.timestamp,locationupdate.location))
+        logger.info(u"New checkin from driver with id {} at {} from {}".format(locationupdate.driver.first_name,locationupdate.timestamp,locationupdate.location))
     else:
-        logger.info(u"Checkout from driver with id {} at {} from {}".format(locationupdate.driver_id,locationupdate.timestamp,locationupdate.location))
+        logger.info(u"Checkout from driver with id {} at {} from {}".format(locationupdate.driver.first_name,locationupdate.timestamp,locationupdate.location))
     
     return locationupdate
 
@@ -152,4 +128,3 @@ def get_user_for_id(oid):
 
 def get_vehicle_for_id(oid):
     return Vehicle.objects.with_id(oid)
-
