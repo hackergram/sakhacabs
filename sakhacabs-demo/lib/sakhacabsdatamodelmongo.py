@@ -28,7 +28,7 @@ class Booking(DynamicDocument):
     cust_id=fields.StringField()
 
 class Product(DynamicDocument):
-    product_code=fields.StringField(unique=True)
+    product_code=fields.StringField(unique=True,required=True)
     product_price=fields.StringField()   
 
 

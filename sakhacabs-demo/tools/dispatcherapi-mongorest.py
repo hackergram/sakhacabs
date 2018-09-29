@@ -37,6 +37,35 @@ class UserView(ResourceView):
     resource = UserResource
     methods = [methods.Create, methods.Update, methods.Fetch, methods.List]
 
+class VehicleResource(Resource):
+    document = Vehicle
+    filters = {
+        'vehicle_num': [ops.Exact],
+        'driver': [ops.Exact],
+    }
+    related_resources = {
+            'driver':UserResource,
+            }
+    
+@api.register(name='vehicle', url='/vehicle/')
+class VehicleView(ResourceView):
+    resource = VehicleResource
+    methods = [methods.Create, methods.Update, methods.Fetch, methods.List]
+
+class LocationUpdateResource(Resource):
+    document = LocationUpdate
+    filters = {
+        'checkin': [ops.Exact],
+        'driver': [ops.Exact],
+    }
+    related_resources = {
+            'driver':UserResource,
+            }
+@api.register(name='locupdate', url='/locupdate/')
+class LocationUpdateView(ResourceView):
+    resource = LocationUpdateResource
+    methods = [methods.Create, methods.Update, methods.Fetch, methods.List]
+
 '''
 @app.route("/user/all")
 def api_get_users():

@@ -15,7 +15,7 @@ CORS(app)
 
 @app.route("/user/all")
 def api_get_users():
-    return User.objects.to_json()
+    return jsonify(json.loads(json.User.objects.to_json()))
 
 @app.route("/user/by_tgid/<tgid>")
 def api_get_user_by_tgid(tgid):
