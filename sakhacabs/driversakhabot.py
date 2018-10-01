@@ -22,9 +22,9 @@ from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, Rege
                           ConversationHandler)
 
 
-from sakhacabs import utils
+#from sakhacabs import utils
 #from sakhacabsfunctionsmongo import *
-#from driversakhabot import *
+from sakhacabs.xpal import *
 
 check_in_text=u'\U0001f44d Check In'
 check_out_text=u'\U0001f44b Check Out'
@@ -48,7 +48,7 @@ driverbotconfig=xetrapal.karma.load_config(configfile="/home/arjun/sakhacabs/dri
 driversakhabot=xetrapal.telegramastras.XetrapalTelegramBot(config=driverbotconfig,logger=sakhacabsxpal.logger)
 
 logger=driversakhabot.logger
-MENU_CHOICE, TYPING_REPLY, TYPING_CHOICE,LOCATION_CHOICE = range(4)
+GETMOBILE,MENU_CHOICE, TYPING_REPLY, TYPING_CHOICE,LOCATION_CHOICE = range(5)
 
 
 
@@ -64,11 +64,14 @@ def facts_to_str(user_data):
 def main_menu(bot, update):
     user_data={}
     try:
-        user_data['driver']=utils.get_driver_by_tgid(update.message.from_user.id)
+        user_data['driver']=get_driver_by_tgid(update.message.from_user.id)
         logger.info(u"{}".format(user_data))
         if user_data['driver']==None:
             update.message.reply_text("Sorry this service is for Sakha Cabs Drivers Only!")
-            return ConversationHandler.END
+            markup=ReplyKeyboardMarkup(contact_keyboard)
+            update.message.reply_text("If you are logging in for the first time, please share your mobile number",reply_markup=markup)
+            #return ConversationHandler.END
+            return GETMOBILE
         logger.info("Main Menu presented to driver {}".format(user_data['driver'].first_name))
         markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
         update.message.reply_text(
@@ -84,7 +87,7 @@ def open_duty_slip(bot, update, user_data):
     logger.info("u{}".format(text))
 
 def location_update_menu(bot, update, user_data):
-    user_data['driver']=utils.get_driver_by_tgid(update.message.from_user.id)
+    user_data['driver']=get_driver_by_tgid(update.message.from_user.id)
     user_data['vehicle']=None
     user_data['handoff']=None
     user_data['location']=None
@@ -126,7 +129,24 @@ def get_location(bot, update,user_data):
     update.message.reply_text(u'{}'.format(text),reply_markup=markup)
     return TYPING_CHOICE
 
-
+def set_mobile(bot,update,user_data):
+    logger.info(u"{}".format(update.message.contact))
+    driver=get_driver_by_mobile(update.message.contact.phone_number)
+    if driver:
+        driver.tgid=update.message.contact.user_id
+        driver.save()
+        user_data['driver']=driver
+        logger.info("Main Menu presented to driver {}".format(user_data['driver'].first_name))
+        markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
+        update.message.reply_text(
+            "Hi! Welcome to the Sakha Driver Assistant."
+            "What would you like to do?",
+            reply_markup=markup)
+        
+        return MENU_CHOICE
+    else:
+        update.message.reply_text("Sorry, you don't seem to be listed!")
+        return ConversationHandler.END
 def cancel_location_update(bot, update, user_data):
     logger.info(u"{}".format(user_data))
     markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
@@ -150,7 +170,7 @@ def submit_location_update(bot, update, user_data):
         location=user_data['location']
         handoff=user_data['handoff']
         logger.info(u"{} {}".format(update.message.date,user_data))
-        location_update=utils.new_locationupdate(user_data['driver'],update.message.date,
+        location_update=new_locationupdate(user_data['driver'],update.message.date,
                                            user_data['checkin'],location=location,
                                            vehicle=user_data['vehicle'],handoff=handoff)
         location_update.save()
@@ -182,7 +202,7 @@ def received_location_information(bot, update, user_data):
     if category==add_vehicle_text:
         if update.message.text:
             text = update.message.text
-            vehicle=utils.get_vehicle_by_vnum(text)
+            vehicle=get_vehicle_by_vid(int(text))
             try:
                 if vehicle.driver_id==None or vehicle.driver_id==user_data['driver'].id:    
                     user_data["vehicle"] = vehicle
@@ -216,9 +236,7 @@ def done(bot, update, user_data):
     if 'choice' in user_data:
         del user_data['choice']
 
-    update.message.reply_text("I learned these facts about you:"
-                              "{}"
-                              "Until next time!".format(facts_to_str(user_data)))
+    update.message.reply_text("Bye!")
 
     user_data.clear()
     return ConversationHandler.END
@@ -240,6 +258,15 @@ def setup():
         entry_points=[CommandHandler('start', main_menu)],
 
         states={
+            GETMOBILE: [MessageHandler(Filters.text,
+                                           done,
+                                           pass_user_data=True),
+                            MessageHandler(Filters.contact,
+                                           set_mobile,
+                                           pass_user_data=True),
+                            ],
+            
+                
             MENU_CHOICE: [RegexHandler('^('+check_in_text+'|'+check_out_text+')$',
                                     location_update_menu,
                                     pass_user_data=True),

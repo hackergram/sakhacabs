@@ -12,7 +12,7 @@ from flask_restful import Api, Resource
 import json
 #from flask.ext.potion.contrib.mongoengine.manager import MongoEngineManager
 from sakhacabs.xpal import *
-from sakhacabs import documents
+#from sakhacabs import documents
 app = Flask(__name__)
 app.config.update(
     MONGODB_HOST = 'localhost',

@@ -8,14 +8,10 @@ Created on Sat Sep  8 21:52:07 2018
 
 from mongoengine import Document, fields, DynamicDocument
 import datetime
-class User(DynamicDocument):
-    role = fields.StringField()
-    telegram_id=fields.IntField(unique=True)
-    mobile_num=fields.StringField(unique=True)
 
 class Driver(DynamicDocument):
     driver_id=fields.StringField(unique=True,required=True)
-    mobile=fields.StringField()
+    mobile_num=fields.StringField()
     tgid=fields.IntField()
     
 class Customer(DynamicDocument):
@@ -45,17 +41,17 @@ class Product(DynamicDocument):
     product_id=fields.StringField(unique=True,required=True)
     
 class LocationUpdate(Document):
-    driver=fields.ReferenceField(Driver,required=True)
+    driver_id=fields.StringField(required=True)
     timestamp=fields.DateTimeField(required=True)
     location=fields.StringField()
     checkin=fields.BooleanField()
-    vehicle=fields.ReferenceField(Vehicle)
-    handoff=fields.ReferenceField(User)
+    vehicle_id=fields.IntField()
+    handoff=fields.StringField()
     
 class DutySlip(Document):
-    driver=fields.ReferenceField(Driver)
+    driver=fields.StringField(required=True)
     created_time=fields.DateTimeField(default=datetime.datetime.utcnow())
-    vehicle=fields.ReferenceField(Vehicle)
+    vehicle=fields.StringField()
     dutyslip_id=fields.StringField()
     open_time=fields.DateTimeField()
     close_time=fields.DateTimeField()
