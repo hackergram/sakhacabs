@@ -287,7 +287,8 @@ demo = {
                 {width:"20%", data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
                 {width:"20%", data: 'booking_id', defaultContent:"None", render: function(data){if(data){return data}}}
             ],
-            scrollY: 200
+            scrollY: 200,
+            scrollX:true
         });
         setInterval( function () {
                 table.ajax.reload( null, false ); // user paging is not reset on reload
@@ -313,7 +314,7 @@ demo = {
                 { data: 'checkin',render: function(data){if(data===true){return "Check In"}else{return "Check Out"}}, defaultContent:"None"},
                 { data: 'timestamp',render: function(data){return new Date(data['$date'])}, defaultContent:"None"},
                 { data: 'location', defaultContent:"None"},
-                { data: 'vehicle_id',render: function(data){if(data){return data['$oid'].slice(0,10);}}, defaultContent:"None"}
+                { data: 'vehicle_id',render: function(data){if(data){return data}}, defaultContent:"None"}
             ],
             scrollY: 200
         });
@@ -332,7 +333,7 @@ demo = {
             },
             columns: [
                 //{ data: function (row){retturn'metadata.first_name' + "metadata.last_name" }},
-                { data: null, render: function (data){return data.first_name +" "+ data.last_name }},
+                { data: null, render: function (data){return data.driver_id }},
                 //{ data: 'checkedin' },
                 { data: 'checkedin', defaultContent: "None", render:function(data){if(data===true){return "Checked In"}else{return "Checked Out"}} },
                 { data: 'onduty', defaultContent: "None", render:function(data){if(data){return data}else{return "Unknown"}}  }
@@ -361,7 +362,7 @@ demo = {
                 //{ data: 'metadata', render: function (data){return data.first_name +" "+ data.last_name }},
                 //{ data: 'checkedin' },
                 { data: 'vehicle_id', defaultContent: "None"},
-                { data: 'checkedin', defaultContent: "None", render:function(data){if(data===true){return "Checked In"}else{return "Checked Out"}}  },
+                { data: 'driver_id', defaultContent: "None", render:function(data){if(data){return data}else{return "Checked Out"}}  },
                 { data: 'reg_num', defaultContent: "Unknown", render:function(data){return data}  }
                 
             ],
