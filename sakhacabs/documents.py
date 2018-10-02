@@ -22,7 +22,7 @@ class Customer(DynamicDocument):
     
 class Vehicle(DynamicDocument):
     vehicle_id=fields.IntField(umique=True,required=True) 
-    driver=fields.ReferenceField(Driver)
+    driver_id=fields.StringField()
     
 class Booking(DynamicDocument):
     booking_id=fields.StringField(required=True)

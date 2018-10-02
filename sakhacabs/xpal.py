@@ -124,17 +124,19 @@ def new_locationupdate(driver,timestamp,checkin=True,location=None,vehicle=None,
     if checkin==True:
         driver.checkedin=True
         if vehicle!=None:
-            vehicle.driver=driver
+            vehicle.driver_id=driver.driver_id
             vehicle.save()
             vehicle_id=vehicle.vehicle_id
     
     if checkin==False:
         driver.checkedin=False
-        if len(documents.Vehicle.objects(driver=driver))>0:
-            v=documents.Vehicle.objects(driver=driver)
+        if len(documents.Vehicle.objects(driver_id=driver.driver_id))>0:
+            v=documents.Vehicle.objects(driver_id=driver.driver_id)
+            
             for vh in v:
-                del vh.driver
+                del vh.driver_id
                 vh.save()
+                vehicle_id=vh.vehicle_id
     
     driver.save()
     UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
