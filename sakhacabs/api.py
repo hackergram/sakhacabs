@@ -5,10 +5,10 @@ Created on Sat Sep 22 20:54:42 2018
 
 @author: arjun
 """
-from flask import Flask, jsonify
+from flask import Flask, jsonify,request
 from flask_cors import CORS
 from flask_mongoengine import MongoEngine
-from flask_restful import Api, Resource
+from flask_restful import reqparse, abort, Api, Resource
 import json
 #from flask.ext.potion.contrib.mongoengine.manager import MongoEngineManager
 from sakhacabs.xpal import *
@@ -21,9 +21,11 @@ app.config.update(
 )
 CORS(app)
 me = MongoEngine(app)
+app.logger=sakhacabsxpal.logger
 
 api = Api(app)
-    
+parser = reqparse.RequestParser()  
+
 class DriverResource(Resource):
     def get(self,tgid=None,mobile_num=None,docid=None,driver_id=None):
         if docid:
@@ -66,10 +68,62 @@ class LocationUpdateResource(Resource):
             if documents.LocationUpdate.objects.with_id(docid):
                 return jsonify({"resp": [json.loads(documents.LocationUpdate.objects.with_id(docid).to_json())]})
             else:
-                return jsonify({"resp":[]})
-       
+                return jsonify({"resp":[]})   
         else:
             return jsonify({"resp": json.loads(documents.LocationUpdate.objects.to_json())})
+    def post(self):
+        app.logger.info("{}".format(request.get_json().keys()))
+        respdict=request.get_json()
+        try:
+            driver=documents.Driver.objects(driver_id=respdict["driver_id"])[0]
+            timestamp=datetime.datetime.fromtimestamp(respdict['timestamp']['$date']/1000)
+            if respdict["vehicle_id"]:
+                vehicle=documents.Vehicle.objects(vehicle_id=respdict["vehicle_id"])[0]
+            else:
+                vehicle=None
+            locupdate=new_locationupdate(driver,timestamp,vehicle=vehicle)
+            #locupdate=documents.LocationUpdate.from_json(json.dumps(request.get_json()))
+            app.logger.info("{}".format(locupdate.to_json()))
+            locupdate.save()
+            return jsonify({"resp": [json.loads(locupdate.to_json())]})
+        except Exception as e:
+            app.logger.info("{}".format(str(e)))
+            return jsonify({"resp":[]})   
+        #args = parser.parse_args()
+        #app.logger.info("{}".format(args))
+        #todo_id = int(max(TODOS.keys()).lstrip('todo')) + 1
+        #todo_id = 'todo%i' % todo_id
+        #TODOS[todo_id] = {'task': args['task']}
+        #return TODOS[todo_id], 201    
+        return "{}"
+     
+    def put(self,docid=None):
+        app.logger.info("{} {}".format(docid,request.get_json()))
+        respdict=request.get_json()
+        if "_id" in respdict.keys():
+            del respdict["_id"]
+        if docid:
+            if documents.LocationUpdate.objects.with_id(docid):
+                try:
+                    locupdate=documents.LocationUpdate.objects.with_id(docid)
+                    locupdate=locupdate.from_json(json.dumps(request.get_json()))
+                    app.logger.info("{}".format(locupdate.to_json()))
+                    locupdate.save()
+                    return jsonify({"resp": [json.loads(locupdate.to_json())]})
+                except Exception as e:
+                    app.logger.info("{}".format(str(e)))
+                    return jsonify({"resp":[]})   
+            else:
+                return jsonify({"resp":[]})   
+        else:
+            return jsonify({"resp":[]})   
+        #args = parser.parse_args()
+        #app.logger.info("{}".format(args))
+        #todo_id = int(max(TODOS.keys()).lstrip('todo')) + 1
+        #todo_id = 'todo%i' % todo_id
+        #TODOS[todo_id] = {'task': args['task']}
+        #return TODOS[todo_id], 201    
+        
 api.add_resource(LocationUpdateResource,"/locupdate",endpoint="locupdate")
 api.add_resource(LocationUpdateResource,"/locupdate/by_id/<string:docid>",endpoint="locupdate_docid")
 
