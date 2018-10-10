@@ -127,6 +127,39 @@ sakha={
         this.fillLocationUpdates();
     },
     
+    fillAssignments: function(pagenum=1){
+        function AssignmentViewModel() {
+            var self = this;
+            self.assignments = ko.observableArray().extend({ paged: { pageSize: 3 } });;
+            self.setPage = function(newPage) {
+                self.chars.pageNumber(newPage);
+            };
+            var baseUri = 'http://192.168.56.101:5000/assignment';
+
+            $.getJSON(baseUri, function (data) {
+                //console.log(data.resp)
+               ko.mapping.fromJS(data.resp, {}, self.assignments);
+                console.log(self.assignments())
+            });
+        }
+        ko.applyBindings(new AssignmentViewModel());
+        ko.bindingHandlers.date = {
+        update: function (element, valueAccessor) {
+            
+            var value = valueAccessor();
+            
+            var date = moment(value());
+           
+            var strDate = date.format('YYYY-MM-DD HH:MM:SS');
+            //console.log(element)
+            $(element).text(strDate)
+             //console.log(strDate)
+        }
+    };
+       
+        
+    },
+    
     fillAssignmentModal: function(assignmentid){
         console.log("Editing Assignment - " +  assignmentid);
         if(assignmentid=="newassignment"){
