@@ -8,6 +8,12 @@ Created on Sat Sep  8 21:52:07 2018
 
 from mongoengine import Document, fields, DynamicDocument
 import datetime
+import bson,json
+from flask_mongoengine import QuerySet
+class CustomQuerySet(QuerySet):
+         def to_json(self):
+            return "[%s]" % (",".join([doc.to_json() for doc in self]))
+
 
 class Driver(DynamicDocument):
     driver_id=fields.StringField(unique=True,required=True)
@@ -48,6 +54,21 @@ class LocationUpdate(Document):
     vehicle_id=fields.IntField()
     handoff=fields.StringField()
     
+
+    
+class Assignment(Document):
+    created_timestamp=fields.DateTimeField(default=datetime.datetime.utcnow())    
+    frm=fields.StringField()
+    to=fields.StringField()    
+    pickup_time=fields.DateTimeField()
+    bookings=fields.ListField(fields.ReferenceField(Booking))
+    meta = {'queryset_class':CustomQuerySet}    
+    def to_json(self):
+        data=self.to_mongo()
+        data['bookings']=[{"Booking":json.loads(booking.to_json())} for booking in self.bookings]
+        return bson.json_util.dumps(data)
+    
+
 class DutySlip(Document):
     driver=fields.StringField(required=True)
     created_time=fields.DateTimeField(default=datetime.datetime.utcnow())
@@ -57,12 +78,4 @@ class DutySlip(Document):
     close_time=fields.DateTimeField()
     open_kms=fields.IntField()
     close_kms=fields.IntField()
-    
-class Trip(Document):
-    created_timestamp=fields.DateTimeField(default=datetime.datetime.utcnow())    
-    frm=fields.StringField()
-    to=fields.StringField()    
-    pickup_time=fields.DateTimeField()
-    bookings=fields.ListField(fields.ReferenceField(Booking))
-    dutyslips=fields.ListField(fields.ReferenceField(DutySlip))
-    
+    assignment=fields.ReferenceField(Assignment)

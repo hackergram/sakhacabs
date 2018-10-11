@@ -26,6 +26,7 @@ app.logger=sakhacabsxpal.logger
 api = Api(app)
 parser = reqparse.RequestParser()  
 
+#TODO - Fix code to return empty resp in the case of other identifiers apart from docid
 class DriverResource(Resource):
     def get(self,tgid=None,mobile_num=None,docid=None,driver_id=None):
         if docid:
@@ -41,6 +42,12 @@ class DriverResource(Resource):
             return jsonify({"resp": json.loads(documents.Driver.objects(driver_id=driver_id).to_json())})
         else:
             return jsonify({"resp": json.loads(documents.Driver.objects.to_json())})
+    def post(self):
+        return return jsonify({"resp":[]})
+    def put(self,tgid=None,mobile_num=None,docid=None,driver_id=None):
+        return jsonify({"resp":[]})
+    def delete(self,tgid=None,mobile_num=None,docid=None,driver_id=None):
+        return jsonify({"resp":[]})
 api.add_resource(DriverResource,"/driver",endpoint="driver")
 api.add_resource(DriverResource,"/driver/by_tgid/<int:tgid>",endpoint="tgid")
 api.add_resource(DriverResource,"/driver/by_mobile/<string:mobile_num>",endpoint="mobile")
@@ -58,6 +65,12 @@ class VehicleResource(Resource):
             return jsonify({"resp": json.loads(documents.Vehicle.objects(vehicle_id=vehicle_id).to_json())})
         else:
             return jsonify({"resp": json.loads(documents.Vehicle.objects.to_json())})
+    def post(self,vehicle_id=None,docid=None):
+        return return jsonify({"resp":[]})
+    def put(self,vehicle_id=None,docid=None):
+        return jsonify({"resp":[]})
+    def delete(self,vehicle_id=None,docid=None):
+        return jsonify({"resp":[]})
 api.add_resource(VehicleResource,"/vehicle",endpoint="vehicle")
 api.add_resource(VehicleResource,"/vehicle/by_id/<string:docid>",endpoint="vehicle_docid")
 api.add_resource(VehicleResource,"/vehicle/by_vehicle_id/<string:vehicle_id>",endpoint="vehicleid")
@@ -68,7 +81,7 @@ class LocationUpdateResource(Resource):
             if documents.LocationUpdate.objects.with_id(docid):
                 return jsonify({"resp": [json.loads(documents.LocationUpdate.objects.with_id(docid).to_json())]})
             else:
-                return jsonify({"resp":[]})   
+                return jsonify({"resp":[]})
         else:
             return jsonify({"resp": json.loads(documents.LocationUpdate.objects.to_json())})
     def post(self):
@@ -89,12 +102,6 @@ class LocationUpdateResource(Resource):
         except Exception as e:
             app.logger.info("{}".format(str(e)))
             return jsonify({"resp":[]})   
-        #args = parser.parse_args()
-        #app.logger.info("{}".format(args))
-        #todo_id = int(max(TODOS.keys()).lstrip('todo')) + 1
-        #todo_id = 'todo%i' % todo_id
-        #TODOS[todo_id] = {'task': args['task']}
-        #return TODOS[todo_id], 201    
         return "{}"
      
     def put(self,docid=None):
@@ -117,13 +124,9 @@ class LocationUpdateResource(Resource):
                 return jsonify({"resp":[]})   
         else:
             return jsonify({"resp":[]})   
-        #args = parser.parse_args()
-        #app.logger.info("{}".format(args))
-        #todo_id = int(max(TODOS.keys()).lstrip('todo')) + 1
-        #todo_id = 'todo%i' % todo_id
-        #TODOS[todo_id] = {'task': args['task']}
-        #return TODOS[todo_id], 201    
         
+    def delete(self,docid=None):
+        return jsonify({"resp":[]})
 api.add_resource(LocationUpdateResource,"/locupdate",endpoint="locupdate")
 api.add_resource(LocationUpdateResource,"/locupdate/by_id/<string:docid>",endpoint="locupdate_docid")
 
@@ -134,9 +137,66 @@ class BookingResource(Resource):
                 return jsonify({"resp": [json.loads(documents.Booking.objects.with_id(docid).to_json())]})
             else:
                 return jsonify({"resp":[]})
-       
         else:
             return jsonify({"resp": json.loads(documents.Booking.objects.to_json())})
+    def post(self):
+        return return jsonify({"resp":[]})
+    def put(self,docid=None):
+        return jsonify({"resp":[]})
+    def delete(self,docid=None):
+        return jsonify({"resp":[]})
 api.add_resource(BookingResource,"/booking",endpoint="booking")
 api.add_resource(BookingResource,"/booking/by_id/<string:docid>",endpoint="booking_docid")
 
+class AssignmentResource(Resource):
+    def get(self,docid=None):
+        if docid:
+            if documents.Assignment.objects.with_id(docid):
+                return jsonify({"resp": [json.loads(documents.Assignment.objects.with_id(docid).to_json())]})
+            else:
+                return jsonify({"resp":[]})
+       
+        else:
+            return jsonify({"resp": json.loads(documents.Assignment.objects.to_json())})
+    def post(self):
+        app.logger.info("{}".format(request.get_json().keys()))
+        respdict=request.get_json()
+        try:
+            assignment=save_assignment(respdict)
+            return jsonify({"resp": [json.loads(assignment.to_json())]})
+        except Exception as e:
+            app.logger.info("{}".format(str(e)))
+            return jsonify({"resp":[]})   
+        return jsonify({"resp":[]})
+    def put(self,docid=None):
+        return jsonify({"resp":[]})
+    def delete(self,docid=None):
+        return jsonify({"resp":[]})
+api.add_resource(AssignmentResource,"/assignment",endpoint="assignment")
+api.add_resource(AssignmentResource,"/assignment/by_id/<string:docid>",endpoint="assignment_docid")
+
+class DutySlipResource(Resource):
+    def get(self,docid=None,assignment_id=None):
+        if docid:
+            if documents.DutySlip.objects.with_id(docid):
+                return jsonify({"resp": [json.loads(documents.DutySlip.objects.with_id(docid).to_json())]})
+            else:
+                return jsonify({"resp":[]})
+        elif assignment_id:
+            if documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(assignment_id)):
+                return jsonify({"resp": [json.loads(documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(assignment_id)).to_json())]})
+            else:
+                
+                return jsonify({"resp":[]})
+        else:
+            return jsonify({"resp": json.loads(documents.DutySlip.objects.to_json())})
+    def post(self):
+        return jsonify({"resp":[]})
+    def put(self,docid=None,assignment_id=None):
+        return jsonify({"resp":[]})
+    def delete(self,docid=None,assignment_id=None):
+        return jsonify({"resp":[]})
+
+api.add_resource(DutySlipResource,"/dutyslip",endpoint="dutyslip")
+api.add_resource(DutySlipResource,"/dutyslip/by_id/<string:docid>",endpoint="dutyslip_docid")
+api.add_resource(DutySlipResource,"/dutyslip/by_assignment_id/<string:assignment_id>",endpoint="dutyslip_assid")

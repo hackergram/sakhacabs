@@ -153,6 +153,20 @@ def new_locationupdate(driver,timestamp,checkin=True,location=None,vehicle=None,
     
     return locationupdate
 
+def save_assignment(assignmentdict):
+    
+    bookings=[documents.Booking.from_json(json.dumps(x)) for x in assignmentdict['bookings']]
+    assignment=documents.Assignment(bookings=bookings)
+    assignment.save()
+    for dutyslipdict in assignmentdict['dutyslips']:
+        d=documents.DutySlip(driver=dutyslipdict['driver'],vehicle=dutyslipdict['vehicle'],assignment=assignment)
+        xetrapal.astra.baselogger.info("Created duty slip {}".format(d.to_json()))
+        d.save()
+    #drivers=[documents.Driver.from_json(json.dumps(x)) for x in assignment['drivers']]
+    #vehicles=[documents.Vehicle.from_json(json.dumps(x)) for x in assignment['vehicles']]
+    #assignment=documents.Assignment(bookings=bookings)
+    xetrapal.astra.baselogger.info("{}".format(assignment.to_json()))
+    return assignment
 
 def get_driver_by_mobile(mobile_num):
     t=documents.Driver.objects(mobile_num=mobile_num)
@@ -163,6 +177,14 @@ def get_driver_by_mobile(mobile_num):
     else:
         return None
 
+def get_driver_by_mobile(mobile_num):
+    t=documents.Driver.objects(mobile_num=mobile_num)
+    xetrapal.astra.baselogger.info("Found {} drivers with Mobile Num {}".format(len(t),mobile_num))
+    if len(t)>0:
+        #return[User(x['value']) for x in t][0]
+        return t[0]
+    else:
+        return None
 
 
 def get_driver_by_tgid(tgid):
@@ -184,7 +206,6 @@ def get_vehicle_by_vid(vid):
         return t[0]
     else:
         return None
-
 
 '''
 
