@@ -65,7 +65,7 @@ class Assignment(Document):
     meta = {'queryset_class':CustomQuerySet}    
     def to_json(self):
         data=self.to_mongo()
-        data['bookings']=[{"Booking":json.loads(booking.to_json())} for booking in self.bookings]
+        data['bookings']=[json.loads(booking.to_json()) for booking in self.bookings]
         return bson.json_util.dumps(data)
     
 
@@ -79,3 +79,4 @@ class DutySlip(Document):
     open_kms=fields.IntField()
     close_kms=fields.IntField()
     assignment=fields.ReferenceField(Assignment)
+    

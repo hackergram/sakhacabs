@@ -27,6 +27,7 @@ import pandas
 
 from sakhacabs import documents,utils
 
+#Remote sync functionality
 def sync_remote():
     custlist=custsheet.get_as_df().to_dict(orient="records")
     driverlist=driversheet.get_as_df().to_dict(orient="records")
@@ -117,57 +118,103 @@ def sync_remote():
     newbookingsdf.cust_meta=newbookingsdf.cust_meta.astype(str)
     bookingsheet.set_dataframe(newbookingsdf,(1,1))
 
-    
-#Fix to check if vehicle is already  taken. 
+
+
+#LocationUpdate CRUD functionality
+#Fix to check if vehicle is already  taken.
+
+
 def new_locationupdate(driver,timestamp,checkin=True,location=None,vehicle=None,handoff=None,logger=xetrapal.astra.baselogger,**kwargs): 
-    vehicle_id=None
-    if checkin==True:
-        driver.checkedin=True
+	"""
+	Creates a new location update, location updates once created are not deleted as they are equivalent to log entries. 
+	Returns a LocationUpdate object
+	"""
+	vehicle_id=None
+	if checkin==True:
+		driver.checkedin=True
         if vehicle!=None:
             vehicle.driver_id=driver.driver_id
             vehicle.save()
             vehicle_id=vehicle.vehicle_id
-    
-    if checkin==False:
-        driver.checkedin=False
-        if len(documents.Vehicle.objects(driver_id=driver.driver_id))>0:
-            v=documents.Vehicle.objects(driver_id=driver.driver_id)
-            
-            for vh in v:
-                del vh.driver_id
-                vh.save()
-                vehicle_id=vh.vehicle_id
-    
-    driver.save()
-    UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
-    adjtimestamp = timestamp + UTC_OFFSET_TIMEDELTA
-    # Get new location update and save it
-    locationupdate=documents.LocationUpdate(driver_id=driver.driver_id,timestamp=adjtimestamp,location=location,checkin=checkin,handoff=handoff,vehicle_id=vehicle_id)
-    
-    # Tell the user what happened
-    if checkin==True:
-        logger.info(u"New checkin from driver with id {} at {} from {}".format(locationupdate.driver_id,locationupdate.timestamp,locationupdate.location))
-    else:
-        logger.info(u"Checkout from driver with id {} at {} from {}".format(locationupdate.driver_id,locationupdate.timestamp,locationupdate.location))
-    locationupdate.save()
-    
-    return locationupdate
+	if checkin==False:
+		driver.checkedin=False
+		if len(documents.Vehicle.objects(driver_id=driver.driver_id))>0:
+			v=documents.Vehicle.objects(driver_id=driver.driver_id)
+			for vh in v:
+				del vh.driver_id
+				vh.save()
+				vehicle_id=vh.vehicle_id
+	driver.save()
+	UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
+	adjtimestamp = timestamp + UTC_OFFSET_TIMEDELTA
+	# Get new location update and save it
+	locationupdate=documents.LocationUpdate(driver_id=driver.driver_id,timestamp=adjtimestamp,location=location,checkin=checkin,handoff=handoff,vehicle_id=vehicle_id)
+	# Tell the user what happened
+	if checkin==True:
+		logger.info(u"New checkin from driver with id {} at {} from {}".format(locationupdate.driver_id,locationupdate.timestamp,locationupdate.location))
+	else:
+		logger.info(u"Checkout from driver with id {} at {} from {}".format(locationupdate.driver_id,locationupdate.timestamp,locationupdate.location))
+	locationupdate.save()
+	return locationupdate
 
-def save_assignment(assignmentdict):
-    
-    bookings=[documents.Booking.from_json(json.dumps(x)) for x in assignmentdict['bookings']]
-    assignment=documents.Assignment(bookings=bookings)
-    assignment.save()
+
+
+'''
+Assignment and Dutyslip CRUD Functionality
+Assignments are collections of one or more bookings grouped together for assignment of vehicles/drivers
+DutySlips record assignment execution. DutySlips are issued by the dispatcher and can be created and deleted but not updated.
+A DutySlip can not be deleted once the open time has been set by the driver, i.e. after execution on an assignment has begun.
+'''
+def save_assignment(assignmentdict,assignment_id=None):
+    '''
+    Creates a new assignment/Updates an existing assignment with the provided bookings and duty slips
+    Input: A dictionary of the format {"assignment": Assignment object,dutyslips: List of driver/vehicle pairs}
+    Returns: An assignment object
+    '''
+    bookings=[documents.Booking.from_json(json.dumps(x)) for x in assignmentdict['assignment']['bookings']]
+    if assignment_id==None:
+		assignment=documents.Assignment(bookings=bookings)
+		assignment.save()
+    else:
+		#TODO Write logic for updating assignment if change in bookings and duty slips
+		sakhacabsxpal.logger.info("Saving existing assignment {}".format(assignment_id))
+		assignment=documents.Assignment.objects.with_id(assignment_id)
+		assignment.bookings=bookings
+    existingdutyslips=documents.DutySlip.objects(assignment=assignment)
+    sakhacabsxpal.logger.info("Existing duty slips {}".format(existingdutyslips.to_json()))
+    existingdutyslips=list(existingdutyslips)
+    sakhacabsxpal.logger.info("Submitted duty slips {}".format(assignmentdict['dutyslips']))
+    sakhacabsxpal.logger.info("Ignoring unchanged dutyslips")
+    for dutyslip in existingdutyslips:
+		sakhacabsxpal.logger.info("{}".format(dutyslip.to_json()))
+		match=False
+		for dutyslipdict in assignmentdict['dutyslips']:
+			sakhacabsxpal.logger.info("{}".format(dutyslipdict))
+			if dutyslip.driver==dutyslipdict['driver'] and dutyslip.vehicle==dutyslipdict['vehicle']:
+				sakhacabsxpal.logger.info("Unchanged {}".format(dutyslipdict))
+				#assignmentdict['dutyslips'].remove(dutyslipdict)
+				#existingdutyslips.remove(dutyslip)
+				match=True
+		if match==False:
+			sakhacabsxpal.logger.info("Removing unmatched dutyslip {}".format(dutyslip.to_json()))
+			dutyslip.delete()
+    sakhacabsxpal.logger.info("Adding the new dutyslips")
     for dutyslipdict in assignmentdict['dutyslips']:
-        d=documents.DutySlip(driver=dutyslipdict['driver'],vehicle=dutyslipdict['vehicle'],assignment=assignment)
-        xetrapal.astra.baselogger.info("Created duty slip {}".format(d.to_json()))
-        d.save()
-    #drivers=[documents.Driver.from_json(json.dumps(x)) for x in assignment['drivers']]
-    #vehicles=[documents.Vehicle.from_json(json.dumps(x)) for x in assignment['vehicles']]
-    #assignment=documents.Assignment(bookings=bookings)
-    xetrapal.astra.baselogger.info("{}".format(assignment.to_json()))
+		d=documents.DutySlip.objects(driver=dutyslipdict['driver'],vehicle=dutyslipdict['vehicle'],assignment=assignment)
+		if len(d)==0:
+			d=documents.DutySlip(driver=dutyslipdict['driver'],vehicle=dutyslipdict['vehicle'],assignment=assignment)
+			sakhacabsxpal.logger.info("Created duty slip {}".format(d.to_json()))
+		else:
+			d=d[0]
+			sakhacabsxpal.logger.info("Duty slip exists {}".format(d.to_json()))
+		d.save()
+    assignment.save()
+    sakhacabsxpal.logger.info("Saved assignment {}".format(assignment.to_json()))
     return assignment
 
+
+
+#Driver CRUD functionality
 def get_driver_by_mobile(mobile_num):
     t=documents.Driver.objects(mobile_num=mobile_num)
     xetrapal.astra.baselogger.info("Found {} drivers with Mobile Num {}".format(len(t),mobile_num))
@@ -176,16 +223,6 @@ def get_driver_by_mobile(mobile_num):
         return t[0]
     else:
         return None
-
-def get_driver_by_mobile(mobile_num):
-    t=documents.Driver.objects(mobile_num=mobile_num)
-    xetrapal.astra.baselogger.info("Found {} drivers with Mobile Num {}".format(len(t),mobile_num))
-    if len(t)>0:
-        #return[User(x['value']) for x in t][0]
-        return t[0]
-    else:
-        return None
-
 
 def get_driver_by_tgid(tgid):
     t=documents.Driver.objects(tgid=tgid)
@@ -197,6 +234,8 @@ def get_driver_by_tgid(tgid):
         return None
 
 
+#Vehicle CRUD functionality
+
 def get_vehicle_by_vid(vid):
     #t=db.view("vehicle/all_by_vnum",keys=[vnum]).all()
     t=documents.Vehicle.objects(vehicle_id=vid)
@@ -206,6 +245,8 @@ def get_vehicle_by_vid(vid):
         return t[0]
     else:
         return None
+
+
 
 '''
 
