@@ -171,7 +171,8 @@ def save_assignment(assignmentdict,assignment_id=None):
     Input: A dictionary of the format {"assignment": Assignment object,dutyslips: List of driver/vehicle pairs}
     Returns: An assignment object
     '''
-    bookings=[documents.Booking.from_json(json.dumps(x)) for x in assignmentdict['assignment']['bookings']]
+    #bookings=[documents.Booking.from_json(json.dumps(x)) for x in assignmentdict['assignment']['bookings']]
+    bookings=[documents.Booking.objects.with_id(x['_id']['$oid']) for x in assignmentdict['assignment']['bookings']]
     if assignment_id==None:
 		assignment=documents.Assignment(bookings=bookings)
 		assignment.save()
