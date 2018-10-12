@@ -1,12 +1,6 @@
 sakha={
     
-    fillTrips: function(){
-        console.log("Filling trip data");
-        $.getJSON('http://192.168.56.101:5984/sakhacabs/_design/user/_view/drivers_check_in', function(data) {
-            myItems = data['rows'];
-            console.log(myItems);
-        });
-    },
+    
     fillBookings: function(){
         console.log("Filling bookings data");
         /*
@@ -120,7 +114,6 @@ sakha={
 
     fillData: function(){
         console.log("Filling data");
-        this.fillTrips();
         this.fillDrivers();
         this.fillBookings();
         this.fillVehicles();
@@ -128,6 +121,7 @@ sakha={
     },
     
     fillAssignments: function(pagenum=1){
+        
         function AssignmentViewModel() {
             var self = this;
             self.assignments = ko.observableArray().extend({ paged: { pageSize: 3 } });;
@@ -137,6 +131,8 @@ sakha={
             var baseUri = 'http://192.168.56.101:5000/assignment';
 
             $.getJSON(baseUri, function (data) {
+                assigns=data.resp;
+               
                 //console.log(data.resp)
                ko.mapping.fromJS(data.resp, {}, self.assignments);
                 console.log(self.assignments())
