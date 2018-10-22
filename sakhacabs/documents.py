@@ -34,7 +34,7 @@ class Booking(DynamicDocument):
     booking_id=fields.StringField(required=True)
     passenger_detail=fields.StringField()
     passenger_mobile=fields.StringField()
-    created_timestamp=fields.DateTimeField(default=datetime.datetime.utcnow())    
+    created_timestamp=fields.DateTimeField(default=datetime.datetime.utcnow)    
     pickup_timestamp=fields.DateTimeField()
     pickup_location=fields.StringField()
     drop_location=fields.StringField()
@@ -54,14 +54,12 @@ class LocationUpdate(Document):
     vehicle_id=fields.IntField()
     handoff=fields.StringField()
     
-
-    
 class Assignment(Document):
-    created_timestamp=fields.DateTimeField(default=datetime.datetime.utcnow())    
-    frm=fields.StringField()
-    to=fields.StringField()    
-    pickup_time=fields.DateTimeField()
-    bookings=fields.ListField(fields.ReferenceField(Booking))
+    created_timestamp=fields.DateTimeField(default=datetime.datetime.utcnow)    
+    reporting_timestamp=fields.DateTimeField()
+    reporting_location=fields.StringField()
+    drop_location=fields.StringField()
+    bookings=fields.SortedListField(fields.ReferenceField(Booking))
     meta = {'queryset_class':CustomQuerySet}    
     def to_json(self):
         data=self.to_mongo()
@@ -71,7 +69,7 @@ class Assignment(Document):
 
 class DutySlip(Document):
     driver=fields.StringField(required=True)
-    created_time=fields.DateTimeField(default=datetime.datetime.utcnow())
+    created_time=fields.DateTimeField(default=datetime.datetime.utcnow)
     vehicle=fields.StringField()
     dutyslip_id=fields.StringField()
     open_time=fields.DateTimeField()

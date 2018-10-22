@@ -7,9 +7,13 @@ Created on Sat Sep  8 21:52:07 2018
 
 
 import sys,datetime,json
-
+import mongoengine
 sys.path.append("/opt/xetrapal")
 import xetrapal
+import pandas
+from sakhacabs import documents,utils
+
+
 sakhacabsxpal=xetrapal.Xetrapal(configfile="/home/arjun/sakhacabs/sakhacabsxpal.conf")
 sakhacabsgd=sakhacabsxpal.get_googledriver()
 datasheet=sakhacabsgd.open_by_key(sakhacabsxpal.config.get("SakhaCabs","datasheetkey"))
@@ -18,14 +22,10 @@ custsheet=datasheet.worksheet_by_title("customers")
 carsheet=datasheet.worksheet_by_title("cars")
 driversheet=datasheet.worksheet_by_title("drivers")
 prodsheet=datasheet.worksheet_by_title("product")
+
 #Setting up mongoengine connections
 sakhacabsxpal.logger.info("Setting up MongoEngine")
-import mongoengine
 mongoengine.connect('sakhacabs', alias='default')
-
-import pandas
-
-from sakhacabs import documents,utils
 
 #Remote sync functionality
 def sync_remote():
@@ -118,12 +118,10 @@ def sync_remote():
     newbookingsdf.cust_meta=newbookingsdf.cust_meta.astype(str)
     bookingsheet.set_dataframe(newbookingsdf,(1,1))
 
-
-
-#LocationUpdate CRUD functionality
-#Fix to check if vehicle is already  taken.
-
-
+'''
+LocationUpdate CRUD functionality
+Fix to check if vehicle is already  taken.
+'''
 def new_locationupdate(driver,timestamp,checkin=True,location=None,vehicle=None,handoff=None,logger=xetrapal.astra.baselogger,**kwargs): 
 	"""
 	Creates a new location update, location updates once created are not deleted as they are equivalent to log entries. 
@@ -145,8 +143,8 @@ def new_locationupdate(driver,timestamp,checkin=True,location=None,vehicle=None,
 				vh.save()
 				vehicle_id=vh.vehicle_id
 	driver.save()
-	UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
-	adjtimestamp = timestamp + UTC_OFFSET_TIMEDELTA
+	#UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
+	adjtimestamp = utils.get_utc_ts(timestamp)#timestamp + UTC_OFFSET_TIMEDELTA
 	# Get new location update and save it
 	locationupdate=documents.LocationUpdate(driver_id=driver.driver_id,timestamp=adjtimestamp,location=location,checkin=checkin,handoff=handoff,vehicle_id=vehicle_id)
 	# Tell the user what happened
@@ -156,8 +154,6 @@ def new_locationupdate(driver,timestamp,checkin=True,location=None,vehicle=None,
 		logger.info(u"Checkout from driver with id {} at {} from {}".format(locationupdate.driver_id,locationupdate.timestamp,locationupdate.location))
 	locationupdate.save()
 	return locationupdate
-
-
 
 '''
 Assignment and Dutyslip CRUD Functionality
@@ -175,12 +171,18 @@ def save_assignment(assignmentdict,assignment_id=None):
     bookings=[documents.Booking.objects.with_id(x['_id']['$oid']) for x in assignmentdict['assignment']['bookings']]
     if assignment_id==None:
 		assignment=documents.Assignment(bookings=bookings)
-		assignment.save()
+		sakhacabsxpal.logger.info("Created new assignment at {}".format(assignment.created_timestamp.strftime("%Y-%m-%d %H:%M:%S")))
     else:
 		#TODO Write logic for updating assignment if change in bookings and duty slips
 		sakhacabsxpal.logger.info("Saving existing assignment {}".format(assignment_id))
 		assignment=documents.Assignment.objects.with_id(assignment_id)
 		assignment.bookings=bookings
+    assignment.bookings=sorted(assignment.bookings, key=lambda k: k.pickup_timestamp)
+    assignment.reporting_timestamp=assignment.bookings[0].pickup_timestamp
+    assignment.reporting_location=assignment.bookings[0].pickup_location
+    if assignment.bookings[0].drop_location:
+		assignment.drop_location=assignment.bookings[0].drop_location
+    assignment.save()
     existingdutyslips=documents.DutySlip.objects(assignment=assignment)
     sakhacabsxpal.logger.info("Existing duty slips {}".format(existingdutyslips.to_json()))
     existingdutyslips=list(existingdutyslips)
@@ -190,7 +192,7 @@ def save_assignment(assignmentdict,assignment_id=None):
 		sakhacabsxpal.logger.info("{}".format(dutyslip.to_json()))
 		match=False
 		for dutyslipdict in assignmentdict['dutyslips']:
-			sakhacabsxpal.logger.info("{}".format(dutyslipdict))
+			#sakhacabsxpal.logger.info("{}".format(dutyslipdict))
 			if dutyslip.driver==dutyslipdict['driver'] and dutyslip.vehicle==dutyslipdict['vehicle']:
 				sakhacabsxpal.logger.info("Unchanged {}".format(dutyslipdict))
 				#assignmentdict['dutyslips'].remove(dutyslipdict)
@@ -209,13 +211,12 @@ def save_assignment(assignmentdict,assignment_id=None):
 			d=d[0]
 			sakhacabsxpal.logger.info("Duty slip exists {}".format(d.to_json()))
 		d.save()
-    assignment.save()
     sakhacabsxpal.logger.info("Saved assignment {}".format(assignment.to_json()))
     return assignment
 
-
-
-#Driver CRUD functionality
+'''
+Driver CRUD functionality
+'''
 def get_driver_by_mobile(mobile_num):
     t=documents.Driver.objects(mobile_num=mobile_num)
     xetrapal.astra.baselogger.info("Found {} drivers with Mobile Num {}".format(len(t),mobile_num))
@@ -234,9 +235,9 @@ def get_driver_by_tgid(tgid):
     else:
         return None
 
-
-#Vehicle CRUD functionality
-
+'''
+Vehicle CRUD functionality
+'''
 def get_vehicle_by_vid(vid):
     #t=db.view("vehicle/all_by_vnum",keys=[vnum]).all()
     t=documents.Vehicle.objects(vehicle_id=vid)
@@ -247,10 +248,23 @@ def get_vehicle_by_vid(vid):
     else:
         return None
 
-
-
 '''
-
+Duty Slips
+'''
+def get_assignments_for_driver(driver_id):
+    d=documents.DutySlip.objects(driver=driver_id)
+    #sakhacabsxpal.logger.info("{}".format(d))
+    assignments=[]
+    if len(d)>0:
+        for duty_slip in d:
+            assignmentdict={}
+            #sakhacabsxpal.logger.info("{}".format(duty_slip.to_json()))
+            assignmentdict['assignment']=duty_slip.assignment
+            assignmentdict['duty_slips']=duty_slip
+            assignments.append(assignmentdict)
+    return assignments
+    
+'''
 def get_driver_by_driver_id(mobile_num):
     t=documents.Driver.objects(mobile_num=mobile_num)
     xetrapal.astra.baselogger.info("Found {} drivers with Mobile Num {}".format(len(t),mobile_num))
@@ -259,7 +273,4 @@ def get_driver_by_driver_id(mobile_num):
         return t[0]
     else:
         return None
-
-
-
 '''

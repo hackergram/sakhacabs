@@ -26,7 +26,7 @@ app.logger=sakhacabsxpal.logger
 api = Api(app)
 parser = reqparse.RequestParser()  
 
-#TODO - Fix code to return empty resp in the case of other identifiers apart from docid
+#TODO - Testing - different scenarios
 class DriverResource(Resource):
     def get(self,tgid=None,mobile_num=None,docid=None,driver_id=None):
         if docid:
@@ -43,23 +43,44 @@ class DriverResource(Resource):
     def post(self):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
+		if "_id" in respdict.keys():
+			del respdict['_id']
 		driver=documents.Driver.objects(driver_id=respdict['driver_id'])
 		if len(driver)>0:
 			driver=driver[0]
 		else:
 			driver=documents.Driver.from_json(json.dumps(respdict))
 		driver.save()
-		return jsonify({"resp":[]})
-    def put(self,tgid=None,mobile_num=None,docid=None,driver_id=None):
-        return jsonify({"resp":[]})
-    def delete(self,tgid=None,mobile_num=None,docid=None,driver_id=None):
-        return jsonify({"resp":[]})
+		return jsonify({"resp":[driver]})
+    def put(self,driver_id):
+		app.logger.info("{}".format(request.get_json()))
+		respdict=request.get_json()
+		driver=documents.Driver.objects(driver_id=driver_id)
+		if len(driver)==0:
+			return jsonify({"resp":[]})
+		else:
+			driver=driver[0]
+		if "_id" in respdict.keys():
+			del respdict['_id']
+		if "driver_id" in respdict.keys():
+			del respdict['driver_id']
+		driver.update(**respdict)
+		driver.save()
+		driver.reload()
+		return jsonify({"resp":[driver]})
+    def delete(self,docid):
+		if len(documents.Driver.objects.with_id(docid))>0:
+			documents.Driver.objects.with_id(docid).delete()
+			return jsonify({"resp":[True]})
+		else:
+			return jsonify({"resp":[False]})
 api.add_resource(DriverResource,"/driver",endpoint="driver")
 api.add_resource(DriverResource,"/driver/by_tgid/<int:tgid>",endpoint="tgid")
 api.add_resource(DriverResource,"/driver/by_mobile/<string:mobile_num>",endpoint="mobile")
 api.add_resource(DriverResource,"/driver/by_id/<string:docid>",endpoint="driver_docid")
 api.add_resource(DriverResource,"/driver/by_driver_id/<string:driver_id>",endpoint="driverid")
 
+#TODO - Complete CRUD
 class VehicleResource(Resource):
     def get(self,vehicle_id=None,docid=None):
         if docid:
@@ -77,12 +98,17 @@ class VehicleResource(Resource):
 		return jsonify({"resp":[]})
     def put(self,vehicle_id=None,docid=None):
         return jsonify({"resp":[]})
-    def delete(self,vehicle_id=None,docid=None):
-        return jsonify({"resp":[]})
+	def delete(self,docid):
+		if len(documents.Vehicle.objects.with_id(docid))>0:
+			documents.Vehicle.objects.with_id(docid).delete()
+			return jsonify({"resp":[True]})
+		else:
+			return jsonify({"resp":[False]})
 api.add_resource(VehicleResource,"/vehicle",endpoint="vehicle")
 api.add_resource(VehicleResource,"/vehicle/by_id/<string:docid>",endpoint="vehicle_docid")
 api.add_resource(VehicleResource,"/vehicle/by_vehicle_id/<string:vehicle_id>",endpoint="vehicleid")
 
+#TODO - Location validatin and geocode lookup, handoff lookup
 class LocationUpdateResource(Resource):
     def get(self,docid=None):
         if docid:
@@ -131,8 +157,12 @@ class LocationUpdateResource(Resource):
                 return jsonify({"resp":[]})   
         else:
             return jsonify({"resp":[]})       
-    def delete(self,docid=None):
-        return jsonify({"resp":[]})
+    def delete(self,docid):
+		if len(documents.LocationUpdate.objects.with_id(docid))>0:
+			documents.LocationUpdate.objects.with_id(docid).delete()
+			return jsonify({"resp":[True]})
+		else:
+			return jsonify({"resp":[False]})
 api.add_resource(LocationUpdateResource,"/locupdate",endpoint="locupdate")
 api.add_resource(LocationUpdateResource,"/locupdate/by_id/<string:docid>",endpoint="locupdate_docid")
 
@@ -151,20 +181,23 @@ class BookingResource(Resource):
 		return jsonify({"resp":[]})
     def put(self,docid=None):
         return jsonify({"resp":[]})
-    def delete(self,docid=None):
-        return jsonify({"resp":[]})
+    
+    def delete(self,docid):
+		if len(documents.Booking.objects.with_id(docid))>0:
+			documents.Booking.objects.with_id(docid).delete()
+			return jsonify({"resp":[True]})
+		else:
+			return jsonify({"resp":[False]})
 api.add_resource(BookingResource,"/booking",endpoint="booking")
 api.add_resource(BookingResource,"/booking/by_id/<string:docid>",endpoint="booking_docid")
 
 class AssignmentResource(Resource):
     def get(self,docid=None):
         if docid:
-            if documents.Assignment.objects.with_id(docid):
-                return jsonify({"resp": [json.loads(documents.Assignment.objects.with_id(docid).to_json())]})
-            else:
-                return jsonify({"resp":[]})
+			queryset=documents.Assignment.objects.with_id(docid)
         else:
-            return jsonify({"resp": json.loads(documents.Assignment.objects.to_json())})
+			queryset=documents.Assignment.objects.order_by("-created_timestamp").all()
+        return jsonify({"resp": json.loads(queryset.to_json())})
     def post(self):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
@@ -187,8 +220,12 @@ class AssignmentResource(Resource):
 			return jsonify({"resp":[]})   
 		return jsonify({"resp":[]})
         
-    def delete(self,docid=None):
-        return jsonify({"resp":[]})
+    def delete(self,docid):
+		if len(documents.Assignment.objects.with_id(docid))>0:
+			documents.Assignment.objects.with_id(docid).delete()
+			return jsonify({"resp":[True]})
+		else:
+			return jsonify({"resp":[False]})
 api.add_resource(AssignmentResource,"/assignment",endpoint="assignment")
 api.add_resource(AssignmentResource,"/assignment/by_id/<string:docid>",endpoint="assignment_docid")
 
@@ -207,8 +244,12 @@ class DutySlipResource(Resource):
                 return jsonify({"resp":[]})
         else:
             return jsonify({"resp": json.loads(documents.DutySlip.objects.to_json())})
-    def delete(self,docid=None,assignment_id=None):
-        return jsonify({"resp":[]})
+    def delete(self,docid):
+		if len(documents.DutySlip.objects.with_id(docid))>0:
+			documents.DutySlip.objects.with_id(docid).delete()
+			return jsonify({"resp":[True]})
+		else:
+			return jsonify({"resp":[False]})
 
 api.add_resource(DutySlipResource,"/dutyslip",endpoint="dutyslip")
 api.add_resource(DutySlipResource,"/dutyslip/by_id/<string:docid>",endpoint="dutyslip_docid")

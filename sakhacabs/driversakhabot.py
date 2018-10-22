@@ -48,7 +48,7 @@ driverbotconfig=xetrapal.karma.load_config(configfile="/home/arjun/sakhacabs/dri
 driversakhabot=xetrapal.telegramastras.XetrapalTelegramBot(config=driverbotconfig,logger=sakhacabsxpal.logger)
 
 logger=driversakhabot.logger
-GETMOBILE,MENU_CHOICE, TYPING_REPLY, TYPING_CHOICE,LOCATION_CHOICE = range(5)
+GETMOBILE,MENU_CHOICE, TYPING_REPLY, TYPING_CHOICE,LOCATION_CHOICE,DUTYSLIP_CHOICE = range(6)
 
 
 
@@ -82,10 +82,30 @@ def main_menu(bot, update):
         return MENU_CHOICE
     except Exception as e:
         logger.info(str(e))
-def open_duty_slip(bot, update, user_data):
-    text=update.message.text
-    logger.info("u{}".format(text))
 
+
+def open_duty_slips(bot, update, user_data):
+    user_data['driver']=get_driver_by_tgid(update.message.from_user.id)
+    user_data['vehicle']=None
+    user_data['handoff']=None
+    user_data['location']=None
+    #text=update.message.tex
+    logger.info("Fetching Duty Slips {}".format(user_data))
+    try:
+        user_data['assignments']=get_assignments_for_driver(user_data['driver'].driver_id)
+        logger.info("{}".format(user_data['assignments']))
+        updatekeys=[]
+        for assignment in user_data['assignments']:
+            logger.info("{}".format(assignment['assignment'].to_json()))
+            keytext=[assignment['assignment'].reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S")]
+            updatekeys.append(keytext)
+            logger.info("{}".format(updatekeys))
+        markup=ReplyKeyboardMarkup(updatekeys)
+        update.message.reply_text("Select Duty Slip to open",reply_markup=markup)
+        return DUTYSLIP_CHOICE
+    except Exception as e:
+        logger.error(str(e))
+        
 def location_update_menu(bot, update, user_data):
     user_data['driver']=get_driver_by_tgid(update.message.from_user.id)
     user_data['vehicle']=None
@@ -112,14 +132,12 @@ def location_update_menu(bot, update, user_data):
     
     return LOCATION_CHOICE
 
-
 def handoff_vehicle(bot, update,user_data):
     text = update.message.text
     user_data['choice'] = text
     logger.info(u"{}".format(user_data))
     update.message.reply_text(u'{} Details?'.format(text))
     return TYPING_CHOICE
-
 
 def get_location(bot, update,user_data):
     text = update.message.text
@@ -147,8 +165,9 @@ def set_mobile(bot,update,user_data):
     else:
         update.message.reply_text("Sorry, you don't seem to be listed!")
         return ConversationHandler.END
+
 def cancel_location_update(bot, update, user_data):
-    logger.info(u"{}".format(user_data))
+    logger.info(u"Cancelling Update {}".format(user_data))
     markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
     
     #del user_data['choice']
@@ -163,9 +182,7 @@ def submit_location_update(bot, update, user_data):
     logger.info(u"{}".format(user_data))
     logger.info(user_data['driver'])
     markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
-    
     #del user_data['choice']
-    
     try:
         location=user_data['location']
         handoff=user_data['handoff']
@@ -185,8 +202,6 @@ def submit_location_update(bot, update, user_data):
     for key in user_data.keys():
         del user_data[key]
     return MENU_CHOICE
-
-
 
 def received_location_information(bot, update, user_data):
     if update.message.text:
@@ -231,7 +246,6 @@ def received_location_information(bot, update, user_data):
 
     return LOCATION_CHOICE
 
-
 def done(bot, update, user_data):
     if 'choice' in user_data:
         del user_data['choice']
@@ -241,11 +255,9 @@ def done(bot, update, user_data):
     user_data.clear()
     return ConversationHandler.END
 
-
 def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
-
 
 def setup():
     # Create the Updater and pass it your bot's token.
@@ -268,12 +280,13 @@ def setup():
             
                 
             MENU_CHOICE: [RegexHandler('^('+check_in_text+'|'+check_out_text+')$',
+                                    #open_duty_slip,
                                     location_update_menu,
                                     pass_user_data=True),
-                       RegexHandler('^('+open_duty_slip_text+')$',
-                                    open_duty_slip,
+						  RegexHandler('^('+open_duty_slip_text+')$',
+						            open_duty_slips,   
                                     pass_user_data=True),
-                       ],
+                         ],
 
             TYPING_CHOICE: [MessageHandler(Filters.text,
                                            received_location_information,
