@@ -1,0 +1,14 @@
+Flask_Cors==3.0.6
+Flask_Potion==0.15.0
+python_telegram_bot==7.0.1
+Flask_MongoRest==0.2.3
+jsonobject==0.9.3
+jsonobject_couchdbkit==0.9.9
+Flask==1.0.2
+pymongo==3.7.1
+flask_mongoengine==0.9.5
+Flask_RESTful==0.3.6
+pandas==0.17.1
+mongoengine==0.15.3
+couchdbkit==0.6.5
+telegram==0.0.1
