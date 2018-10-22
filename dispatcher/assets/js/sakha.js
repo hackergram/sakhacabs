@@ -144,9 +144,10 @@ sakha={
             
             var value = valueAccessor();
             
-            var date = moment(value());
-           
-            var strDate = date.format('YYYY-MM-DD HH:MM:SS');
+            //var date = moment(value());
+           //var strDate=new 
+           var strDate=new Date(value())
+            //var strDate = date.format();
             //console.log(element)
             $(element).text(strDate)
              //console.log(strDate)
@@ -160,7 +161,7 @@ sakha={
         console.log("Editing Assignment - " +  assignmentid);
         if(assignmentid=="newassignment"){
             console.log("Creating new assignment")
-            assignment['id']="newid"
+            assignmentdict.assignment['id']="newid"
         }
         this.updateassignmentbookinglist();
         this.updateassignmentvehiclelist();
@@ -359,21 +360,22 @@ sakha={
       }
     },
     saveAssignment: function(){
-        console.log(assignment)
-        assignment['bookings']=[]
-        assignment['dutyslips']=[]
+        console.log(assignmentdict)
+        assignmentdict['assignment']={}
+        assignmentdict.assignment['bookings']=[]
+        assignmentdict['dutyslips']=[]
         
         bookings=$("#bookinglist").DataTable().rows({selected: true }).data()
         for (i=0;i<bookings.length;i++){
-            assignment.bookings.push(bookings[i])
+            assignmentdict.assignment.bookings.push(bookings[i])
         }
         
         dutyslips=$("#dutysliplist").DataTable().rows({selected: true }).data()
         for (i=0;i<dutyslips.length;i++){
             //dutyslips[i]['vehicle']=$("Vehicle_"+dutyslips[i].driver.driver_id).val()
-            assignment.dutyslips.push(dutyslips[i])
+            assignmentdict.dutyslips.push(dutyslips[i])
         }
-        console.log(assignment)
+        console.log(assignmentdict)
     }
     
 }

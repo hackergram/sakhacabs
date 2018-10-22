@@ -15,6 +15,23 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
   <!-- CSS Files -->
   <link href="assets/css/material-dashboard.css" rel="stylesheet" />
+ 
+  <style>
+        .wrap { width: 100%; height: 600px; padding: 0; overflow: hidden; float: left;}
+        .frame { width: 1396px; height: 786px; border: 1px solid black}
+
+        .frame {
+                // zoom: 0.25;
+                -moz-transform: scale(0.70);
+                -moz-transform-origin: 0 0;
+                -o-transform: scale(0.70);
+                -o-transform-origin: 0 0;
+                -webkit-transform: scale(0.70);
+                -webkit-transform-origin: 0 0;
+        }
+  </style>
+ 
+    
 </head>
 
 <body class="">
@@ -61,35 +78,7 @@
               <div class="modal-body">
                 <form>
             
-                <!--<div class="row">
-                  <div class="col-lg-4 col-md-12">
-                   <div class="form-group">
-                        <label for="bookingselect">Bookings</label>
-                        <select multiple class="form-control" id="bookingselect">
-                        </select>
-                       <button type="button" class="btn btn-default" onclick="sakha.updateassignmentbookinglist()">Update Bookings</button>
-                    </div>
-                  </div>
                 
-                  <div class="col-lg-4 col-md-12">
-                      
-                    <div class="form-group">
-                        <label for="driverselect">Drivers</label>
-                        <select multiple class="form-control" id="driverselect">
-                        </select>
-                        <button type="button" class="btn btn-default" onclick="sakha.updateassignmentdriverlist()">Update Drivers</button>
-                    </div>
-                  </div>  
-                  <div class="col-lg-4 col-md-12">
-                  
-                    <div class="form-group">
-                        <label for="vehicleselect">Vehicles</label>
-                        <select multiple class="form-control" id="vehicleselect">
-                        </select>
-                        <button type="button" class="btn btn-default" onclick="sakha.updateassignmentvehiclelist()">Update Vehicles</button>
-                    </div>
-                  </div>
-                </div>-->
                 <div class="row">
                   <div class="col-lg-12 col-md-12">
                     <div class="card">
@@ -203,6 +192,21 @@
                 <div class="col-lg-12 col-md-12">
                     <div class="card">
                         <div class="card-header card-header-primary">
+                          <h4 class="card-title">Map My India </h4>
+                          <p class="card-category">From their API</p>
+                        </div>
+                         <div class="card-body">
+                             <div class="wrap">
+                                 <iframe class="frame" src="https://fleet.mapmyindia.com"></iframe>
+								</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-primary">
                           <h4 class="card-title">Assignments</h4>
                           <p class="card-category">Current Assignments</p>
                         </div>
@@ -218,7 +222,7 @@
                                         </div>
                                         <div class="card-body">
                                             <div class="bookingline" data-bind="foreach: bookings">
-                                            <p data-bind="text: Booking.booking_id"></p>
+                                            <p data-bind="text: booking_id"></p>
                                             
                                             </div>
                                             
@@ -308,8 +312,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-         
+            </div>    
             <div class="row">
             <!-- Bookings -->
                 <div class="col-lg-6 col-md-12">
@@ -461,7 +464,10 @@
     <script src="assets/js/knockout-paging.js"></script>
  
     <script type="text/javascript">
-        var assignment={}
+        var assignmentdict={}
+        assignmentdict['assignment']={}
+        assignmentdict.assignment['bookings']=[]
+        assignmentdict['dutyslips']=[]
     	$(document).ready(function(){
              
            
