@@ -57,7 +57,7 @@ def facts_to_str(user_data):
     facts = list()
     logger.info("Converting facts to string")
     for key, value in user_data.items():
-        facts.append(u'{} - {}'.format(key, value))
+        facts.append(u'{} - {}'.format(key, repr(value)))
     logger.info("Converted facts to string")
     return "\n".join(facts).join(['\n', '\n'])
 
@@ -210,8 +210,9 @@ def submit_location_update(bot, update, user_data):
 def received_location_information(bot, update, user_data):
     if update.message.text:
         text = update.message.text
-    
+        logger.info("Received message {} and user data - {}".format(text,user_data['choice']==add_vehicle_text))
     category = user_data['choice']
+    #logger.info("Category {}".format(category))
     if category==add_handoff_text:
         if update.message.contact:
             contact=update.message.contact
@@ -219,9 +220,10 @@ def received_location_information(bot, update, user_data):
         else:
             user_data["handoff"]=None
     if category==add_vehicle_text:
+        logger.info("Adding vehicle")
         if update.message.text:
             text = update.message.text
-            vehicle=get_vehicle_by_vid(int(text))
+            vehicle=get_vehicle_by_vid(text)
             try:
                 if vehicle.driver_id==None or vehicle.driver_id==user_data['driver'].id:    
                     user_data["vehicle"] = vehicle
@@ -233,6 +235,7 @@ def received_location_information(bot, update, user_data):
         else:
             user_data["vehicle"]=None
     if category==send_location_text:
+        logger.info("Received {}".format(update.message))
         if update.message.location:
             location = update.message.location
             user_data["location"] = location.to_json()

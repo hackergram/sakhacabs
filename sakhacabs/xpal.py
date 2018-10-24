@@ -112,11 +112,12 @@ def sync_remote():
             print b.to_json()
             b.save()
     newbookingsdf=pandas.DataFrame(json.loads(documents.Booking.objects.to_json()))
-    newbookingsdf.created_timestamp= newbookingsdf.created_timestamp.apply(lambda x: datetime.datetime.fromtimestamp(x['$date']/1000).strftime("%Y-%m-%d %H:%M:%S"))
-    newbookingsdf.pickup_timestamp= newbookingsdf.pickup_timestamp.apply(lambda x: datetime.datetime.fromtimestamp(x['$date']/1000).strftime("%Y-%m-%d %H:%M:%S"))
-    newbookingsdf['_id']=newbookingsdf['_id'].apply(lambda x: x['$oid'])
-    newbookingsdf.cust_meta=newbookingsdf.cust_meta.astype(str)
-    bookingsheet.set_dataframe(newbookingsdf,(1,1))
+    if len(newbookingsdf)>0:
+		newbookingsdf.created_timestamp= newbookingsdf.created_timestamp.apply(lambda x: datetime.datetime.fromtimestamp(x['$date']/1000).strftime("%Y-%m-%d %H:%M:%S"))
+		newbookingsdf.pickup_timestamp= newbookingsdf.pickup_timestamp.apply(lambda x: datetime.datetime.fromtimestamp(x['$date']/1000).strftime("%Y-%m-%d %H:%M:%S"))
+		newbookingsdf['_id']=newbookingsdf['_id'].apply(lambda x: x['$oid'])
+		newbookingsdf.cust_meta=newbookingsdf.cust_meta.astype(str)
+		bookingsheet.set_dataframe(newbookingsdf,(1,1))
 
 '''
 LocationUpdate CRUD functionality

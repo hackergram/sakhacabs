@@ -19,7 +19,8 @@ class Driver(DynamicDocument):
     driver_id=fields.StringField(unique=True,required=True)
     mobile_num=fields.StringField()
     tgid=fields.IntField()
-    
+    def __repr__(self):
+		return "Driver (%r)" %(self.driver_id)
 class Customer(DynamicDocument):
     cust_id=fields.StringField(unique=True,required=True)
     cust_type=fields.StringField()
@@ -27,9 +28,10 @@ class Customer(DynamicDocument):
     tgid=fields.IntField()
     
 class Vehicle(DynamicDocument):
-    vehicle_id=fields.IntField(umique=True,required=True) 
+    vehicle_id=fields.StringField(unique=True,required=True) 
     driver_id=fields.StringField()
-    
+    def __repr__(self):
+		return "Vehicle (%r)" %(self.vehicle_id)
 class Booking(DynamicDocument):
     booking_id=fields.StringField(required=True)
     passenger_detail=fields.StringField()
@@ -42,7 +44,8 @@ class Booking(DynamicDocument):
     product_id = fields.StringField()
     cust_id=fields.StringField()
     booking_channel=fields.StringField()
-
+    def __repr__(self):
+		return "Booking (%r)" %(self.booking_id)
 class Product(DynamicDocument):
     product_id=fields.StringField(unique=True,required=True)
     
@@ -51,7 +54,7 @@ class LocationUpdate(Document):
     timestamp=fields.DateTimeField(required=True)
     location=fields.StringField()
     checkin=fields.BooleanField()
-    vehicle_id=fields.IntField()
+    vehicle_id=fields.StringField()
     handoff=fields.StringField()
     
 class Assignment(Document):
