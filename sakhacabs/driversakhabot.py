@@ -93,6 +93,9 @@ def open_duty_slips(bot, update, user_data):
     logger.info("Fetching Duty Slips {}".format(user_data))
     try:
         user_data['assignments']=get_assignments_for_driver(user_data['driver'].driver_id)
+        if user_data['assignments']==[]:
+			update.message.reply_text("No Assignments As of Now")
+			return MENU_CHOICE
         logger.info("{}".format(user_data['assignments']))
         updatekeys=[]
         for assignment in user_data['assignments']:
@@ -105,7 +108,8 @@ def open_duty_slips(bot, update, user_data):
         return DUTYSLIP_CHOICE
     except Exception as e:
         logger.error(str(e))
-        
+        update.message.reply_text("An error occurred")
+        return MENU_CHOICE
 def location_update_menu(bot, update, user_data):
     user_data['driver']=get_driver_by_tgid(update.message.from_user.id)
     user_data['vehicle']=None
