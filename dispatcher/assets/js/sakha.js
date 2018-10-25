@@ -349,8 +349,9 @@ sakha={
             },
             columns: [
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
-                { width:"35%",data: 'pickup_timestamp',defaultContent:"None",render: function(data){return new Date(data['$date'])}},
-                {width:"40%", data: 'pickup_location',defaultContent:"None",render: function(data){if(data){return data}}},
+                { width:"15%",data: 'pickup_timestamp',defaultContent:"None",render: function(data){return new Date(data['$date'])}},
+                {width:"20%", data: 'pickup_location',defaultContent:"None",render: function(data){if(data){return data}}},
+                {width:"30%", data: 'passenger_detail',defaultContent:"None",render: function(data){if(data){return data}}},
                 {width:"10%", data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
                 {width:"15%", data: 'booking_id', defaultContent:"None", render: function(data){if(data){return data}}}
             ],
