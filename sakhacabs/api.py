@@ -38,7 +38,7 @@ class DriverResource(Resource):
         elif driver_id:
             queryset=documents.Driver.objects(driver_id=driver_id)
         else:
-            queryset=documents.Driver.objects.all()
+            queryset=documents.Driver.objects
         return jsonify({"resp":json.loads(queryset.to_json())}) 
     def post(self):
 		app.logger.info("{}".format(request.get_json()))
