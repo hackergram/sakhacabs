@@ -79,5 +79,7 @@ class DutySlip(Document):
     close_time=fields.DateTimeField()
     open_kms=fields.IntField()
     close_kms=fields.IntField()
+    parking_charges=fields.FloatField()
+    toll_charges=fields.FloatField()
     assignment=fields.ReferenceField(Assignment)
     

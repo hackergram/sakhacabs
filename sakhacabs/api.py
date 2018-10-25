@@ -230,7 +230,7 @@ api.add_resource(AssignmentResource,"/assignment",endpoint="assignment")
 api.add_resource(AssignmentResource,"/assignment/by_id/<string:docid>",endpoint="assignment_docid")
 
 class DutySlipResource(Resource):
-    def get(self,docid=None,assignment_id=None):
+    def get(self,docid=None,assignment_id=None,driver_id=None):
         if docid:
             if documents.DutySlip.objects.with_id(docid):
                 return jsonify({"resp": [json.loads(documents.DutySlip.objects.with_id(docid).to_json())]})
@@ -241,6 +241,11 @@ class DutySlipResource(Resource):
                 return jsonify({"resp": [json.loads(documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(assignment_id)).to_json())]})
             else:
                 
+                return jsonify({"resp":[]})
+        elif driver_id:
+            if documents.DutySlip.objects(driver=driver_id):
+                return jsonify({"resp": [json.loads(documents.DutySlip.objects(driver=driver_id).to_json())]})
+            else:
                 return jsonify({"resp":[]})
         else:
             return jsonify({"resp": json.loads(documents.DutySlip.objects.to_json())})
@@ -254,3 +259,4 @@ class DutySlipResource(Resource):
 api.add_resource(DutySlipResource,"/dutyslip",endpoint="dutyslip")
 api.add_resource(DutySlipResource,"/dutyslip/by_id/<string:docid>",endpoint="dutyslip_docid")
 api.add_resource(DutySlipResource,"/dutyslip/by_assignment_id/<string:assignment_id>",endpoint="dutyslip_assid")
+api.add_resource(DutySlipResource,"/dutyslip/by_driver_id/<string:driver_id>",endpoint="dutyslip_driverid")

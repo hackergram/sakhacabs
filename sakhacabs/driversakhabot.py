@@ -83,8 +83,17 @@ def main_menu(bot, update):
     except Exception as e:
         logger.info(str(e))
 
+def open_duty_slip(bot,update,user_data):
+	logger.info("Opening Duty Slip {},{}".format(update.message.text.split(" ")[1],user_data))
+	markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
+	dutyslip=documents.DutySlip.objects.with_id(update.message.text.split(" ")[1])
+	user_data['current_duty_slip']=dutyslip
+	logger.info("Curr DS =".format(dutyslip))
+	update.message.reply_text(dutyslip.assignment.to_json(),
+            reply_markup=markup)
+	return MENU_CHOICE
 
-def open_duty_slips(bot, update, user_data):
+def get_duty_slips(bot, update, user_data):
     user_data['driver']=get_driver_by_tgid(update.message.from_user.id)
     user_data['vehicle']=None
     user_data['handoff']=None
@@ -92,17 +101,19 @@ def open_duty_slips(bot, update, user_data):
     #text=update.message.tex
     logger.info("Fetching Duty Slips {}".format(user_data))
     try:
-        user_data['assignments']=get_assignments_for_driver(user_data['driver'].driver_id)
-        if user_data['assignments']==[]:
+        user_data['duties']=get_duties_for_driver(user_data['driver'].driver_id)
+        if user_data['duties']==[]:
 			update.message.reply_text("No Assignments As of Now")
 			return MENU_CHOICE
-        logger.info("{}".format(user_data['assignments']))
+        logger.info("{}".format(user_data['duties']))
         updatekeys=[]
-        for assignment in user_data['assignments']:
-            logger.info("{}".format(assignment['assignment'].to_json()))
-            keytext=[assignment['assignment'].reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S")]
+        for duty in user_data['duties']:
+            logger.info("{}".format(duty.to_json()))
+            keytext=["ID: "+unicode(duty.id)+" "+unicode(duty.assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S"))]
             updatekeys.append(keytext)
             logger.info("{}".format(updatekeys))
+        keytext=[cancel_text]
+        updatekeys.append(keytext)
         markup=ReplyKeyboardMarkup(updatekeys)
         update.message.reply_text("Select Duty Slip to open",reply_markup=markup)
         return DUTYSLIP_CHOICE
@@ -110,6 +121,7 @@ def open_duty_slips(bot, update, user_data):
         logger.error(str(e))
         update.message.reply_text("An error occurred")
         return MENU_CHOICE
+
 def location_update_menu(bot, update, user_data):
     user_data['driver']=get_driver_by_tgid(update.message.from_user.id)
     user_data['vehicle']=None
@@ -170,7 +182,7 @@ def set_mobile(bot,update,user_data):
         update.message.reply_text("Sorry, you don't seem to be listed!")
         return ConversationHandler.END
 
-def cancel_location_update(bot, update, user_data):
+def cancel(bot, update, user_data):
     logger.info(u"Cancelling Update {}".format(user_data))
     markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
     
@@ -291,7 +303,7 @@ def setup():
                                     location_update_menu,
                                     pass_user_data=True),
 						  RegexHandler('^('+open_duty_slip_text+')$',
-						            open_duty_slips,   
+						            get_duty_slips,   
                                     pass_user_data=True),
                          ],
 
@@ -306,7 +318,13 @@ def setup():
                                            pass_user_data=True),
                             ],
                                            
-
+			DUTYSLIP_CHOICE: [RegexHandler('^(ID: [a-z,0-9,\s]+)',
+									open_duty_slip,
+									pass_user_data=True),
+							  RegexHandler('^('+cancel_text+')$',
+                                    cancel,
+                                    pass_user_data=True),
+							],
             LOCATION_CHOICE: [RegexHandler('^('+add_handoff_text+'|'+add_vehicle_text+')$',
                                     handoff_vehicle,
                                     pass_user_data=True),
@@ -317,7 +335,7 @@ def setup():
                                     submit_location_update,
                                     pass_user_data=True),
                               RegexHandler('^('+cancel_text+')$',
-                                    cancel_location_update,
+                                    cancel,
                                     pass_user_data=True),
                            ],
         },

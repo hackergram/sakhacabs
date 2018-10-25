@@ -77,7 +77,7 @@ def sync_remote():
     productdf=pandas.DataFrame(json.loads(documents.Product.objects.to_json()))
     productdf['_id']=productdf['_id'].apply(lambda x: x['$oid'])
     prodsheet.set_dataframe(productdf,(1,1))
-    
+    '''
     bookingdf=bookingsheet.get_as_df()
     bookingdf.created_timestamp=bookingdf.created_timestamp.apply(pandas.to_datetime).apply(utils.get_utc_ts)
     bookingdf.pickup_timestamp=bookingdf.pickup_timestamp.apply(pandas.to_datetime).apply(utils.get_utc_ts)
@@ -119,7 +119,6 @@ def sync_remote():
 		newbookingsdf.cust_meta=newbookingsdf.cust_meta.astype(str)
 		bookingsheet.set_dataframe(newbookingsdf,(1,1))
 
-'''
 LocationUpdate CRUD functionality
 Fix to check if vehicle is already  taken.
 '''
@@ -252,11 +251,14 @@ def get_vehicle_by_vid(vid):
 '''
 Duty Slips
 '''
-def get_assignments_for_driver(driver_id):
+def get_duties_for_driver(driver_id):
     d=documents.DutySlip.objects(driver=driver_id)
     #sakhacabsxpal.logger.info("{}".format(d))
     assignments=[]
+    
     if len(d)>0:
+		return d
+    '''
         for duty_slip in d:
             assignmentdict={}
             #sakhacabsxpal.logger.info("{}".format(duty_slip.to_json()))
@@ -264,7 +266,7 @@ def get_assignments_for_driver(driver_id):
             assignmentdict['duty_slips']=duty_slip
             assignments.append(assignmentdict)
     return assignments
-    
+    '''
 '''
 def get_driver_by_driver_id(mobile_num):
     t=documents.Driver.objects(mobile_num=mobile_num)
@@ -275,3 +277,42 @@ def get_driver_by_driver_id(mobile_num):
     else:
         return None
 '''
+
+def import_gadv():
+	datasheet=sakhacabsgd.open_by_key(sakhacabsxpal.config.get("SakhaCabs","datasheetkey"))
+	gadvsheet=datasheet.worksheet_by_title("gadventures")
+	gadvdf=gadvsheet.get_as_df()
+	bookinglist=json.loads(gadvdf.to_json(orient="records"))
+	bookinglist
+	gadvbookings=[]
+	for booking in bookinglist:
+		if 'booking_id' in booking.keys() and booking['booking_id']!="" and len(documents.Booking.objects(booking_id=booking['booking_id']))>0:
+			sakhacabsxpal.logger.info("Existing Booking")
+			b=documents.Booking.objects(booking_id=booking['booking_id'])[0]
+			b.cust_meta=booking
+		else:
+			sakhacabsxpal.logger.info("New Booking")
+			b=documents.Booking(booking_id=utils.new_booking_id(),cust_meta=booking,cust_id="gadventures")
+			booking['booking_id']=b.booking_id
+			
+		b.save()    
+		print b,b.to_json()
+		gadvbookings.append(b)
+	newgadvdf=pandas.DataFrame(bookinglist)
+	gadvsheet.set_dataframe(newgadvdf,(1,1))
+	for booking in documents.Booking.objects(cust_id="gadventures"):
+		try:
+			booking.cust_id="gadventures"
+			booking.passenger_detail=booking.cust_meta['Passengers']
+			booking.pickup_location="Intl Airport, Flight #"+str(booking.cust_meta['Pick-Up'])
+			booking.drop_location=booking.cust_meta['Drop-Off']
+			booking.num_passengers=len(booking.cust_meta['Passengers'].split(","))
+			booking.channel="Bulk"
+			booking.pickup_timestamp=utils.get_utc_ts(datetime.datetime.strptime(booking.cust_meta['Date']+" "+booking.cust_meta['Flight Time'],"%Y-%m-%d %H:%M:%S"))
+			if booking.cust_meta['Transfer Name']=="Airport to Hotel Transfer":
+				booking.product_id="GADVARPTPKUP"
+			booking.save()
+			print booking.to_json()
+		except:
+			print "Error",booking.to_json()
+	return bookinglist
