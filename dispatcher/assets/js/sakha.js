@@ -4,7 +4,7 @@ sakha={
     fillBookings: function(){
         console.log("Filling bookings data");
         /*
-        $.getJSON('http://192.168.56.101:5984/sakhacabs/_design/user/_view/drivers_check_in', function(data) {
+        $.getJSON('http://'+serverip+':5984/sakhacabs/_design/user/_view/drivers_check_in', function(data) {
             myItems = data['rows'];
             console.log(myItems);
         });
@@ -12,7 +12,7 @@ sakha={
         var table=$('#bookingtable').DataTable({
             select: true,
             ajax: {
-                url: 'http://192.168.56.101:5000/booking',
+                url: 'http://'+serverip+':5000/booking',
                 dataSrc: 'resp'
             },
             columns: [
@@ -34,14 +34,14 @@ sakha={
     fillLocationUpdates: function(){
         console.log("Filling location data");
         /*
-        $.getJSON('http://192.168.56.101:5984/sakhacabs/_design/locationupdate/_view/all', function(data) {
+        $.getJSON('http://'+serverip+':5984/sakhacabs/_design/locationupdate/_view/all', function(data) {
             location_updates = data['rows'];
             console.log(location_updates);
         });
         */
         var table=$('#locationupdatetable').DataTable({
             ajax: {
-                url: 'http://192.168.56.101:5000/locupdate',
+                url: 'http://'+serverip+':5000/locupdate',
                 dataSrc: 'resp'
             },
             columns: [
@@ -61,10 +61,10 @@ sakha={
     fillDrivers: function(){
         console.log("Filling driver data");
         var table = $('#drivertable').DataTable({
-            //ajax: 'http://192.168.56.101:5000/driver/all'
+            //ajax: 'http://'+serverip+':5000/driver/all'
             select: true,
             ajax: {
-                url: 'http://192.168.56.101:5000/driver',
+                url: 'http://'+serverip+':5000/driver',
                 dataSrc: "resp" 
             },
             columns: [
@@ -87,10 +87,10 @@ sakha={
         console.log("Filling vehicle data");
         
         var table = $('#vehicletable').DataTable({
-            //ajax: 'http://192.168.56.101:5000/driver/all'
+            //ajax: 'http://'+serverip+':5000/driver/all'
             select: true,
             ajax: {
-                url: 'http://192.168.56.101:5000/vehicle',
+                url: 'http://'+serverip+':5000/vehicle',
                 dataSrc: "resp" 
             },
             columns: [
@@ -128,7 +128,7 @@ sakha={
             self.setPage = function(newPage) {
                 self.chars.pageNumber(newPage);
             };
-            var baseUri = 'http://192.168.56.101:5000/assignment';
+            var baseUri = 'http://'+serverip+':5000/assignment';
 
             $.getJSON(baseUri, function (data) {
                 assigns=data.resp;
@@ -192,7 +192,7 @@ sakha={
          var gotdrivers=false;
          var gotvehicles=false;
          
-         $.getJSON("http://192.168.56.101:5000/driver",function(data){
+         $.getJSON("http://"+serverip+":5000/driver",function(data){
              
              driverlist=data.resp;
              console.log(driverlist);
@@ -205,7 +205,7 @@ sakha={
                  console.log("vehicles not set")
              }
           });
-         $.getJSON("http://192.168.56.101:5000/vehicle",function(data){
+         $.getJSON("http://"+serverip+":5000/vehicle",function(data){
              
              //console.log(data);
              //vehiclelist=data.resp;
@@ -246,7 +246,7 @@ sakha={
                         //responsive: true,
                         /*
                         ajax: {
-                            url: 'http://192.168.56.101:5000/driver',
+                            url: 'http://'+serverip+':5000/driver',
                             dataSrc: 'resp'
                         },
                         */
@@ -319,7 +319,7 @@ sakha={
                 select: true,
                 responsive: true,
                 ajax: {
-                    url: 'http://192.168.56.101:5000/vehicle',
+                    url: 'http://'+serverip+':5000/vehicle',
                     dataSrc: 'resp'
                 },
                 columns: [
@@ -344,7 +344,7 @@ sakha={
             select: true,
             responsive: true,
             ajax: {
-                url: 'http://192.168.56.101:5000/booking',
+                url: 'http://'+serverip+':5000/booking',
                 dataSrc: 'resp'
             },
             columns: [
