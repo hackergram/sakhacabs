@@ -14,7 +14,7 @@ import pandas
 from sakhacabs import documents,utils
 
 
-sakhacabsxpal=xetrapal.Xetrapal(configfile="/home/arjun/sakhacabs/sakhacabsxpal.conf")
+sakhacabsxpal=xetrapal.Xetrapal(configfile="/opt/sakhacabs-appdata/sakhacabsxpal.conf")
 sakhacabsgd=sakhacabsxpal.get_googledriver()
 datasheet=sakhacabsgd.open_by_key(sakhacabsxpal.config.get("SakhaCabs","datasheetkey"))
 bookingsheet=datasheet.worksheet_by_title("bookings")

@@ -44,7 +44,7 @@ contact_keyboard=[[{'text':send_contact_text,'request_contact':True}]]
 
 
 
-driverbotconfig=xetrapal.karma.load_config(configfile="/home/arjun/sakhacabs/driversakhabot.conf")
+driverbotconfig=xetrapal.karma.load_config(configfile="/opt/sakhacabs-appdata/driversakhabot.conf")
 driversakhabot=xetrapal.telegramastras.XetrapalTelegramBot(config=driverbotconfig,logger=sakhacabsxpal.logger)
 
 logger=driversakhabot.logger
