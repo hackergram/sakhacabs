@@ -89,7 +89,10 @@ def open_duty_slip(bot,update,user_data):
 	dutyslip=documents.DutySlip.objects.with_id(update.message.text.split(" ")[1])
 	user_data['current_duty_slip']=dutyslip
 	logger.info("Curr DS =".format(dutyslip))
-	update.message.reply_text(dutyslip.assignment.to_json(),
+	replytext="Reporting Time: "+dutyslip.assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S")+"\n"+"Reporting Location: "+dutyslip.assignment.reporting_location+"\nBookings:"
+	for booking in dutyslip.assignment.bookings:
+		replytext=replytext+"\nBooking ID: "+booking.booking_id+"\nPassenger Detail: "+booking.passenger_detail
+	update.message.reply_text(replytext,
             reply_markup=markup)
 	return MENU_CHOICE
 
