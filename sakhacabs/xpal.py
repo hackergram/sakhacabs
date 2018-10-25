@@ -303,7 +303,7 @@ def import_gadv():
 	for booking in documents.Booking.objects(cust_id="gadventures"):
 		try:
 			booking.cust_id="gadventures"
-			booking.passenger_detail=booking.cust_meta['Passengers']
+			booking.passenger_detail=str(booking.cust_meta['Booking ID'])+"\n"+booking.cust_meta['Trip Code']+"\n"+booking.cust_meta['Passengers']
 			booking.pickup_location="Intl Airport, Flight #"+str(booking.cust_meta['Pick-Up'])
 			booking.drop_location=booking.cust_meta['Drop-Off']
 			booking.num_passengers=len(booking.cust_meta['Passengers'].split(","))
