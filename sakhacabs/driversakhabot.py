@@ -88,7 +88,7 @@ def open_duty_slip(bot,update,user_data):
 	markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
 	dutyslip=documents.DutySlip.objects.with_id(update.message.text.split(" ")[1])
 	user_data['current_duty_slip']=dutyslip
-	logger.info("Curr DS =".format(dutyslip))
+	logger.info("Curr DS ={}".format(dutyslip))
 	replytext="Vehicle: "+dutyslip.vehicle+"\nReporting Time: "+dutyslip.assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S")+"\n"+"Reporting Location: "+dutyslip.assignment.reporting_location+"\nBookings:"
 	for booking in dutyslip.assignment.bookings:
 		replytext=replytext+"\nBooking ID: "+booking.booking_id+"\nPassenger Detail: "+booking.passenger_detail+"\nDrop Localtion: "+booking.drop_location
@@ -105,7 +105,7 @@ def get_duty_slips(bot, update, user_data):
     logger.info("Fetching Duty Slips {}".format(user_data))
     try:
         user_data['duties']=get_duties_for_driver(user_data['driver'].driver_id)
-        if user_data['duties']==[]:
+        if not user_data['duties'] or user_data['duties']==[]:
 			update.message.reply_text("No Assignments As of Now")
 			return MENU_CHOICE
         logger.info("{}".format(user_data['duties']))

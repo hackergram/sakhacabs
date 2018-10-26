@@ -197,7 +197,15 @@ class AssignmentResource(Resource):
 			queryset=documents.Assignment.objects.with_id(docid)
         else:
 			queryset=documents.Assignment.objects.order_by("-created_timestamp").all()
-        return jsonify({"resp": json.loads(queryset.to_json())})
+        
+        assignmentlist=[]
+        for assignment in queryset:
+			assignmentdict={}
+			assignmentdict['assignment']=json.loads(assignment.to_json())
+			assignmentdict['dutyslips']=json.loads(documents.DutySlip.objects(assignment=assignment).to_json())
+			assignmentlist.append(assignmentdict)
+        #return jsonify({"resp": json.loads(queryset.to_json())})
+        return jsonify({"resp": assignmentlist})
     def post(self):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
@@ -222,6 +230,9 @@ class AssignmentResource(Resource):
         
     def delete(self,docid):
 		if len(documents.Assignment.objects.with_id(docid))>0:
+			dutyslips=documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(docid))
+			app.logger.info("Deleting DutySlips {}".format(dutyslips.to_json()))
+			dutyslips.delete()
 			documents.Assignment.objects.with_id(docid).delete()
 			return jsonify({"resp":[True]})
 		else:
@@ -233,18 +244,18 @@ class DutySlipResource(Resource):
     def get(self,docid=None,assignment_id=None,driver_id=None):
         if docid:
             if documents.DutySlip.objects.with_id(docid):
-                return jsonify({"resp": [json.loads(documents.DutySlip.objects.with_id(docid).to_json())]})
+                return jsonify({"resp": json.loads(documents.DutySlip.objects.with_id(docid).to_json())})
             else:
                 return jsonify({"resp":[]})
         elif assignment_id:
             if documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(assignment_id)):
-                return jsonify({"resp": [json.loads(documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(assignment_id)).to_json())]})
+                return jsonify({"resp": json.loads(documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(assignment_id)).to_json())})
             else:
                 
                 return jsonify({"resp":[]})
         elif driver_id:
             if documents.DutySlip.objects(driver=driver_id):
-                return jsonify({"resp": [json.loads(documents.DutySlip.objects(driver=driver_id).to_json())]})
+                return jsonify({"resp": json.loads(documents.DutySlip.objects(driver=driver_id).to_json())})
             else:
                 return jsonify({"resp":[]})
         else:
@@ -255,10 +266,10 @@ class DutySlipResource(Resource):
 			return jsonify({"resp":[True]})
 		else:
 			return jsonify({"resp":[False]})
-
 api.add_resource(DutySlipResource,"/dutyslip",endpoint="dutyslip")
 api.add_resource(DutySlipResource,"/dutyslip/by_id/<string:docid>",endpoint="dutyslip_docid")
 api.add_resource(DutySlipResource,"/dutyslip/by_assignment_id/<string:assignment_id>",endpoint="dutyslip_assid")
 api.add_resource(DutySlipResource,"/dutyslip/by_driver_id/<string:driver_id>",endpoint="dutyslip_driverid")
+
 if __name__ == '__main__':
    app.run(host="0.0.0.0")
