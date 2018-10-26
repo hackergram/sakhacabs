@@ -167,12 +167,17 @@ api.add_resource(LocationUpdateResource,"/locupdate",endpoint="locupdate")
 api.add_resource(LocationUpdateResource,"/locupdate/by_id/<string:docid>",endpoint="locupdate_docid")
 
 class BookingResource(Resource):
-    def get(self,docid=None):
+    def get(self,docid=None,booking_id=None):
         if docid:
             if documents.Booking.objects.with_id(docid):
                 return jsonify({"resp": [json.loads(documents.Booking.objects.with_id(docid).to_json())]})
             else:
                 return jsonify({"resp":[]})
+        if booking_id:
+			if documents.Booking.objects(booking_id=booking_id):
+				return jsonify({"resp": [json.loads(documents.Booking.objects(booking_id=booking_id).to_json())]})
+			else:
+				return jsonify({"resp":[]})
         else:
             return jsonify({"resp": json.loads(documents.Booking.objects.to_json())})
     def post(self):
@@ -190,6 +195,7 @@ class BookingResource(Resource):
 			return jsonify({"resp":[False]})
 api.add_resource(BookingResource,"/booking",endpoint="booking")
 api.add_resource(BookingResource,"/booking/by_id/<string:docid>",endpoint="booking_docid")
+api.add_resource(BookingResource,"/booking/by_booking_id/<string:booking_id>",endpoint="booking_id")
 
 class AssignmentResource(Resource):
     def get(self,docid=None):

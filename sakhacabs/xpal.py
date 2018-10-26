@@ -211,6 +211,9 @@ def save_assignment(assignmentdict,assignment_id=None):
 			d=d[0]
 			sakhacabsxpal.logger.info("Duty slip exists {}".format(d.to_json()))
 		d.save()
+    for booking in assignment.bookings:
+		booking.assignment=str(assignment.id)
+		booking.save()
     sakhacabsxpal.logger.info("Saved assignment {}".format(assignment.to_json()))
     return assignment
 
