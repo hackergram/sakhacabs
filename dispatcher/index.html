@@ -86,12 +86,8 @@
                       <h4 class="card-title">Assignment Details</h4>
                       <p class="card-category">This Assignment</p>
                     </div>
-                    <div class="card-body">
-                        Assignment ID:
-                        <br>
-                        Bookings:
-                        <br>
-                        DutySlips Assigned: 
+                    <div class="card-body" id="assignmentdetail">
+                       
                     </div>
                   </div>
                   </div>
@@ -212,16 +208,22 @@
                                 
                                 <div class="col-lg-4 col-md-12">
                                     <div class="card">
-                                        <div class="card-header card-header-warning" data-toggle="modal" data-target="#createassignmentform" data-assignmentid="">
-                                            <h4 class="card-title" data-bind="date: reporting_timestamp.$date"></h4>
-                                            <p class="card-category" data-bind="text: _id.$oid" ></p>
+                                        <div class="card-header card-header-warning">
+                                            <h4 class="card-title" data-bind="date: assignment.reporting_timestamp.$date"></h4>
+                                            <p class="card-category" data-bind="text: assignment._id.$oid" ></p>
+                                            <div class="card-category" >
+                                            <button onclick="sakha.deleteAssignment(this.id)" data-bind="attr: {'id': 'delete_'+assignment._id.$oid()}">Delete</button>
+                                            <button onclick="sakha.deleteAssignment(this.id)" data-bind="attr: {'id': 'cancel_'+assignment._id.$oid()}">Cancel</button>    
+                                            </div>
                                         </div>
                                         <div class="card-body">
-                                            <div class="bookingline" data-bind="foreach: bookings">
-                                            <p data-bind="text: booking_id"></p>
-                                            
+                                            <div class="bookingline" data-bind="foreach: assignment.bookings">
+                                            <span data-bind="text: booking_id"></span>  <span data-bind="text: cust_id"></span>
+                                            <p data-bind="text: passenger_detail"></p>    
                                             </div>
-                                            
+                                            <div class="dsline" data-bind="foreach: dutyslips">
+                                            <span data-bind="text: driver"></span> <span data-bind="text: vehicle"></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

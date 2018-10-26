@@ -129,13 +129,17 @@ sakha={
                 self.chars.pageNumber(newPage);
             };
             var baseUri = 'http://'+serverip+':5000/assignment';
-
+            var dutyslipuri = 'http://'+serverip+':5000/dutyslip/by_assignment_id';
+            var assigns,assignswithids
             $.getJSON(baseUri, function (data) {
-                assigns=data.resp;
+               assigns=data.resp;
+               mapassignments=function(){
+                    ko.mapping.fromJS(assigns, {}, self.assignments);
+                    console.log(self.assignments())
+               }
+               mapassignments()
                
-                //console.log(data.resp)
-               ko.mapping.fromJS(data.resp, {}, self.assignments);
-                console.log(self.assignments())
+                
             });
         }
         ko.applyBindings(new AssignmentViewModel());
@@ -379,7 +383,39 @@ sakha={
             assignmentdict.dutyslips.push(dutyslips[i])
         }
         console.log(assignmentdict)
-        $.post("http://"+serverip+":5000/assignment",assignmentdict)
+        var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+        var url = "http://"+serverip+":5000/assignment";
+        var params = JSON.stringify(assignmentdict);
+        http.open("POST", url, true);
+
+        //Send the proper header information along with the request
+        http.setRequestHeader("Content-type", "application/json");
+        http.onreadystatechange = function() {//Call a function when the state changes.
+            if(http.readyState == 4 && http.status == 200) {
+                //alert(http.responseText);
+                $("#assignmentdetail").text(http.responseText)
+            }
+        }
+        http.send(params);
+    },
+    deleteAssignment: function(id){
+       console.log("Clicked "+ id)
+       console.log("Deleting assignment with id: "+ id.split("_")[1]+" and associated duty slips")    
+       var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+        var url = "http://"+serverip+":5000/assignment/by_id/"+id.split("_")[1];
+        //var params = JSON.stringify(assignmentdict);
+        http.open("DELETE", url, true);
+
+        //Send the proper header information along with the request
+        http.setRequestHeader("Content-type", "application/json");
+        http.onreadystatechange = function() {//Call a function when the state changes.
+            if(http.readyState == 4 && http.status == 200) {
+                //alert(http.responseText);
+                //$("#assignmentdetail").text(http.responseText)
+                window.location.reload(false);
+            }
+        }
+        http.send();
     }
     
 }
