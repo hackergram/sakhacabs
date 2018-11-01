@@ -21,7 +21,6 @@ from telegram import ReplyKeyboardMarkup
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
                           ConversationHandler)
 
-
 #from sakhacabs import utils
 #from sakhacabsfunctionsmongo import *
 from sakhacabs.xpal import *
@@ -44,19 +43,14 @@ location_keyboard=[[{'text':send_location_text,'request_location':True}]]
 contact_keyboard=[[{'text':send_contact_text,'request_contact':True}]]
 dutyslip_start_keyboard=[[start_duty_text],[cancel_text]]
 dutyslip_stop_keyboard=[[stop_duty_text],[cancel_text]]
+dutyslip_submit_keyboard=[[submit_text],[cancel_text]]
 #yes_no_keyboard = [[telegram.InlineKeyboardButton("Yes", callback_data='Yes'),telegram.InlineKeyboardButton("No", callback_data='No')]]
-
-
-
 
 driverbotconfig=xetrapal.karma.load_config(configfile="/opt/sakhacabs-appdata/driversakhabot.conf")
 driversakhabot=xetrapal.telegramastras.XetrapalTelegramBot(config=driverbotconfig,logger=sakhacabsxpal.logger)
 
 logger=driversakhabot.logger
 GETMOBILE,MENU_CHOICE, TYPING_REPLY, TYPING_CHOICE,LOCATION_CHOICE,DUTYSLIP_CHOICE, DUTYSLIP_MENU,DUTYSLIP_OPEN,DUTYSLIP_FORM = range(9)
-
-
-
 
 def facts_to_str(user_data):
     facts = list()
@@ -83,7 +77,6 @@ def main_menu(bot, update):
             "Hi! Welcome to the Sakha Driver Assistant."
             "What would you like to do?",
             reply_markup=markup)
-        
         return MENU_CHOICE
     except Exception as e:
         logger.info(str(e))
@@ -142,7 +135,6 @@ def location_update_menu(bot, update, user_data):
     if user_data['driver']==None:
         update.message.reply_text("Sorry this service is for Sakha Cabs Drivers Only!")
         return ConversationHandler.END
-
     text = update.message.text
     user_data['choice'] = text
     if text==check_in_text:
@@ -155,7 +147,6 @@ def location_update_menu(bot, update, user_data):
         update.message.reply_text(check_in_text,reply_markup=markup)
     else:
         update.message.reply_text(check_out_text,reply_markup=markup)
-    
     return LOCATION_CHOICE
 
 def handoff_vehicle(bot, update,user_data):
@@ -186,7 +177,6 @@ def set_mobile(bot,update,user_data):
             "Hi! Welcome to the Sakha Driver Assistant."
             "What would you like to do?",
             reply_markup=markup)
-        
         return MENU_CHOICE
     else:
         update.message.reply_text("Sorry, you don't seem to be listed!")
@@ -195,16 +185,13 @@ def set_mobile(bot,update,user_data):
 def cancel(bot, update, user_data):
     logger.info(u"Cancelling Update {}".format(user_data))
     markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
-    
     #del user_data['choice']
-
     update.message.reply_text(u'Cancelled!', reply_markup=markup)
     for key in user_data.keys():
         del user_data[key]
     return MENU_CHOICE
 
 def submit_location_update(bot, update, user_data):
-    
     logger.info(u"{}".format(user_data))
     logger.info(user_data['driver'])
     markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
@@ -230,56 +217,40 @@ def submit_location_update(bot, update, user_data):
     return MENU_CHOICE
 
 def received_dutyslip_information(bot, update, user_data):
+    logger.info("Received ds info")
     if update.message.text:
         text = update.message.text
-        logger.info("Received message {} and user data - {}".format(text,user_data['choice']==add_vehicle_text))
+        logger.info("Received message {} and user data - {}".format(text,user_data))
     field = user_data['field']
     if field=="dutyslipnum":
-		user_data['current_duty_slip'].dutyslipnum=text
+		user_data['current_duty_slip'].dutyslip_id=text
 		user_data['field']="openkms"
-	if field=="openkms"::
-		user_data['current_duty_slip'].openkms=text
+		logger.info("{}".format(user_data))
+		update.message.reply_text("Open Kms?")
+		return DUTYSLIP_FORM
+    if field=="openkms":
+		user_data['current_duty_slip'].open_kms=text
+		user_data['current_duty_slip'].open_time=update.message.date
 		user_data['field']="closekms"
-    #logger.info("Category {}".format(category))
-    if category==add_handoff_text:
-        if update.message.contact:
-            contact=update.message.contact
-            user_data["handoff"] = contact
-        else:
-            user_data["handoff"]=None
-    if category==add_vehicle_text:
-        logger.info("Adding vehicle")
-        if update.message.text:
-            text = update.message.text
-            vehicle=get_vehicle_by_vid(text)
-            try:
-                if vehicle.driver_id==None or vehicle.driver_id==user_data['driver'].id:    
-                    user_data["vehicle"] = vehicle
-                else:
-                    update.message.reply_text("That vehicle is assigned to someone else")
-                    return LOCATION_CHOICE
-            except:
-                    user_data["vehicle"] = vehicle
-        else:
-            user_data["vehicle"]=None
-    if category==send_location_text:
-        logger.info("Received {}".format(update.message))
-        if update.message.location:
-            location = update.message.location
-            user_data["location"] = location.to_json()
-        else:
-            user_data["location"] = None
-    logger.info(u"{}".format(user_data))
-    markup = ReplyKeyboardMarkup(location_update_keyboard, one_time_keyboard=True)
-    
-    del user_data['choice']
-
-    update.message.reply_text(u"Neat! Just so you know, this is what you already told me:"
-                              u"{}"
-                              u"You can tell me more, or change your opinion on something.".format(
-                                  facts_to_str(user_data)), reply_markup=markup)
-
-    return LOCATION_CHOICE
+		logger.info("{}".format(user_data))
+		markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard)
+		update.message.reply_text("Trip in progress. Stop Trip?",reply_markup=markup)
+		return DUTYSLIP_OPEN
+    if field=="closekms":
+		user_data['current_duty_slip'].close_kms=text
+		user_data['current_duty_slip'].close_time=update.message.date
+		user_data['field']="amount"
+		logger.info("{}".format(user_data))
+		update.message.reply_text("Amount Received?")
+		return DUTYSLIP_FORM
+    if field=="amount":
+		user_data['current_duty_slip'].amount=text
+		#user_data['field']="amount"
+		logger.info("{}".format(user_data))
+		markup = ReplyKeyboardMarkup(dutyslip_submit_keyboard)
+		update.message.reply_text("Submit Trip?",reply_markup=markup)
+		return DUTYSLIP_OPEN
+		
 
 
 def received_location_information(bot, update, user_data):
@@ -318,9 +289,7 @@ def received_location_information(bot, update, user_data):
             user_data["location"] = None
     logger.info(u"{}".format(user_data))
     markup = ReplyKeyboardMarkup(location_update_keyboard, one_time_keyboard=True)
-    
     del user_data['choice']
-
     update.message.reply_text(u"Neat! Just so you know, this is what you already told me:"
                               u"{}"
                               u"You can tell me more, or change your opinion on something.".format(
@@ -329,27 +298,56 @@ def received_location_information(bot, update, user_data):
     return LOCATION_CHOICE
 
 def start_duty(bot, update, user_data):
-	try:
-		sakhacabsxpal.logger.info("Starting Duty {}".format(user_data['current_duty_slip'].to_json()))
-		markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard)
+    try:
+        sakhacabsxpal.logger.info("Starting Duty {}".format(user_data['current_duty_slip'].to_json()))
+        markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard)
 		#update.message.reply_text("Trip in progress",
         #    reply_markup=markup)
         user_data['field']="dutyslipnum"
-		update.message.reply_text("Duty Slip Number?")
-		
-	except Exception as e:
+        update.message.reply_text("Duty Slip Number?")
+    except Exception as e:
 		logger.error(str(e))
 		update.message.reply_text("An error occurred")
 		return MENU_CHOICE
 	#return DUTYSLIP_OPEN
-	return DUTYSLIP_FORM
+    return DUTYSLIP_FORM
+    
+def stop_duty(bot, update, user_data):
+    try:
+        sakhacabsxpal.logger.info("Stopping Duty {}".format(user_data['current_duty_slip'].to_json()))
+        #markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard)
+		#update.message.reply_text("Trip in progress",
+        #    reply_markup=markup)
+        #user_data['field']="dutyslipnum"
+        update.message.reply_text("Close Kms?")
+    except Exception as e:
+		logger.error(str(e))
+		update.message.reply_text("An error occurred")
+		return MENU_CHOICE
+	#return DUTYSLIP_OPEN
+    return DUTYSLIP_FORM
+
+def submit_duty(bot, update, user_data):
+    try:
+        sakhacabsxpal.logger.info("Submitting Duty {}".format(user_data['current_duty_slip'].to_json()))
+        user_data['current_duty_slip'].status="closed"
+        user_data['current_duty_slip'].save()
+        markup = ReplyKeyboardMarkup(driver_base_keyboard)
+        update.message.reply_text("Trip Saved",
+            reply_markup=markup)
+            
+    except Exception as e:
+		logger.error(str(e))
+		update.message.reply_text("An error occurred")
+		return MENU_CHOICE
+	#return DUTYSLIP_OPEN
+    return MENU_CHOICE
+
 
 def done(bot, update, user_data):
     if 'choice' in user_data:
         del user_data['choice']
-
     update.message.reply_text("Bye!")
-
     user_data.clear()
     return ConversationHandler.END
 
@@ -374,9 +372,7 @@ def setup():
                             MessageHandler(Filters.contact,
                                            set_mobile,
                                            pass_user_data=True),
-                            ],
-            
-                
+                            ],       
             MENU_CHOICE: [RegexHandler('^('+check_in_text+'|'+check_out_text+')$',
                                     #open_duty_slip,
                                     location_update_menu,
@@ -384,8 +380,7 @@ def setup():
                           RegexHandler('^('+open_duty_slip_text+')$',
                                     get_duty_slips,   
                                     pass_user_data=True),
-                         ],
-
+                            ],
             TYPING_CHOICE: [MessageHandler(Filters.text,
                                            received_location_information,
                                            pass_user_data=True),
@@ -402,8 +397,7 @@ def setup():
                             MessageHandler(Filters.location,
                                            received_dutyslip_information,
                                            pass_user_data=True),
-                            ],                
-                                           
+                            ],                                    
             DUTYSLIP_CHOICE: [RegexHandler('^(ID: [a-z,0-9,\s]+)',
                                     open_duty_slip,
                                     pass_user_data=True),
@@ -419,12 +413,15 @@ def setup():
                                     pass_user_data=True),   
                             ],
             DUTYSLIP_OPEN: [RegexHandler('^('+stop_duty_text+')$',
-                                    start_duty,
+                                    stop_duty,
+                                    pass_user_data=True),             
+                             RegexHandler('^('+submit_text+')$',
+                                    submit_duty,
                                     pass_user_data=True),             
                              RegexHandler('^('+cancel_text+')$',
                                     cancel,
                                     pass_user_data=True),   
-                           ]
+                           ],
             LOCATION_CHOICE: [RegexHandler('^('+add_handoff_text+'|'+add_vehicle_text+')$',
                                     handoff_vehicle,
                                     pass_user_data=True),
@@ -439,18 +436,13 @@ def setup():
                                     pass_user_data=True),
                            ],
         },
-
         fallbacks=[RegexHandler('^Done$', done, pass_user_data=True)]
     )
-
     dp.add_handler(conv_handler)
-
     # log all errors
     dp.add_error_handler(error)
-
     # Start the Bot
     #updater.start_polling()
-
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.

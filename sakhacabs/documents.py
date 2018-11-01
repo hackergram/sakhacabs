@@ -82,4 +82,6 @@ class DutySlip(Document):
     parking_charges=fields.FloatField()
     toll_charges=fields.FloatField()
     assignment=fields.ReferenceField(Assignment)
+    amount=fields.IntField()
+    status=fields.StringField()
     
