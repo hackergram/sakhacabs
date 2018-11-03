@@ -48,26 +48,29 @@ class DriverResource(Resource):
 		driver=documents.Driver.objects(driver_id=respdict['driver_id'])
 		if len(driver)>0:
 			driver=driver[0]
+			return jsonify({"status":"error","resp":"Driver with that ID Exists"})
 		else:
 			driver=documents.Driver.from_json(json.dumps(respdict))
 		driver.save()
-		return jsonify({"resp":[driver]})
+		return jsonify({"status":"success","resp":[driver]})
     def put(self,driver_id):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
 		driver=documents.Driver.objects(driver_id=driver_id)
 		if len(driver)==0:
-			return jsonify({"resp":[]})
+			return jsonify({"status":"error","resp":"No driver found"})
 		else:
 			driver=driver[0]
 		if "_id" in respdict.keys():
 			del respdict['_id']
 		if "driver_id" in respdict.keys():
+			if respdict['driver_id']!=driver_id:
+				return jsonify({"status":"error","resp":"Driver ID mismatch"})
 			del respdict['driver_id']
 		driver.update(**respdict)
 		driver.save()
 		driver.reload()
-		return jsonify({"resp":[driver]})
+		return jsonify({"status":"success","resp":[driver]})
     def delete(self,docid):
 		if len(documents.Driver.objects.with_id(docid))>0:
 			documents.Driver.objects.with_id(docid).delete()
