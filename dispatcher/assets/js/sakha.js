@@ -68,7 +68,13 @@ sakha={
             },
             columns: [
                 //{ data: function (row){retturn'metadata.first_name' + "metadata.last_name" }},
-                { data: null, render: function (data){return data.driver_id }},
+                { data: null, render: function (data){
+                    
+                    var driverid='<a class="nav-link" data-toggle="modal" data-target="#createdriverform" data-driverid="'+data.driver_id+'">\
+                        <i class="material-icons">content_paste</i> '+data.driver_id+'\
+                        </a>'
+                    return driverid 
+                }},
                 //{ data: 'checkedin' },
                 { data: 'checkedin', defaultContent: "None", render:function(data){if(data===true){return "Checked In"}else{return "Checked Out"}} },
                 { data: 'onduty', defaultContent: "None", render:function(data){if(data){return data}else{return "Unknown"}}  }
@@ -413,6 +419,78 @@ sakha={
             }
         }
         http.send();
+    },
+    fillDriverModal: function(driverid){
+        if(driverid==="newdriver"){
+            console.log("creating new driver")
+            $("#driverid").val("")
+            $("#mobnum").val("")
+            $("#firstname").val("")
+            $("#lastname").val("")
+            
+        }
+        else{
+            console.log("editing driver "+driverid)
+            $.getJSON('http://'+serverip+':5000/driver/by_driver_id/'+driverid,function(data){
+                console.log(data.resp[0])
+                $("#driverid").val(data.resp[0].driver_id)
+                $("#mobnum").val(data.resp[0].mobile_num)
+                $("#firstname").val(data.resp[0].first_name)
+                $("#lastname").val(data.resp[0].last_name)
+            })
+        }
+       
+       document.getElementById("savedriver").setAttribute("onclick","sakha.saveDriver('"+driverid+"')")
+                    
+    },
+    saveDriver: function(driverid){
+        console.log("Trying to save "+driverid)
+        driverdict={}
+        driverdict.driver_id=$("#driverid").val()
+        driverdict.mobile_num=$("#mobnum").val()
+        driverdict.first_name=$("#firstname").val()
+        driverdict.last_name=$("#lastname").val()
+        var params = JSON.stringify(driverdict);
+        var http = new XMLHttpRequest(); 
+        if(driverid==="newdriver"){
+            //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+            var url = "http://"+serverip+":5000/driver";
+            http.open("POST", url, true);
+
+            
+        }
+        else{
+            var url = "http://"+serverip+":5000/driver/by_driver_id/"+driverid;
+            http.open("PUT", url, true);
+
+        }
+        //Send the proper header information along with the request
+        if (driverdict.driver_id.length>4){
+            http.setRequestHeader("Content-type", "application/json");
+            http.onreadystatechange = function() {//Call a function when the state changes.
+            if(http.readyState == 4 && http.status == 200) {
+                    //alert(http.responseText);
+                    response=JSON.parse(http.responseText)
+                    console.log(response)
+                    if(response.status==="success"){
+                       document.getElementById("driverstatus").innerHTML="<span style='color:green'>Success!</span>"
+                        console.log("success")
+                    }
+                    
+                    if (response.status==="error"){
+                        console.log("error")
+                         document.getElementById("driverstatus").innerHTML="<span style='color:red'>"+response.resp+"</span>" 
+                    }
+                    
+                }
+            }
+            http.send(params);
+        }
+        else{
+            alert("Driver ID must be at least 5 characters")
+        }
     }
     
 }
+
+

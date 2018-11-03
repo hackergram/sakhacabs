@@ -61,12 +61,18 @@
               <p>Create Assignment</p>
             </a>
           </li>
+          <li class="nav-item" id="createdrivernavitem">
+            <a class="nav-link" data-toggle="modal" data-target="#createdriverform" data-driverid="newdriver">
+              <i class="material-icons">content_paste</i>
+              <p>Create Driver</p>
+            </a>
+          </li>
           <!-- your sidebar here -->
         </ul>
       </div>
     </div>
       
-    <!-- Modal -->
+    <!-- Modals -->
     <div class="modal fade" id="createassignmentform" tabindex="-1" role="dialog" aria-labelledby="Create Assignment">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -151,7 +157,61 @@
             </div>
           </div>
         </div>
-    
+    <div class="modal fade" id="createdriverform" tabindex="-1" role="dialog" aria-labelledby="Create Driver">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+             </div>
+              <div class="modal-body">
+                
+                <div class="card-header card-header-primary">
+                  <h4 class="card-title">Edit Driver Profile</h4>
+                 <div id="driverstatus" class="card-category"></div>
+                </div>
+                <div class="card-body">
+                  <form>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                          <label class="bmd-label-floating">Driver ID</label>
+                          <input type="text" class="form-control" id="driverid" require="true">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                          <label class="bmd-label-floating">Mobile Num</label>
+                          <input type="text" class="form-control" id="mobnum">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                          <label class="bmd-label-floating">First Name</label>
+                          <input type="text" class="form-control" id="firstname">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                          <label class="bmd-label-floating">Last Name</label>
+                          <input type="text" class="form-control" id="lastname">
+                        </div>
+                      </div>
+                    </div>
+                </form>
+                </div>
+              
+              </div>
+              <div class="modal-footer">  
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="savedriver">Save changes</button>
+              </div>
+            </div>
+          </div>
+        
+      
+    </div>
     <div class="main-panel">
       <!-- Navbar -->
       <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
@@ -477,19 +537,43 @@
             $('#createassignmentform').on('show.bs.modal', function (event) {
                
                 var eventsrc = $(event.relatedTarget) // Button that triggered the modal
-                var assignmentid = eventsrc.data('assignmentid') // Extract info from data-* attributes
-                $("#dashboardnavitem").toggleClass("active")
-                $("#createassignmentnavitem").toggleClass("active")
                 
-                $(".modal-dialog").draggable({
-                    handle: ".modal-header"
-                })
-                sakha.fillAssignmentModal(assignmentid)
+                var assignmentid = eventsrc.data('assignmentid') // Extract info from data-* attributes
+                    $("#dashboardnavitem").toggleClass("active")
+                    $("#createassignmentnavitem").toggleClass("active")
+                
+                    $(".modal-dialog").draggable({
+                        handle: ".modal-header"
+                    })
+                    sakha.fillAssignmentModal(assignmentid)    
+               
+                
                 
             
             })
+            $("#createdriverform").on('show.bs.modal', function (event){
+                    var eventsrc = $(event.relatedTarget) // Button that triggered the modal
+                    var driverid = eventsrc.data('driverid') // Extract info from data-* attributes
+                    $("#dashboardnavitem").toggleClass("active")
+                    $("#createdrivernavitem").toggleClass("active")
+                
+                    $(".modal-dialog").draggable({
+                        handle: ".modal-header"
+                    })
+                    sakha.fillDriverModal(driverid)    
+                        
+            })
             
             $('#createassignmentform').on('hide.bs.modal', function (event) {
+                
+                //$("#dashboardnavitem").toggleClass("active")
+                //$("#createassignmentnavitem").toggleClass("active")
+                //$("#bookinglist").DataTable().destroy()
+                //$("#vehiclelist").DataTable().destroy()
+                //$("#dutysliplist").DataTable().destroy()
+                window.location.reload(false);
+            })
+            $("#createdriverform").on('hide.bs.modal', function (event) {
                 
                 //$("#dashboardnavitem").toggleClass("active")
                 //$("#createassignmentnavitem").toggleClass("active")
