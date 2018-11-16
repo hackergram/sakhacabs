@@ -75,7 +75,14 @@ sakha={
                         </a>'
                     return driverid 
                 }},
-                //{ data: 'checkedin' },
+                { data: null,render: function(data){
+                    if(data.mobile_num){
+                    return data.mobile_num
+                        }
+                    else{
+                        return "None"
+                    }
+                }},
                 { data: 'checkedin', defaultContent: "None", render:function(data){if(data===true){return "Checked In"}else{return "Checked Out"}} },
                 { data: 'onduty', defaultContent: "None", render:function(data){if(data){return data}else{return "Unknown"}}  }
                 
