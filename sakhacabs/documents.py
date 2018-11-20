@@ -84,4 +84,5 @@ class DutySlip(Document):
     assignment=fields.ReferenceField(Assignment)
     amount=fields.IntField()
     status=fields.StringField()
+    payment_mode=fields.StringField()
     

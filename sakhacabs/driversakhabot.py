@@ -36,6 +36,8 @@ submit_text=u'\U00002714 Submit'
 cancel_text=u'\U0000274C Cancel'
 start_duty_text=u'\U0001f3c1 Start Duty'
 stop_duty_text=u'\U0001f6a9 Stop Duty'
+cash_text=u'\U0001f6a9 Cash'
+credit_text=u'\U0001f6a9 Credit'
 
 driver_base_keyboard = [[check_in_text, check_out_text ],[open_duty_slip_text]]
 location_update_keyboard = [[add_handoff_text, add_vehicle_text ],[send_location_text],[submit_text,cancel_text]]    
@@ -44,6 +46,7 @@ contact_keyboard=[[{'text':send_contact_text,'request_contact':True}]]
 dutyslip_start_keyboard=[[start_duty_text],[cancel_text]]
 dutyslip_stop_keyboard=[[stop_duty_text],[cancel_text]]
 dutyslip_submit_keyboard=[[submit_text],[cancel_text]]
+payment_mode_keyboard=[[cash_text],[credit_text]]
 #yes_no_keyboard = [[telegram.InlineKeyboardButton("Yes", callback_data='Yes'),telegram.InlineKeyboardButton("No", callback_data='No')]]
 
 driverbotconfig=xetrapal.karma.load_config(configfile="/opt/sakhacabs-appdata/driversakhabot.conf")
@@ -218,9 +221,17 @@ def submit_location_update(bot, update, user_data):
 
 def received_dutyslip_information(bot, update, user_data):
     logger.info("Received ds info")
-    if update.message.text:
-        text = update.message.text
-        logger.info("Received message {} and user data - {}".format(text,user_data))
+    logger.info("{}".format(update.message))
+    if update.message:
+		if update.message.text:
+			if update.message.text==cash_text:
+				text="cash"
+			elif update.message.text==credit_text:
+				text="credit"	
+			else:
+				text = update.message.text
+    logger.info("Received message {} and user data - {}".format(text,user_data))
+			
     field = user_data['field']
     if field=="dutyslipnum":
 		user_data['current_duty_slip'].dutyslip_id=text
@@ -239,20 +250,39 @@ def received_dutyslip_information(bot, update, user_data):
     if field=="closekms":
 		user_data['current_duty_slip'].close_kms=text
 		user_data['current_duty_slip'].close_time=update.message.date
+		user_data['field']="parking"
+		logger.info("{}".format(user_data))
+		update.message.reply_text("Parking Charges? Enter 0 if none")
+		return DUTYSLIP_FORM
+    if field=="parking":
+		user_data['current_duty_slip'].parking_charges=float(text)
+		user_data['field']="toll"
+		logger.info("{}".format(user_data))
+		update.message.reply_text("Toll Charges? Enter 0 if none")
+		return DUTYSLIP_FORM
+    if field=="toll":
+		user_data['current_duty_slip'].toll_charges=float(text)
+		user_data['field']="payment_mode"
+		logger.info("{}".format(user_data))
+		markup=ReplyKeyboardMarkup(payment_mode_keyboard)
+		update.message.reply_text("Payment Mode?",reply_markup=markup)
+		return DUTYSLIP_FORM
+		
+    if field=="payment_mode":
+		logger.info("Payment mode is : " + text)
+		user_data['current_duty_slip'].payment_mode=text
 		user_data['field']="amount"
 		logger.info("{}".format(user_data))
-		update.message.reply_text("Amount Received?")
+		update.message.reply_text("Amount Received? Enter 0 if none")
 		return DUTYSLIP_FORM
     if field=="amount":
-		user_data['current_duty_slip'].amount=text
+		user_data['current_duty_slip'].amount=float(text)
 		#user_data['field']="amount"
 		logger.info("{}".format(user_data))
 		markup = ReplyKeyboardMarkup(dutyslip_submit_keyboard)
 		update.message.reply_text("Submit Trip?",reply_markup=markup)
 		return DUTYSLIP_OPEN
 		
-
-
 def received_location_information(bot, update, user_data):
     if update.message.text:
         text = update.message.text
@@ -343,7 +373,6 @@ def submit_duty(bot, update, user_data):
 	#return DUTYSLIP_OPEN
     return MENU_CHOICE
 
-
 def done(bot, update, user_data):
     if 'choice' in user_data:
         del user_data['choice']
@@ -393,6 +422,12 @@ def setup():
                             ],
             DUTYSLIP_FORM: [MessageHandler(Filters.text,
                                            received_dutyslip_information,
+                                           pass_user_data=True),
+                            RegexHandler('^('+cash_text+')$',
+                                    received_dutyslip_information,
+                                           pass_user_data=True),
+                            RegexHandler('^('+credit_text+')$',
+                                    received_dutyslip_information,
                                            pass_user_data=True),
                             MessageHandler(Filters.location,
                                            received_dutyslip_information,
@@ -453,7 +488,6 @@ def single_update():
     for update in p:
         driversakhabot.updater.dispatcher.process_update(update)
     return p
-
 
 if __name__ == '__main__':
     setup()
