@@ -205,7 +205,7 @@ def save_assignment(assignmentdict,assignment_id=None):
     for dutyslipdict in assignmentdict['dutyslips']:
 		d=documents.DutySlip.objects(driver=dutyslipdict['driver'],vehicle=dutyslipdict['vehicle'],assignment=assignment)
 		if len(d)==0:
-			d=documents.DutySlip(driver=dutyslipdict['driver'],vehicle=dutyslipdict['vehicle'],assignment=assignment)
+			d=documents.DutySlip(driver=dutyslipdict['driver'],vehicle=dutyslipdict['vehicle'],assignment=assignment,status="new")
 			sakhacabsxpal.logger.info("Created duty slip {}".format(d.to_json()))
 		else:
 			d=d[0]
@@ -254,33 +254,11 @@ def get_vehicle_by_vid(vid):
 '''
 Duty Slips
 '''
-def get_duties_for_driver(driver_id):
-    d=documents.DutySlip.objects(driver=driver_id)
-    #sakhacabsxpal.logger.info("{}".format(d))
-    assignments=[]
-    
-    if len(d)>0:
+def get_duties_for_driver(driver_id, status="new"):
+	d=documents.DutySlip.objects(driver=driver_id,status=status)
+	if len(d)>0:
 		return d
-    '''
-        for duty_slip in d:
-            assignmentdict={}
-            #sakhacabsxpal.logger.info("{}".format(duty_slip.to_json()))
-            assignmentdict['assignment']=duty_slip.assignment
-            assignmentdict['duty_slips']=duty_slip
-            assignments.append(assignmentdict)
-    return assignments
-    '''
-'''
-def get_driver_by_driver_id(mobile_num):
-    t=documents.Driver.objects(mobile_num=mobile_num)
-    xetrapal.astra.baselogger.info("Found {} drivers with Mobile Num {}".format(len(t),mobile_num))
-    if len(t)>0:
-        #return[User(x['value']) for x in t][0]
-        return t[0]
-    else:
-        return None
-'''
-
+		
 def import_gadv():
 	datasheet=sakhacabsgd.open_by_key(sakhacabsxpal.config.get("SakhaCabs","datasheetkey"))
 	gadvsheet=datasheet.worksheet_by_title("gadventures")

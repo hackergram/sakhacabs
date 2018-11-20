@@ -242,6 +242,9 @@ def received_dutyslip_information(bot, update, user_data):
     if field=="openkms":
 		user_data['current_duty_slip'].open_kms=text
 		user_data['current_duty_slip'].open_time=update.message.date
+		user_data['current_duty_slip'].status="open"
+		user_data['current_duty_slip'].save()
+		
 		user_data['field']="closekms"
 		logger.info("{}".format(user_data))
 		markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard)
