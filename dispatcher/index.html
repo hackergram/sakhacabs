@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
   <!-- CSS Files -->
   <link href="assets/css/material-dashboard.css" rel="stylesheet" />
- 
+ <link rel="stylesheet" type="text/css" href="assets/css/sakha.css">
   <style>
         .wrap { width: 100%; height: 600px; padding: 0; overflow: hidden; float: left;}
         .frame { width: 1396px; height: 786px; border: 1px solid black}
@@ -212,7 +212,66 @@
         
       
     </div>
-    <div class="main-panel">
+    <div class="modal fade" id="editdutyslipform" tabindex="-1" role="dialog" aria-labelledby="Edit Duty Slip">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+             </div>
+              <div class="modal-body">
+                
+                <div class="card-header card-header-primary">
+                  <h4 class="card-title">Edit Duty Slip</h4>
+                 <div id="driverstatus" class="card-category"></div>
+                </div>
+                <div class="card-body">
+                    <!--
+                  <form>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                          <label class="bmd-label-floating">Driver ID</label>
+                          <input type="text" class="form-control" id="driverid" require="true">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                          <label class="bmd-label-floating">Mobile Num</label>
+                          <input type="text" class="form-control" id="mobnum">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                          <label class="bmd-label-floating">First Name</label>
+                          <input type="text" class="form-control" id="firstname">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group bmd-form-group">
+                          <label class="bmd-label-floating">Last Name</label>
+                          <input type="text" class="form-control" id="lastname">
+                        </div>
+                      </div>
+                    </div>
+                </form>
+                    -->
+                    Under Construction
+                </div>
+              
+              </div>
+              <div class="modal-footer">  
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="savedutyslip">Save changes</button>
+              </div>
+            </div>
+          </div>
+        
+      
+    </div>
+   
+      <div class="main-panel">
       <!-- Navbar -->
       <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
         <div class="container-fluid">
@@ -283,7 +342,10 @@
                                             <p data-bind="text: passenger_detail"></p>    
                                             </div>
                                             <div class="dsline" data-bind="foreach: dutyslips">
+                                            <div data-bind="attr: {'class' : status}">
                                             <span data-bind="text: driver"></span> <span data-bind="text: vehicle"></span>
+                                            <span data-bind="text: status"></span>
+                                            </div>
                                             </div>
                                         </div>
                                     </div>
@@ -371,7 +433,50 @@
                         </div>
                     </div>
                 </div>
-            </div>    
+            </div>
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-primary">
+                          <h4 class="card-title">Duty Slips</h4>
+                          <p class="card-category">Current Duty Slips</p>
+                        </div>
+                        <div class="card-body table-responsive">
+                           <table class="table table-striped" id="dutysliptable" style="width: 100%">
+                                <thead>
+                                    <th style="width: 20%">Created Time</th>
+                                    <th style="width: 5%">Driver</th>
+                                    <th style="width: 5%">Status</th>
+                                    <th style="width: 20%">Open Time</th>
+                                    <th style="width: 20%">Close Time</th>
+                                    <th style="width: 10%">Open KMs</th>
+                                    <th style="width: 10%">Close KMs</th>
+                                    <th style="width: 5%">Payment Mode</th>
+                                    <th style="width: 5%">Amount Collected</th>
+                                                                    
+                                    <!--
+                                        driver=fields.StringField(required=True)
+                                        created_time=fields.DateTimeField(default=datetime.datetime.utcnow)
+                                        vehicle=fields.StringField()
+                                        dutyslip_id=fields.StringField()
+                                        open_time=fields.DateTimeField()
+                                        close_time=fields.DateTimeField()
+                                        open_kms=fields.IntField()
+                                        close_kms=fields.IntField()
+                                        parking_charges=fields.FloatField()
+                                        toll_charges=fields.FloatField()
+                                        assignment=fields.ReferenceField(Assignment)
+                                        amount=fields.IntField()
+                                        status=fields.StringField()
+                                        payment_mode=fields.StringField()
+                                    -->
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row">
             <!-- Bookings -->
                 <div class="col-lg-6 col-md-12">
@@ -504,7 +609,7 @@
   <script src="assets/js/plugins/bootstrap-notify.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="assets/js/material-dashboard.js" type="text/javascript"></script>
-  <link rel="stylesheet" type="text/css" src="assets/css/sakha.css">
+  
   <!--  DataTables Includes  -->
  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
   <!--<link rel="stylesheet" type="text/css" src="assets/css/jquery.dataTables.css">-->
@@ -529,10 +634,8 @@
         assignmentdict.assignment['bookings']=[]
         assignmentdict['dutyslips']=[]
     	$(document).ready(function(){
-             
             serverip="192.168.56.101"
-            //serverip="10.8.0.8"
-            
+            //serverip="10.8.0.8"  
             sakha.fillData();
             sakha.fillAssignments(pagenum=1)
             $('#createassignmentform').on('show.bs.modal', function (event) {
@@ -563,8 +666,7 @@
                     })
                     sakha.fillDriverModal(driverid)    
                         
-            })
-            
+            })   
             $('#createassignmentform').on('hide.bs.modal', function (event) {
                 
                 //$("#dashboardnavitem").toggleClass("active")
@@ -581,6 +683,17 @@
                 //$("#bookinglist").DataTable().destroy()
                 //$("#vehiclelist").DataTable().destroy()
                 //$("#dutysliplist").DataTable().destroy()
+                window.location.reload(false);
+            })
+            $("#editdutyslipform").on('show.bs.modal', function (event) {
+                console.log("editing duty slip in modal")
+                var eventsrc = $(event.relatedTarget) // Button that triggered the modal
+                var dsid = eventsrc.data('dsid') // Extract info from data-* attributes
+                console.log(dsid)
+                sakha.fillDutySlipModal(dsid)
+            })
+            $("#editdutyslipform").on('hide.bs.modal', function (event) {
+                console.log("closing duty slip modal")
                 window.location.reload(false);
             })
             

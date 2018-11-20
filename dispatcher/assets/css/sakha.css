@@ -5,3 +5,53 @@
 .dataTables_wrapper .dataTables_paginate{
     font-size: .65em;
 }
+
+
+.card .card-header-new .card-icon,
+.card .card-header-new .card-text,
+.card .card-header-new:not(.card-header-icon):not(.card-header-text),
+.card.bg-new,
+.card.card-rotate.bg-new .front,
+.card.card-rotate.bg-new .back {
+  background: linear-gradient(60deg, #ffa726, #fb8c00);
+}
+
+
+.card .card-header-open .card-icon,
+.card .card-header-open .card-text,
+.card .card-header-open:not(.card-header-icon):not(.card-header-text),
+.card.bg-open,
+.card.card-rotate.bg-open .front,
+.card.card-rotate.bg-open .back {
+  background: linear-gradient(60deg, #ffa726, #fb8c00);
+}
+
+
+.card .card-header-closed .card-icon,
+.card .card-header-closed .card-text,
+.card .card-header-closed:not(.card-header-icon):not(.card-header-text),
+.card.bg-closed,
+.card.card-rotate.bg-closed .front,
+.card.card-rotate.bg-closed .back {
+  background: linear-gradient(60deg, #ffa726, #fb8c00);
+}
+
+
+.dsline {
+    text-transform: uppercase;
+    
+}
+.closed{
+    background: linear-gradient(60deg, green, green);
+    padding-left: 1em;
+}
+
+.open{
+    background: linear-gradient(60deg, yellow, yellow);
+    padding-left: 1em;
+}
+
+.new{
+    background: linear-gradient(60deg, pink, pink);
+    padding-left: 1em;
+}

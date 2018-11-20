@@ -123,12 +123,105 @@ sakha={
        
         
     },
+    fillDutySlips: function(){
+         console.log("Filling dutyslip data");
+        var table = $('#dutysliptable').DataTable({
+            //ajax: 'http://'+serverip+':5000/driver/all'
+            select: true,
+            ajax: {
+                url: 'http://'+serverip+':5000/dutyslip',
+                dataSrc: "resp" 
+            },
+            columns: [
+                //{ data: function (row){retturn'metadata.first_name' + "metadata.last_name" }},
+                { data: null, render: function (data){
+                    
+                    var createdtime='<a class="nav-link" data-toggle="modal" data-target="#editdutyslipform" data-dsid="'+data._id.$oid+'">\
+                        <i class="material-icons">content_paste</i> '+new Date(data.created_time.$date)+'\
+                        </a>'
+                    return createdtime 
+                }},
+                { data: null,render: function(data){
+                    if(data.driver){
+                    return data.driver
+                        }
+                    else{
+                        return "None"
+                    }
+                }},
+                { data: null,render: function(data){
+                    if(data.status){
+                    return String.toUpperCase(data.status)
+                        }
+                    else{
+                        return "None"
+                    }
+                }},
+                { data: null,render: function(data){
+                    if(data.open_time){
+                    return new Date(data.open_time.$date)
+                        }
+                    else{
+                        return "None"
+                    }
+                }},
+                { data: null,render: function(data){
+                    if(data.close_time){
+                    return new Date(data.close_time.$date)
+                        }
+                    else{
+                        return "None"
+                    }
+                }},
+                 { data: null,render: function(data){
+                    if(data.open_kms){
+                    return data.open_kms
+                        }
+                    else{
+                        return "None"
+                    }
+                }},
+                { data: null,render: function(data){
+                    if(data.close_kms){
+                    return data.close_kms
+                        }
+                    else{
+                        return "None"
+                    }
+                }},
+                { data: null,render: function(data){
+                    if(data.payment_mode){
+                    return String.toUpperCase(data.payment_mode)
+                        }
+                    else{
+                        return "None"
+                    }
+                }},
+                { data: null,render: function(data){
+                    if(data.amount){
+                    return data.amount
+                        }
+                    else{
+                        return "None"
+                    }
+                }}
+                
+            ]
+        });
+         
+        setInterval( function () {
+                table.ajax.reload( null, false ); // user paging is not reset on reload
+        }, 30000 );
+    },
     fillData: function(){
         console.log("Filling data");
+        
         this.fillDrivers();
         this.fillBookings();
         this.fillVehicles();
         this.fillLocationUpdates();
+        this.fillDutySlips();
+        
     },
     fillAssignments: function(pagenum=1){
         
@@ -450,6 +543,20 @@ sakha={
        document.getElementById("savedriver").setAttribute("onclick","sakha.saveDriver('"+driverid+"')")
                     
     },
+    fillDutySlipModal: function(dsid){
+       console.log("editing dutyslip "+dsid)
+            $.getJSON('http://'+serverip+':5000/duty_slip/by_id/'+dsid,function(data){
+                console.log(data.resp[0])
+                $("#driverid").val(data.resp[0].driver_id)
+                $("#mobnum").val(data.resp[0].mobile_num)
+                $("#firstname").val(data.resp[0].first_name)
+                $("#lastname").val(data.resp[0].last_name)
+            })
+       
+       document.getElementById("savedutyslip").setAttribute("onclick","sakha.saveDutySlip('"+dsid+"')")
+                    
+    },
+    
     saveDriver: function(driverid){
         console.log("Trying to save "+driverid)
         driverdict={}
