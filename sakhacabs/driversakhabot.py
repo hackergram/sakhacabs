@@ -169,7 +169,7 @@ def get_location(bot, update,user_data):
 
 def set_mobile(bot,update,user_data):
     logger.info(u"{}".format(update.message.contact))
-    driver=get_driver_by_mobile(update.message.contact.phone_number)
+    driver=get_driver_by_mobile(update.message.contact.phone_number.lstrip("+"))
     if driver:
         driver.tgid=update.message.contact.user_id
         driver.save()
