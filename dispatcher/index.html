@@ -222,42 +222,125 @@
                 
                 <div class="card-header card-header-primary">
                   <h4 class="card-title">Edit Duty Slip</h4>
-                 <div id="driverstatus" class="card-category"></div>
+                 
                 </div>
                 <div class="card-body">
-                    <!--
-                  <form>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group bmd-form-group">
-                          <label class="bmd-label-floating">Driver ID</label>
-                          <input type="text" class="form-control" id="driverid" require="true">
+                    <form>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Status</label>
+                              <input type="text" class="form-control" id="status" require="true">
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group bmd-form-group">
-                          <label class="bmd-label-floating">Mobile Num</label>
-                          <input type="text" class="form-control" id="mobnum">
+                        <div class="row">
+                          <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Duty Slip ID</label>
+                              <input type="text" class="form-control" id="dutyslip_id" require="true">
+                            </div>
+                          </div>
+                        
+                         <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Driver ID</label>
+                              <input type="text" class="form-control" id="driver" require="true">
+                            </div>
+                          </div>
+                        <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Vehicle ID</label>
+                              <input type="text" class="form-control" id="vehicle" require="true">
+                            </div>
+                          </div>
+                          
+                          <div class="col-md-3">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Created Time</label>
+                                  
+                              <input type="text" class="form-control" id="created_time">
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group bmd-form-group">
-                          <label class="bmd-label-floating">First Name</label>
-                          <input type="text" class="form-control" id="firstname">
+                        <div class="row">
+                          <div class="col-md-4">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Open Time</label>
+                              <input type="text" class="form-control" id="open_time" require="true">
+                            </div>
+                          </div>
+                        <div class="col-md-4">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Close Time</label>
+                              <input type="text" class="form-control" id="close_time" require="true">
+                            </div>
+                          </div>
+                          
+                          <div class="col-md-4">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Total Time</label>
+                                  
+                              <input type="text" class="form-control" id="total_time">
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group bmd-form-group">
-                          <label class="bmd-label-floating">Last Name</label>
-                          <input type="text" class="form-control" id="lastname">
+                        <div class="row">
+                          <div class="col-md-4">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Open KMs</label>
+                              <input type="text" class="form-control" id="open_kms" require="true">
+                            </div>
+                          </div>
+                        <div class="col-md-4">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Close KMs</label>
+                              <input type="text" class="form-control" id="close_kms" require="true">
+                            </div>
+                          </div>
+                          
+                          <div class="col-md-4">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Total KMs</label>
+                              <input type="text" class="form-control" id="total_kms">
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                </form>
-                    -->
-                    Under Construction
+                        <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Parking Charges</label>
+                              <input type="text" class="form-control" id="parking_charges" require="true">
+                            </div>
+                          </div>
+                          
+                          <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Toll Charges</label>
+                              <input type="text" class="form-control" id="toll_charges">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Payment Mode</label>
+                              <input type="text" class="form-control" id="payment_mode" require="true">
+                            </div>
+                          </div>
+                          
+                          <div class="col-md-6">
+                            <div class="form-group bmd-form-group">
+                              <label class="bmd-label-floating">Amount Collected</label>
+                              <input type="text" class="form-control" id="amount">
+                            </div>
+                          </div>
+                        </div>
+                    
+                                            
+                    
+                    </form>
+               
                 </div>
               
               </div>
@@ -444,13 +527,15 @@
                         <div class="card-body table-responsive">
                            <table class="table table-striped" id="dutysliptable" style="width: 100%">
                                 <thead>
+                                    <th style="width: 5%">Duty Slip ID</th>
+                                    
                                     <th style="width: 20%">Created Time</th>
                                     <th style="width: 5%">Driver</th>
                                     <th style="width: 5%">Status</th>
                                     <th style="width: 20%">Open Time</th>
                                     <th style="width: 20%">Close Time</th>
-                                    <th style="width: 10%">Open KMs</th>
-                                    <th style="width: 10%">Close KMs</th>
+                                    <th style="width: 7.5%">Open KMs</th>
+                                    <th style="width: 7.5%">Close KMs</th>
                                     <th style="width: 5%">Payment Mode</th>
                                     <th style="width: 5%">Amount Collected</th>
                                                                     
@@ -616,7 +701,8 @@
   
     <script type="text/javascript" charset="utf8" src="assets/js/jquery.dataTables.js">
     </script>
-    <script type="text/javascript" charset="utf8" src="assets/js/moment-with-locales.js"></script>
+    <!--<script type="text/javascript" charset="utf8" src="assets/js/moment-with-locales.js"></script>-->
+    <script type="text/javascript" charset="utf8" src="assets/js/moment-with-locales.min.js"></script>
     <link rel="stylesheet" type="text/css" src="assets/css/select.bootstrap4.min.css">
     <script type="text/javascript" charset="utf8" src="assets/js/dataTables.select.min.js"></script>
     

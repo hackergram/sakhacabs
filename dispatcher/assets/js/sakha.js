@@ -136,10 +136,18 @@ sakha={
                 //{ data: function (row){retturn'metadata.first_name' + "metadata.last_name" }},
                 { data: null, render: function (data){
                     
-                    var createdtime='<a class="nav-link" data-toggle="modal" data-target="#editdutyslipform" data-dsid="'+data._id.$oid+'">\
-                        <i class="material-icons">content_paste</i> '+new Date(data.created_time.$date)+'\
+                    var dutyslip_id='<a class="nav-link" data-toggle="modal" data-target="#editdutyslipform" data-dsid="'+data._id.$oid+'">\
+                        <i class="material-icons">content_paste</i> '+data.dutyslip_id+'\
                         </a>'
-                    return createdtime 
+                    return dutyslip_id 
+                }},
+                { data: null,render: function(data){
+                    if(data.created_time){
+                    return moment(data.created_time.$date)
+                        }
+                    else{
+                        return "None"
+                    }
                 }},
                 { data: null,render: function(data){
                     if(data.driver){
@@ -254,9 +262,10 @@ sakha={
             //var date = moment(value());
            //var strDate=new 
            var strDate=new Date(value())
+           console.log(moment(value()).format('MMMM Do YYYY, h:mm:ss a'))
             //var strDate = date.format();
             //console.log(element)
-            $(element).text(strDate)
+            $(element).text(moment(value()).format('MMMM Do YYYY, h:mm:ss a'))
              //console.log(strDate)
         }
     };
@@ -545,12 +554,26 @@ sakha={
     },
     fillDutySlipModal: function(dsid){
        console.log("editing dutyslip "+dsid)
-            $.getJSON('http://'+serverip+':5000/duty_slip/by_id/'+dsid,function(data){
+       var url = 'http://'+serverip+':5000/dutyslip/by_id/'+dsid
+       console.log("getting url "+url)
+       
+            $.getJSON(url,function(data){
                 console.log(data.resp[0])
-                $("#driverid").val(data.resp[0].driver_id)
-                $("#mobnum").val(data.resp[0].mobile_num)
-                $("#firstname").val(data.resp[0].first_name)
-                $("#lastname").val(data.resp[0].last_name)
+                $("#driver").val(data.resp[0].driver)
+                $("#vehicle").val(data.resp[0].vehicle)
+                $("#dutyslip_id").val(data.resp[0].dutyslip_id)
+                $("#status").val(String.toUpperCase(data.resp[0].status))
+                $("#created_time").val(moment(data.resp[0].created_time.$date).format('MMMM Do YYYY, h:mm:ss a'));
+                $("#open_time").val(moment(data.resp[0].open_time.$date).format('MMMM Do YYYY, h:mm:ss a'));
+                $("#close_time").val(moment(data.resp[0].close_time.$date).format('MMMM Do YYYY, h:mm:ss a')); 
+                $("#total_time").val(moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2));
+                $("#open_kms").val(data.resp[0].open_kms)
+                $("#close_kms").val(data.resp[0].close_kms)
+                $("#total_kms").val(parseFloat(data.resp[0].close_kms)-parseFloat(data.resp[0].open_kms))
+                $("#payment_mode").val(data.resp[0].payment_mode)
+                $("#parking_charges").val(data.resp[0].parking_charges)
+                $("#toll_charges").val(data.resp[0].toll_charges)
+                $("#amount").val(data.resp[0].amount)
             })
        
        document.getElementById("savedutyslip").setAttribute("onclick","sakha.saveDutySlip('"+dsid+"')")
@@ -603,8 +626,41 @@ sakha={
         else{
             alert("Driver ID must be at least 5 characters")
         }
-    }
+    },
+    saveDutySlip: function(dsid){
+        console.log("Saving duty slip with ID "+dsid)
+        dutyslipdict={}
+        dutyslipdict.driver=$("#driver").val()
+        dutyslipdict.vehicle=$("#vehicle").val()
+        dutyslipdict.dutyslip_id=$("#dutyslip_id").val()
+        dutyslipdict.status=String.toLowerCase($("#status").val())
+        dutyslipdict.created_time=moment($("#created_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
+        //moment(.$date).format('MMMM Do YYYY, h:mm:ss a'));
+        dutyslipdict.open_time=moment($("#open_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
+        //moment(.$date).format('MMMM Do YYYY, h:mm:ss a'));
+        dutyslipdict.close_time=moment($("#close_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
+        //moment(.$date).format('MMMM Do YYYY, h:mm:ss a'));
+        dutyslipdict.open_kms=$("#open_kms").val()
+        dutyslipdict.close_kms=$("#close_kms").val()
+        dutyslipdict.payment_mode=$("#payment_mode").val()
+        dutyslipdict.parking_charges=$("#parking_charges").val()
+        dutyslipdict.toll_charges=$("#toll_charges").val()
+        dutyslipdict.amount=$("#amount").val()
+        params=JSON.stringify(dutyslipdict)
+        console.log(params)
+        var url = "http://"+serverip+":5000/dutyslip/by_id/"+dsid;
+        var http = new XMLHttpRequest();
+        http.open("PUT", url, true);
+        http.setRequestHeader("Content-type", "application/json");
+        http.onreadystatechange = function() {//Call a function when the state changes.
+            if(http.readyState == 4 && http.status == 200) {
+                response=JSON.parse(http.responseText)
+                console.log(response)
+       
+            }
+        http.send(params);
+        }
     
+    }   
 }
-
 
