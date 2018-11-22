@@ -253,22 +253,43 @@ class DutySlipResource(Resource):
     def get(self,docid=None,assignment_id=None,driver_id=None):
         if docid:
             if documents.DutySlip.objects.with_id(docid):
-                return jsonify({"resp": json.loads(documents.DutySlip.objects.with_id(docid).to_json())})
+                return jsonify({"resp": [json.loads(documents.DutySlip.objects.with_id(docid).to_json())]})
             else:
                 return jsonify({"resp":[]})
         elif assignment_id:
             if documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(assignment_id)):
-                return jsonify({"resp": json.loads(documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(assignment_id)).to_json())})
+                return jsonify({"resp": [json.loads(documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(assignment_id)).to_json())]})
             else:
                 
                 return jsonify({"resp":[]})
         elif driver_id:
             if documents.DutySlip.objects(driver=driver_id):
-                return jsonify({"resp": json.loads(documents.DutySlip.objects(driver=driver_id).to_json())})
+                return jsonify({"resp": [json.loads(documents.DutySlip.objects(driver=driver_id).to_json())]})
             else:
                 return jsonify({"resp":[]})
         else:
             return jsonify({"resp": json.loads(documents.DutySlip.objects.to_json())})
+    def put(self,docid):
+		app.logger.info("{}".format(request.get_json()))
+		respdict=request.get_json()
+		dutyslip=documents.DutySlip.objects.with_id(docid)
+		app.logger.info(dutyslip.to_json())
+		if dutyslip==None:
+			return jsonify({"status":"error","resp":"No dutyslip found"})
+		if "_id" in respdict.keys():
+			del respdict['_id']
+		if 'created_time' in respdict.keys():
+			respdict['created_time']=datetime.datetime.fromtimestamp(respdict['created_time']/1000)
+		if 'open_time' in respdict.keys():
+			respdict['open_time']=datetime.datetime.fromtimestamp(respdict['open_time']/1000)
+		if 'close_time' in respdict.keys():
+			respdict['close_time']=datetime.datetime.fromtimestamp(respdict['close_time']/1000)
+		dutyslip.update(**respdict)
+		dutyslip.save()
+		dutyslip.reload()
+		return jsonify({"status":"success","resp":[dutyslip]})
+    
+
     def delete(self,docid):
 		if len(documents.DutySlip.objects.with_id(docid))>0:
 			documents.DutySlip.objects.with_id(docid).delete()
