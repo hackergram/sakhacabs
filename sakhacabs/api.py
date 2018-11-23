@@ -227,6 +227,14 @@ class AssignmentResource(Resource):
         for booking in bookings:
 			if hasattr(booking,"assignment"):
 				return jsonify({"resp": "Booking is already assigned! Please delete the old assignment before creating a new one.","status":"error"}) 
+				
+        seenvehicles=[]
+        for dutyslip in respdict['dutyslips']:
+			if "vehicle" in dutyslip.keys():
+				if dutyslip['vehicle'] in seenvehicles:
+					return jsonify({"resp": "Can't assign the same vehicle to more than one driver in the same assignment.","status":"error"}) 
+				seenvehicles.append(dutyslip['vehicle'])
+				
         try:
             assignment=save_assignment(respdict)
             return jsonify({"resp": [json.loads(assignment.to_json())],"status":"success"})
