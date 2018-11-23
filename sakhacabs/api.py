@@ -39,7 +39,7 @@ class DriverResource(Resource):
             queryset=documents.Driver.objects(driver_id=driver_id)
         else:
             queryset=documents.Driver.objects
-        return jsonify({"resp":json.loads(queryset.to_json())}) 
+        return jsonify({"resp":json.loads(queryset.to_json()),"status":"success"}) 
     def post(self):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -214,17 +214,21 @@ class AssignmentResource(Resource):
 			assignmentdict['dutyslips']=json.loads(documents.DutySlip.objects(assignment=assignment).to_json())
 			assignmentlist.append(assignmentdict)
         #return jsonify({"resp": json.loads(queryset.to_json())})
-        return jsonify({"resp": assignmentlist})
+        return jsonify({"resp": assignmentlist,"status":"success"})
     def post(self):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
         app.logger.info("")
+        bookings=[documents.Booking.objects.with_id(x['_id']['$oid']) for x in respdict['assignment']['bookings']]
+        for booking in bookings:
+			if hasattr(booking,"assignment"):
+				return jsonify({"resp": "Booking is already assigned! Please delete the old assignment before creating a new one.","status":"error"})
         try:
             assignment=save_assignment(respdict)
-            return jsonify({"resp": [json.loads(assignment.to_json())]})
+            return jsonify({"resp": [json.loads(assignment.to_json())],"status":"success"})
         except Exception as e:
             app.logger.info("{}".format(str(e)))
-            return jsonify({"resp":[]})   
+            return jsonify({"resp":"Saving assignment failed","status":"error"})   
         return jsonify({"resp":[]})
     def put(self,docid):
 		app.logger.info("{}".format(request.get_json()))
@@ -234,14 +238,19 @@ class AssignmentResource(Resource):
 			return jsonify({"resp": [json.loads(assignment.to_json())]})
 		except Exception as e:
 			app.logger.info("{}".format(str(e)))
-			return jsonify({"resp":[]})   
-		return jsonify({"resp":[]})
-        
+		return jsonify({"resp":"Error creating assignment!","status":"error"})   
+		
     def delete(self,docid):
 		if len(documents.Assignment.objects.with_id(docid))>0:
 			dutyslips=documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(docid))
 			app.logger.info("Deleting DutySlips {}".format(dutyslips.to_json()))
 			dutyslips.delete()
+			bookings=documents.Booking.objects(assignment=docid)
+			app.logger.info("Removing Assignment reference from  Bookings {}".format(bookings.to_json()))
+			
+			for booking in bookings:
+				del(booking.assignment)
+				booking.save()
 			documents.Assignment.objects.with_id(docid).delete()
 			return jsonify({"resp":[True]})
 		else:

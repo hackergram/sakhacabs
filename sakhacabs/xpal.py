@@ -161,6 +161,8 @@ Assignments are collections of one or more bookings grouped together for assignm
 DutySlips record assignment execution. DutySlips are issued by the dispatcher and can be created and deleted but not updated.
 A DutySlip can not be deleted once the open time has been set by the driver, i.e. after execution on an assignment has begun.
 '''
+
+
 def save_assignment(assignmentdict,assignment_id=None):
     '''
     Creates a new assignment/Updates an existing assignment with the provided bookings and duty slips
@@ -217,6 +219,17 @@ def save_assignment(assignmentdict,assignment_id=None):
     sakhacabsxpal.logger.info("Saved assignment {}".format(assignment.to_json()))
     return assignment
 
+
+'''
+Duty Slips
+'''
+def get_duties_for_driver(driver_id, status="new"):
+	d=documents.DutySlip.objects(driver=driver_id,status=status)
+	if len(d)>0:
+		return d
+	
+
+
 '''
 Driver CRUD functionality
 '''
@@ -251,14 +264,7 @@ def get_vehicle_by_vid(vid):
     else:
         return None
 
-'''
-Duty Slips
-'''
-def get_duties_for_driver(driver_id, status="new"):
-	d=documents.DutySlip.objects(driver=driver_id,status=status)
-	if len(d)>0:
-		return d
-		
+	
 def import_gadv():
 	datasheet=sakhacabsgd.open_by_key(sakhacabsxpal.config.get("SakhaCabs","datasheetkey"))
 	gadvsheet=datasheet.worksheet_by_title("gadventures")
