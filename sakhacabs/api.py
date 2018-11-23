@@ -218,11 +218,15 @@ class AssignmentResource(Resource):
     def post(self):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
-        app.logger.info("")
+        app.logger.info("Validating assignmentdict")
+        if respdict['dutyslips']==[]:
+				return jsonify({"resp": "At least one driver must be assigned to create an assignment.","status":"error"})
+        if respdict['assignment']['bookings']==[]:
+				return jsonify({"resp": "At least one booking must be assigned to create an assignment.","status":"error"})
         bookings=[documents.Booking.objects.with_id(x['_id']['$oid']) for x in respdict['assignment']['bookings']]
         for booking in bookings:
 			if hasattr(booking,"assignment"):
-				return jsonify({"resp": "Booking is already assigned! Please delete the old assignment before creating a new one.","status":"error"})
+				return jsonify({"resp": "Booking is already assigned! Please delete the old assignment before creating a new one.","status":"error"}) 
         try:
             assignment=save_assignment(respdict)
             return jsonify({"resp": [json.loads(assignment.to_json())],"status":"success"})
