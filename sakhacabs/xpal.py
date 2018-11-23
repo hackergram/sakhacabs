@@ -223,8 +223,8 @@ def save_assignment(assignmentdict,assignment_id=None):
 '''
 Duty Slips
 '''
-def get_duties_for_driver(driver_id, status="new"):
-	d=documents.DutySlip.objects(driver=driver_id,status=status)
+def get_duties_for_driver(driver_id):
+	d=documents.DutySlip.objects(driver=driver_id,status__ne="verified")
 	if len(d)>0:
 		return d
 	

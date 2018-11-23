@@ -115,6 +115,7 @@ def get_duty_slips(bot, update, user_data):
         updatekeys=[]
         for duty in user_data['duties']:
             logger.info("{}".format(duty.to_json()))
+            #keytext=["Status: "+duty.status.upper()+" ID: "+unicode("..."+str(duty.id)[:10])+" "+unicode(duty.assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S"))]
             keytext=["ID: "+unicode(duty.id)+" "+unicode(duty.assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S"))]
             updatekeys.append(keytext)
             logger.info("{}".format(updatekeys))
@@ -283,7 +284,8 @@ def received_dutyslip_information(bot, update, user_data):
 		#user_data['field']="amount"
 		logger.info("{}".format(user_data))
 		markup = ReplyKeyboardMarkup(dutyslip_submit_keyboard)
-		update.message.reply_text("Submit Trip?",reply_markup=markup)
+		#logger.info("{}".format(facts_to_str(user_data['current_duty_slip'].to_json())))
+		update.message.reply_text("Trip Details - {} Submit Trip?".format(repr(user_data['current_duty_slip'])),reply_markup=markup)
 		return DUTYSLIP_OPEN
 		
 def received_location_information(bot, update, user_data):
