@@ -658,8 +658,8 @@ sakha={
                 console.log(response)
        
             }
-        http.send(params);
         }
+        http.send(params);
     
     }   
 }
