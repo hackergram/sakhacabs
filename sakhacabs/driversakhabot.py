@@ -55,6 +55,7 @@ driversakhabot=xetrapal.telegramastras.XetrapalTelegramBot(config=driverbotconfi
 logger=driversakhabot.logger
 GETMOBILE,MENU_CHOICE, TYPING_REPLY, TYPING_CHOICE,LOCATION_CHOICE,DUTYSLIP_CHOICE, DUTYSLIP_MENU,DUTYSLIP_OPEN,DUTYSLIP_FORM = range(9)
 
+
 def facts_to_str(user_data):
     facts = list()
     logger.info("Converting facts to string")
@@ -232,105 +233,158 @@ def received_dutyslip_information(bot, update, user_data):
 			else:
 				text = update.message.text
     logger.info("Received message {} and user data - {}".format(text,user_data))
-			
     field = user_data['field']
     if field=="dutyslipnum":
-		user_data['current_duty_slip'].dutyslip_id=text
-		user_data['field']="openkms"
-		logger.info("{}".format(user_data))
-		update.message.reply_text("Open Kms?")
-		return DUTYSLIP_FORM
+		try:
+			user_data['current_duty_slip'].dutyslip_id=text
+			user_data['field']="openkms"
+			logger.info("{}".format(user_data))
+			update.message.reply_text("Open Kms?")
+			return DUTYSLIP_FORM
+		except Exception as e:
+			logger.error(str(e))
+			markup = ReplyKeyboardMarkup(driver_base_keyboard)
+			update.message.reply_text("An error occurred, please start over",reply_markup=markup)
+			return MENU_CHOICE
+	
     if field=="openkms":
-		user_data['current_duty_slip'].open_kms=text
-		user_data['current_duty_slip'].open_time=update.message.date
-		user_data['current_duty_slip'].status="open"
-		user_data['current_duty_slip'].save()
+		try:
+			user_data['current_duty_slip'].open_kms=text
+			user_data['current_duty_slip'].open_time=update.message.date
+			user_data['current_duty_slip'].status="open"
+			user_data['current_duty_slip'].save()
+			user_data['field']="closekms"
+			logger.info("{}".format(user_data))
+			markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard)
+			update.message.reply_text("Trip in progress. Stop Trip?",reply_markup=markup)
+			return DUTYSLIP_OPEN
+		except Exception as e:
+			logger.error(str(e))
+			markup = ReplyKeyboardMarkup(driver_base_keyboard)
+			update.message.reply_text("An error occurred, please start over",reply_markup=markup)
+			return MENU_CHOICE
 		
-		user_data['field']="closekms"
-		logger.info("{}".format(user_data))
-		markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard)
-		update.message.reply_text("Trip in progress. Stop Trip?",reply_markup=markup)
-		return DUTYSLIP_OPEN
     if field=="closekms":
-		user_data['current_duty_slip'].close_kms=text
-		user_data['current_duty_slip'].close_time=update.message.date
-		user_data['field']="parking"
-		logger.info("{}".format(user_data))
-		update.message.reply_text("Parking Charges? Enter 0 if none")
-		return DUTYSLIP_FORM
+		try:
+			user_data['current_duty_slip'].close_kms=text
+			user_data['current_duty_slip'].close_time=update.message.date
+			user_data['field']="parking"
+			logger.info("{}".format(user_data))
+			update.message.reply_text("Parking Charges? Enter 0 if none")
+			return DUTYSLIP_FORM
+		except Exception as e:
+			logger.error(str(e))
+			markup = ReplyKeyboardMarkup(driver_base_keyboard)
+			update.message.reply_text("An error occurred, please start over",reply_markup=markup)
+			return MENU_CHOICE
+		
     if field=="parking":
-		user_data['current_duty_slip'].parking_charges=float(text)
-		user_data['field']="toll"
-		logger.info("{}".format(user_data))
-		update.message.reply_text("Toll Charges? Enter 0 if none")
-		return DUTYSLIP_FORM
+		try:
+			user_data['current_duty_slip'].parking_charges=float(text)
+			user_data['field']="toll"
+			logger.info("{}".format(user_data))
+			update.message.reply_text("Toll Charges? Enter 0 if none")
+			return DUTYSLIP_FORM
+		except Exception as e:
+			logger.error(str(e))
+			markup = ReplyKeyboardMarkup(driver_base_keyboard)
+			update.message.reply_text("An error occurred, please start over",reply_markup=markup)
+			return MENU_CHOICE
+		
     if field=="toll":
-		user_data['current_duty_slip'].toll_charges=float(text)
-		user_data['field']="payment_mode"
-		logger.info("{}".format(user_data))
-		markup=ReplyKeyboardMarkup(payment_mode_keyboard)
-		update.message.reply_text("Payment Mode?",reply_markup=markup)
-		return DUTYSLIP_FORM
+		try:
+			user_data['current_duty_slip'].toll_charges=float(text)
+			user_data['field']="payment_mode"
+			logger.info("{}".format(user_data))
+			markup=ReplyKeyboardMarkup(payment_mode_keyboard)
+			update.message.reply_text("Payment Mode?",reply_markup=markup)
+			return DUTYSLIP_FORM
+		except Exception as e:
+			logger.error(str(e))
+			markup = ReplyKeyboardMarkup(driver_base_keyboard)
+			update.message.reply_text("An error occurred, please start over",reply_markup=markup)
+			return MENU_CHOICE
 		
     if field=="payment_mode":
-		logger.info("Payment mode is : " + text)
-		user_data['current_duty_slip'].payment_mode=text
-		user_data['field']="amount"
-		logger.info("{}".format(user_data))
-		update.message.reply_text("Amount Received? Enter 0 if none")
-		return DUTYSLIP_FORM
+		try:
+			logger.info("Payment mode is : " + text)
+			user_data['current_duty_slip'].payment_mode=text
+			user_data['field']="amount"
+			logger.info("{}".format(user_data))
+			update.message.reply_text("Amount Received? Enter 0 if none")
+			return DUTYSLIP_FORM
+		except Exception as e:
+			logger.error(str(e))
+			markup = ReplyKeyboardMarkup(driver_base_keyboard)
+			update.message.reply_text("An error occurred, please start over",reply_markup=markup)
+			return MENU_CHOICE
+	
     if field=="amount":
-		user_data['current_duty_slip'].amount=float(text)
-		#user_data['field']="amount"
-		logger.info("{}".format(user_data))
-		markup = ReplyKeyboardMarkup(dutyslip_submit_keyboard)
-		#logger.info("{}".format(facts_to_str(user_data['current_duty_slip'].to_json())))
-		update.message.reply_text("Trip Details - {} Submit Trip?".format(repr(user_data['current_duty_slip'])),reply_markup=markup)
-		return DUTYSLIP_OPEN
+		try:
+			user_data['current_duty_slip'].amount=float(text)
+			#user_data['field']="amount"
+			logger.info("{}".format(user_data))
+			markup = ReplyKeyboardMarkup(dutyslip_submit_keyboard)
+			#logger.info("{}".format(facts_to_str(user_data['current_duty_slip'].to_json())))
+			update.message.reply_text("Trip Details - {} Submit Trip?".format(repr(user_data['current_duty_slip'])),reply_markup=markup)
+			return DUTYSLIP_OPEN
+		except Exception as e:
+			logger.error(str(e))
+			markup = ReplyKeyboardMarkup(driver_base_keyboard)
+			update.message.reply_text("An error occurred, please start over",reply_markup=markup)
+			return MENU_CHOICE
+		
 		
 def received_location_information(bot, update, user_data):
-    if update.message.text:
-        text = update.message.text
-        logger.info("Received message {} and user data - {}".format(text,user_data['choice']==add_vehicle_text))
-    category = user_data['choice']
-    #logger.info("Category {}".format(category))
-    if category==add_handoff_text:
-        if update.message.contact:
-            contact=update.message.contact
-            user_data["handoff"] = contact
-        else:
-            user_data["handoff"]=None
-    if category==add_vehicle_text:
-        logger.info("Adding vehicle")
-        if update.message.text:
-            text = update.message.text
-            vehicle=get_vehicle_by_vid(text)
-            try:
-                if vehicle.driver_id==None or vehicle.driver_id==user_data['driver'].id:    
-                    user_data["vehicle"] = vehicle
-                else:
-                    update.message.reply_text("That vehicle is assigned to someone else")
-                    return LOCATION_CHOICE
-            except:
-                    user_data["vehicle"] = vehicle
-        else:
-            user_data["vehicle"]=None
-    if category==send_location_text:
-        logger.info("Received {}".format(update.message))
-        if update.message.location:
-            location = update.message.location
-            user_data["location"] = location.to_json()
-        else:
-            user_data["location"] = None
-    logger.info(u"{}".format(user_data))
-    markup = ReplyKeyboardMarkup(location_update_keyboard, one_time_keyboard=True)
-    del user_data['choice']
-    update.message.reply_text(u"Neat! Just so you know, this is what you already told me:"
-                              u"{}"
-                              u"You can tell me more, or change your opinion on something.".format(
-                                  facts_to_str(user_data)), reply_markup=markup)
+	try:
+		if update.message.text:
+			text = update.message.text
+			logger.info("Received message {} and user data - {}".format(text,user_data['choice']==add_vehicle_text))
+		category = user_data['choice']
+		#logger.info("Category {}".format(category))
+		if category==add_handoff_text:
+			if update.message.contact:
+				contact=update.message.contact
+				user_data["handoff"] = contact
+			else:
+				user_data["handoff"]=None
+		if category==add_vehicle_text:
+			logger.info("Adding vehicle")
+			if update.message.text:
+				text = update.message.text
+				vehicle=get_vehicle_by_vid(text)
+				try:
+					if vehicle.driver_id==None or vehicle.driver_id==user_data['driver'].id:    
+						user_data["vehicle"] = vehicle
+					else:
+						update.message.reply_text("That vehicle is assigned to someone else")
+						return LOCATION_CHOICE
+				except:
+						user_data["vehicle"] = vehicle
+			else:
+				user_data["vehicle"]=None
+		if category==send_location_text:
+			logger.info("Received {}".format(update.message))
+			if update.message.location:
+				location = update.message.location
+				user_data["location"] = location.to_json()
+			else:
+				user_data["location"] = None
+		logger.info(u"{}".format(user_data))
+		markup = ReplyKeyboardMarkup(location_update_keyboard, one_time_keyboard=True)
+		del user_data['choice']
+		update.message.reply_text(u"Neat! Just so you know, this is what you already told me:"
+								  u"{}"
+								  u"You can tell me more, or change your opinion on something.".format(
+									  facts_to_str(user_data)), reply_markup=markup)
 
-    return LOCATION_CHOICE
+		return LOCATION_CHOICE
+	except Exception as e:
+		logger.error(str(e))
+		markup = ReplyKeyboardMarkup(driver_base_keyboard)
+		update.message.reply_text("An error occurred, please start over",reply_markup=markup)
+		return MENU_CHOICE
+	
 
 def start_duty(bot, update, user_data):
     try:
@@ -340,12 +394,15 @@ def start_duty(bot, update, user_data):
         #    reply_markup=markup)
         user_data['field']="dutyslipnum"
         update.message.reply_text("Duty Slip Number?")
+        return DUTYSLIP_FORM
     except Exception as e:
 		logger.error(str(e))
-		update.message.reply_text("An error occurred")
+		markup = ReplyKeyboardMarkup(driver_base_keyboard)
+		update.message.reply_text("An error occurred, please start over",reply_markup=markup)
 		return MENU_CHOICE
+	
 	#return DUTYSLIP_OPEN
-    return DUTYSLIP_FORM
+    
     
 def stop_duty(bot, update, user_data):
     try:
@@ -357,25 +414,22 @@ def stop_duty(bot, update, user_data):
         update.message.reply_text("Close Kms?")
     except Exception as e:
 		logger.error(str(e))
-		update.message.reply_text("An error occurred")
+		markup = ReplyKeyboardMarkup(driver_base_keyboard)
+		update.message.reply_text("An error occurred, please start over",reply_markup=markup)
 		return MENU_CHOICE
 	#return DUTYSLIP_OPEN
     return DUTYSLIP_FORM
 
 def submit_duty(bot, update, user_data):
+    markup = ReplyKeyboardMarkup(driver_base_keyboard)
     try:
         sakhacabsxpal.logger.info("Submitting Duty {}".format(user_data['current_duty_slip'].to_json()))
         user_data['current_duty_slip'].status="closed"
         user_data['current_duty_slip'].save()
-        markup = ReplyKeyboardMarkup(driver_base_keyboard)
-        update.message.reply_text("Trip Saved",
-            reply_markup=markup)
-            
+        update.message.reply_text("Trip Saved",reply_markup=markup)        
     except Exception as e:
 		logger.error(str(e))
-		update.message.reply_text("An error occurred")
-		return MENU_CHOICE
-	#return DUTYSLIP_OPEN
+		update.message.reply_text("An error occurred, please start over",reply_markup=markup)
     return MENU_CHOICE
 
 def done(bot, update, user_data):
@@ -476,7 +530,7 @@ def setup():
                                     pass_user_data=True),
                            ],
         },
-        fallbacks=[RegexHandler('^Done$', done, pass_user_data=True)]
+        fallbacks=[RegexHandler('^[dD]one$', done, pass_user_data=True)]
     )
     dp.add_handler(conv_handler)
     # log all errors
