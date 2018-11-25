@@ -183,9 +183,12 @@ class BookingResource(Resource):
 				return jsonify({"resp":[]})
         else:
             return jsonify({"resp": json.loads(documents.Booking.objects.to_json())})
-    def post(self):
+    def post(self,command=None):	
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
+		if command=="import":
+			bookinglist=import_gadv(respdict)
+			return jsonify({"resp":bookinglist})
 		return jsonify({"resp":[]})
     def put(self,docid=None):
         return jsonify({"resp":[]})
@@ -199,7 +202,7 @@ class BookingResource(Resource):
 api.add_resource(BookingResource,"/booking",endpoint="booking")
 api.add_resource(BookingResource,"/booking/by_id/<string:docid>",endpoint="booking_docid")
 api.add_resource(BookingResource,"/booking/by_booking_id/<string:booking_id>",endpoint="booking_id")
-
+api.add_resource(BookingResource,"/booking/<string:command>",endpoint="booking_command")
 class AssignmentResource(Resource):
     def get(self,docid=None):
         if docid:

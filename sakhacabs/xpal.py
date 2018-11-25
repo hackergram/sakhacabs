@@ -265,29 +265,45 @@ def get_vehicle_by_vid(vid):
         return None
 
 	
-def import_gadv():
+#def import_gadv():
+def import_gadv(bookinglist):
+	'''
 	datasheet=sakhacabsgd.open_by_key(sakhacabsxpal.config.get("SakhaCabs","datasheetkey"))
 	gadvsheet=datasheet.worksheet_by_title("gadventures")
 	gadvdf=gadvsheet.get_as_df()
 	bookinglist=json.loads(gadvdf.to_json(orient="records"))
 	bookinglist
 	gadvbookings=[]
+	'''
+	
 	for booking in bookinglist:
-		if 'booking_id' in booking.keys() and booking['booking_id']!="" and len(documents.Booking.objects(booking_id=booking['booking_id']))>0:
-			sakhacabsxpal.logger.info("Existing Booking")
-			b=documents.Booking.objects(booking_id=booking['booking_id'])[0]
-			b.cust_meta=booking
+		dupbookings=documents.Booking.objects(cust_meta=booking)
+		#if 'booking_id' in booking.keys() and booking['booking_id']!="" and len(documents.Booking.objects(booking_id=booking['booking_id']))>0:
+		if len(dupbookings)>0:
+			sakhacabsxpal.logger.info("Duplicate booking {}".format(dupbookings))
+			booking['booking_id']=dupbookings[0].booking_id
+			#b=documents.Booking.objects(booking_id=booking['booking_id'])[0]
+			#b.cust_meta=booking
 		else:
 			sakhacabsxpal.logger.info("New Booking")
 			b=documents.Booking(booking_id=utils.new_booking_id(),cust_meta=booking,cust_id="gadventures")
+			b.passenger_detail=str(b.cust_meta['Booking ID'])+"\n"+b.cust_meta['Trip Code']+"\n"+b.cust_meta['Passengers']
+			b.pickup_location="Intl Airport, Flight #"+str(b.cust_meta['Pick-Up'])
+			b.drop_location=b.cust_meta['Drop-Off']
+			b.num_passengers=len(b.cust_meta['Passengers'].split(","))
+			b.channel="Bulk"
+			b.pickup_timestamp=utils.get_utc_ts(datetime.datetime.strptime(b.cust_meta['Date']+" "+b.cust_meta['Flight Time'],"%Y-%m-%d %H:%M:%S"))
+			if b.cust_meta['Transfer Name']=="Airport to Hotel Transfer":
+				b.product_id="GADVARPTPKUP"
+			b.save()
 			booking['booking_id']=b.booking_id
-			
-		b.save()    
-		print b,b.to_json()
-		gadvbookings.append(b)
-	newgadvdf=pandas.DataFrame(bookinglist)
-	gadvsheet.set_dataframe(newgadvdf,(1,1))
-	for booking in documents.Booking.objects(cust_id="gadventures"):
+			    
+	#	print b,b.to_json()
+	#	gadvbookings.append(b)
+	#newgadvdf=pandas.DataFrame(bookinglist)
+	#gadvsheet.set_dataframe(newgadvdf,(1,1))
+	'''
+	for booking in documents.b.objects(cust_id="gadventures"):
 		try:
 			booking.cust_id="gadventures"
 			booking.passenger_detail=str(booking.cust_meta['Booking ID'])+"\n"+booking.cust_meta['Trip Code']+"\n"+booking.cust_meta['Passengers']
@@ -302,4 +318,5 @@ def import_gadv():
 			print booking.to_json()
 		except:
 			print "Error",booking.to_json()
+	'''
 	return bookinglist
