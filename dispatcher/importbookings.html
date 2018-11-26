@@ -82,6 +82,7 @@ var bookinglist=[];
 var serverip="192.168.56.101"
 
 var submit_output=function(){
+    var OUT = document.getElementById('out');
     console.log("Submitting bookings")
     console.log(bookinglist)
     params=JSON.stringify(bookinglist)
@@ -93,6 +94,9 @@ var submit_output=function(){
         if(http.readyState == 4 && http.status == 200) {
             response=JSON.parse(http.responseText)
             console.log(response)
+            if(OUT.innerText === undefined) OUT.textContent = JSON.stringify(response['resp'],2,2);
+	           else OUT.innerText = JSON.stringify(response['resp'],2,2);
+   
         }
     }
     http.send(params);
