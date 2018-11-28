@@ -34,24 +34,25 @@ class CustomQuerySet(QuerySet):
             return "[%s]" % (",".join([doc.to_json() for doc in self]))
 
 
-class Driver(DynamicDocument):
+class Driver(PPrintMixin,DynamicDocument):
     driver_id=fields.StringField(unique=True,required=True)
     mobile_num=fields.StringField()
     tgid=fields.IntField()
     def __repr__(self):
 		return "Driver (%r)" %(self.driver_id)
-class Customer(DynamicDocument):
+class Customer(PPrintMixin,DynamicDocument):
     cust_id=fields.StringField(unique=True,required=True)
     cust_type=fields.StringField()
     mobile_num=fields.StringField()
     tgid=fields.IntField()
+   
     
-class Vehicle(DynamicDocument):
+class Vehicle(PPrintMixin,DynamicDocument):
     vehicle_id=fields.StringField(unique=True,required=True) 
     driver_id=fields.StringField()
     def __repr__(self):
 		return "Vehicle (%r)" %(self.vehicle_id)
-class Booking(DynamicDocument):
+class Booking(PPrintMixin,DynamicDocument):
     booking_id=fields.StringField(required=True)
     passenger_detail=fields.StringField()
     passenger_mobile=fields.StringField()
@@ -65,10 +66,10 @@ class Booking(DynamicDocument):
     booking_channel=fields.StringField()
     def __repr__(self):
 		return "Booking (%r)" %(self.booking_id)
-class Product(DynamicDocument):
+class Product(PPrintMixin,DynamicDocument):
     product_id=fields.StringField(unique=True,required=True)
     
-class LocationUpdate(Document):
+class LocationUpdate(PPrintMixin,Document):
     driver_id=fields.StringField(required=True)
     timestamp=fields.DateTimeField(required=True)
     location=fields.StringField()
@@ -76,7 +77,7 @@ class LocationUpdate(Document):
     vehicle_id=fields.StringField()
     handoff=fields.StringField()
     
-class Assignment(Document):
+class Assignment(PPrintMixin,Document):
     created_timestamp=fields.DateTimeField(default=datetime.datetime.utcnow)    
     reporting_timestamp=fields.DateTimeField()
     reporting_location=fields.StringField()
