@@ -71,9 +71,9 @@ class DriverResource(Resource):
 		driver.save()
 		driver.reload()
 		return jsonify({"status":"success","resp":[driver]})
-    def delete(self,driver_id):
-		if len(documents.Driver.objects(driver_id=driver_id))>0:
-			documents.Driver.objects(driver_id=driver_id).delete()
+    def delete(self,docid):
+		if len(documents.Driver.objects.with_id(docid))>0:
+			documents.Driver.objects.with_id(docid).delete()
 			return jsonify({"resp":[True]})
 		else:
 			return jsonify({"resp":[False]})
@@ -190,6 +190,7 @@ class BookingResource(Resource):
 			bookinglist=import_gadv(respdict)
 			return jsonify({"resp":bookinglist})
 		return jsonify({"resp":[]})
+		
     def put(self,docid=None):
         return jsonify({"resp":[]})
     
