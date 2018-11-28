@@ -84,12 +84,7 @@ sakha={
                     }
                 }},
                 { data: 'checkedin', defaultContent: "None", render:function(data){if(data===true){return "Checked In"}else{return "Checked Out"}} },
-                { data: 'onduty', defaultContent: "None", render:function(data){if(data){return data}else{return "Unknown"}}  },
-                { data: null,render: function(data){
-                    driverid='"'+data.driver_id+'"'
-                    return "<button onclick='sakha.deleteDriver("+driverid+")'>Delete</button>"
-                }}
- 
+                { data: 'onduty', defaultContent: "None", render:function(data){if(data){return data}else{return "Unknown"}}  }
                 
             ],
             scrollY: 200
@@ -217,10 +212,6 @@ sakha={
                     else{
                         return "None"
                     }
-                }},
-                 { data: null,render: function(data){
-                    dsid='"'+data._id.$oid+'"'
-                    return "<button onclick='sakha.deleteDutySlip("+dsid+")'>Delete</button>"
                 }}
                 
             ]
@@ -634,58 +625,6 @@ sakha={
         }
         else{
             alert("Driver ID must be at least 5 characters")
-        }
-    },
-    deleteDutySlip: function(dsid){
-        t=confirm("Really Delete Duty Slip with ID "+dsid)
-        if (t===true){
-            
-            var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
-            var url = "http://"+serverip+":5000/dutyslip/by_id/"+dsid;
-            //var params = JSON.stringify(assignmentdict);
-            console.log(url)
-            http.open("DELETE", url, true);
-
-            //Send the proper header information along with the request
-            http.setRequestHeader("Content-type", "application/json");
-            http.onreadystatechange = function() {//Call a function when the state changes.
-                if(http.readyState == 4 && http.status == 200) {
-                    //alert(http.responseText);
-                    //$("#assignmentdetail").text(http.responseText)
-                    alert("deleted "+dsid)
-                    window.location.reload(true);
-                }
-            }
-            http.send();
-        }
-        else{
-            alert("Cancelled delete!")
-        }
-    },
-     deleteDriver: function(driverid){
-        t=confirm("Really Delete Duty Slip with ID "+driverid)
-        if (t===true){
-            
-            var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
-            var url = "http://"+serverip+":5000/driver/by_driver_id/"+driverid;
-            //var params = JSON.stringify(assignmentdict);
-            console.log(url)
-            http.open("DELETE", url, true);
-
-            //Send the proper header information along with the request
-            http.setRequestHeader("Content-type", "application/json");
-            http.onreadystatechange = function() {//Call a function when the state changes.
-                if(http.readyState == 4 && http.status == 200) {
-                    //alert(http.responseText);
-                    //$("#assignmentdetail").text(http.responseText)
-                    alert("deleted "+driverid)
-                    window.location.reload(true);
-                }
-            }
-            http.send();
-        }
-        else{
-            alert("Cancelled delete!")
         }
     },
     saveDutySlip: function(dsid){

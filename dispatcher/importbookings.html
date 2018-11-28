@@ -20,6 +20,8 @@
 }
 a { text-decoration: none }
 </style>
+<script src="assets/js/core/jquery.min.js" type="text/javascript"></script>
+
 </head>
 <body>
 <pre>
@@ -34,9 +36,21 @@ a { text-decoration: none }
 Output Format: <select name="format" onchange="setfmt()">
 <!--<option value="csv" selected> CSV</option>-->
 <option value="json"> JSON</option>
-<!--<option value="form"> FORMULAE</option>-->
-<option value="html"> HTML</option>
+<!--<option value="form"> FORMULAE</option>
+<option value="html"> HTML</option>-->
 </select><br />
+Customer ID: <select name="customer" id="customer">
+<!--<option value="csv" selected> CSV</option>
+<option value="json"> JSON</option>-->
+<!--<option value="form"> FORMULAE</option>
+<option value="html"> HTML</option>-->
+</select><br/>
+Product ID: <select name="product" id="product">
+<!--<option value="csv" selected> CSV</option>
+<option value="json"> JSON</option>-->
+<!--<option value="form"> FORMULAE</option>
+<option value="html"> HTML</option>-->
+</select><br/>
 <div id="drop">Drop a spreadsheet file here to see sheet data</div>
 <input type="file" name="xlfile" id="xlf" /> ... or click here to select a file
 <button id="process" onclick="process_output()">Process!</button>
@@ -76,11 +90,32 @@ var XW = {
 	worker: './assets/js/jsxlsx/xlsxworker.js'
 };
 
+var get_cust_list=function(){
+     $.getJSON('http://'+serverip+':5000/customer',function(data){
+                console.log(data.resp)
+                for (i=0;i<data.resp.length;i++){
+                    $("#customer").append('<option>' + data.resp[i].cust_id + '</option>');
+                }
+                $("#customer").append('<option>retail</option>');
+            })
+}
+
+    
+var get_prod_list=function(){
+     $.getJSON('http://'+serverip+':5000/product',function(data){
+                console.log(data.resp)
+                for (i=0;i<data.resp.length;i++){
+                    $("#product").append('<option>' + data.resp[i].product_id + '</option>');
+                }
+                
+            })
+}
 var global_wb;
 var global_output; 
 var bookinglist=[];
 var serverip="192.168.56.101"
-
+get_cust_list();
+    get_prod_list();
 var submit_output=function(){
     var OUT = document.getElementById('out');
     console.log("Submitting bookings")
@@ -175,7 +210,7 @@ var process_wb = (function() {
 		});
 		return result.join("\n");
 	};
-*/
+
 	var to_html = function to_html(workbook) {
 		HTMLOUT.innerHTML = "";
 		workbook.SheetNames.forEach(function(sheetName) {
@@ -184,7 +219,7 @@ var process_wb = (function() {
 		});
 		return "";
 	};
-
+*/
 	return function process_wb(wb) {
 		global_wb = wb;
 		var output = "";
