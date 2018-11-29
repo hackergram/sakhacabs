@@ -30,49 +30,54 @@
 </head>
 <body>
     <div class="container">
+        
         <div class="col-sm-12 col-md-12 home-booking-form" id="booking-form">
-            <div class="page-header clearfix">
+            <div class="row">
+                <div class="page-header clearfix">
                 <div class="col-sm-12 small-cols">
                     <h1 class="medium-bold-title">Book A Sakha Cab</h1>
                     <span></span>
                 </div>
             </div>
+            </div>
             <form method="post" id="contact" novalidate="novalidate">
-
-                <div id="system_details" class="form-group clearfix">
-                        <div class="col-sm-12 small-cols">
-                            <label>System Details</label>
-                        
-                        </div>
+                <div class="row">
+                    <div id="system_details" class="form-group clearfix">
+                        <div class="row">
+                            <div class="col-sm-12 small-cols">
+                                <label>System Details</label>
+                            </div>
+                            </div>
                         <div class="row">
                             <div class="col-sm-6 small-cols">
-                                <select name="customer" id="customer" class="form-control">
+                                <select name="cust_id" id="cust_id" class="form-control">
                                     <option value="0" selected="selected">Select Customer</option>
                                 </select>
                             </div>
                             <div class="col-sm-6 small-cols">
-                                <select name="product" id="product" class="form-control">
+                                <select name="product_id" id="product_id" class="form-control">
                                     <option value="0" selected="selected">Select Product</option>
                                 </select>
                             </div>
                         </div>
-                        <div  class="row">
+                        <div class="row">
                             <div class="col-sm-6 small-cols" id="cust_details"></div>
                             <div class="col-sm-6 small-cols" id="prod_details"></div>
                         </div>'
                     </div>
-                <script>
+                
+                    <script>
                         var serverip="192.168.56.101"
                         var get_cust_list=function(){
 
                             $.getJSON('http://'+serverip+':5000/customer',function(data){
                                 console.log(data.resp)
                                 for (i=0;i<data.resp.length;i++){
-                                    $("#customer").append('<option>' + data.resp[i].cust_id + '</option>');
+                                    $("#cust_id").append('<option>' + data.resp[i].cust_id + '</option>');
                                 }
-                                $("#customer").append('<option>retail</option>');
+                                $("#cust_id").append('<option>retail</option>');
 
-                                $("#customer").on("change", function(event) { 
+                                $("#cust_id").on("change", function(event) { 
                                     console.log(this.value)
                                     $("#cust_data").remove()
                                     $("#cust_details").append("<div id='cust_data'>"+this.value+"</div>")
@@ -84,14 +89,21 @@
                             $.getJSON('http://'+serverip+':5000/product',function(data){
                                 console.log(data.resp)
                                 for (i=0;i<data.resp.length;i++){
-                                    $("#product").append('<option>' + data.resp[i].product_id + '</option>');
+                                    $("#product_id").append('<option>' + data.resp[i].product_id + '</option>');
                                 }
 
 
-                                $("#product").on("change", function(event) { 
+                                $("#product_id").on("change", function(event) { 
                                     console.log(this.value)
                                      $("#prod_data").remove()
-                                    $("#prod_details").append("<div id='prod_data'>"+this.value+"</div>")
+                                    var prod_detail="No details found"
+                                    for(i=0;i<data.resp.length;i++){
+                                        if(data.resp[i].product_id===this.value){
+                                            prod_detail=data.resp[i].desc
+                                        }
+                                        
+                                    }
+                                    $("#prod_details").append("<div id='prod_data'>"+prod_detail+"</div>")
                                 } );
 
 
@@ -99,11 +111,15 @@
                         }
                         get_cust_list();
                         get_prod_list();
-</script>
-                <div id="personal_details" class="form-group clearfix">
-                        <div class="col-sm-12 small-cols">
-                                <label>Personal Information</label>
+                </script>
+                </div>
+                <div class="row">  
+                    <div id="personal_details" class="form-group clearfix">
+                        <div class="row">
+                            <div class="col-sm-12 small-cols">
+                                <label>Contact Information</label>
                             </div>
+                        </div>
                         <div class="row">
                             <div class="col-sm-12 small-cols">
                                 <input type="text" name="person_name" id="person_name" class="form-control" placeholder="Passenger/Contact Name">
@@ -111,102 +127,133 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6 small-cols">
-                                <input type="text" name="ph_no" id="ph_no" class="form-control" placeholder="Phone No." pattern="^\d{10}$">
+                                <input type="text" name="mob_no" id="mob_no" class="form-control" placeholder="Phone No." pattern="^\d{10}$">
                             </div>
                             <div class="col-sm-6 small-cols">   
                                 <input type="email" name="email" id="email" class="form-control" placeholder="Email">
                             </div>
                         </div>
                     </div>
-                <div class="form-group clearfix">
-                        <div class="col-sm-12 small-cols">
-                            <label>Pickup Time</label>
+                </div> 
+                <div class="row">
+                    <div id="reporting_details" class="form-group clearfix">
+                        <div class="row">
+                            <div class="col-sm-12 small-cols">
+                            <label>Reporting Information</label>
+                        </div>   
                         </div>
-                        <div class="col-sm-6 small-cols date-picker-wrap">
-                            <div class="form-group">
-                                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-                                    <input type="text" id="pickup_time" class="form-control datetimepicker-input" placeholder="Pick up time" data-target="#datetimepicker1" />
-                                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
-                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        <div class="row">
+                            <div class="col-sm-6 small-cols date-picker-wrap">
+                                <div class="form-group">
+                                    <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                                        <input type="text" id="pickup_timestamp" class="form-control datetimepicker-input" placeholder="Reporting Time" data-target="#datetimepicker1" />
+                                        <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-sm-6 small-cols">
+                                <select id="pickup_city" name="pickup_city" class="form-control ">
+                                    <option value="0" selected="selected">Select City</option>
+                                    <option data-val="1098" value="Delhi">Delhi</option>
+                                    <option data-val="1095" value="Jaipur">Jaipur</option>
+                                </select>
+                            </div>   
                         </div>
-</div>
-                <div class="form-group clearfix">
-                        <div class="col-sm-12 small-cols">
-                            <label>Pickup Location</label>
+                        <div class="row">
+                            <div class="col-sm-12 small-cols">
+                                <input type="text" id="pickup_location" name="pickup-location" class="form-control" placeholder="Enter pickup location">
+                            </div>
                         </div>
-                        <div class="col-sm-6 small-cols">
-                            <select id="city" name="city" class="form-control ">
-                                <option value="0" selected="selected">Select City</option>
-                                <option data-val="1098" value="Delhi">Delhi</option>
-                                <option data-val="1095" value="Jaipur">Jaipur</option>
-                            </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="additional_info" class="form-group clearfix">
+                        <div class="row">
+                            <div class="col-sm-12 small-cols">
+                                <label>Additional Information</label>
+                            </div>
                         </div>
-                        <div class="col-sm-6 small-cols">
-                            <input type="text" id="pickup_location" name="pickup-location" class="form-control" placeholder="Enter pickup location">
-                        </div>
-</div>
-                <div class="form-group clearfix">
-                    <div class="col-sm-12 small-cols">
-                        <label>Cab Category</label>
+                        <div class="row">
+                            <div class="col-sm-6 small-cols">
+                                <select id="drop_city" name="drop_city" class="form-control ">
+                                    <option value="0" selected="selected">Select City</option>
+                                    <option data-val="1098" value="Delhi">Delhi</option>
+                                    <option data-val="1095" value="Jaipur">Jaipur</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6 small-cols">
+                                <input type="text" id="drop_location" name="drop-location" class="form-control" placeholder="Enter Drop location">
+                            </div>
+                        </div>   
                     </div>
-                    <div class="col-sm-6 small-cols ">
-                        <select name="cab" id="cab" class="form-control">
-                            <option value="0" selected="selected">Select Cab</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-6 small-cols ">
-                        <select name="no_of_passengers" id="no_of_passengers" class="form-control">
-                            <option selected="selected">No of passengers</option>
-                            <option value="1">ONE</option>
-                            <option value="2">TWO</option>
-                            <option value="3">THREE</option>
-                        </select>
-                    </div>
-</div>
-                <div class="form-group clearfix">
-                    <div class="col-sm-12 small-cols">
-                        <label>Drop Location</label>
-                    </div>
-                    <div class="col-sm-6 small-cols">
-                        <select id="drop_city" name="drop_city" class="form-control ">
-                            <option value="0" selected="selected">Select City</option>
-                            <option data-val="1098" value="Delhi">Delhi</option>
-                            <option data-val="1095" value="Jaipur">Jaipur</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-6 small-cols">
-                        <input type="text" id="drop_location" name="drop-location" class="form-control" placeholder="Enter Drop location">
-                    </div>
-</div>
-                <div class="form-group clearfix">
-                    <div class="col-sm-7 small-cols ">
-                        <input type="hidden" name="admin_email" class="admin_email">
-                    </div> 
                     <script>
-                            $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:MM:SS'});
-                        function submit_booking(){
-                            console.log("Submitting booking");
-                            fieldset={}
-                            var formfields=document.getElementsByClassName("form-control")
-                            for (i=0;i<formfields.length;i++){
-                                if(formfields[i].id==="pickup_time"){
-                                    fieldset[formfields[i].id]=moment(formfields[i].value,'YYYY-MM-DD HH:MM:SS').toDate()
-                                }
-                                else{
-                                    fieldset[formfields[i].id]=formfields[i].value    
-                                }       
+                    $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:MM:SS'});
+                    function submit_booking(){
+                        console.log("Submitting booking");
+                        fieldset={}
+                        var formfields=document.getElementsByClassName("form-control")
+                        for (i=0;i<formfields.length;i++){
+                            if(formfields[i].id==="pickup_timestamp"){
+                                fieldset[formfields[i].id]=moment(formfields[i].value,'YYYY-MM-DD HH:MM:SS').toDate()
                             }
-                            console.log(fieldset)
+                            else{
+                                fieldset[formfields[i].id]=formfields[i].value    
+                            }       
                         }
-                    </script> 
-                    <div class="col-sm-5 small-cols ">
+                        fieldset['pickup_location']=fieldset['pickup_city']+"-"+fieldset['pickup_location']
+                        delete fieldset["pickup_city"]
+                        fieldset['drop_location']=fieldset['drop_city']+"-"+fieldset['drop_location']
+                        delete fieldset["drop_city"]
+                        fieldset['passenger_detail']=fieldset['person_name']+" "+fieldset['mob_no']+" "+fieldset['email']
+                        fieldset['passenger_mobile']=fieldset['mob_no']
+                        delete fieldset['person_name']
+                        delete fieldset['mob_no']
+                        delete fieldset['email']
+                        if (fieldset['cust_id']==='0'){
+                            fieldset['cust_id']="retail"
+                        }
+                        if (fieldset['product_id']==='0'){
+                            fieldset['product_id']="SINGLTRP"
+                            
+                        }
+                        fieldset['booking_channel']="webform"
+                        console.log(fieldset)
+                         t=confirm("Really save bookings with params \n "+JSON.stringify(fieldset))
+                        if (t===true){
+                            var params = JSON.stringify(fieldset);
+                            var http = new XMLHttpRequest(); 
+                            var url = "http://"+serverip+":5000/booking/single";
+                            //var params = JSON.stringify(assignmentdict);
+                            console.log(url)
+                            http.open("POST", url, true);
+
+                            //Send the proper header information along with the request
+                            http.setRequestHeader("Content-type", "application/json");
+                            http.onreadystatechange = function() {//Call a function when the state changes.
+                                if(http.readyState == 4 && http.status == 200) {
+                                    //alert(http.responseText);
+                                    //$("#assignmentdetail").text(http.responseText)
+                                    alert("saved\n"+http.responseText)
+                                    window.location.reload(true);
+                                }
+                            }
+                            http.send(params);
+                        }
+                        else{
+                            alert("Cancelled save booking!")
+                        }
+                    }
+                </script> 
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 small-cols ">
                         <input class="btn default-btn sakha-booking-btn"  name="submit_form" value="Book a Cab" onclick="submit_booking()">
                     </div>
-</div>
+                </div>
             </form>
+               
         </div>    
     </div>
     <style>
