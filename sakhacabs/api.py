@@ -186,19 +186,22 @@ class BookingResource(Resource):
     def post(self,command=None):	
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
+		if command=="single":
+			booking=new_booking(respdict)
+			return jsonify({"resp":[booking],"status":"success"})
 		if command=="import":
 			bookinglist=import_gadv(respdict)
-			return jsonify({"resp":bookinglist})
+			return jsonify({"resp":bookinglist,"status":"success"})
 		return jsonify({"resp":[]})
     def put(self,docid=None):
         return jsonify({"resp":[]})
     
-    def delete(self,docid):
-		if len(documents.Booking.objects.with_id(docid))>0:
-			documents.Booking.objects.with_id(docid).delete()
-			return jsonify({"resp":[True]})
+    def delete(self,booking_id):
+		if len(documents.Booking.objects(booking_id=booking_id))>0:
+			documents.Booking.objects(booking_id=booking_id).delete()
+			return jsonify({"resp":[],"status":"success"})
 		else:
-			return jsonify({"resp":[False]})
+			return jsonify({"resp":[],"status":"error"})
 api.add_resource(BookingResource,"/booking",endpoint="booking")
 api.add_resource(BookingResource,"/booking/by_id/<string:docid>",endpoint="booking_docid")
 api.add_resource(BookingResource,"/booking/by_booking_id/<string:booking_id>",endpoint="booking_id")

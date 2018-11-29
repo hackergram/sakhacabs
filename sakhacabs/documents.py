@@ -64,8 +64,7 @@ class Booking(PPrintMixin,DynamicDocument):
     product_id = fields.StringField()
     cust_id=fields.StringField()
     booking_channel=fields.StringField()
-    def __repr__(self):
-		return "Booking (%r)" %(self.booking_id)
+    
 class Product(PPrintMixin,DynamicDocument):
     product_id=fields.StringField(unique=True,required=True)
     

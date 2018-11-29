@@ -162,7 +162,23 @@ DutySlips record assignment execution. DutySlips are issued by the dispatcher an
 A DutySlip can not be deleted once the open time has been set by the driver, i.e. after execution on an assignment has begun.
 '''
 
-
+def new_booking(respdict):
+	bookingdict={}
+	sakhacabsxpal.logger.info("Creating new booking")
+	sakhacabsxpal.logger.info("{}".format(respdict))
+	for key in respdict.keys():
+		if key in ["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","drop_location","booking_channel","num_passengers"]:
+			bookingdict[key]=respdict[key]
+			respdict.pop(key)
+		
+	sakhacabsxpal.logger.info("{}".format(respdict))
+	b=documents.Booking(booking_id=utils.new_booking_id(),**bookingdict)
+	b.cust_meta=respdict
+	b.save()
+	b.reload()
+	sakhacabsxpal.logger.info("{}".format(b))
+	return b
+	
 def save_assignment(assignmentdict,assignment_id=None):
     '''
     Creates a new assignment/Updates an existing assignment with the provided bookings and duty slips
@@ -285,7 +301,7 @@ def import_gadv(bookinglist):
 			#b=documents.Booking.objects(booking_id=booking['booking_id'])[0]
 			#b.cust_meta=booking
 		else:
-			sakhacabsxpal.logger.info("New Booking")
+			sakhacabsxpal.logger.info("New Booking") #TODO - Merge with single booking workflow
 			b=documents.Booking(booking_id=utils.new_booking_id(),cust_meta=booking,cust_id="gadventures")
 			b.passenger_detail=str(b.cust_meta['Booking ID'])+"\n"+b.cust_meta['Trip Code']+"\n"+b.cust_meta['Passengers']
 			b.pickup_location="Intl Airport, Flight #"+str(b.cust_meta['Pick-Up'])
