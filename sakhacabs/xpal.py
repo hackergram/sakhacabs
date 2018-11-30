@@ -314,7 +314,7 @@ def export_bookings():
 	for booking in bookings:
 		del booking['_id']
 	bookingdf=pandas.DataFrame(bookings)
-	bookingdf.to_csv("./dispatcher/reports/bookings.csv")
+	bookingdf.to_csv("./dispatcher/reports/bookings.csv", encoding="utf-8")
 	return "reports/bookings.csv"
 	
 	
