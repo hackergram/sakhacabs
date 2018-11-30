@@ -32,6 +32,7 @@ sakha={
         setInterval( function () {
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
+       
         
     },
     fillLocationUpdates: function(){
@@ -66,10 +67,14 @@ sakha={
         var table = $('#drivertable').DataTable({
             //ajax: 'http://'+serverip+':5000/driver/all'
             select: true,
+            buttons: [
+            'excel'
+            ],
             ajax: {
                 url: 'http://'+serverip+':5000/driver',
                 dataSrc: "resp" 
             },
+            
             columns: [
                 //{ data: function (row){retturn'metadata.first_name' + "metadata.last_name" }},
                 { data: null, render: function (data){
@@ -102,7 +107,11 @@ sakha={
         setInterval( function () {
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
-       
+        $("#exportdrivers").on("click",function(){
+            $.getJSON('http://'+serverip+':5000/driver/export',function(data){
+                window.open(data.resp[0],"_blank")
+            })
+        })
     },
     fillVehicles: function(){
         console.log("Filling vehicle data");
@@ -752,6 +761,48 @@ sakha={
         }
         http.send(params);
     
-    }   
+    },
+    JSONtoCSV: function(jsonstring){
+        console.log(jsonstring)
+        function parseJSONToCSVStr(jsonData) {
+            if(jsonData.length == 0) {
+                return '';
+            }
+
+            let keys = Object.keys(jsonData[0]);
+
+            let columnDelimiter = ',';
+            let lineDelimiter = '\n';
+
+            let csvColumnHeader = keys.join(columnDelimiter);
+            let csvStr = csvColumnHeader + lineDelimiter;
+
+            jsonData.forEach(item => {
+                keys.forEach((key, index) => {
+                    if( (index > 0) && (index < keys.length-1) ) {
+                        csvStr += columnDelimiter;
+                    }
+                    csvStr += item[key];
+                });
+                csvStr += lineDelimiter;
+            });
+
+            return encodeURIComponent(csvStr);;
+        }
+        
+        function exportToCsvFile(jsonData) {
+            let csvStr = parseJSONToCSVStr(jsonData);
+            let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
+
+            let exportFileDefaultName = 'data.csv';
+            console.log("exporting " + csvStr)
+            let linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            console.log("clicking")
+            linkElement.click();
+        }
+        exportToCsvFile(jsonstring)
+    }
 }
 

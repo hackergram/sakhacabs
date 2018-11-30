@@ -617,9 +617,10 @@
                         <div class="card-header card-header-primary">
                             <h4 class="card-title">Driver Status</h4>
                             <p class="card-category">Driver status</p>
+                            <button id="exportdrivers">Export</button>
                         </div>
                         <div class="card-body table-responsive">
-                            <table class="table table-hover table-striped" id="drivertable">
+                            <table class=" table table-hover" id="drivertable">
                                 <thead>
                                    <th>Driver ID</th>
                                     <th>Mobile Number</th>
@@ -710,13 +711,33 @@
     <script type="text/javascript" charset="utf8" src="assets/js/dataTables.select.min.js"></script>
     
     <link rel="stylesheet" type="text/css" src="assets/css/responsive.dataTables.min.css">
-    <script type="text/javascript" charset="utf8" src="assets/js/dataTables.responsive.min.js"></script>
-  <!-- Sakha Cabs Specific Functions -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css">
+    <!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.bootstrap4.min.css ">
+    -->
+     
+
+    
+  <script type=" https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+     <!-- <script type="text/javascript" charset="utf8" src="assets/js/dataTables.responsive.min.js"></script>
+ Sakha Cabs Specific Functions -->
     <script src="assets/js/sakha.js"></script>
     <script src="assets/js/knockout-3.4.2.js"></script>
     <script src="assets/js/knockout.mapping-latest.js"></script>
     <script src="assets/js/knockout-paging.js"></script>
  
+    
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+   <!--  <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+-->
+ 
+    
+    
     <script type="text/javascript">
         var assignmentdict={}
         assignmentdict['assignment']={}

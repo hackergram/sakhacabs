@@ -221,7 +221,7 @@
                         fieldset['booking_channel']="webform"
                         console.log(fieldset)
                          t=confirm("Really save bookings with params \n "+JSON.stringify(fieldset))
-                        if (t===true){
+                        if (t===true){  
                             var params = JSON.stringify(fieldset);
                             var http = new XMLHttpRequest(); 
                             var url = "http://"+serverip+":5000/booking/single";
