@@ -32,7 +32,11 @@ sakha={
         setInterval( function () {
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
-       
+         $("#exportbookings").on("click",function(){
+            $.getJSON('http://'+serverip+':5000/booking/export',function(data){
+                window.open(data.resp[0],"_blank")
+            })
+        })
         
     },
     fillLocationUpdates: function(){
@@ -61,6 +65,11 @@ sakha={
         setInterval( function () {
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
+          $("#exportlocupdates").on("click",function(){
+            $.getJSON('http://'+serverip+':5000/locupdate/export',function(data){
+                window.open(data.resp[0],"_blank")
+            })
+        })
     },
     fillDrivers: function(){
         console.log("Filling driver data");
@@ -138,7 +147,11 @@ sakha={
         setInterval( function () {
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
-       
+          $("#exportvehicles").on("click",function(){
+            $.getJSON('http://'+serverip+':5000/vehicle/export',function(data){
+                window.open(data.resp[0],"_blank")
+            })
+        })
         
     },
     fillDutySlips: function(){
