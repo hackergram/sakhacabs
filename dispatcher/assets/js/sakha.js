@@ -18,9 +18,13 @@ sakha={
                 { width:"15%",data: 'pickup_timestamp',defaultContent:"None",render: function(data){return new Date(data['$date'])}},
                 {width:"15%", data: 'pickup_location',defaultContent:"None",render: function(data){if(data){return data}}},
                 {width:"20%", data: 'passenger_detail', defaultContent:"None", render: function(data){if(data){return data}}},
-                {width:"20%", data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
-                {width:"20%", data: 'booking_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {width:"15%", data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {width:"15%", data: 'booking_id', defaultContent:"None", render: function(data){if(data){return data}}},
                 {width:"10%", data: 'assignment', defaultContent:"None", render: function(data){if(data){return data}}},
+                { data: null,render: function(data){
+                    bookingid='"'+data.booking_id+'"'
+                    return "<button onclick='sakha.deleteBooking("+bookingid+")'>Delete</button>"
+                }}
             ],
             scrollY: 200,
             scrollX:true
@@ -663,7 +667,7 @@ sakha={
         }
     },
      deleteDriver: function(driverid){
-        t=confirm("Really Delete Duty Slip with ID "+driverid)
+        t=confirm("Really Delete Driver with ID "+driverid)
         if (t===true){
             
             var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
@@ -679,6 +683,32 @@ sakha={
                     //alert(http.responseText);
                     //$("#assignmentdetail").text(http.responseText)
                     alert("deleted "+driverid)
+                    window.location.reload(true);
+                }
+            }
+            http.send();
+        }
+        else{
+            alert("Cancelled delete!")
+        }
+    },
+    deleteBooking: function(booking_id){
+        t=confirm("Really Delete Booking with ID "+booking_id)
+        if (t===true){
+            
+            var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+            var url = "http://"+serverip+":5000/booking/by_booking_id/"+booking_id;
+            //var params = JSON.stringify(assignmentdict);
+            console.log(url)
+            http.open("DELETE", url, true);
+
+            //Send the proper header information along with the request
+            http.setRequestHeader("Content-type", "application/json");
+            http.onreadystatechange = function() {//Call a function when the state changes.
+                if(http.readyState == 4 && http.status == 200) {
+                    //alert(http.responseText);
+                    //$("#assignmentdetail").text(http.responseText)
+                    alert("deleted "+booking_id)
                     window.location.reload(true);
                 }
             }
