@@ -89,7 +89,11 @@ api.add_resource(DriverResource,"/driver/<string:command>",endpoint="driver_comm
 
 #TODO - Complete CRUD
 class VehicleResource(Resource):
-    def get(self,vehicle_id=None,docid=None):
+    def get(self,vehicle_id=None,docid=None,command=None):
+        if command=="export":
+			fileloc=export_vehicles()
+			return jsonify({"resp":[fileloc],"status":"success"})
+		
         if docid:
             if documents.Vehicle.objects.with_id(docid):
                 return jsonify({"resp": [json.loads(documents.Vehicle.objects.with_id(docid).to_json())]})
@@ -114,17 +118,20 @@ class VehicleResource(Resource):
 api.add_resource(VehicleResource,"/vehicle",endpoint="vehicle")
 api.add_resource(VehicleResource,"/vehicle/by_id/<string:docid>",endpoint="vehicle_docid")
 api.add_resource(VehicleResource,"/vehicle/by_vehicle_id/<string:vehicle_id>",endpoint="vehicleid")
-
+api.add_resource(VehicleResource,"/vehicle/<string:command>",endpoint="vehicle_command")
 #TODO - Location validatin and geocode lookup, handoff lookup
 class LocationUpdateResource(Resource):
-    def get(self,docid=None):
-        if docid:
-            if documents.LocationUpdate.objects.with_id(docid):
-                return jsonify({"resp": [json.loads(documents.LocationUpdate.objects.with_id(docid).to_json())]})
-            else:
-                return jsonify({"resp":[]})
-        else:
-            return jsonify({"resp": json.loads(documents.LocationUpdate.objects.to_json())})
+    def get(self,docid=None,command=None):
+		if command=="export":
+			fileloc=export_locupdates()
+			return jsonify({"resp":[fileloc],"status":"success"})
+		if docid:
+			if documents.LocationUpdate.objects.with_id(docid):
+				return jsonify({"resp": [json.loads(documents.LocationUpdate.objects.with_id(docid).to_json())]})
+			else:
+				return jsonify({"resp":[]})
+		else:
+			return jsonify({"resp": json.loads(documents.LocationUpdate.objects.to_json())})
     def post(self):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
@@ -172,9 +179,12 @@ class LocationUpdateResource(Resource):
 			return jsonify({"resp":[False]})
 api.add_resource(LocationUpdateResource,"/locupdate",endpoint="locupdate")
 api.add_resource(LocationUpdateResource,"/locupdate/by_id/<string:docid>",endpoint="locupdate_docid")
-
+api.add_resource(LocationUpdateResource,"/locupdate/<string:command>",endpoint="locupdate_command")
 class BookingResource(Resource):
-    def get(self,docid=None,booking_id=None):
+    def get(self,docid=None,booking_id=None,command=None):
+        if command=="export":
+			fileloc=export_bookings()
+			return jsonify({"resp":[fileloc],"status":"success"})
         if docid:
             if documents.Booking.objects.with_id(docid):
                 return jsonify({"resp": [json.loads(documents.Booking.objects.with_id(docid).to_json())]})

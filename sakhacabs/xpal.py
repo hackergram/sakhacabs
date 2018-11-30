@@ -289,6 +289,35 @@ def export_drivers():
 	driverdf=pandas.DataFrame(drivers)
 	driverdf.to_csv("./dispatcher/reports/drivers.csv")
 	return "reports/drivers.csv"
+	
+def export_locupdates():
+	locupdates=documents.LocationUpdate.objects.to_json()
+	locupdates=json.loads(locupdates)
+	for locupdate in locupdates:
+		del locupdate['_id']
+	locupdatedf=pandas.DataFrame(locupdates)
+	locupdatedf.to_csv("./dispatcher/reports/locupdates.csv")
+	return "reports/locupdates.csv"
+	
+def export_vehicles():
+	vehicles=documents.Vehicle.objects.to_json()
+	vehicles=json.loads(vehicles)
+	for vehicle in vehicles:
+		del vehicle['_id']
+	vehicledf=pandas.DataFrame(vehicles)
+	vehicledf.to_csv("./dispatcher/reports/vehicles.csv")
+	return "reports/vehicles.csv"
+
+def export_bookings():
+	bookings=documents.Booking.objects.to_json()
+	bookings=json.loads(bookings)
+	for booking in bookings:
+		del booking['_id']
+	bookingdf=pandas.DataFrame(bookings)
+	bookingdf.to_csv("./dispatcher/reports/bookings.csv")
+	return "reports/bookings.csv"
+	
+	
 #def import_gadv():
 def import_gadv(bookinglist):
 	'''
