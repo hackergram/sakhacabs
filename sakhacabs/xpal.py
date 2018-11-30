@@ -296,6 +296,7 @@ def export_locupdates():
 	for locupdate in locupdates:
 		del locupdate['_id']
 	locupdatedf=pandas.DataFrame(locupdates)
+	locupdatedf.timestamp=locupdatedf.timestamp.apply(lambda x: datetime.datetime.fromtimestamp((x['$date']+1)/1000).strftime("%Y-%m-%d %H:%M:%S"))
 	locupdatedf.to_csv("./dispatcher/reports/locupdates.csv")
 	return "reports/locupdates.csv"
 	
@@ -314,6 +315,8 @@ def export_bookings():
 	for booking in bookings:
 		del booking['_id']
 	bookingdf=pandas.DataFrame(bookings)
+	bookingdf.created_timestamp=bookingdf.created_timestamp.apply(lambda x: datetime.datetime.fromtimestamp((x['$date']+1)/1000).strftime("%Y-%m-%d %H:%M:%S"))
+	bookingdf.pickup_timestamp=bookingdf.pickup_timestamp.apply(lambda x: datetime.datetime.fromtimestamp((x['$date']+1)/1000).strftime("%Y-%m-%d %H:%M:%S"))
 	bookingdf.to_csv("./dispatcher/reports/bookings.csv", encoding="utf-8")
 	return "reports/bookings.csv"
 	
