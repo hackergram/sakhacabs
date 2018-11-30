@@ -280,7 +280,15 @@ def get_vehicle_by_vid(vid):
     else:
         return None
 
-	
+
+def export_drivers():
+	drivers=documents.Driver.objects.to_json()
+	drivers=json.loads(drivers)
+	for driver in drivers:
+		del driver['_id']
+	driverdf=pandas.DataFrame(drivers)
+	driverdf.to_csv("./dispatcher/reports/drivers.csv")
+	return "reports/drivers.csv"
 #def import_gadv():
 def import_gadv(bookinglist):
 	'''

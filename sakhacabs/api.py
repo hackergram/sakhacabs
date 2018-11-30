@@ -28,18 +28,21 @@ parser = reqparse.RequestParser()
 
 #TODO - Testing - different scenarios
 class DriverResource(Resource):
-    def get(self,tgid=None,mobile_num=None,docid=None,driver_id=None):
-        if docid:
-            queryset=documents.Driver.objects.with_id(docid)
-        elif tgid:
-            queryset=documents.Driver.objects(tgid=tgid)
-        elif mobile_num:
+    def get(self,tgid=None,mobile_num=None,docid=None,driver_id=None, command=None):
+		if command=="export":
+			fileloc=export_drivers()
+			return jsonify({"resp":[fileloc],"status":"success"})
+		if docid:
+			queryset=documents.Driver.objects.with_id(docid)
+		elif tgid:
+			queryset=documents.Driver.objects(tgid=tgid)
+		elif mobile_num:
 			queryset=documents.Driver.objects(mobile_num=mobile_num)
-        elif driver_id:
-            queryset=documents.Driver.objects(driver_id=driver_id)
-        else:
-            queryset=documents.Driver.objects
-        return jsonify({"resp":json.loads(queryset.to_json()),"status":"success"}) 
+		elif driver_id:
+			queryset=documents.Driver.objects(driver_id=driver_id)
+		else:
+			queryset=documents.Driver.objects
+		return jsonify({"resp":json.loads(queryset.to_json()),"status":"success"}) 
     def post(self):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -82,6 +85,7 @@ api.add_resource(DriverResource,"/driver/by_tgid/<int:tgid>",endpoint="tgid")
 api.add_resource(DriverResource,"/driver/by_mobile/<string:mobile_num>",endpoint="mobile")
 api.add_resource(DriverResource,"/driver/by_id/<string:docid>",endpoint="driver_docid")
 api.add_resource(DriverResource,"/driver/by_driver_id/<string:driver_id>",endpoint="driverid")
+api.add_resource(DriverResource,"/driver/<string:command>",endpoint="driver_command")
 
 #TODO - Complete CRUD
 class VehicleResource(Resource):
