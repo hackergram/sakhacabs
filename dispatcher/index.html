@@ -32,6 +32,8 @@
   </style>
  
     
+   
+    
 </head>
 
 <body class="">
@@ -406,7 +408,8 @@
                           <p class="card-category">Current Assignments</p>
                         </div>
                          <div class="card-body">
-                             <div class="row" data-bind="foreach: assignments.pageItems">
+                            
+                             <div class="row" id="assignmentcards"  data-bind="foreach: assignments.pageItems">
                                 <!--  <div class="col-lg-4 col-md-12"><span data-bind="text: _id.$oid"></span></div>-->
                                 
                                 <div class="col-lg-4 col-md-12">
@@ -740,7 +743,8 @@
 -->
  
     
-    
+     
+      
     <script type="text/javascript">
         var assignmentdict={}
         assignmentdict['assignment']={}
@@ -809,6 +813,8 @@
                 console.log("closing duty slip modal")
                 window.location.reload(false);
             })
+  
+                    
             
     	});
 	</script>

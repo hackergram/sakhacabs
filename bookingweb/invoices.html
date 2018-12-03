@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html style="" lang="en-US">
+<html prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# website: http://ogp.me/ns/website# og: http://ogp.me/ns#" class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients no-cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths js_active  vc_desktop  vc_transform  vc_transform  vc_transform " style="" lang="en-US">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" type="text/css" href="index_files/84db8.css" media="all">
     <meta charset="UTF-8"><meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cab Hire Services in Delhi,Jaipur | Sakha Consulting Wings</title>
+    <title>Invoicing | Sakha Consulting Wings</title>
 
    <!-- <script type="text/javascript" src="index_files/formJS.js"></script>-->
     <style type="text/css">.recentcomments
@@ -35,7 +35,7 @@
             <div class="row">
                 <div class="page-header clearfix">
                 <div class="col-sm-12 small-cols">
-                    <h1 class="medium-bold-title">Book A Sakha Cab</h1>
+                    <h1 class="medium-bold-title">Generate Invoices</h1>
                     <span></span>
                 </div>
             </div>
@@ -54,15 +54,10 @@
                                     <option value="0" selected="selected">Select Customer</option>
                                 </select>
                             </div>
-                            <div class="col-sm-6 small-cols">
-                                <select name="product_id" id="product_id" class="form-control">
-                                    <option value="0" selected="selected">Select Product</option>
-                                </select>
-                            </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-6 small-cols" id="cust_details"></div>
-                            <div class="col-sm-6 small-cols" id="prod_details"></div>
+                   
                         </div>'
                     </div>
                 
@@ -189,14 +184,14 @@
                         </div>   
                     </div>
                     <script>
-                    $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
+                    $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:MM:SS'});
                     function submit_booking(){
                         console.log("Submitting booking");
                         fieldset={}
                         var formfields=document.getElementsByClassName("form-control")
                         for (i=0;i<formfields.length;i++){
                             if(formfields[i].id==="pickup_timestamp"){
-                                fieldset[formfields[i].id]=moment(formfields[i].value,'YYYY-MM-DD HH:mm:ss').toDate()
+                                fieldset[formfields[i].id]=moment(formfields[i].value,'YYYY-MM-DD HH:MM:SS').toDate()
                             }
                             else{
                                 fieldset[formfields[i].id]=formfields[i].value    

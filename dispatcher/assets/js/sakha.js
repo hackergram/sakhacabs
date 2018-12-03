@@ -33,6 +33,7 @@ sakha={
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
          $("#exportbookings").on("click",function(){
+             console.log("exporing bookings")
             $.getJSON('http://'+serverip+':5000/booking/export',function(data){
                 window.open(data.resp[0],"_blank")
             })
@@ -266,17 +267,19 @@ sakha={
         this.fillDutySlips();
         
     },
-    fillAssignments: function(pagenum=1){
-        
+    fillAssignments: function(pagenum=1,searchdict={}){
+        element_id="assignmentcards"
         function AssignmentViewModel() {
+            
             var self = this;
             self.assignments = ko.observableArray().extend({ paged: { pageSize: 3 } });;
             self.setPage = function(newPage) {
                 self.chars.pageNumber(newPage);
             };
             var baseUri = 'http://'+serverip+':5000/assignment';
-            var dutyslipuri = 'http://'+serverip+':5000/dutyslip/by_assignment_id';
+            //var dutyslipuri = 'http://'+serverip+':5000/dutyslip/by_assignment_id';
             var assigns,assignswithids
+            /*
             $.getJSON(baseUri, function (data) {
                assigns=data.resp;
                mapassignments=function(){
@@ -286,26 +289,47 @@ sakha={
                mapassignments()
                
                 
-            });
-        }
-        ko.applyBindings(new AssignmentViewModel());
-        ko.bindingHandlers.date = {
-        update: function (element, valueAccessor) {
+            });*/
+            var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+            var url = "http://"+serverip+":5000/assignment/search";
+            var params = JSON.stringify(searchdict);
+            http.open("POST", url, true);
+
+            //Send the proper header information along with the request
+            http.setRequestHeader("Content-type", "application/json");
+            http.onreadystatechange = function() {//Call a function when the state changes.
+                if(http.readyState == 4 && http.status == 200) {
+                    
+                    assigns=JSON.parse(http.responseText).resp;
+                    mapassignments=function(){
+                            ko.mapping.fromJS(assigns, {}, self.assignments);
+                            console.log(self.assignments())
+                       }
+                    mapassignments();
+                }
+            }
+             
+            http.send(params);
             
-            var value = valueAccessor();
-            
-            //var date = moment(value());
-           //var strDate=new 
-           var strDate=new Date(value())
-           console.log(moment(value()).format('MMMM Do YYYY, h:mm:ss a'))
-            //var strDate = date.format();
-            //console.log(element)
-            $(element).text(moment(value()).format('MMMM Do YYYY, h:mm:ss a'))
-             //console.log(strDate)
         }
-    };
-       
         
+        
+        
+        ko.bindingHandlers.date = {
+            update: function (element, valueAccessor) {
+                var value = valueAccessor();
+                //var date = moment(value());
+                //var strDate=new 
+                var strDate=new Date(value())
+                console.log(moment(value()).format('MMMM Do YYYY, h:mm:ss a'))
+                //var strDate = date.format();
+                //console.log(element)
+                $(element).text(moment(value()).format('MMMM Do YYYY, h:mm:ss a'))
+                 //console.log(strDate)
+            }
+        };
+       
+        ko.applyBindings(new AssignmentViewModel(),document.getElementById(element_id));    
     },    
     fillAssignmentModal: function(assignmentid){
         console.log("Editing Assignment - " +  assignmentid);
@@ -523,7 +547,7 @@ sakha={
         for (i=0;i<bookings.length;i++){
             assignmentdict.assignment.bookings.push(bookings[i])
         }
-        
+        assignmentdict.assignment.cust_id=assignmentdict.assignment.bookings[0].cust_id
         dutyslips=$("#dutysliplist").DataTable().rows({selected: true }).data()
         for (i=0;i<dutyslips.length;i++){
             //dutyslips[i]['vehicle']=$("Vehicle_"+dutyslips[i].driver.driver_id).val()
@@ -614,7 +638,6 @@ sakha={
        document.getElementById("savedutyslip").setAttribute("onclick","sakha.saveDutySlip('"+dsid+"')")
                     
     },
-    
     saveDriver: function(driverid){
         console.log("Trying to save "+driverid)
         driverdict={}
@@ -688,7 +711,7 @@ sakha={
             alert("Cancelled delete!")
         }
     },
-     deleteDriver: function(driverid){
+    deleteDriver: function(driverid){
         t=confirm("Really Delete Driver with ID "+driverid)
         if (t===true){
             
