@@ -25,3 +25,9 @@ def get_utc_ts(ts):
 def get_local_ts(ts):
     adjts = ts - UTC_OFFSET_TIMEDELTA
     return adjts
+
+def get_ts_string(x):
+	return datetime.datetime.fromtimestamp((x['$date']+1)/1000).strftime("%Y-%m-%d %H:%M:%S")
+
+def get_ts(x):
+	return datetime.datetime.fromtimestamp((x['$date']+1)/1000)

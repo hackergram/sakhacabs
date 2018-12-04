@@ -64,6 +64,7 @@ class Booking(PPrintMixin,DynamicDocument):
     product_id = fields.StringField()
     cust_id=fields.StringField()
     booking_channel=fields.StringField()
+    status=fields.StringField()
     
 class Product(PPrintMixin,DynamicDocument):
     product_id=fields.StringField(unique=True,required=True)
@@ -77,11 +78,13 @@ class LocationUpdate(PPrintMixin,Document):
     handoff=fields.StringField()
     
 class Assignment(PPrintMixin,Document):
+    cust_id=fields.StringField()
     created_timestamp=fields.DateTimeField(default=datetime.datetime.utcnow)    
     reporting_timestamp=fields.DateTimeField()
     reporting_location=fields.StringField()
     drop_location=fields.StringField()
     bookings=fields.SortedListField(fields.ReferenceField(Booking))
+    status=fields.StringField()
     meta = {'queryset_class':CustomQuerySet}    
     def to_json(self):
         data=self.to_mongo()
@@ -105,3 +108,7 @@ class DutySlip(PPrintMixin,Document):
     status=fields.StringField()
     payment_mode=fields.StringField()
     
+class Invoice(PPrintMixin,DynamicDocument):
+	cust_id=fields.StringField()
+	invoice_date=fields.DateTimeField()
+	invoicelines=fields.ListField(fields.DictField())

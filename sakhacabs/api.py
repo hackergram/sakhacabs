@@ -235,19 +235,42 @@ class AssignmentResource(Resource):
 			assignmentlist.append(assignmentdict)
         #return jsonify({"resp": json.loads(queryset.to_json())})
         return jsonify({"resp": assignmentlist,"status":"success"})
-    def post(self):
+    def post(self,command=None):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
+        if command=="search":
+			search_keys=respdict
+			date_frm=None
+			date_to=None
+			cust_id=None
+			app.logger.info(search_keys)
+			if "date_frm" in search_keys and search_keys['date_frm']!="":
+				date_frm=datetime.datetime.strptime(search_keys['date_frm'],"%Y-%m-%d %H:%M:%S")
+			if "date_to" in search_keys and search_keys['date_to']!="":
+				date_to=datetime.datetime.strptime(search_keys['date_to'],"%Y-%m-%d %H:%M:%S")
+			if "cust_id" in search_keys and search_keys['cust_id']!="0":
+				cust_id=search_keys['cust_id']
+			queryset=search_assignments(cust_id=cust_id,date_frm=date_frm,date_to=date_to)
+			assignmentlist=[]
+			app.logger.info(queryset)
+			for assignment in queryset:
+				assignmentdict={}
+				assignmentdict['assignment']=json.loads(assignment.to_json())
+				assignmentdict['dutyslips']=json.loads(documents.DutySlip.objects(assignment=assignment).to_json())
+				assignmentlist.append(assignmentdict)
+			return jsonify({"resp": assignmentlist	,"status":"success"})
         app.logger.info("Validating assignmentdict")
         if respdict['dutyslips']==[]:
 				return jsonify({"resp": "At least one driver must be assigned to create an assignment.","status":"error"})
         if respdict['assignment']['bookings']==[]:
 				return jsonify({"resp": "At least one booking must be assigned to create an assignment.","status":"error"})
         bookings=[documents.Booking.objects.with_id(x['_id']['$oid']) for x in respdict['assignment']['bookings']]
+        respdict['assignment']['cust_id']=bookings[0].cust_id
         for booking in bookings:
 			if hasattr(booking,"assignment"):
 				return jsonify({"resp": "Booking is already assigned! Please delete the old assignment before creating a new one.","status":"error"}) 
-				
+			if booking.cust_id!=respdict['assignment']['cust_id']:
+				return jsonify({"resp": "Bookings from different customers cannot be assigned together.","status":"error"}) 
         seenvehicles=[]
         for dutyslip in respdict['dutyslips']:
 			if "vehicle" in dutyslip.keys():
@@ -289,6 +312,8 @@ class AssignmentResource(Resource):
 			return jsonify({"resp":[False]})
 api.add_resource(AssignmentResource,"/assignment",endpoint="assignment")
 api.add_resource(AssignmentResource,"/assignment/by_id/<string:docid>",endpoint="assignment_docid")
+api.add_resource(AssignmentResource,"/assignment/<string:command>",endpoint="assignment_command")
+
 
 class DutySlipResource(Resource):
     def get(self,docid=None,assignment_id=None,driver_id=None):
@@ -432,6 +457,16 @@ api.add_resource(ProductResource,"/product",endpoint="product")
 api.add_resource(ProductResource,"/product/by_id/<string:docid>",endpoint="product_docid")
 api.add_resource(ProductResource,"/product/by_product_id/<string:product_id>",endpoint="product_id")
 api.add_resource(ProductResource,"/product/<string:command>",endpoint="product_command")
+
+class InvoiceResource(Resource):
+	def post(self):
+		app.logger.info("{}".format(request.get_json()))
+		respdict=request.get_json()
+		assignments=documents.Assignment.objects.filter(id__in=respdict)
+		invoice=get_invoice(assignments)
+	
+		return jsonify({"resp":invoice,"status":"success"})
+api.add_resource(InvoiceResource,"/invoice",endpoint="invoice")
 
 if __name__ == '__main__':
    app.run(host="0.0.0.0")
