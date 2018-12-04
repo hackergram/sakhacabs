@@ -46,8 +46,35 @@
 
   .capitalize {
     text-transform: capitalize;
+      font-size: 1.2em; 
   }
 
   .post-cards {
-    min-height: 250px;
+    min-height: 100px;
+      font-size: .70em;
   }
+
+.btn-sm{
+    font-size: .8em;
+}
+.card {
+    padding: .25em;
+    margin: .25em;
+    
+}
+
+.card-body 
+{
+    padding: .25em;
+    margin: .25em;
+    
+}
+.card-header{
+    padding: .25em;
+    margin: .25em;
+    
+}
+.row .col{
+    padding: .25em;
+    margin: .25em;
+}

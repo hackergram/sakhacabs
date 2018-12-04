@@ -10,7 +10,7 @@ const paginationApp = new Vue({
         posts: [],
         baseUrl: 'http://192.168.56.101:5000/assignment/search',
         page: 1,
-        perPage: 9,
+        perPage: 2,
         pages: [],
     },
     methods: {
