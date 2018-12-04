@@ -238,6 +238,14 @@ class AssignmentResource(Resource):
     def post(self,command=None):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
+        if command=="updatestatus":
+			assignment=documents.Assignment.objects.with_id(respdict['assignment_id'])
+			assignment.status=respdict['status']
+			assignment.save()
+			for booking in assignment.bookings:
+				booking.status=assignment.status
+				booking.save()
+			return jsonify({"resp": "Status updated.","status":"success"})	
         if command=="search":
 			search_keys=respdict
 			date_frm=None
