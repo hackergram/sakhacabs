@@ -3,14 +3,15 @@
   "date_to": "2018-12-01 15:24:12",
   "cust_id": "0"
 }*/
-serverip="192.168.56.101"
+//serverip="192.168.56.101"
+search_query={}
 const paginationApp = new Vue({
     el: '#pagination-app',
     data: {
         posts: [],
-        baseUrl: 'http://192.168.56.101:5000/assignment/search',
+        baseUrl: 'http://'+serverip+':5000/assignment/search',
         page: 1,
-        perPage: 2,
+        perPage: assperpage,
         pages: [],
     },
     methods: {

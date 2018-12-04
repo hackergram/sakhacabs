@@ -1,4 +1,4 @@
-sakha={
+var sakha={
     fillBookings: function(){
         console.log("Filling bookings data");
         /*
@@ -569,11 +569,35 @@ sakha={
         }
         http.send(params);
     },
+    updateAssignmentStatus: function(assignment_id,status){
+        dict={}
+        dict.assignment_id=assignment_id
+        dict.status=status
+        var params=JSON.stringify(dict)
+        var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+        var url = "http://"+serverip+":5000/assignment/updatestatus";
+        http.open("POST", url, true);
+
+        //Send the proper header information along with the request
+        http.setRequestHeader("Content-type", "application/json");
+        http.onreadystatechange = function() {//Call a function when the state changes.
+            if(http.readyState == 4 && http.status == 200) {
+                //alert(http.responseText);
+                alert(http.responseText)
+                window.location.reload(false);
+            }
+        }
+        http.send(params);
+    },
     deleteAssignment: function(id){
        console.log("Clicked "+ id)
-       console.log("Deleting assignment with id: "+ id.split("_")[1]+" and associated duty slips")    
-       var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
-        var url = "http://"+serverip+":5000/assignment/by_id/"+id.split("_")[1];
+       //console.log("Deleting assignment with id: "+ id.split("_")[1]+" and associated duty slips")    
+       console.log("Deleting assignment with id: "+ id+" and associated duty slips")    
+       
+        var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+          var url = "http://"+serverip+":5000/assignment/by_id/"+id;
+     
+        //var url = "http://"+serverip+":5000/assignment/by_id/"+id.split("_")[1];
         //var params = JSON.stringify(assignmentdict);
         http.open("DELETE", url, true);
 

@@ -13,8 +13,9 @@
 .card.bg-new,
 .card.card-rotate.bg-new .front,
 .card.card-rotate.bg-new .back {
-  background: linear-gradient(60deg, #ffa726, #fb8c00);
+  background: linear-gradient(60deg, #0000FF, #9797E7);
 }
+
 
 
 .card .card-header-open .card-icon,
@@ -33,10 +34,39 @@
 .card.bg-closed,
 .card.card-rotate.bg-closed .front,
 .card.card-rotate.bg-closed .back {
-  background: linear-gradient(60deg, #ffa726, #fb8c00);
+  background: linear-gradient(60deg, #008000, #15DA15);
 }
 
 
+.card .card-header-cancelled .card-icon,
+.card .card-header-cancelled .card-text,
+.card .card-header-cancelled:not(.card-header-icon):not(.card-header-text),
+.card.bg-cancelled,
+.card.card-rotate.bg-cancelled .front,
+.card.card-rotate.bg-cancelled .back {
+background: linear-gradient(60deg, #ef5350, #e53935);
+}
+
+
+
+
+.card .card-header-new .card-icon,
+.card .card-header-new:not(.card-header-icon):not(.card-header-text),
+.card .card-header-new .card-text {
+  box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4);
+}
+
+.card .card-header-closed .card-icon,
+.card .card-header-closed:not(.card-header-icon):not(.card-header-text),
+.card .card-header-closed .card-text {
+  box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4);
+}
+
+.card .card-header-open .card-icon,
+.card .card-header-open:not(.card-header-icon):not(.card-header-text),
+.card .card-header-open .card-text {
+  box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4);
+}
 .dsline {
     text-transform: uppercase;
     

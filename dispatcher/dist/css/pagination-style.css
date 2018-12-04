@@ -58,23 +58,23 @@
     font-size: .8em;
 }
 .card {
-    padding: .25em;
-    margin: .25em;
+    padding: .15em;
+    margin: .15em;
     
 }
 
 .card-body 
 {
-    padding: .25em;
-    margin: .25em;
+    padding: .15em;
+    margin: .15em;
     
 }
 .card-header{
-    padding: .25em;
-    margin: .25em;
+    padding: .15em;
+    margin: .15em;
     
 }
 .row .col{
-    padding: .25em;
-    margin: .25em;
+    padding: .15em;
+    margin: .15em;
 }

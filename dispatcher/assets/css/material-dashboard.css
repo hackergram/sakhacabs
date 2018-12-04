@@ -1106,10 +1106,10 @@ pre code {
   position: relative;
   width: 100%;
   min-height: 1px;
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  padding-right: 1px;
+  padding-left:  1px;
+  margin-top: 1px;
+  margin-bottom: 1px;
 }
 
 .col {
@@ -4604,11 +4604,11 @@ tbody.collapse.show {
 
 .card-body {
   flex: 1 1 auto;
-  padding: 1.25rem;
+  padding: .75rem;
 }
 
 .card-title {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .card-subtitle {
@@ -4625,14 +4625,14 @@ tbody.collapse.show {
 }
 
 .card-link+.card-link {
-  margin-left: 1.25rem;
+  margin-left: .75rem;
 }
 
 .card-header {
   padding: 0.5rem 0.5rem;
   margin-bottom: 0;
   background-color: #fff;
-  border-bottom: 1px solid #eeeeee;
+  border-bottom: .5px solid #eeeeee;
 }
 
 .card-header:first-child {
@@ -10626,9 +10626,9 @@ fieldset[disabled][disabled] .btn-group-raised .btn,
 .btn.btn-sm,
 .btn-group-sm>.btn,
 .btn-group-sm .btn {
-  padding: 0.40625rem 1.25rem;
-  font-size: 0.6875rem;
-  line-height: 1.5;
+  padding: 0.25rem .25rem;
+  font-size: 0.5rem;
+  line-height: 1;
   border-radius: 0.2rem;
 }
 
@@ -16572,7 +16572,7 @@ label {
 }
 
 .card .card-title {
-  margin-top: 0.625rem;
+  margin-top: 0.25rem;
 }
 
 .card .card-title:last-child {
@@ -16586,7 +16586,7 @@ label {
 
 .card .card-body,
 .card .card-footer {
-  padding: 0.9375rem 1.875rem;
+  padding: 0.5rem .5rem;
 }
 
 .card .card-body+.card-footer {
@@ -16747,6 +16747,15 @@ label {
   background: linear-gradient(60deg, #ec407a, #d81b60);
 }
 
+
+.card .card-header-new .card-icon,
+.card .card-header-new .card-text,
+.card .card-header-new:not(.card-header-icon):not(.card-header-text),
+.card.bg-new,
+.card.card-rotate.bg-new .front,
+.card.card-rotate.bg-new .back {
+  background: linear-gradient(60deg, #ffe07a, #d81ee0);
+}
 .card .card-header-primary .card-icon,
 .card .card-header-primary:not(.card-header-icon):not(.card-header-text),
 .card .card-header-primary .card-text {
@@ -16762,6 +16771,12 @@ label {
 .card .card-header-rose .card-icon,
 .card .card-header-rose:not(.card-header-icon):not(.card-header-text),
 .card .card-header-rose .card-text {
+  box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4);
+}
+
+.card .card-header-new .card-icon,
+.card .card-header-new:not(.card-header-icon):not(.card-header-text),
+.card .card-header-new .card-text {
   box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4);
 }
 
@@ -16890,7 +16905,7 @@ label {
 }
 
 .card .card-body {
-  padding: 0.9375rem 20px;
+  padding: 0.5rem 20px;
   position: relative;
 }
 
@@ -16991,7 +17006,7 @@ label {
 .card .card-body+.card-footer,
 .card .card-footer {
   padding: 0;
-  padding-top: 10px;
+  padding-top: 5px;
   margin: 0 15px 10px;
   border-radius: 0;
   justify-content: space-between;
