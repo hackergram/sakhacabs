@@ -247,7 +247,8 @@ var sakha={
                 }},
                  { data: null,render: function(data){
                     dsid='"'+data._id.$oid+'"'
-                    return "<button onclick='sakha.deleteDutySlip("+dsid+")'>Delete</button>"
+                    return "<button onclick='sakha.deleteDutySlip("+dsid+")'>Delete</button>\
+                            <button onclick='sakha.updateDutySlipStatus("+dsid+",\"verified\")'>Verify</button>"
                 }}
                 
             ]
@@ -267,70 +268,6 @@ var sakha={
         this.fillDutySlips();
         
     },
-    fillAssignments: function(pagenum=1,searchdict={}){
-        element_id="assignmentcards"
-        function AssignmentViewModel() {
-            
-            var self = this;
-            self.assignments = ko.observableArray().extend({ paged: { pageSize: 3 } });;
-            self.setPage = function(newPage) {
-                self.chars.pageNumber(newPage);
-            };
-            var baseUri = 'http://'+serverip+':5000/assignment';
-            //var dutyslipuri = 'http://'+serverip+':5000/dutyslip/by_assignment_id';
-            var assigns,assignswithids
-            /*
-            $.getJSON(baseUri, function (data) {
-               assigns=data.resp;
-               mapassignments=function(){
-                    ko.mapping.fromJS(assigns, {}, self.assignments);
-                    console.log(self.assignments())
-               }
-               mapassignments()
-               
-                
-            });*/
-            var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
-            var url = "http://"+serverip+":5000/assignment/search";
-            var params = JSON.stringify(searchdict);
-            http.open("POST", url, true);
-
-            //Send the proper header information along with the request
-            http.setRequestHeader("Content-type", "application/json");
-            http.onreadystatechange = function() {//Call a function when the state changes.
-                if(http.readyState == 4 && http.status == 200) {
-                    
-                    assigns=JSON.parse(http.responseText).resp;
-                    mapassignments=function(){
-                            ko.mapping.fromJS(assigns, {}, self.assignments);
-                            console.log(self.assignments())
-                       }
-                    mapassignments();
-                }
-            }
-             
-            http.send(params);
-            
-        }
-        
-        
-        
-        ko.bindingHandlers.date = {
-            update: function (element, valueAccessor) {
-                var value = valueAccessor();
-                //var date = moment(value());
-                //var strDate=new 
-                var strDate=new Date(value())
-                console.log(moment(value()).format('MMMM Do YYYY, h:mm:ss a'))
-                //var strDate = date.format();
-                //console.log(element)
-                $(element).text(moment(value()).format('MMMM Do YYYY, h:mm:ss a'))
-                 //console.log(strDate)
-            }
-        };
-       
-        ko.applyBindings(new AssignmentViewModel(),document.getElementById(element_id));    
-    },    
     fillAssignmentModal: function(assignmentid){
         console.log("Editing Assignment - " +  assignmentid);
         if(assignmentid=="newassignment"){
@@ -577,7 +514,28 @@ var sakha={
         var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
         var url = "http://"+serverip+":5000/assignment/updatestatus";
         http.open("POST", url, true);
-
+        
+        //Send the proper header information along with the request
+        http.setRequestHeader("Content-type", "application/json");
+        http.onreadystatechange = function() {//Call a function when the state changes.
+            if(http.readyState == 4 && http.status == 200) {
+                //alert(http.responseText);
+                alert(http.responseText)
+                window.location.reload(false);
+            }
+        }
+        http.send(params);
+    },
+    updateDutySlipStatus: function(dsid,status){
+        console.log(dsid,status)
+        dict={}
+        dict.dsid=dsid
+        dict.status=status
+        var params=JSON.stringify(dict)
+        var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+        var url = "http://"+serverip+":5000/dutyslip/updatestatus";
+        http.open("POST", url, true);
+        console.log(url,dict)
         //Send the proper header information along with the request
         http.setRequestHeader("Content-type", "application/json");
         http.onreadystatechange = function() {//Call a function when the state changes.

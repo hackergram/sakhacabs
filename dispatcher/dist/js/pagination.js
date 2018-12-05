@@ -25,7 +25,7 @@ const paginationApp = new Vue({
             })
             .then(response => {
                 this.posts = response.data.resp;
-                console.log(this.posts)
+                
             })
             .catch(response => {
                 console.log(response);
