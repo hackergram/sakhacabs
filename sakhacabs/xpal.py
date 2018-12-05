@@ -5,14 +5,12 @@ Created on Sat Sep  8 21:52:07 2018
 @author: arjun
 """
 
-
-import sys,datetime,json
+import sys,datetime,json,re
 import mongoengine
 sys.path.append("/opt/xetrapal")
 import xetrapal
 import pandas
 from sakhacabs import documents,utils
-
 
 sakhacabsxpal=xetrapal.Xetrapal(configfile="/opt/sakhacabs-appdata/sakhacabsxpal.conf")
 sakhacabsgd=sakhacabsxpal.get_googledriver()
@@ -28,6 +26,18 @@ sakhacabsxpal.logger.info("Setting up MongoEngine")
 mongoengine.connect('sakhacabs', alias='default')
 
 #Remote sync functionality
+def validate_booking_dict(bookingdict):
+	valid=True
+	required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
+	for key in required_keys:
+		if key not in bookingdict.keys():
+			valid=False
+		if bookingdict[key]==None:
+			valid=False
+	if len(bookingdict['passenger_mobile'])>12:
+		valid=False
+	return valid
+	
 def sync_remote():
     custlist=custsheet.get_as_df().to_dict(orient="records")
     driverlist=driversheet.get_as_df().to_dict(orient="records")
@@ -237,7 +247,6 @@ def save_assignment(assignmentdict,assignment_id=None):
     sakhacabsxpal.logger.info("Saved assignment {}".format(assignment.to_json()))
     return assignment
 
-
 '''
 Duty Slips
 '''
@@ -246,8 +255,6 @@ def get_duties_for_driver(driver_id):
 	if len(d)>0:
 		return d
 	
-
-
 '''
 Driver CRUD functionality
 '''
@@ -281,7 +288,6 @@ def get_vehicle_by_vid(vid):
         return t[0]
     else:
         return None
-
 
 def export_drivers():
 	drivers=documents.Driver.objects.to_json()
@@ -321,8 +327,7 @@ def export_bookings():
 	bookingdf.pickup_timestamp=bookingdf.pickup_timestamp.apply(lambda x: datetime.datetime.fromtimestamp((x['$date']+1)/1000).strftime("%Y-%m-%d %H:%M:%S"))
 	bookingdf.to_csv("./dispatcher/reports/bookings.csv", encoding="utf-8")
 	return "reports/bookings.csv"
-	
-	
+
 #def import_gadv():
 def import_gadv(bookinglist):
 	'''
@@ -381,9 +386,6 @@ def import_gadv(bookinglist):
 	'''
 	return bookinglist
 
-
-
-
 def search_assignments(cust_id=None,date_frm=None,date_to=None):
 	assignments=documents.Assignment.objects
 	if cust_id!=None:
@@ -394,7 +396,6 @@ def search_assignments(cust_id=None,date_frm=None,date_to=None):
 		assignments=assignments.filter(reporting_timestamp__lt=date_to)
 	return assignments
 	
-
 def get_invoice(to_settle):
 	invoice_lines=[]
 	for ass in to_settle:

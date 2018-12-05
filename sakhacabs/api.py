@@ -9,6 +9,7 @@ from flask import Flask, jsonify,request
 from flask_cors import CORS
 from flask_mongoengine import MongoEngine
 from flask_restful import reqparse, abort, Api, Resource
+
 import json
 #from flask.ext.potion.contrib.mongoengine.manager import MongoEngineManager
 from sakhacabs.xpal import *
@@ -203,8 +204,11 @@ class BookingResource(Resource):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
 		if command=="single":
-			booking=new_booking(respdict)
-			return jsonify({"resp":[booking],"status":"success"})
+			if validate_booking_dict(respdict):
+				booking=new_booking(respdict)
+				return jsonify({"resp":[booking],"status":"success"})
+			else:
+				return jsonify({"resp":"Invalid Input","status":"error"})
 		if command=="import":
 			bookinglist=import_gadv(respdict)
 			return jsonify({"resp":bookinglist,"status":"success"})
