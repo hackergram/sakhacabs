@@ -38,10 +38,10 @@
     <script src="dist/js/bootstrap.min.js"></script>
    
     -->
-      <script src="dist/js/vue.min.js"></script>
+    <script src="dist/js/vue.min.js"></script>
     <script src="dist/js/axios.min.js"></script>
-     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-      <script src=" https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src=" https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
@@ -274,142 +274,113 @@
      </main>
    
    
-       <script>
-                var assignments=[]
-                var current_invoice={}
-                var search_query={}
-                var table = null;
-                var updateInvoice=function(){
-                    
-                    var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
-                    var url = "http://"+serverip+":5000/invoice";
-                    var params = JSON.stringify(assignments);
-                    console.log(url)
-                    http.open("POST", url, true);
+    <script>
+        var assignments=[]
+        var current_invoice={}
+        var search_query={}
+        var table = null;
+        var updateInvoice=function(){
 
-                    //Send the proper header information along with the request
-                    http.setRequestHeader("Content-type", "application/json");
-                    http.onreadystatechange = function() {//Call a function when the state changes.
-                        if(http.readyState == 4 && http.status == 200) {
-                            /*$("#invoice").empty()
-                            $("#invoice").append(http.responseText);*/
-                            current_invoice=JSON.parse(http.responseText).resp
-                                console.log(current_invoice) //$("#assignmentdetail").text(http.responseText)
-                            if(table!=null){ 
-                            table.destroy()
-                             $("#invoicelines").empty()
-                                }
-                             table=$('#invoicelines').DataTable(
-                             {
-                                data: current_invoice.invoicelines,
-                                columns: [
-                                        //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
-                                        {title:"Date", width:"15%",data: 'date',defaultContent:"None"},
-                                        {title:"Particulars",width:"35%", data: 'particulars',defaultContent:"None",render: function(data){if(data){return data}}},
-                                         {title:"Product",width:"10%", data: 'product',defaultContent:"None",render: function(data){if(data){return data}}},
+                var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+                var url = "http://"+serverip+":5000/invoice";
+                var params = JSON.stringify(assignments);
+                console.log(url)
+                http.open("POST", url, true);
 
-                                        {title:"Rate",width:"10%", data: 'rate',defaultContent:"None",render: function(data){if(data){return data}}},
-                                        {title:"Qty",width:"10%", data: 'qty', defaultContent:"None", render: function(data){if(data){return data}}},
-                                        {title:"Amount",width:"20%", data: 'amount', defaultContent:"None", render: function(data){if(data){return data}}}
-                                    ]
-                                        
-                                        
-                             });
-                            $("#invoicetotal").empty()
-                            $("#invoicetotal").append("<b>Total: </b>"+ current_invoice.total)
-                        }
-                    }
-                    http.send(params);
-                }
-                var addassignment=function(assid){
-                    if(assignments.includes(assid)===false){
-                        assignments.push(assid)
-                    }
-                    console.log(assignments)
-                } 
-                  var removeassignment=function(assid){
-                    if(assignments.includes(assid)===true){
-                       var index = assignments.indexOf(assid);
-                            if (index > -1) {
-                              assignments.splice(index, 1);
+                //Send the proper header information along with the request
+                http.setRequestHeader("Content-type", "application/json");
+                http.onreadystatechange = function() {//Call a function when the state changes.
+                    if(http.readyState == 4 && http.status == 200) {
+                        /*$("#invoice").empty()
+                        $("#invoice").append(http.responseText);*/
+                        current_invoice=JSON.parse(http.responseText).resp
+                            console.log(current_invoice) //$("#assignmentdetail").text(http.responseText)
+                        if(table!=null){ 
+                        table.destroy()
+                         $("#invoicelines").empty()
                             }
-                    }
-                    console.log(assignments)
-                }
-                  
-                var addAll=function(){
-                    
-                    for(i=0;i<paginationApp.posts.length;i++){
-                        addassignment(paginationApp.posts[i].assignment._id.$oid)
-                    }
-                    
-                }
-                var searchAssignments=function(){
-                  
-                    
-                    search_query={}
-                    search_query.date_frm=$("#date_frm").val()
-                    search_query.date_to=$("#date_to").val()
-                    search_query.cust_id=$("#cust_id").val()
-                    console.log(search_query)
-                    paginationApp.getPosts()
-                    /*
-                    //sakha.fillAssignments(pagenum=1,searchdict=search_query)
-                    var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
-                    var url = "http://"+serverip+":5000/assignment/search";
-                    var params = JSON.stringify(search_query);
-                    http.open("POST", url, true);
+                         table=$('#invoicelines').DataTable(
+                         {
+                            data: current_invoice.invoicelines,
+                            columns: [
+                                    //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
+                                    {title:"Date", width:"15%",data: 'date',defaultContent:"None"},
+                                    {title:"Particulars",width:"35%", data: 'particulars',defaultContent:"None",render: function(data){if(data){return data}}},
+                                     {title:"Product",width:"10%", data: 'product',defaultContent:"None",render: function(data){if(data){return data}}},
 
-                    //Send the proper header information along with the request
-                    http.setRequestHeader("Content-type", "application/json");
-                    http.onreadystatechange = function() {//Call a function when the state changes.
-                        if(http.readyState == 4 && http.status == 200) {
+                                    {title:"Rate",width:"10%", data: 'rate',defaultContent:"None",render: function(data){if(data){return data}}},
+                                    {title:"Qty",width:"10%", data: 'qty', defaultContent:"None", render: function(data){if(data){return data}}},
+                                    {title:"Amount",width:"20%", data: 'amount', defaultContent:"None", render: function(data){if(data){return data}}}
+                                ]
 
-                            assigns=JSON.parse(http.responseText).resp;
-                            console.log(assigns)
+
+                         });
+                        $("#invoicetotal").empty()
+                        $("#invoicetotal").append("<b>Total: </b>"+ current_invoice.total)
+                    }
+                }
+                http.send(params);
+
+            }
+        var addassignment=function(assid){
+                if(assignments.includes(assid)===false){
+                    assignments.push(assid)
+                }
+                console.log(assignments)
+
+            } 
+        var removeassignment=function(assid){
+                if(assignments.includes(assid)===true){
+                   var index = assignments.indexOf(assid);
+                        if (index > -1) {
+                          assignments.splice(index, 1);
                         }
-                    }
+                }
+                console.log(assignments)
 
-                    http.send(params);
-                    */
+            }  
+        var addAll=function(){
+
+                for(i=0;i<paginationApp.posts.length;i++){
+                    addassignment(paginationApp.posts[i].assignment._id.$oid)
                 }
 
+            }
+        var searchAssignments=function(){
+                search_query={}
+                search_query.date_frm=$("#date_frm").val()
+                search_query.date_to=$("#date_to").val()
+                search_query.cust_id=$("#cust_id").val()
+                console.log(search_query)
+                paginationApp.getPosts()
 
+                var serverip="192.168.56.101"
+                var assperpage=2
+                var get_cust_list=function(){
 
+                    $.getJSON('http://'+serverip+':5000/customer',function(data){
+                        console.log(data.resp)
+                        for (i=0;i<data.resp.length;i++){
+                            $("#cust_id").append('<option>' + data.resp[i].cust_id + '</option>');
+                        }
+                        $("#cust_id").append('<option>retail</option>');
 
+                        $("#cust_id").on("change", function(event) { 
+                            console.log(this.value)
+                            $("#cust_data").remove()
+                            $("#cust_details").append("<div id='cust_data'>"+this.value+"</div>")
+                        } );
+                    })
 
-                    var serverip="192.168.56.101"
-                    var assperpage=2
-
-
-                    var get_cust_list=function(){
-
-                        $.getJSON('http://'+serverip+':5000/customer',function(data){
-                            console.log(data.resp)
-                            for (i=0;i<data.resp.length;i++){
-                                $("#cust_id").append('<option>' + data.resp[i].cust_id + '</option>');
-                            }
-                            $("#cust_id").append('<option>retail</option>');
-
-                            $("#cust_id").on("change", function(event) { 
-                                console.log(this.value)
-                                $("#cust_data").remove()
-                                $("#cust_details").append("<div id='cust_data'>"+this.value+"</div>")
-                            } );
-                        })
-
-                    }
-
-                    get_cust_list();
-
-
-            </script>
-    
-     <script src="dist/js/pagination.js"></script>
-     <script>
-                $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
-                $('#datetimepicker2').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
-         $('#datetimepicker3').datetimepicker({format: 'YYYY-MM-DD HH:mm'});
-</script>
+                }
+            }
+        get_cust_list();
+    </script>
+    <script src="dist/js/pagination.js"></script>
+    <script>
+        $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
+        $('#datetimepicker2').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
+        $('#datetimepicker3').datetimepicker({format: 'YYYY-MM-DD HH:mm'});
+    </script>
 </body>
 </html>
