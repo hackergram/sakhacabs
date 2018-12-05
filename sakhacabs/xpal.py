@@ -1,4 +1,5 @@
-#!/u*-
+# -*- coding: utf-8 -*-
+#
 """
 Created on Sat Sep  8 21:52:07 2018
 
@@ -25,6 +26,8 @@ prodsheet=datasheet.worksheet_by_title("product")
 sakhacabsxpal.logger.info("Setting up MongoEngine")
 mongoengine.connect('sakhacabs', alias='default')
 
+
+
 #Remote sync functionality
 def validate_booking_dict(bookingdict):
 	valid=True
@@ -33,6 +36,8 @@ def validate_booking_dict(bookingdict):
 		if key not in bookingdict.keys():
 			valid=False
 		if bookingdict[key]==None:
+			valid=False
+		if utils.nospec.search(bookingdict[key]):
 			valid=False
 	if len(bookingdict['passenger_mobile'])>12:
 		valid=False
