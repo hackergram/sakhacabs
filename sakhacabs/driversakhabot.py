@@ -253,6 +253,11 @@ def received_dutyslip_information(bot, update, user_data):
 			user_data['current_duty_slip'].open_time=update.message.date
 			user_data['current_duty_slip'].status="open"
 			user_data['current_duty_slip'].save()
+			user_data['current_duty_slip'].assignment.status="open"
+			user_data['current_duty_slip'].assignment.save()
+			for booking in user_data['current_duty_slip'].assignment.bookings:
+				booking.status="open"
+				booking.save()
 			user_data['field']="closekms"
 			logger.info("{}".format(user_data))
 			markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard)

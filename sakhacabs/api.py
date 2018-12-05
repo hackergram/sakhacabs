@@ -120,6 +120,7 @@ api.add_resource(VehicleResource,"/vehicle/by_id/<string:docid>",endpoint="vehic
 api.add_resource(VehicleResource,"/vehicle/by_vehicle_id/<string:vehicle_id>",endpoint="vehicleid")
 api.add_resource(VehicleResource,"/vehicle/<string:command>",endpoint="vehicle_command")
 #TODO - Location validatin and geocode lookup, handoff lookup
+
 class LocationUpdateResource(Resource):
     def get(self,docid=None,command=None):
 		if command=="export":
@@ -180,6 +181,7 @@ class LocationUpdateResource(Resource):
 api.add_resource(LocationUpdateResource,"/locupdate",endpoint="locupdate")
 api.add_resource(LocationUpdateResource,"/locupdate/by_id/<string:docid>",endpoint="locupdate_docid")
 api.add_resource(LocationUpdateResource,"/locupdate/<string:command>",endpoint="locupdate_command")
+
 class BookingResource(Resource):
     def get(self,docid=None,booking_id=None,command=None):
         if command=="export":
@@ -220,6 +222,7 @@ api.add_resource(BookingResource,"/booking",endpoint="booking")
 api.add_resource(BookingResource,"/booking/by_id/<string:docid>",endpoint="booking_docid")
 api.add_resource(BookingResource,"/booking/by_booking_id/<string:booking_id>",endpoint="booking_id")
 api.add_resource(BookingResource,"/booking/<string:command>",endpoint="booking_command")
+
 class AssignmentResource(Resource):
     def get(self,docid=None):
         if docid:
@@ -322,7 +325,6 @@ api.add_resource(AssignmentResource,"/assignment",endpoint="assignment")
 api.add_resource(AssignmentResource,"/assignment/by_id/<string:docid>",endpoint="assignment_docid")
 api.add_resource(AssignmentResource,"/assignment/<string:command>",endpoint="assignment_command")
 
-
 class DutySlipResource(Resource):
     def get(self,docid=None,assignment_id=None,driver_id=None):
         if docid:
@@ -343,6 +345,17 @@ class DutySlipResource(Resource):
                 return jsonify({"resp":[]})
         else:
             return jsonify({"resp": json.loads(documents.DutySlip.objects.to_json())})
+    
+    def post(self,command=None):
+        app.logger.info("{}".format(request.get_json()))
+        respdict=request.get_json()
+        if command=="updatestatus":
+			dutyslip=documents.DutySlip.objects.with_id(respdict['dsid'])
+			dutyslip.status=respdict['status']
+			dutyslip.save()
+			return jsonify({"resp": "Status updated.","status":"success"})	
+    
+    
     def put(self,docid):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -374,6 +387,7 @@ api.add_resource(DutySlipResource,"/dutyslip",endpoint="dutyslip")
 api.add_resource(DutySlipResource,"/dutyslip/by_id/<string:docid>",endpoint="dutyslip_docid")
 api.add_resource(DutySlipResource,"/dutyslip/by_assignment_id/<string:assignment_id>",endpoint="dutyslip_assid")
 api.add_resource(DutySlipResource,"/dutyslip/by_driver_id/<string:driver_id>",endpoint="dutyslip_driverid")
+api.add_resource(DutySlipResource,"/dutyslip/<string:command>",endpoint="dutyslip_command")
 
 class CustomerResource(Resource):
     def get(self,tgid=None,mobile_num=None,docid=None,cust_id=None):
