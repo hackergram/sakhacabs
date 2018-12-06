@@ -236,7 +236,7 @@ def received_dutyslip_information(bot, update, user_data):
     field = user_data['field']
     if field=="dutyslipnum":
 		try:
-			if nospec.search(text):
+			if utils.nospec.search(text):
 				markup = ReplyKeyboardMarkup(driver_base_keyboard)
 				update.message.reply_text("No special characters in duty slip number, please start over",reply_markup=markup)
 				return MENU_CHOICE
@@ -253,7 +253,7 @@ def received_dutyslip_information(bot, update, user_data):
 	
     if field=="openkms":
 		try:
-			if notnum.search(text):
+			if utils.notnum.search(text):
 				update.message.reply_text("Numbers only for open kms")
 				return DUTYSLIP_FORM
 			user_data['current_duty_slip'].open_kms=float(text)
@@ -278,7 +278,7 @@ def received_dutyslip_information(bot, update, user_data):
 		
     if field=="closekms":
 		try:
-			if notnum.search(text):
+			if utils.notnum.search(text):
 				markup = ReplyKeyboardMarkup(driver_base_keyboard)
 				update.message.reply_text("Numbers only for close kms")
 				return DUTYSLIP_OPEN
@@ -299,7 +299,7 @@ def received_dutyslip_information(bot, update, user_data):
 		
     if field=="parking":
 		try:
-			if notnum.search(text):
+			if utils.notnum.search(text):
 				update.message.reply_text("Numbers only for parking")
 				return DUTYSLIP_FORM
 			
@@ -316,7 +316,7 @@ def received_dutyslip_information(bot, update, user_data):
 		
     if field=="toll":
 		try:
-			if notnum.search(text):
+			if utils.notnum.search(text):
 				update.message.reply_text("Numbers only for toll")
 				return DUTYSLIP_FORM
 			user_data['current_duty_slip'].toll_charges=float(text)
@@ -347,7 +347,7 @@ def received_dutyslip_information(bot, update, user_data):
 	
     if field=="amount":
 		try:
-			if notnum.search(text):
+			if utils.notnum.search(text):
 				update.message.reply_text("Numbers only for amount")
 				return DUTYSLIP_FORM
 			user_data['current_duty_slip'].amount=float(text)
