@@ -1,25 +1,23 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-  <meta charset="utf-8" />
-  <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="assets/img/favicon.png">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <title>
-    Sakha Cabs Dispatcher Dashboard
-  </title>
-  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
-  <!--     Fonts and icons     -->
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
-  <!-- CSS Files -->
-  <link href="assets/css/material-dashboard.css" rel="stylesheet" />
-  <link rel="stylesheet" type="text/css" href="assets/css/sakha.css">
-  <style>
+    <meta charset="utf-8" />
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>
+        Sakha Cabs Dispatcher Dashboard
+    </title>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <!-- CSS Files -->
+    <link href="assets/css/material-dashboard.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="assets/css/sakha.css">
+    <style>
         .wrap { width: 100%; height: 600px; padding: 0; overflow: hidden; float: left;}
         .frame { width: 1396px; height: 786px; border: 1px solid black}
-
         .frame {
                 // zoom: 0.25;
                 -moz-transform: scale(0.70);
@@ -29,14 +27,12 @@
                 -webkit-transform: scale(0.70);
                 -webkit-transform-origin: 0 0;
         }
-  </style>
-  <link href="dist/css/pagination-style.css" rel="stylesheet">
-    
-   <script>
-     var serverip="192.168.56.101"
-     var assperpage=3
+    </style>
+    <link href="dist/css/pagination-style.css" rel="stylesheet">
+    <script>
+        var serverip="192.168.56.101"
+        var assperpage=3
     </script>
-    
 </head>
 
 <body class="">
@@ -413,82 +409,98 @@
                               <main role="main" id="pagination-app">
 
                                 <div class="container" v-cloak>
-                                   
+                                   <div class="row">
+                                       <div class="col-sm-4 small-cols">
+                                            <p class="text-right">Sort By: </p >
+                                        </div>
+                                        <div class="col-sm-4 small-cols">
+                                            <select id="assign_sort" name="assign_sort" class="form-control" onchange="sortAssignments()">
+                                                <option value="created_timestamp">Created Time</option>
+                                                <option value="reporting_timestamp" selected="selected">Reporting Time</option>
+                                            </select>
+                                        </div>
+                                       <div class="col-sm-4 small-cols">
+                                            <select id="assign_order" name="assign_order" class="form-control" onchange="sortAssignments()">
+                                                <option value="ascending" selected="selected">Ascending</option>
+                                                <option value="descending">Descending</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="row">
-                                    <div class="col-md-4" v-for="post in displayedPosts">
-                                      <div class="card mb-4 box-shadow post-cards">
-                                        <!-- <img class="card-img-top" src="dist/img/placeholder-blue-800x600px.png" alt="Card image cap"> -->
-                                        <div class="card-header" v-bind:class="'card-header-'+post.assignment.status">
-                                                    <h4 class="card-title">{{String.toUpperCase(post.assignment.cust_id)}}</h4>
-                                                    <h5 class="card-title">{{moment(post.assignment.reporting_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a')}}</h5>
-                                                    <p>{{post.assignment.status}}</p>
-                                                    
-
-                                                </div>
-                                                
-                                          <div class="card-body">
-                                            <div class="container">
-                                                <div class="row">
-                                                   <div class="btn-group">
-                                                    
-                                                    <button type="button" class="btn btn-sm btn-outline-secondary" 
-                                                            @click="sakha.deleteAssignment(post.assignment._id.$oid)">Delete</button>
-                                                    
-                                                    <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'cancelled')">Cancel</button>
-                                                        <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'closed')">Mark Closed</button>
-                                                    <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'new')">Mark New</button>
-                                                    <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'open')">Mark Open</button>
+                                        <div class="col-md-4" v-for="post in displayedPosts">
+                                          <div class="card mb-4 box-shadow post-cards">
+                                            <!-- <img class="card-img-top" src="dist/img/placeholder-blue-800x600px.png" alt="Card image cap"> -->
+                                            <div class="card-header" v-bind:class="'card-header-'+post.assignment.status">
+                                                        <h4 class="card-title">{{String.toUpperCase(post.assignment.cust_id)}}</h4>
+                                                        <h5 class="card-title"><b>RT: </b>  {{moment(post.assignment.reporting_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a')}}</h5>
+                                                        <h5 class="card-title"><b>CT: </b> {{moment(post.assignment.created_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a')}}</h5>
+                                                        <h5><b>Status: </b>{{post.assignment.status}}</h5>
                                                     </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <div class="row">
-                                                        <h5 class="card-title">Bookings</h5>
-                                                        </div>
-                                                        <div class="row" v-for="booking in post.assignment.bookings">
-                                                            <div class="col-lg-12">
-                                                          <div class="card">
-                                                              <div v-bind:class="'card-header-'+booking.status">{{booking.booking_id}}</div>
-                                                              <div class="card-body">
-                                                                  <b>Pickup Time:</b> <span>{{moment(booking.pickup_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a')}}</span>
-                                                                  <br><b> Passenger Detail:</b><span>{{booking.passenger_detail}}</span> 
 
-                                                            </div>
-                                                            </div>
+                                              <div class="card-body">
+                                                <div class="container">
+                                                    <div class="row">
+                                                       <div class="btn-group">
+
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                                                @click="sakha.deleteAssignment(post.assignment._id.$oid)">Delete</button>
+
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'cancelled')">Cancel</button>
+                                                            <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'closed')">Mark Closed</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'new')">Mark New</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'open')">Mark Open</button>
                                                         </div>
-                                                        </div>
-                                                    </div>  
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <div class="row">
-                                                        <h5 class="card-title">Duty Slips</h5>
-                                                        </div>
-                                                <div class="row" v-for="dutyslip in post.dutyslips">
+                                                    </div>
+                                                    <div class="row">
                                                         <div class="col-lg-12">
-                                                        <div class="card">
-                                                            <div v-bind:class="'card-header-'+dutyslip.status">{{dutyslip.dutyslip_id}}</div>
-                                                            <div class="card-body">
-
-                                                                <b>Driver: </b><span>{{dutyslip.driver}}</span>
-                                                                <b>Vehicle: </b><span>{{dutyslip.vehicle}}</span>
-                                                              <div v-if="dutyslip.open_time && dutyslip.open_kms && dutyslip.close_time && dutyslip.close_kms">
-                                                                <br><b>Open Time: </b><span>{{moment(dutyslip.open_time.$date).format('MMMM Do YYYY, h:mm:ss a')}}</span>
-                                                                <br><b>KMS: </b><span>{{dutyslip.close_kms-dutyslip.open_kms}}</span>
-                                                                <b>HRS: </b><span>{{moment(dutyslip.close_time.$date).diff(moment(dutyslip.open_time.$date),"hours",true).toFixed(2)}}</span>
-                                                                  </div>
+                                                            <div class="row">
+                                                            <h5 class="card-title">Bookings</h5>
                                                             </div>
-                                                        </div>    
-                                                            </div>
+                                                            <div class="row" v-for="booking in post.assignment.bookings">
+                                                                <div class="col-lg-12">
+                                                              <div class="card">
+                                                                  <div v-bind:class="'card-header-'+booking.status">{{booking.booking_id}}</div>
+                                                                  <div class="card-body">
+                                                                      <b>Pickup Time:</b> <span>{{moment(booking.pickup_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a')}}</span>
+                                                                      <br><b> Passenger Detail:</b><span>{{booking.passenger_detail}}</span> 
 
-                                                </div>
+                                                                </div>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </div>  
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="row">
+                                                            <h5 class="card-title">Duty Slips</h5>
+                                                            </div>
+                                                    <div class="row" v-for="dutyslip in post.dutyslips">
+                                                            <div class="col-lg-12">
+                                                            <div class="card">
+                                                                <div v-bind:class="'card-header-'+dutyslip.status">{{dutyslip.dutyslip_id}}</div>
+                                                                <div class="card-body">
+
+                                                                    <b>Driver: </b><span>{{dutyslip.driver}}</span>
+                                                                    <b>Vehicle: </b><span>{{dutyslip.vehicle}}</span>
+                                                                  <div v-if="dutyslip.open_time && dutyslip.open_kms && dutyslip.close_time && dutyslip.close_kms">
+                                                                    <br><b>Open Time: </b><span>{{moment(dutyslip.open_time.$date).format('MMMM Do YYYY, h:mm:ss a')}}</span>
+                                                                    <br><b>KMS: </b><span>{{dutyslip.close_kms-dutyslip.open_kms}}</span>
+                                                                    <b>HRS: </b><span>{{moment(dutyslip.close_time.$date).diff(moment(dutyslip.open_time.$date),"hours",true).toFixed(2)}}</span>
+                                                                      </div>
+                                                                </div>
+                                                            </div>    
+                                                                </div>
+
+                                                    </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                          </div>
+
                                         </div>
-                                      </div>
                                     </div>
-                                  </div>
                                     <div class="clearfix btn-group col-md-2 offset-md-5">
                                     <button type="button" class="btn btn-sm btn-outline-secondary" v-if="page != 1" @click="page--"> << </button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" v-for="pageNumber in pages.slice(page-1, page+5)" @click="page = pageNumber"> {{pageNumber}} </button>
@@ -500,7 +512,21 @@
                              </main>      
                          
                         </div>
+                        <script>
+                            var sort_field="reporting_timestamp"
+                            var sort_order="ascending"
+                        </script>
                         <script src="dist/js/pagination.js"></script>
+                        <script>
+                        
+                            var sortAssignments=function(){
+                                sort_order=$("#assign_order").val()
+                                sort_field=$("#assign_sort").val()
+                                console.log("Re-getting assignments")
+                                paginationApp.getPosts()
+                            }
+                        
+                        </script>
                     </div>
                 </div>
             </div>

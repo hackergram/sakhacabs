@@ -5,6 +5,7 @@
 }*/
 //serverip="192.168.56.101"
 search_query={}
+
 const paginationApp = new Vue({
     el: '#pagination-app',
     data: {
@@ -24,31 +25,26 @@ const paginationApp = new Vue({
                     config: { headers: {'Content-Type': 'application/json' }}
             })
             .then(response => {
+                
                 this.posts = response.data.resp;
+                this.posts = this.posts.sort(function(a,b){
+                  // Turn your strings into dates, and then subtract them
+                  // to get a value that is either negative, positive, or zero.
+                  //console.log(sort_field,sort_order)
+                  //console.log(a.assignment[sort_field],b.assignment[sort_field])
+                  val= new Date(a.assignment[sort_field].$date) - new Date(b.assignment[sort_field].$date);
+                  if (sort_order==="ascending"){
+                      return val
+                  }
+                  if(sort_order==="descending"){
+                      return val*-1
+                  }
+                });
                 
             })
             .catch(response => {
                 console.log(response);
             });
-            /*
-            
-             var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
-                    var url = "http://"+serverip+":5000/assignment/search";
-                    var params = JSON.stringify(search_query);
-                    http.open("POST", url, true);
-
-                    //Send the proper header information along with the request
-                    http.setRequestHeader("Content-type", "application/json");
-                    http.onreadystatechange = function() {//Call a function when the state changes.
-                        if(http.readyState == 4 && http.status == 200) {
-
-                            this.posts=JSON.parse(http.responseText).resp;
-                            console.log(this.posts)
-                        }
-                    }
-
-            http.send(params);
-            */
         },
         setPages () {
             let numberOfPages = Math.ceil(this.posts.length / this.perPage);
