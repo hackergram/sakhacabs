@@ -36,7 +36,7 @@ class CustomQuerySet(QuerySet):
 
 class Driver(PPrintMixin,DynamicDocument):
     driver_id=fields.StringField(unique=True,required=True)
-    mobile_num=fields.StringField()
+    mobile_num=fields.StringField(unique=True,required=True)
     tgid=fields.IntField()
     def __repr__(self):
 		return "Driver (%r)" %(self.driver_id)
