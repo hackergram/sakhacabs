@@ -54,9 +54,12 @@ class DriverResource(Resource):
 			driver=driver[0]
 			return jsonify({"status":"error","resp":"Driver with that ID Exists"})
 		else:
-			driver=documents.Driver.from_json(json.dumps(respdict))
-		driver.save()
-		return jsonify({"status":"success","resp":[driver]})
+			if validate_driver_dict(respdict):
+				driver=documents.Driver.from_json(json.dumps(respdict))
+				driver.save()
+				return jsonify({"status":"success","resp":[driver]})
+			else:
+				return jsonify({"status":"error","resp":"Invalid!"})
     def put(self,driver_id):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
