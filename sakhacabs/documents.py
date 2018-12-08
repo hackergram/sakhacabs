@@ -65,6 +65,7 @@ class Booking(PPrintMixin,DynamicDocument):
     cust_id=fields.StringField(required=True)
     booking_channel=fields.StringField(required=True)
     status=fields.StringField(default="new")
+    remarks=fields.StringField()
     
 class Product(PPrintMixin,DynamicDocument):
     product_id=fields.StringField(unique=True,required=True)
@@ -107,6 +108,7 @@ class DutySlip(PPrintMixin,Document):
     amount=fields.IntField()
     status=fields.StringField(default="new")
     payment_mode=fields.StringField()
+    remarks=fields.StringField()
     
 class Invoice(PPrintMixin,DynamicDocument):
 	cust_id=fields.StringField()
