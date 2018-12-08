@@ -359,12 +359,13 @@ def import_gadv(bookinglist):
 			b.pickup_location="Intl Airport, Flight #"+str(b.cust_meta['Pick-Up'])
 			b.drop_location=b.cust_meta['Drop-Off']
 			b.num_passengers=len(b.cust_meta['Passengers'].split(","))
-			b.channel="Bulk"
+			b.booking_channel="bulk"
 			if b.cust_meta['Flight Time'] == "None":
 				b.cust_meta['Flight Time']="00:00:00"
 			b.pickup_timestamp=utils.get_utc_ts(datetime.datetime.strptime(b.cust_meta['Date']+" "+b.cust_meta['Flight Time'],"%Y-%m-%d %H:%M:%S"))
 			if b.cust_meta['Transfer Name']=="Airport to Hotel Transfer":
 				b.product_id="GADVARPTPKUP"
+			
 			b.save()
 			booking['booking_id']=b.booking_id
 			    

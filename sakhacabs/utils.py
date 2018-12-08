@@ -16,6 +16,11 @@ def ran_gen(size, chars=charstring):
     return ''.join(random.choice(chars) for x in range(size))
 
 
+def new_invoice_id():
+    booking_id=datetime.datetime.now().strftime("%Y%m%d")+"-"+ran_gen(4)
+    return booking_id
+
+
 def new_booking_id():
     booking_id=datetime.datetime.now().strftime("%y%m%d")+ran_gen(4)
     return booking_id
