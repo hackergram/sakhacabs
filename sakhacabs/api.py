@@ -10,7 +10,7 @@ from flask_cors import CORS
 from flask_mongoengine import MongoEngine
 from flask_restful import reqparse, abort, Api, Resource
 
-import json
+import json,datetime
 #from flask.ext.potion.contrib.mongoengine.manager import MongoEngineManager
 #from sakhacabs.xpal import *
 from sakhacabs import xpal
@@ -209,7 +209,7 @@ class BookingResource(Resource):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
 		if command=="single":
-			if validate_booking_dict(respdict):
+			if xpal.validate_booking_dict(respdict):
 				booking=xpal.new_booking(respdict)
 				return jsonify({"resp":[booking],"status":"success"})
 			else:
@@ -218,18 +218,27 @@ class BookingResource(Resource):
 			bookinglist=xpal.import_gadv(respdict)
 			return jsonify({"resp":bookinglist,"status":"success"})
 		return jsonify({"resp":[]})
-    def put(self,docid=None):
-        app.logger.info("{}".format(request.get_json()))
-        respdict=request.get_json()
-		#TODO xpal.update_booking(respdict) #70
-		#Update Booking should 
-		# 1. Update the booking
-		# 2. Update the assignment
-		#Training Note: If more than one booking is linked in an assignment, the assignment reporting time will reflect that of the last updated booking. If something else is needed best to delete the assignment and create a new one. 
-        return jsonify({"resp":[]})
+    def put(self,booking_id=None):
+		#PUT to /booking/by_booking_id/<booking_id>
+        #Training Note: If more than one booking is linked in an assignment, the assignment reporting time will reflect that of the last updated booking. If something else is needed best to delete the assignment and create a new one. 
+        
+		app.logger.info("{}".format(request.get_json()))
+		respdict=request.get_json()
+		if 'created_timestamp' in respdict.keys():
+			respdict['created_timestamp']=datetime.datetime.fromtimestamp(respdict['created_timestamp']['$date']/1000)
+		if 'pickup_timestamp' in respdict.keys():
+			respdict['pickup_timestamp']=datetime.datetime.fromtimestamp(respdict['pickup_timestamp']['$date']/1000)
+		if xpal.validate_booking_dict(respdict):
+			resp=xpal.update_booking(booking_id,respdict)
+		if type(resp)!=list:
+			status="error"
+		else:
+			status="success"
+		return jsonify({"resp":resp,"status":status})
     
     def delete(self,booking_id):
 		if len(xpal.documents.Booking.objects(booking_id=booking_id))>0:
+			#TODO: xpal.delete_booking(booking_id) #81
 			xpal.documents.Booking.objects(booking_id=booking_id).delete()
 			return jsonify({"resp":[],"status":"success"})
 		else:
@@ -243,6 +252,7 @@ class AssignmentResource(Resource):
     def get(self,docid=None):
         if docid:
 			queryset=xpal.documents.Assignment.objects.with_id(docid)
+			app.logger.info("Getting assignment {}".format(queryset))
         else:
 			queryset=xpal.documents.Assignment.objects.order_by("reporting_timestamp").all()
         

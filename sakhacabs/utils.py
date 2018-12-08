@@ -9,7 +9,7 @@ Created on Sun Sep 30 10:43:19 2018
 import random,datetime,re
 charstring="ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"
 UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
-nospec=re.compile(r"[^A-Za-z0-9 '-]+")
+nospec=re.compile(r"[^A-Za-z0-9\n '-]+")
 notnum=re.compile(r"[^0-9]+")
 
 def ran_gen(size, chars=charstring): 
