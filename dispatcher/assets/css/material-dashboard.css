@@ -16274,10 +16274,10 @@ a .material-icons {
 
 .form-check,
 label {
-  font-size: 1em;
+  font-size: 1.5em;
   line-height: 1;
-  color: #AAAAAA;
-  font-weight: 400;
+  color: black;
+  font-weight: 500;
 }
 
 /*           Animations              */
