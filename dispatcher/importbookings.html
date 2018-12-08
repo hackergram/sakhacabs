@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>SheetJS Live Demo</title>
+<title>Import Booking</title>
 <style>
 #drop{
 	border:2px dashed #bbb;
@@ -129,9 +129,18 @@ var submit_output=function(){
         if(http.readyState == 4 && http.status == 200) {
             response=JSON.parse(http.responseText)
             console.log(response)
+            if (response.status==="success"){
+                alert("Successfully imported bookings!")
+            }
+            else{
+                alert("Something went wrong!")
+            }
             if(OUT.innerText === undefined) OUT.textContent = JSON.stringify(response['resp'],2,2);
 	           else OUT.innerText = JSON.stringify(response['resp'],2,2);
    
+        }
+        else{
+                alert("Something went wrong!")
         }
     }
     http.send(params);
@@ -156,12 +165,17 @@ var parse_rows=function(rows){
 
 var process_output=function(){
     var OUT = document.getElementById('out');
-    rows=JSON.parse(global_output)['Transfers Export']
-    parsed_output=parse_rows(rows)
-    console.log(parsed_output)
-    if(OUT.innerText === undefined) OUT.textContent = JSON.stringify(parsed_output,2,2);
-	else OUT.innerText = JSON.stringify(parsed_output,2,2);
-    bookinglist=parsed_output;
+    try{
+        rows=JSON.parse(global_output)['Transfers Export']
+        parsed_output=parse_rows(rows)
+        console.log(parsed_output)
+        if(OUT.innerText === undefined) OUT.textContent = JSON.stringify(parsed_output,2,2);
+	   else OUT.innerText = JSON.stringify(parsed_output,2,2);
+        bookinglist=parsed_output;    
+    }
+    catch(err){
+        alert("Something went wrong!")
+    }
     
 }
 

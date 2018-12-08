@@ -74,7 +74,11 @@
     margin: .15em;
     
 }
-.row .col{
+.row {
+    padding: .15em;
+    margin: .15em;
+}
+.col {
     padding: .15em;
     margin: .15em;
 }
