@@ -528,7 +528,8 @@ var sakha={
                 response=JSON.parse(http.responseText)
                 if (response.status==="success"){
                     alert("Successfully created assignment");
-                    $("#assignmentdetail").text(JSON.stringify(response.resp[0]))
+                    $("#reporting_timestamp").text(JSON.stringify(response.resp[0].reporting_timestamp))
+                    $("#reporting_location").text(JSON.stringify(response.resp[0].reporting_location))
                 }
                 else{
                     alert("Failed to create assignment");
