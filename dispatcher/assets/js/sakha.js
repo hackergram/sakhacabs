@@ -500,8 +500,16 @@ var sakha={
         http.setRequestHeader("Content-type", "application/json");
         http.onreadystatechange = function() {//Call a function when the state changes.
             if(http.readyState == 4 && http.status == 200) {
-                //alert(http.responseText);
-                $("#assignmentdetail").text(http.responseText)
+                response=JSON.parse(http.responseText)
+                if (response.status==="success"){
+                    alert("Successfully created assignment");
+                    $("#assignmentdetail").text(response.resp[0])
+                }
+                else{
+                    alert("Failed to create assignment");
+                    $("#assignmentdetail").text(response.resp)
+                }
+                
             }
         }
         http.send(params);
