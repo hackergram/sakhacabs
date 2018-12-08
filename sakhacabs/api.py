@@ -300,7 +300,7 @@ class AssignmentResource(Resource):
             assignment=save_assignment(respdict)
             return jsonify({"resp": [json.loads(assignment.to_json())],"status":"success"})
         except Exception as e:
-            app.logger.info("{}".format(str(e)))
+            app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
             return jsonify({"resp":"Saving assignment failed","status":"error"})   
         return jsonify({"resp":[]})
     def put(self,docid):

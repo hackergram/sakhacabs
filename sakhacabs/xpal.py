@@ -42,6 +42,10 @@ def validate_booking_dict(bookingdict):
 	if len(bookingdict['passenger_mobile'])>12:
 		valid=False
 	return valid
+
+def validate_driver_dict(driverdict):
+	valid=True
+	return valid
 	
 def sync_remote():
     custlist=custsheet.get_as_df().to_dict(orient="records")
@@ -238,6 +242,8 @@ def save_assignment(assignmentdict,assignment_id=None):
 			dutyslip.delete()
     sakhacabsxpal.logger.info("Adding the new dutyslips")
     for dutyslipdict in assignmentdict['dutyslips']:
+		if "vehicle" not in dutyslipdict.keys():
+			dutyslipdict['vehicle']=None
 		d=documents.DutySlip.objects(driver=dutyslipdict['driver'],vehicle=dutyslipdict['vehicle'],assignment=assignment)
 		if len(d)==0:
 			d=documents.DutySlip(driver=dutyslipdict['driver'],vehicle=dutyslipdict['vehicle'],assignment=assignment,status="new")
