@@ -779,10 +779,23 @@ var sakha={
         http.open("PUT", url, true);
         http.setRequestHeader("Content-type", "application/json");
         http.onreadystatechange = function() {//Call a function when the state changes.
-            if(http.readyState == 4 && http.status == 200) {
-                response=JSON.parse(http.responseText)
-                console.log(response)
-       
+            if(http.readyState == 4 ) {
+                if(http.status == 200){
+                    response=JSON.parse(http.responseText)
+                    console.log(response)
+                    if (response.status==="success"){
+                        sakha.fillDutySlipModal(dsid)
+                        alert("Saved dutyslip successfully")
+
+                    }
+                    else{
+                        alert("Caught Error saving dutyslip")
+                    }
+                }
+                else{
+                    alert("Uncaught Error saving duty slip!")
+                }
+               
             }
         }
         http.send(params);

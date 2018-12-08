@@ -24,6 +24,7 @@ a { text-decoration: none }
 
 </head>
 <body>
+    <a href="../sakhadispatcher" id="backlink">Back</a>
 <pre>
 <!--
 
@@ -114,6 +115,7 @@ var global_wb;
 var global_output; 
 var bookinglist=[];
 var serverip="192.168.56.101"
+
 get_cust_list();
     get_prod_list();
 var submit_output=function(){
@@ -139,9 +141,7 @@ var submit_output=function(){
 	           else OUT.innerText = JSON.stringify(response['resp'],2,2);
    
         }
-        else{
-                alert("Something went wrong!")
-        }
+        
     }
     http.send(params);
 }    
@@ -327,7 +327,9 @@ var do_file = (function() {
 	function handleFile(e) { do_file(e.target.files); }
 	xlf.addEventListener('change', handleFile, false);
 })();
-	
+
+    
+    
 </script>
 </body>
 </html>
