@@ -83,22 +83,31 @@ def main_menu(bot, update):
             reply_markup=markup)
         return MENU_CHOICE
     except Exception as e:
-        logger.info(str(e))
+        logger.info("{} {}".format(type(e),str(e)))
 
 def open_duty_slip(bot,update,user_data):
-    logger.info("Opening Duty Slip {},{}".format(update.message.text.split(" ")[1],user_data))
-    #markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
-    markup = ReplyKeyboardMarkup(dutyslip_start_keyboard, one_time_keyboard=True)
-    dutyslip=documents.DutySlip.objects.with_id(update.message.text.split(" ")[1])
-    user_data['current_duty_slip']=dutyslip
-    logger.info("Curr DS ={}".format(dutyslip))
-    replytext="Vehicle: "+dutyslip.vehicle+"\nReporting Time: "+dutyslip.assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S")+"\n"+"Reporting Location: "+dutyslip.assignment.reporting_location+"\nBookings:"
-    for booking in dutyslip.assignment.bookings:
-        replytext=replytext+"\nBooking ID: "+booking.booking_id+"\nPassenger Detail: "+booking.passenger_detail+"\nDrop Localtion: "+booking.drop_location
-    update.message.reply_text(replytext,
-            reply_markup=markup)
-    #return MENU_CHOICE
-    return DUTYSLIP_MENU
+	try:
+		logger.info("Opening Duty Slip {},{}".format(update.message.text.split(" ")[1],user_data))
+		#markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
+		markup = ReplyKeyboardMarkup(dutyslip_start_keyboard, one_time_keyboard=True)
+		dutyslip=documents.DutySlip.objects.with_id(update.message.text.split(" ")[1])
+		user_data['current_duty_slip']=dutyslip
+		logger.info("Curr DS ={}".format(dutyslip))
+		replytext="Reporting Time: "+dutyslip.assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S")+"\n"+"Reporting Location: "+dutyslip.assignment.reporting_location+"\nBookings:"
+		if hasattr(dutyslip,"vehicle"):
+			replytext="Vehicle: {}\n".format(dutyslip.vehicle)+replytext
+		
+		for booking in dutyslip.assignment.bookings:
+			replytext=replytext+"\nBooking ID: "+booking.booking_id+"\nPassenger Detail: "+booking.passenger_detail+"\nDrop Localtion: "+booking.drop_location
+		update.message.reply_text(replytext,
+				reply_markup=markup)
+		#return MENU_CHOICE
+		return DUTYSLIP_MENU
+	except Exception as e:
+		logger.info("{} {}".format(type(e),str(e)))
+		markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
+		update.message.reply_text("Could not open duty slip",reply_markup=markup)
+        return MENU_CHOICE
 
 def get_duty_slips(bot, update, user_data):
     user_data['driver']=get_driver_by_tgid(update.message.from_user.id)

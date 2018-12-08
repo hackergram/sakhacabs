@@ -141,6 +141,7 @@ def sync_remote():
 LocationUpdate CRUD functionality
 Fix to check if vehicle is already  taken.
 '''
+
 def new_locationupdate(driver,timestamp,checkin=True,location=None,vehicle=None,handoff=None,logger=xetrapal.astra.baselogger,**kwargs): 
 	"""
 	Creates a new location update, location updates once created are not deleted as they are equivalent to log entries. 
@@ -175,12 +176,15 @@ def new_locationupdate(driver,timestamp,checkin=True,location=None,vehicle=None,
 	return locationupdate
 
 '''
-Assignment and Dutyslip CRUD Functionality
+Bookings, Assignments and DutySlips
 Assignments are collections of one or more bookings grouped together for assignment of vehicles/drivers
 DutySlips record assignment execution. DutySlips are issued by the dispatcher and can be created and deleted but not updated.
 A DutySlip can not be deleted once the open time has been set by the driver, i.e. after execution on an assignment has begun.
 '''
 
+'''
+Bookings
+'''
 def new_booking(respdict):
 	bookingdict={}
 	sakhacabsxpal.logger.info("Creating new booking")
@@ -211,7 +215,7 @@ def save_assignment(assignmentdict,assignment_id=None):
 		assignment.status="new"
 		sakhacabsxpal.logger.info("Created new assignment at {}".format(assignment.created_timestamp.strftime("%Y-%m-%d %H:%M:%S")))
     else:
-		#TODO Write logic for updating assignment if change in bookings and duty slips
+		#TODO Write logic for updating assignment if change in bookings and duty slips #70
 		sakhacabsxpal.logger.info("Saving existing assignment {}".format(assignment_id))
 		assignment=documents.Assignment.objects.with_id(assignment_id)
 		assignment.bookings=bookings
@@ -258,6 +262,18 @@ def save_assignment(assignmentdict,assignment_id=None):
     sakhacabsxpal.logger.info("Saved assignment {}".format(assignment.to_json()))
     return assignment
 
+def search_assignments(cust_id=None,date_frm=None,date_to=None):
+	assignments=documents.Assignment.objects
+	if cust_id!=None:
+		assignments=assignments.filter(cust_id=cust_id)
+	if date_frm!=None:
+		assignments=assignments.filter(reporting_timestamp__gt=date_frm)
+	if date_to!=None:
+		assignments=assignments.filter(reporting_timestamp__lt=date_to)
+	return assignments
+
+
+
 '''
 Duty Slips
 '''
@@ -300,114 +316,15 @@ def get_vehicle_by_vid(vid):
     else:
         return None
 
-def export_drivers():
-	drivers=documents.Driver.objects.to_json()
-	drivers=json.loads(drivers)
-	for driver in drivers:
-		del driver['_id']
-	driverdf=pandas.DataFrame(drivers)
-	driverdf.to_csv("./dispatcher/reports/drivers.csv")
-	return "reports/drivers.csv"
-	
-def export_locupdates():
-	locupdates=documents.LocationUpdate.objects.to_json()
-	locupdates=json.loads(locupdates)
-	for locupdate in locupdates:
-		del locupdate['_id']
-	locupdatedf=pandas.DataFrame(locupdates)
-	locupdatedf.timestamp=locupdatedf.timestamp.apply(lambda x: datetime.datetime.fromtimestamp((x['$date']+1)/1000).strftime("%Y-%m-%d %H:%M:%S"))
-	locupdatedf.to_csv("./dispatcher/reports/locupdates.csv")
-	return "reports/locupdates.csv"
-	
-def export_vehicles():
-	vehicles=documents.Vehicle.objects.to_json()
-	vehicles=json.loads(vehicles)
-	for vehicle in vehicles:
-		del vehicle['_id']
-	vehicledf=pandas.DataFrame(vehicles)
-	vehicledf.to_csv("./dispatcher/reports/vehicles.csv")
-	return "reports/vehicles.csv"
 
-def export_bookings():
-	bookings=documents.Booking.objects.to_json()
-	bookings=json.loads(bookings)
-	for booking in bookings:
-		del booking['_id']
-	bookingdf=pandas.DataFrame(bookings)
-	bookingdf.created_timestamp=bookingdf.created_timestamp.apply(lambda x: datetime.datetime.fromtimestamp((x['$date']+1)/1000).strftime("%Y-%m-%d %H:%M:%S"))
-	bookingdf.pickup_timestamp=bookingdf.pickup_timestamp.apply(lambda x: datetime.datetime.fromtimestamp((x['$date']+1)/1000).strftime("%Y-%m-%d %H:%M:%S"))
-	bookingdf.to_csv("./dispatcher/reports/bookings.csv", encoding="utf-8")
-	return "reports/bookings.csv"
 
-#def import_gadv():
-def import_gadv(bookinglist):
-	'''
-	datasheet=sakhacabsgd.open_by_key(sakhacabsxpal.config.get("SakhaCabs","datasheetkey"))
-	gadvsheet=datasheet.worksheet_by_title("gadventures")
-	gadvdf=gadvsheet.get_as_df()
-	bookinglist=json.loads(gadvdf.to_json(orient="records"))
-	bookinglist
-	gadvbookings=[]
-	'''
 	
-	for booking in bookinglist:
-		dupbookings=documents.Booking.objects(cust_meta=booking)
-		#if 'booking_id' in booking.keys() and booking['booking_id']!="" and len(documents.Booking.objects(booking_id=booking['booking_id']))>0:
-		if len(dupbookings)>0:
-			sakhacabsxpal.logger.info("Duplicate booking {}".format(dupbookings))
-			booking['booking_id']=dupbookings[0].booking_id
-			#b=documents.Booking.objects(booking_id=booking['booking_id'])[0]
-			#b.cust_meta=booking
-		else:
-			sakhacabsxpal.logger.info("New Booking") #TODO - Merge with single booking workflow
-			b=documents.Booking(booking_id=utils.new_booking_id(),cust_meta=booking,cust_id="gadventures")
-			b.passenger_detail=str(b.cust_meta['Booking ID'])+"\n"+b.cust_meta['Trip Code']+"\n"+b.cust_meta['Passengers']
-			b.pickup_location="Intl Airport, Flight #"+str(b.cust_meta['Pick-Up'])
-			b.drop_location=b.cust_meta['Drop-Off']
-			b.num_passengers=len(b.cust_meta['Passengers'].split(","))
-			b.booking_channel="bulk"
-			if b.cust_meta['Flight Time'] == "None":
-				b.cust_meta['Flight Time']="00:00:00"
-			b.pickup_timestamp=utils.get_utc_ts(datetime.datetime.strptime(b.cust_meta['Date']+" "+b.cust_meta['Flight Time'],"%Y-%m-%d %H:%M:%S"))
-			if b.cust_meta['Transfer Name']=="Airport to Hotel Transfer":
-				b.product_id="GADVARPTPKUP"
-			
-			b.save()
-			booking['booking_id']=b.booking_id
-			    
-	#	print b,b.to_json()
-	#	gadvbookings.append(b)
-	#newgadvdf=pandas.DataFrame(bookinglist)
-	#gadvsheet.set_dataframe(newgadvdf,(1,1))
-	'''
-	for booking in documents.b.objects(cust_id="gadventures"):
-		try:
-			booking.cust_id="gadventures"
-			booking.passenger_detail=str(booking.cust_meta['Booking ID'])+"\n"+booking.cust_meta['Trip Code']+"\n"+booking.cust_meta['Passengers']
-			booking.pickup_location="Intl Airport, Flight #"+str(booking.cust_meta['Pick-Up'])
-			booking.drop_location=booking.cust_meta['Drop-Off']
-			booking.num_passengers=len(booking.cust_meta['Passengers'].split(","))
-			booking.channel="Bulk"
-			booking.pickup_timestamp=utils.get_utc_ts(datetime.datetime.strptime(booking.cust_meta['Date']+" "+booking.cust_meta['Flight Time'],"%Y-%m-%d %H:%M:%S"))
-			if booking.cust_meta['Transfer Name']=="Airport to Hotel Transfer":
-				booking.product_id="GADVARPTPKUP"
-			booking.save()
-			print booking.to_json()
-		except:
-			print "Error",booking.to_json()
-	'''
-	return bookinglist
+'''
+Invoices
+'''
 
-def search_assignments(cust_id=None,date_frm=None,date_to=None):
-	assignments=documents.Assignment.objects
-	if cust_id!=None:
-		assignments=assignments.filter(cust_id=cust_id)
-	if date_frm!=None:
-		assignments=assignments.filter(reporting_timestamp__gt=date_frm)
-	if date_to!=None:
-		assignments=assignments.filter(reporting_timestamp__lt=date_to)
-	return assignments
-	
+
+
 def get_invoice(to_settle):
 	invoice_lines=[]
 	for ass in to_settle:
@@ -482,3 +399,85 @@ def get_invoice(to_settle):
 		total+=line['amount']
 	invoice['total']=total
 	return invoice
+
+
+
+
+
+'''
+Exporting everything
+'''
+
+def export_drivers():
+	drivers=documents.Driver.objects.to_json()
+	drivers=json.loads(drivers)
+	for driver in drivers:
+		del driver['_id']
+	driverdf=pandas.DataFrame(drivers)
+	driverdf.to_csv("./dispatcher/reports/drivers.csv")
+	return "reports/drivers.csv"
+	
+def export_locupdates():
+	locupdates=documents.LocationUpdate.objects.to_json()
+	locupdates=json.loads(locupdates)
+	for locupdate in locupdates:
+		del locupdate['_id']
+	locupdatedf=pandas.DataFrame(locupdates)
+	locupdatedf.timestamp=locupdatedf.timestamp.apply(lambda x: datetime.datetime.fromtimestamp((x['$date']+1)/1000).strftime("%Y-%m-%d %H:%M:%S"))
+	locupdatedf.to_csv("./dispatcher/reports/locupdates.csv")
+	return "reports/locupdates.csv"
+	
+def export_vehicles():
+	vehicles=documents.Vehicle.objects.to_json()
+	vehicles=json.loads(vehicles)
+	for vehicle in vehicles:
+		del vehicle['_id']
+	vehicledf=pandas.DataFrame(vehicles)
+	vehicledf.to_csv("./dispatcher/reports/vehicles.csv")
+	return "reports/vehicles.csv"
+
+def export_bookings():
+	bookings=documents.Booking.objects.to_json()
+	bookings=json.loads(bookings)
+	for booking in bookings:
+		del booking['_id']
+	bookingdf=pandas.DataFrame(bookings)
+	bookingdf.created_timestamp=bookingdf.created_timestamp.apply(lambda x: datetime.datetime.fromtimestamp((x['$date']+1)/1000).strftime("%Y-%m-%d %H:%M:%S"))
+	bookingdf.pickup_timestamp=bookingdf.pickup_timestamp.apply(lambda x: datetime.datetime.fromtimestamp((x['$date']+1)/1000).strftime("%Y-%m-%d %H:%M:%S"))
+	bookingdf.to_csv("./dispatcher/reports/bookings.csv", encoding="utf-8")
+	return "reports/bookings.csv"
+
+
+
+'''
+Bulk Imports of everything
+'''
+#def import_gadv():
+def import_gadv(bookinglist):
+	for booking in bookinglist:
+		dupbookings=documents.Booking.objects(cust_meta=booking)
+		#if 'booking_id' in booking.keys() and booking['booking_id']!="" and len(documents.Booking.objects(booking_id=booking['booking_id']))>0:
+		if len(dupbookings)>0:
+			sakhacabsxpal.logger.info("Duplicate booking {}".format(dupbookings))
+			booking['booking_id']=dupbookings[0].booking_id
+			#b=documents.Booking.objects(booking_id=booking['booking_id'])[0]
+			#b.cust_meta=booking
+		else:
+			sakhacabsxpal.logger.info("New Booking") #TODO - Merge with single booking workflow #83
+			b=documents.Booking(booking_id=utils.new_booking_id(),cust_meta=booking,cust_id="gadventures")
+			b.passenger_detail=str(b.cust_meta['Booking ID'])+"\n"+b.cust_meta['Trip Code']+"\n"+b.cust_meta['Passengers']
+			b.pickup_location="Intl Airport, Flight #"+str(b.cust_meta['Pick-Up'])
+			b.drop_location=b.cust_meta['Drop-Off']
+			b.num_passengers=len(b.cust_meta['Passengers'].split(","))
+			b.booking_channel="bulk"
+			if b.cust_meta['Flight Time'] == "None":
+				b.cust_meta['Flight Time']="00:00:00"
+			b.pickup_timestamp=utils.get_utc_ts(datetime.datetime.strptime(b.cust_meta['Date']+" "+b.cust_meta['Flight Time'],"%Y-%m-%d %H:%M:%S"))
+			if b.cust_meta['Transfer Name']=="Airport to Hotel Transfer":
+				b.product_id="GADVARPTPKUP"
+			
+			b.save()
+			booking['booking_id']=b.booking_id
+			    
+	return bookinglist
+

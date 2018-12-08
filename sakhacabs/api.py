@@ -12,7 +12,8 @@ from flask_restful import reqparse, abort, Api, Resource
 
 import json
 #from flask.ext.potion.contrib.mongoengine.manager import MongoEngineManager
-from sakhacabs.xpal import *
+#from sakhacabs.xpal import *
+from sakhacabs import xpal
 # from sakhacabs import documents
 app = Flask(__name__)
 app.config.update(
@@ -22,40 +23,40 @@ app.config.update(
 )
 CORS(app)
 me = MongoEngine(app)
-app.logger=sakhacabsxpal.logger
+app.logger=xpal.sakhacabsxpal.logger
 
 api = Api(app)
 parser = reqparse.RequestParser()  
 
-#TODO - Testing - different scenarios
+
 class DriverResource(Resource):
     def get(self,tgid=None,mobile_num=None,docid=None,driver_id=None, command=None):
 		if command=="export":
 			fileloc=export_drivers()
 			return jsonify({"resp":[fileloc],"status":"success"})
 		if docid:
-			queryset=documents.Driver.objects.with_id(docid)
+			queryset=xpal.documents.documents.Driver.objects.with_id(docid)
 		elif tgid:
-			queryset=documents.Driver.objects(tgid=tgid)
+			queryset=xpal.documents.Driver.objects(tgid=tgid)
 		elif mobile_num:
-			queryset=documents.Driver.objects(mobile_num=mobile_num)
+			queryset=xpal.documents.Driver.objects(mobile_num=mobile_num)
 		elif driver_id:
-			queryset=documents.Driver.objects(driver_id=driver_id)
+			queryset=xpal.documents.Driver.objects(driver_id=driver_id)
 		else:
-			queryset=documents.Driver.objects
+			queryset=xpal.documents.Driver.objects
 		return jsonify({"resp":json.loads(queryset.to_json()),"status":"success"}) 
     def post(self):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
 		if "_id" in respdict.keys():
 			del respdict['_id']
-		driver=documents.Driver.objects(driver_id=respdict['driver_id'])
+		driver=xpal.documents.Driver.objects(driver_id=respdict['driver_id'])
 		if len(driver)>0:
 			driver=driver[0]
 			return jsonify({"status":"error","resp":"Driver with that ID Exists"})
 		else:
 			if validate_driver_dict(respdict):
-				driver=documents.Driver.from_json(json.dumps(respdict))
+				driver=xpal.documents.Driver.from_json(json.dumps(respdict))
 				driver.save()
 				return jsonify({"status":"success","resp":[driver]})
 			else:
@@ -63,7 +64,7 @@ class DriverResource(Resource):
     def put(self,driver_id):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		driver=documents.Driver.objects(driver_id=driver_id)
+		driver=xpal.documents.Driver.objects(driver_id=driver_id)
 		if len(driver)==0:
 			return jsonify({"status":"error","resp":"No driver found"})
 		else:
@@ -79,8 +80,8 @@ class DriverResource(Resource):
 		driver.reload()
 		return jsonify({"status":"success","resp":[driver]})
     def delete(self,driver_id):
-		if len(documents.Driver.objects(driver_id=driver_id))>0:
-			documents.Driver.objects(driver_id=driver_id).delete()
+		if len(xpal.documents.Driver.objects(driver_id=driver_id))>0:
+			xpal.documents.Driver.objects(driver_id=driver_id).delete()
 			return jsonify({"resp":[True]})
 		else:
 			return jsonify({"resp":[False]})
@@ -91,7 +92,6 @@ api.add_resource(DriverResource,"/driver/by_id/<string:docid>",endpoint="driver_
 api.add_resource(DriverResource,"/driver/by_driver_id/<string:driver_id>",endpoint="driverid")
 api.add_resource(DriverResource,"/driver/<string:command>",endpoint="driver_command")
 
-#TODO - Complete CRUD
 class VehicleResource(Resource):
     def get(self,vehicle_id=None,docid=None,command=None):
         if command=="export":
@@ -99,14 +99,14 @@ class VehicleResource(Resource):
 			return jsonify({"resp":[fileloc],"status":"success"})
 		
         if docid:
-            if documents.Vehicle.objects.with_id(docid):
-                return jsonify({"resp": [json.loads(documents.Vehicle.objects.with_id(docid).to_json())]})
+            if xpal.documents.Vehicle.objects.with_id(docid):
+                return jsonify({"resp": [json.loads(xpal.documents.Vehicle.objects.with_id(docid).to_json())]})
             else:
                 return jsonify({"resp":[]})
         elif vehicle_id:
-            return jsonify({"resp": json.loads(documents.Vehicle.objects(vehicle_id=vehicle_id).to_json())})
+            return jsonify({"resp": json.loads(xpal.documents.Vehicle.objects(vehicle_id=vehicle_id).to_json())})
         else:
-            return jsonify({"resp": json.loads(documents.Vehicle.objects.to_json())})
+            return jsonify({"resp": json.loads(xpal.documents.Vehicle.objects.to_json())})
     def post(self,vehicle_id=None,docid=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -114,8 +114,8 @@ class VehicleResource(Resource):
     def put(self,vehicle_id=None,docid=None):
         return jsonify({"resp":[]})
 	def delete(self,docid):
-		if len(documents.Vehicle.objects.with_id(docid))>0:
-			documents.Vehicle.objects.with_id(docid).delete()
+		if len(xpal.documents.Vehicle.objects.with_id(docid))>0:
+			xpal.documents.Vehicle.objects.with_id(docid).delete()
 			return jsonify({"resp":[True]})
 		else:
 			return jsonify({"resp":[False]})
@@ -123,7 +123,9 @@ api.add_resource(VehicleResource,"/vehicle",endpoint="vehicle")
 api.add_resource(VehicleResource,"/vehicle/by_id/<string:docid>",endpoint="vehicle_docid")
 api.add_resource(VehicleResource,"/vehicle/by_vehicle_id/<string:vehicle_id>",endpoint="vehicleid")
 api.add_resource(VehicleResource,"/vehicle/<string:command>",endpoint="vehicle_command")
-#TODO - Location validatin and geocode lookup, handoff lookup
+
+
+
 
 class LocationUpdateResource(Resource):
     def get(self,docid=None,command=None):
@@ -131,24 +133,24 @@ class LocationUpdateResource(Resource):
 			fileloc=export_locupdates()
 			return jsonify({"resp":[fileloc],"status":"success"})
 		if docid:
-			if documents.LocationUpdate.objects.with_id(docid):
-				return jsonify({"resp": [json.loads(documents.LocationUpdate.objects.with_id(docid).to_json())]})
+			if xpal.documents.LocationUpdate.objects.with_id(docid):
+				return jsonify({"resp": [json.loads(xpal.documents.LocationUpdate.objects.with_id(docid).to_json())]})
 			else:
 				return jsonify({"resp":[]})
 		else:
-			return jsonify({"resp": json.loads(documents.LocationUpdate.objects.to_json())})
+			return jsonify({"resp": json.loads(xpal.documents.LocationUpdate.objects.to_json())})
     def post(self):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
         try:
-            driver=documents.Driver.objects(driver_id=respdict["driver_id"])[0]
+            driver=xpal.documents.Driver.objects(driver_id=respdict["driver_id"])[0]
             timestamp=datetime.datetime.fromtimestamp(respdict['timestamp']['$date']/1000)
             if respdict["vehicle_id"]:
-                vehicle=documents.Vehicle.objects(vehicle_id=respdict["vehicle_id"])[0]
+                vehicle=xpal.documents.Vehicle.objects(vehicle_id=respdict["vehicle_id"])[0]
             else:
                 vehicle=None
             locupdate=new_locationupdate(driver,timestamp,vehicle=vehicle)
-            #locupdate=documents.LocationUpdate.from_json(json.dumps(request.get_json()))
+            #locupdate=xpal.documents.LocationUpdate.from_json(json.dumps(request.get_json()))
             app.logger.info("{}".format(locupdate.to_json()))
             locupdate.save()
             return jsonify({"resp": [json.loads(locupdate.to_json())]})
@@ -162,9 +164,9 @@ class LocationUpdateResource(Resource):
         if "_id" in respdict.keys():
             del respdict["_id"]
         if docid:
-            if documents.LocationUpdate.objects.with_id(docid):
+            if xpal.documents.LocationUpdate.objects.with_id(docid):
                 try:
-                    locupdate=documents.LocationUpdate.objects.with_id(docid)
+                    locupdate=xpal.documents.LocationUpdate.objects.with_id(docid)
                     locupdate=locupdate.from_json(json.dumps(request.get_json()))
                     app.logger.info("{}".format(locupdate.to_json()))
                     locupdate.save()
@@ -177,8 +179,8 @@ class LocationUpdateResource(Resource):
         else:
             return jsonify({"resp":[]})       
     def delete(self,docid):
-		if len(documents.LocationUpdate.objects.with_id(docid))>0:
-			documents.LocationUpdate.objects.with_id(docid).delete()
+		if len(xpal.documents.LocationUpdate.objects.with_id(docid))>0:
+			xpal.documents.LocationUpdate.objects.with_id(docid).delete()
 			return jsonify({"resp":[True]})
 		else:
 			return jsonify({"resp":[False]})
@@ -192,36 +194,43 @@ class BookingResource(Resource):
 			fileloc=export_bookings()
 			return jsonify({"resp":[fileloc],"status":"success"})
         if docid:
-            if documents.Booking.objects.with_id(docid):
-                return jsonify({"resp": [json.loads(documents.Booking.objects.with_id(docid).to_json())]})
+            if xpal.documents.Booking.objects.with_id(docid):
+                return jsonify({"resp": [json.loads(xpal.documents.Booking.objects.with_id(docid).to_json())]})
             else:
                 return jsonify({"resp":[]})
         if booking_id:
-			if documents.Booking.objects(booking_id=booking_id):
-				return jsonify({"resp": [json.loads(documents.Booking.objects(booking_id=booking_id).to_json())]})
+			if xpal.documents.Booking.objects(booking_id=booking_id):
+				return jsonify({"resp": [json.loads(xpal.documents.Booking.objects(booking_id=booking_id).to_json())]})
 			else:
 				return jsonify({"resp":[]})
         else:
-            return jsonify({"resp": json.loads(documents.Booking.objects.to_json())})
+            return jsonify({"resp": json.loads(xpal.documents.Booking.objects.to_json())})
     def post(self,command=None):	
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
 		if command=="single":
 			if validate_booking_dict(respdict):
-				booking=new_booking(respdict)
+				booking=xpal.new_booking(respdict)
 				return jsonify({"resp":[booking],"status":"success"})
 			else:
 				return jsonify({"resp":"Invalid Input","status":"error"})
 		if command=="import":
-			bookinglist=import_gadv(respdict)
+			bookinglist=xpal.import_gadv(respdict)
 			return jsonify({"resp":bookinglist,"status":"success"})
 		return jsonify({"resp":[]})
     def put(self,docid=None):
+        app.logger.info("{}".format(request.get_json()))
+        respdict=request.get_json()
+		#TODO xpal.update_booking(respdict) #70
+		#Update Booking should 
+		# 1. Update the booking
+		# 2. Update the assignment
+		#Training Note: If more than one booking is linked in an assignment, the assignment reporting time will reflect that of the last updated booking. If something else is needed best to delete the assignment and create a new one. 
         return jsonify({"resp":[]})
     
     def delete(self,booking_id):
-		if len(documents.Booking.objects(booking_id=booking_id))>0:
-			documents.Booking.objects(booking_id=booking_id).delete()
+		if len(xpal.documents.Booking.objects(booking_id=booking_id))>0:
+			xpal.documents.Booking.objects(booking_id=booking_id).delete()
 			return jsonify({"resp":[],"status":"success"})
 		else:
 			return jsonify({"resp":[],"status":"error"})
@@ -233,15 +242,15 @@ api.add_resource(BookingResource,"/booking/<string:command>",endpoint="booking_c
 class AssignmentResource(Resource):
     def get(self,docid=None):
         if docid:
-			queryset=documents.Assignment.objects.with_id(docid)
+			queryset=xpal.documents.Assignment.objects.with_id(docid)
         else:
-			queryset=documents.Assignment.objects.order_by("-created_timestamp").all()
+			queryset=xpal.documents.Assignment.objects.order_by("reporting_timestamp").all()
         
         assignmentlist=[]
         for assignment in queryset:
 			assignmentdict={}
 			assignmentdict['assignment']=json.loads(assignment.to_json())
-			assignmentdict['dutyslips']=json.loads(documents.DutySlip.objects(assignment=assignment).to_json())
+			assignmentdict['dutyslips']=json.loads(xpal.documents.DutySlip.objects(assignment=assignment).to_json())
 			assignmentlist.append(assignmentdict)
         #return jsonify({"resp": json.loads(queryset.to_json())})
         return jsonify({"resp": assignmentlist,"status":"success"})
@@ -249,7 +258,7 @@ class AssignmentResource(Resource):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
         if command=="updatestatus":
-			assignment=documents.Assignment.objects.with_id(respdict['assignment_id'])
+			assignment=xpal.documents.Assignment.objects.with_id(respdict['assignment_id'])
 			assignment.status=respdict['status']
 			assignment.save()
 			for booking in assignment.bookings:
@@ -268,13 +277,13 @@ class AssignmentResource(Resource):
 				date_to=datetime.datetime.strptime(search_keys['date_to'],"%Y-%m-%d %H:%M:%S")
 			if "cust_id" in search_keys and search_keys['cust_id']!="0":
 				cust_id=search_keys['cust_id']
-			queryset=search_assignments(cust_id=cust_id,date_frm=date_frm,date_to=date_to)
+			queryset=xpal.search_assignments(cust_id=cust_id,date_frm=date_frm,date_to=date_to)
 			assignmentlist=[]
 			app.logger.info(queryset)
 			for assignment in queryset:
 				assignmentdict={}
 				assignmentdict['assignment']=json.loads(assignment.to_json())
-				assignmentdict['dutyslips']=json.loads(documents.DutySlip.objects(assignment=assignment).to_json())
+				assignmentdict['dutyslips']=json.loads(xpal.documents.DutySlip.objects(assignment=assignment).to_json())
 				assignmentlist.append(assignmentdict)
 			return jsonify({"resp": assignmentlist	,"status":"success"})
         app.logger.info("Validating assignmentdict")
@@ -282,7 +291,7 @@ class AssignmentResource(Resource):
 				return jsonify({"resp": "At least one driver must be assigned to create an assignment.","status":"error"})
         if respdict['assignment']['bookings']==[]:
 				return jsonify({"resp": "At least one booking must be assigned to create an assignment.","status":"error"})
-        bookings=[documents.Booking.objects.with_id(x['_id']['$oid']) for x in respdict['assignment']['bookings']]
+        bookings=[xpal.documents.Booking.objects.with_id(x['_id']['$oid']) for x in respdict['assignment']['bookings']]
         respdict['assignment']['cust_id']=bookings[0].cust_id
         for booking in bookings:
 			if hasattr(booking,"assignment"):
@@ -297,7 +306,7 @@ class AssignmentResource(Resource):
 				seenvehicles.append(dutyslip['vehicle'])
 				
         try:
-            assignment=save_assignment(respdict)
+            assignment=xpal.save_assignment(respdict)
             return jsonify({"resp": [json.loads(assignment.to_json())],"status":"success"})
         except Exception as e:
             app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
@@ -307,24 +316,24 @@ class AssignmentResource(Resource):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
 		try:
-			assignment=save_assignment(respdict,docid)
+			assignment=xpal.save_assignment(respdict,docid)
 			return jsonify({"resp": [json.loads(assignment.to_json())]})
 		except Exception as e:
 			app.logger.info("{}".format(str(e)))
 		return jsonify({"resp":"Error creating assignment!","status":"error"})   
 		
     def delete(self,docid):
-		if len(documents.Assignment.objects.with_id(docid))>0:
-			dutyslips=documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(docid))
+		if len(xpal.documents.Assignment.objects.with_id(docid))>0:
+			dutyslips=xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(docid))
 			app.logger.info("Deleting DutySlips {}".format(dutyslips.to_json()))
 			dutyslips.delete()
-			bookings=documents.Booking.objects(assignment=docid)
+			bookings=xpal.documents.Booking.objects(assignment=docid)
 			app.logger.info("Removing Assignment reference from  Bookings {}".format(bookings.to_json()))
 			
 			for booking in bookings:
 				del(booking.assignment)
 				booking.save()
-			documents.Assignment.objects.with_id(docid).delete()
+			xpal.documents.Assignment.objects.with_id(docid).delete()
 			return jsonify({"resp":[True]})
 		else:
 			return jsonify({"resp":[False]})
@@ -335,41 +344,39 @@ api.add_resource(AssignmentResource,"/assignment/<string:command>",endpoint="ass
 class DutySlipResource(Resource):
     def get(self,docid=None,assignment_id=None,driver_id=None):
         if docid:
-            if documents.DutySlip.objects.with_id(docid):
-                return jsonify({"resp": [json.loads(documents.DutySlip.objects.with_id(docid).to_json())]})
+            if xpal.documents.DutySlip.objects.with_id(docid):
+                return jsonify({"resp": [json.loads(xpal.documents.DutySlip.objects.with_id(docid).to_json())]})
             else:
                 return jsonify({"resp":[]})
         elif assignment_id:
-            if documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(assignment_id)):
-                return jsonify({"resp": [json.loads(documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(assignment_id)).to_json())]})
+            if xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(assignment_id)):
+                return jsonify({"resp": [json.loads(xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(assignment_id)).to_json())]})
             else:
                 
                 return jsonify({"resp":[]})
         elif driver_id:
-            if documents.DutySlip.objects(driver=driver_id):
-                return jsonify({"resp": [json.loads(documents.DutySlip.objects(driver=driver_id).to_json())]})
+            if xpal.documents.DutySlip.objects(driver=driver_id):
+                return jsonify({"resp": [json.loads(xpal.documents.DutySlip.objects(driver=driver_id).to_json())]})
             else:
                 return jsonify({"resp":[]})
         else:
-            return jsonify({"resp": json.loads(documents.DutySlip.objects.to_json())})
+            return jsonify({"resp": json.loads(xpal.documents.DutySlip.objects.to_json())})
     
     def post(self,command=None):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
         if command=="updatestatus":
-			dutyslip=documents.DutySlip.objects.with_id(respdict['dsid'])
+			#TODO xpal.update_dutyslip_status(dsid), move to put and take dsid from by_id - needs fix in UI as well #82
+			dutyslip=xpal.documents.DutySlip.objects.with_id(respdict['dsid'])
 			dutyslip.status=respdict['status']
 			dutyslip.save()
 			return jsonify({"resp": "Status updated.","status":"success"})	
     
     
     def put(self,docid):
+		
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		dutyslip=documents.DutySlip.objects.with_id(docid)
-		app.logger.info(dutyslip.to_json())
-		if dutyslip==None:
-			return jsonify({"status":"error","resp":"No dutyslip found"})
 		if "_id" in respdict.keys():
 			del respdict['_id']
 		if 'created_time' in respdict.keys():
@@ -378,6 +385,11 @@ class DutySlipResource(Resource):
 			respdict['open_time']=datetime.datetime.fromtimestamp(respdict['open_time']/1000)
 		if 'close_time' in respdict.keys():
 			respdict['close_time']=datetime.datetime.fromtimestamp(respdict['close_time']/1000)
+		#TODO: dutyslip=xpal.update_dutyslip(docid,respdict) #82
+		dutyslip=xpal.documents.DutySlip.objects.with_id(docid)
+		app.logger.info(dutyslip.to_json())
+		if dutyslip==None:
+			return jsonify({"status":"error","resp":"No dutyslip found"})
 		dutyslip.update(**respdict)
 		dutyslip.save()
 		dutyslip.reload()
@@ -385,8 +397,9 @@ class DutySlipResource(Resource):
     
 
     def delete(self,docid):
-		if len(documents.DutySlip.objects.with_id(docid))>0:
-			documents.DutySlip.objects.with_id(docid).delete()
+		#TODO: xpal.delete_dutyslip(docid) for #82
+		if len(xpal.documents.DutySlip.objects.with_id(docid))>0:
+			xpal.documents.DutySlip.objects.with_id(docid).delete()
 			return jsonify({"resp":[True]})
 		else:
 			return jsonify({"resp":[False]})
@@ -399,33 +412,33 @@ api.add_resource(DutySlipResource,"/dutyslip/<string:command>",endpoint="dutysli
 class CustomerResource(Resource):
     def get(self,tgid=None,mobile_num=None,docid=None,cust_id=None):
         if docid:
-            queryset=documents.Customer.objects.with_id(docid)
+            queryset=xpal.documents.Customer.objects.with_id(docid)
         elif tgid:
-            queryset=documents.Customer.objects(tgid=tgid)
+            queryset=xpal.documents.Customer.objects(tgid=tgid)
         elif mobile_num:
-			queryset=documents.Customer.objects(mobile_num=mobile_num)
+			queryset=xpal.documents.Customer.objects(mobile_num=mobile_num)
         elif cust_id:
-            queryset=documents.Customer.objects(cust_id=cust_id)
+            queryset=xpal.documents.Customer.objects(cust_id=cust_id)
         else:
-            queryset=documents.Customer.objects
+            queryset=xpal.documents.Customer.objects
         return jsonify({"resp":json.loads(queryset.to_json()),"status":"success"}) 
     def post(self):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
 		if "_id" in respdict.keys():
 			del respdict['_id']
-		customer=documents.Customer.objects(cust_id=respdict['cust_id'])
+		customer=xpal.documents.Customer.objects(cust_id=respdict['cust_id'])
 		if len(customer)>0:
 			customer=customer[0]
 			return jsonify({"status":"error","resp":"Customer with that ID Exists"})
 		else:
-			customer=documents.Customer.from_json(json.dumps(respdict))
+			customer=xpal.documents.Customer.from_json(json.dumps(respdict))
 		customer.save()
 		return jsonify({"status":"success","resp":[customer]})
     def put(self,cust_id):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		customer=documents.Customer.objects(cust_id=cust_id)
+		customer=xpal.documents.Customer.objects(cust_id=cust_id)
 		if len(customer)==0:
 			return jsonify({"status":"error","resp":"No customer found"})
 		else:
@@ -441,8 +454,8 @@ class CustomerResource(Resource):
 		customer.reload()
 		return jsonify({"status":"success","resp":[customer]})
     def delete(self,docid):
-		if len(documents.Customer.objects.with_id(docid))>0:
-			documents.Customer.objects.with_id(docid).delete()
+		if len(xpal.documents.Customer.objects.with_id(docid))>0:
+			xpal.documents.Customer.objects.with_id(docid).delete()
 			return jsonify({"resp":[True]})
 		else:
 			return jsonify({"resp":[False]})
@@ -455,17 +468,17 @@ api.add_resource(CustomerResource,"/customer/by_cust_id/<string:cust_id>",endpoi
 class ProductResource(Resource):
     def get(self,docid=None,product_id=None):
         if docid:
-            if documents.Product.objects.with_id(docid):
-                return jsonify({"resp": [json.loads(documents.Product.objects.with_id(docid).to_json())]})
+            if xpal.documents.Product.objects.with_id(docid):
+                return jsonify({"resp": [json.loads(xpal.documents.Product.objects.with_id(docid).to_json())]})
             else:
                 return jsonify({"resp":[]})
         if product_id:
-			if documents.Product.objects(product_id=product_id):
-				return jsonify({"resp": [json.loads(documents.Product.objects(product_id=product_id).to_json())]})
+			if xpal.documents.Product.objects(product_id=product_id):
+				return jsonify({"resp": [json.loads(xpal.documents.Product.objects(product_id=product_id).to_json())]})
 			else:
 				return jsonify({"resp":[]})
         else:
-            return jsonify({"resp": json.loads(documents.Product.objects.to_json())})
+            return jsonify({"resp": json.loads(xpal.documents.Product.objects.to_json())})
     def post(self,command=None):	
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -477,8 +490,8 @@ class ProductResource(Resource):
         return jsonify({"resp":[]})
     
     def delete(self,docid):
-		if len(documents.Product.objects.with_id(docid))>0:
-			documents.Product.objects.with_id(docid).delete()
+		if len(xpal.documents.Product.objects.with_id(docid))>0:
+			xpal.documents.Product.objects.with_id(docid).delete()
 			return jsonify({"resp":[True]})
 		else:
 			return jsonify({"resp":[False]})
@@ -491,7 +504,7 @@ class InvoiceResource(Resource):
 	def post(self):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		assignments=documents.Assignment.objects.filter(id__in=respdict)
+		assignments=xpal.documents.Assignment.objects.filter(id__in=respdict)
 		invoice=get_invoice(assignments)
 	
 		return jsonify({"resp":invoice,"status":"success"})
