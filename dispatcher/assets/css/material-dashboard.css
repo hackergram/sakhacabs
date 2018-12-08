@@ -5622,7 +5622,7 @@ button.close {
 
 @media (min-width: 576px) {
   .modal-dialog {
-    max-width: 500px;
+    max-width: 1200px;
     margin: 1.75rem auto;
   }
   .modal-dialog-centered {
@@ -11129,11 +11129,11 @@ fieldset[disabled] .form-group.is-focused .form-check .form-check-label {
 }
 
 form {
-  margin-bottom: 1.125rem;
+  margin-bottom: .125rem;
   margin-left: 1.125rem;
   margin-right: 1.125rem;
-  margin-top: 1.125rem;
-  padding: 10px;
+  margin-top: .125rem;
+  padding: 5px;
 
 }
 
