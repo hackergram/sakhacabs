@@ -503,8 +503,9 @@ var sakha={
         for (i=0;i<bookings.length;i++){
             assignmentdict.assignment.bookings.push(bookings[i])
         }
-        if (assignmentdict.assignment.bookings===[]){
-            alert("Please select some duties first")
+        console.log(assignmentdict.assignment.bookings)
+        if (assignmentdict.assignment.bookings.length===0){
+            alert("Please select some bookings first")
         }
         assignmentdict.assignment.cust_id=assignmentdict.assignment.bookings[0].cust_id
         dutyslips=$("#dutysliplist").DataTable().rows({selected: true }).data()
