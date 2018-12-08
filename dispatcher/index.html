@@ -101,23 +101,8 @@
               <div class="modal-body">
                 <form>
             
-                <div class="row">
-                      <div class="col-lg-12 col-md-12">
-                  
-                     <div class="card">
-                    <div class="card-header card-header-primary">
-                      <h4 class="card-title">Assignment Details</h4>
-                      <p class="card-category">This Assignment</p>
-                    </div>
-                    <div class="card-body" id="assignmentdetail">
-                       
-                    </div>
-                  </div>
-                  </div>
-                    
-                  
-                </div>
-                <div class="row">
+           
+                <div class="row" style="min-height: 500px">
                   <div class="col-lg-12 col-md-12">
                     <div class="card">
                         <div class="card-header card-header-primary">
@@ -127,6 +112,7 @@
                         <div class="card-body table-responsive">
                            <table class="table table-striped" id="bookinglist">
                                 <thead>
+                                    <th>Selected</th>
                                     <th>Pickup Time</th>
                                     <th >Pickup Location</th>
                                     <th >Drop Location</th>
@@ -149,8 +135,8 @@
                             <h4 class="card-title">Assign Dutyslips</h4>
                             <p class="card-category">Driver status</p>
                         </div>
-                        <div class="card-body table-responsive">
-                            <table class="table table-striped" id="dutysliplist">
+                        <div class="card-body ">
+                            <table class="table-striped" id="dutysliplist">
                                 <thead>
                                     <th>Assign Driver</th>
                                    <th>Driver ID</th>
@@ -164,6 +150,22 @@
                         </div>
                   </div>
                   </div>
+                </div>
+                         <div class="row">
+                      <div class="col-lg-12 col-md-12">
+                  
+                     <div class="card">
+                    <div class="card-header card-header-primary">
+                      <h4 class="card-title">Assignment Details</h4>
+                      <p class="card-category">This Assignment</p>
+                    </div>
+                    <div class="card-body" id="assignmentdetail">
+                       
+                    </div>
+                  </div>
+                  </div>
+                    
+                  
                 </div>
                 </form>
               </div>
@@ -712,6 +714,8 @@
   
     <!--  DataTables Includes  -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
+    
     <!--
     <link rel="stylesheet" type="text/css" src="assets/css/jquery.dataTables.css">
     -->
@@ -720,6 +724,7 @@
     <script type="text/javascript" charset="utf8" src="assets/js/moment-with-locales.js"></script>
     -->
     <link rel="stylesheet" type="text/css" src="assets/css/select.bootstrap4.min.css">
+    
     <script type="text/javascript" charset="utf8" src="assets/js/dataTables.select.min.js"></script>
     
     <link rel="stylesheet" type="text/css" src="assets/css/responsive.dataTables.min.css">

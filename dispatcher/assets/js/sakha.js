@@ -382,7 +382,7 @@ var sakha={
       $('#dutysliplist').on('click',"tr", function() {
            // var row = this.parentElement;
           console.log(table.row(this).id())  
-          if (!$('#dutysliplist').hasClass("editing")) {
+          //if (!$('#dutysliplist').hasClass("editing")) {
                 $('#dutysliplist').addClass("editing");
                 var data = table.row(this).data();
                 console.log(data)
@@ -400,10 +400,14 @@ var sakha={
                             "value": v
                         }))
                     })
+                    options.push($("<option></option>", {
+                            "text": "None",
+                            "value": null
+                        }))
                     return options;
                 }));
                 $("#Vehicle_" + data.driver.driver_id).val(thisVehicleText)
-            }
+            //}
         });
         
       $('#dutysliplist').on("change", ".changeVehicle", function() {
@@ -458,18 +462,33 @@ var sakha={
                 url: 'http://'+serverip+':5000/booking',
                 dataSrc: 'resp'
             },
+             columnDefs: [ {
+                            orderable: false,
+                            className: 'select-checkbox',
+                            targets:   0
+                        } ],
+             select: {
+                            style:    'os',
+                            selector: 'td:first-child'
+                        },
             columns: [
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
-                { width:"10%",data: 'pickup_timestamp',defaultContent:"None",render: function(data){return new Date(data['$date'])}},
+                 {width:"5%", defaultContent:""},
+                { width:"15%",data: 'pickup_timestamp',defaultContent:"None",render: function(data){
+                    
+                    return new moment(data['$date']).format('MMMM Do YYYY, h:mm:ss a')
+                }},
                 {width:"15%", data: 'pickup_location',defaultContent:"None",render: function(data){if(data){return data}}},
                  {width:"15%", data: 'drop_location',defaultContent:"None",render: function(data){if(data){return data}}},
                
                 {width:"25%", data: 'passenger_detail',defaultContent:"None",render: function(data){if(data){return data}}},
                 {width:"10%", data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
-                {width:"15%", data: 'booking_id', defaultContent:"None", render: function(data){if(data){return data}}},
-                {width:"10%", data: 'assignment', defaultContent:"None", render: function(data){if(data){return data}}}
+                {width:"5%", data: 'booking_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {width:"5%", data: 'assignment', defaultContent:"None", render: function(data){if(data){
+                    return "Assigned"
+                }}}
             ],
-            scrollY: 100
+            scrollY: 400
          
         });
       }
@@ -484,11 +503,17 @@ var sakha={
         for (i=0;i<bookings.length;i++){
             assignmentdict.assignment.bookings.push(bookings[i])
         }
+        if (assignmentdict.assignment.bookings===[]){
+            alert("Please select some duties first")
+        }
         assignmentdict.assignment.cust_id=assignmentdict.assignment.bookings[0].cust_id
         dutyslips=$("#dutysliplist").DataTable().rows({selected: true }).data()
         for (i=0;i<dutyslips.length;i++){
             //dutyslips[i]['vehicle']=$("Vehicle_"+dutyslips[i].driver.driver_id).val()
             assignmentdict.dutyslips.push(dutyslips[i])
+            if(dutyslips[i].vehicle===""){
+                dutyslips[i].vehicle=null
+            }
         }
         console.log(assignmentdict)
         var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
@@ -503,7 +528,7 @@ var sakha={
                 response=JSON.parse(http.responseText)
                 if (response.status==="success"){
                     alert("Successfully created assignment");
-                    $("#assignmentdetail").text(response.resp[0])
+                    $("#assignmentdetail").text(JSON.stringify(response.resp[0]))
                 }
                 else{
                     alert("Failed to create assignment");
