@@ -191,7 +191,7 @@ var sakha={
                 }},
                 { data: null,render: function(data){
                     if(data.status){
-                    return String.toUpperCase(data.status)
+                    return data.status.toUpperCase()
                         }
                     else{
                         return "None"
@@ -231,7 +231,7 @@ var sakha={
                 }},
                 { data: null,render: function(data){
                     if(data.payment_mode){
-                    return String.toUpperCase(data.payment_mode)
+                    return data.payment_mode.toUpperCase()
                         }
                     else{
                         return "None"
