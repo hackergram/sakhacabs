@@ -88,21 +88,25 @@ background: linear-gradient(60deg, #0C420C, #0C710C);
 .card .card-header-open .card-text {
   box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4);
 }
-.dsline {
-    text-transform: uppercase;
-    
-}
-.closed{
-    background: linear-gradient(60deg, green, green);
-    padding-left: 1em;
-}
 
-.open{
-    background: linear-gradient(60deg, yellow, yellow);
-    padding-left: 1em;
+@media (min-width: 576px) {
+  .modal-dialog {
+    max-width: 1200px;
+    margin: 1.75rem auto;
+  }
+  .modal-dialog-centered {
+    min-height: calc(100% - (1.75rem * 2));
+  }
+  .modal-content {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+  }
+  .modal-sm {
+    max-width: 300px;
+  }
 }
-
-.new{
-    background: linear-gradient(60deg, pink, pink);
-    padding-left: 1em;
+.h4 .card-title{
+    font-size: 1rem;
+}
+h5 .card-title{
+    font-size: .75rem;
 }

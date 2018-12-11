@@ -1,4 +1,14 @@
 var sakha={
+    fillData: function(){
+        console.log("Filling data");
+        
+        this.fillDrivers();
+        this.fillBookings();
+        this.fillVehicles();
+        this.fillLocationUpdates();
+        this.fillDutySlips();
+        
+    },
     fillBookings: function(){
         console.log("Filling bookings data");
         /*
@@ -15,16 +25,36 @@ var sakha={
             },
             columns: [
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
-                { width:"15%",data: 'pickup_timestamp',defaultContent:"None",render: function(data){return new Date(data['$date'])}},
-                {width:"15%", data: 'pickup_location',defaultContent:"None",render: function(data){if(data){return data}}},
-                {width:"20%", data: 'passenger_detail', defaultContent:"None", render: function(data){if(data){return data}}},
-                {width:"15%", data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
-                {width:"15%", data: 'booking_id', defaultContent:"None", render: function(data){if(data){return data}}},
-                {width:"10%", data: 'assignment', defaultContent:"None", render: function(data){if(data){return data}}},
-                { data: null,render: function(data){
+                { width:"5%",data: null,render: function(data){
                     bookingid='"'+data.booking_id+'"'
                     return "<button onclick='sakha.deleteBooking("+bookingid+")'>Delete</button>"
-                }}
+                   
+                }},
+                {width:"10%", data: 'booking_id', defaultContent:"None", render: function(data){
+                    if(data){
+                    
+                        var bookingid='<a class="nav-link" data-toggle="modal" data-target="#editbookingform" data-bookingid="'+data+'">\
+                        <i class="material-icons">content_paste</i> '+data+'\
+                        </a>'
+                    
+                        return bookingid
+                        
+                    
+                    }
+                }},
+                
+                { width:"15%",data: 'pickup_timestamp',defaultContent:"None",render: function(data){
+                    
+                    //console.log(data)    
+                    return moment(data.$date).format("YYYY-MMM-DD HH:mm:ss")
+                    }},
+                {width:"25%", data: 'pickup_location',defaultContent:"None",render: function(data){if(data){
+                    return data
+                    }}},
+                {width:"25%", data: 'passenger_detail', defaultContent:"None", render: function(data){if(data){return data}}},
+                {width:"10%", data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {width:"10%", data: 'assignment', defaultContent:"None", render: function(data){if(data){return data}}},
+                
             ],
             scrollY: 200,
             scrollX:true
@@ -191,7 +221,7 @@ var sakha={
                 }},
                 { data: null,render: function(data){
                     if(data.status){
-                    return String.toUpperCase(data.status)
+                    return data.status.toUpperCase()
                         }
                     else{
                         return "None"
@@ -199,7 +229,7 @@ var sakha={
                 }},
                 { data: null,render: function(data){
                     if(data.open_time){
-                    return new Date(data.open_time.$date)
+                    return moment(data.open_time.$date)
                         }
                     else{
                         return "None"
@@ -207,7 +237,7 @@ var sakha={
                 }},
                 { data: null,render: function(data){
                     if(data.close_time){
-                    return new Date(data.close_time.$date)
+                    return moment(data.close_time.$date)
                         }
                     else{
                         return "None"
@@ -231,7 +261,7 @@ var sakha={
                 }},
                 { data: null,render: function(data){
                     if(data.payment_mode){
-                    return String.toUpperCase(data.payment_mode)
+                    return data.payment_mode.toUpperCase()
                         }
                     else{
                         return "None"
@@ -258,16 +288,8 @@ var sakha={
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
     },
-    fillData: function(){
-        console.log("Filling data");
-        
-        this.fillDrivers();
-        this.fillBookings();
-        this.fillVehicles();
-        this.fillLocationUpdates();
-        this.fillDutySlips();
-        
-    },
+    
+    
     fillAssignmentModal: function(assignmentid){
         console.log("Editing Assignment - " +  assignmentid);
         if(assignmentid=="newassignment"){
@@ -638,21 +660,68 @@ var sakha={
                 $("#driver").val(data.resp[0].driver)
                 $("#vehicle").val(data.resp[0].vehicle)
                 $("#dutyslip_id").val(data.resp[0].dutyslip_id)
-                $("#status").val(String.toUpperCase(data.resp[0].status))
-                $("#created_time").val(moment(data.resp[0].created_time.$date).format('MMMM Do YYYY, h:mm:ss a'));
-                $("#open_time").val(moment(data.resp[0].open_time.$date).format('MMMM Do YYYY, h:mm:ss a'));
-                $("#close_time").val(moment(data.resp[0].close_time.$date).format('MMMM Do YYYY, h:mm:ss a')); 
-                $("#total_time").val(moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2));
+                $("#status").val(data.resp[0].status).change()
+                //$("#created_time").val(moment(data.resp[0].created_time.$date).format('MMMM Do YYYY, h:mm:ss a'));
+                $("#created_time").empty()
+                $("#created_time").append( moment(data.resp[0].created_time.$date).format('ddd MMM Do YYYY, h:mm:ss a'));
+                if (data.resp[0].hasOwnProperty("open_time")){
+                    $("#open_time").val(moment(data.resp[0].open_time.$date).format('YYYY-MM-DD HH:mm:ss'));    
+                }
+                else{
+                    $("#open_time").val(null)
+                }
+                if (data.resp[0].hasOwnProperty("close_time")){
+                
+                    $("#close_time").val(moment(data.resp[0].close_time.$date).format('YYYY-MM-DD HH:mm:ss')); 
+                   $("#total_time").val(moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2));
+            
+                    //'YYYY-MM-DD HH:mm'
+                }     //$("#total_time").text=moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2);
                 $("#open_kms").val(data.resp[0].open_kms)
                 $("#close_kms").val(data.resp[0].close_kms)
                 $("#total_kms").val(parseFloat(data.resp[0].close_kms)-parseFloat(data.resp[0].open_kms))
-                $("#payment_mode").val(data.resp[0].payment_mode)
+                $("#payment_mode").val(data.resp[0].payment_mode.toUpperCase())
                 $("#parking_charges").val(data.resp[0].parking_charges)
                 $("#toll_charges").val(data.resp[0].toll_charges)
                 $("#amount").val(data.resp[0].amount)
             })
        
        document.getElementById("savedutyslip").setAttribute("onclick","sakha.saveDutySlip('"+dsid+"')")
+                    
+    },
+    fillBookingModal: function(bookingid){
+       console.log("editing booking "+bookingid)
+       var url = 'http://'+serverip+':5000/booking/by_booking_id/'+bookingid
+       console.log("getting url "+url)
+       
+            $.getJSON(url,function(data){
+                console.log(data.resp[0])
+                $("#booking_pickup_timestamp").empty()
+                $("#booking_id").append(data.resp[0].booking_id )
+                $("#booking_cust_id").val(data.resp[0].cust_id)
+              
+                $("#booking_product_id").val(data.resp[0].product_id)
+                $("#booking_status").val(data.resp[0].status).change()
+                //$("#created_time").val(moment(data.resp[0].created_time.$date).format('MMMM Do YYYY, h:mm:ss a'));
+                //$("#booking_pickup_timestamp").empty()
+                $("#booking_pickup_timestamp").val(moment(data.resp[0].pickup_timestamp.$date+1).format('YYYY-MM-DD HH:mm:ss'))
+                
+                $("#booking_created_timestamp").empty()
+                
+                $("#booking_created_timestamp").append(moment(data.resp[0].created_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a'));
+               $("#booking_channel").val(data.resp[0].booking_channel);
+                //$("#total_time").text=moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2);
+                $("#booking_cust_meta").val(JSON.stringify(data.resp[0].cust_meta))
+                $("#booking_remarks").val(data.resp[0].remarks)
+                $("#booking_passenger_mobile").val(data.resp[0].passenger_mobile)
+                $("#booking_passenger_detail").val(data.resp[0].passenger_detail)
+               
+                $("#booking_pickup_location").val(data.resp[0].pickup_location)
+                $("#booking_drop_location").val(data.resp[0].drop_location)
+                
+            })
+       
+       document.getElementById("savebooking").setAttribute("onclick","sakha.saveBooking('"+bookingid+"')")
                     
     },
     saveDriver: function(driverid){
@@ -668,8 +737,6 @@ var sakha={
             //$.post("http://"+serverip+":5000/assignment",assignmentdict)
             var url = "http://"+serverip+":5000/driver";
             http.open("POST", url, true);
-
-            
         }
         else{
             var url = "http://"+serverip+":5000/driver/by_driver_id/"+driverid;
@@ -757,13 +824,11 @@ var sakha={
     deleteBooking: function(booking_id){
         t=confirm("Really Delete Booking with ID "+booking_id)
         if (t===true){
-            
             var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
             var url = "http://"+serverip+":5000/booking/by_booking_id/"+booking_id;
             //var params = JSON.stringify(assignmentdict);
             console.log(url)
             http.open("DELETE", url, true);
-
             //Send the proper header information along with the request
             http.setRequestHeader("Content-type", "application/json");
             http.onreadystatechange = function() {//Call a function when the state changes.
@@ -780,6 +845,50 @@ var sakha={
             alert("Cancelled delete!")
         }
     },
+    saveBooking: function(booking_id){
+        console.log(booking_id)
+        booking_dict={}
+        booking_dict.pickup_timestamp=$("#booking_pickup_timestamp").val();
+        booking_dict.pickup_location=$("#booking_pickup_location").val();
+        booking_dict.cust_meta=JSON.parse($("#booking_cust_meta").val())
+        booking_dict.product_id=$("#booking_product_id").val()
+        booking_dict.status=$("#booking_status").val()
+        booking_dict.booking_channel=$("#booking_channel").val()
+        booking_dict.remarks=$("#booking_remarks").val()
+        booking_dict.drop_location=$("#booking_drop_location").val()
+        booking_dict.passenger_mobile=$("#booking_passenger_mobile").val()
+        booking_dict.passenger_detail=$("#booking_passenger_detail").val()
+        console.log(booking_dict)
+        
+        params=JSON.stringify(booking_dict)
+        console.log(params)
+        var url = "http://"+serverip+":5000/booking/by_booking_id/"+booking_id;
+        var http = new XMLHttpRequest();
+        http.open("PUT", url, true);
+        http.setRequestHeader("Content-type", "application/json");
+        http.onreadystatechange = function() {//Call a function when the state changes.
+            if(http.readyState == 4 ) {
+                if(http.status == 200){
+                    response=JSON.parse(http.responseText)
+                    console.log(response)
+                    if (response.status==="success"){
+                        sakha.fillBookingModal(booking_id)
+                        alert("Saved booking successfully")
+
+                    }
+                    else{
+                        alert("Caught Error saving booking")
+                    }
+                }
+                else{
+                    alert("Uncaught Error saving booking!")
+                }
+               
+            }
+        }
+        http.send(params);
+        
+    },
     saveDutySlip: function(dsid){
         console.log("Saving duty slip with ID "+dsid)
         dutyslipdict={}
@@ -787,11 +896,13 @@ var sakha={
         dutyslipdict.vehicle=$("#vehicle").val()
         dutyslipdict.dutyslip_id=$("#dutyslip_id").val()
         dutyslipdict.status=String.toLowerCase($("#status").val())
-        dutyslipdict.created_time=moment($("#created_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
+        //dutyslipdict.created_time=moment($("#created_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
         //moment(.$date).format('MMMM Do YYYY, h:mm:ss a'));
-        dutyslipdict.open_time=moment($("#open_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
+        //dutyslipdict.open_time=moment($("#open_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
+        dutyslipdict.open_time=$("#open_time").val()
         //moment(.$date).format('MMMM Do YYYY, h:mm:ss a'));
-        dutyslipdict.close_time=moment($("#close_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
+        //dutyslipdict.close_time=moment($("#close_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
+        dutyslipdict.close_time=$("#close_time").val()
         //moment(.$date).format('MMMM Do YYYY, h:mm:ss a'));
         dutyslipdict.open_kms=$("#open_kms").val()
         dutyslipdict.close_kms=$("#close_kms").val()
@@ -799,6 +910,7 @@ var sakha={
         dutyslipdict.parking_charges=$("#parking_charges").val()
         dutyslipdict.toll_charges=$("#toll_charges").val()
         dutyslipdict.amount=$("#amount").val()
+        dutyslipdict.remarks=$("#ds_remarks").val()
         params=JSON.stringify(dutyslipdict)
         console.log(params)
         var url = "http://"+serverip+":5000/dutyslip/by_id/"+dsid;
