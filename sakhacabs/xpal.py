@@ -15,12 +15,15 @@ from sakhacabs import documents,utils
 
 sakhacabsxpal=xetrapal.Xetrapal(configfile="/opt/sakhacabs-appdata/sakhacabsxpal.conf")
 sakhacabsgd=sakhacabsxpal.get_googledriver()
-datasheet=sakhacabsgd.open_by_key(sakhacabsxpal.config.get("SakhaCabs","datasheetkey"))
-bookingsheet=datasheet.worksheet_by_title("bookings")
-custsheet=datasheet.worksheet_by_title("customers")
-carsheet=datasheet.worksheet_by_title("cars")
-driversheet=datasheet.worksheet_by_title("drivers")
-prodsheet=datasheet.worksheet_by_title("product")
+try:
+	datasheet=sakhacabsgd.open_by_key(sakhacabsxpal.config.get("SakhaCabs","datasheetkey"))
+	bookingsheet=datasheet.worksheet_by_title("bookings")
+	custsheet=datasheet.worksheet_by_title("customers")
+	carsheet=datasheet.worksheet_by_title("cars")
+	driversheet=datasheet.worksheet_by_title("drivers")
+	prodsheet=datasheet.worksheet_by_title("product")
+except Exception as e:
+	sakhacabsxpal.logger.error("Error connecting to Google Drive, check connectivity - {} {}".format(repr(e),str(e)))
 
 #Setting up mongoengine connections
 sakhacabsxpal.logger.info("Setting up MongoEngine")
@@ -29,24 +32,27 @@ mongoengine.connect('sakhacabs', alias='default')
 
 
 #Remote sync functionality
-def validate_booking_dict(bookingdict):
+def validate_booking_dict(bookingdict,new=True):
 	valid=True
-	required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
+	if new==True:
+			required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
+			for key in required_keys:
+				if key not in bookingdict.keys():
+					sakhacabsxpal.logger.error("{} missing".format(key))
+					valid=False
+				if bookingdict[key]==None:
+					sakhacabsxpal.logger.error("{} can't be None".format(key))
+					valid=False
 	string_keys=["cust_id","product_id","passenger_detail","passenger_mobile"]
-	for key in required_keys:
-		if key not in bookingdict.keys():
-			sakhacabsxpal.logger.error("{} missing".format(key))
-			valid=False
-		if bookingdict[key]==None:
-			sakhacabsxpal.logger.error("{} can't be None".format(key))
-			valid=False
 	for key in string_keys:
-		if utils.nospec.search(str(bookingdict[key])):
-			sakhacabsxpal.logger.error("{} has special character".format(key))
+		if key in bookingdict.keys():
+			if utils.nospec.search(str(bookingdict[key])):
+				sakhacabsxpal.logger.error("{} has special character".format(key))
+				valid=False
+	if "passenger_mobile" in bookingdict.keys():
+		if len(bookingdict['passenger_mobile'])>12:
+			sakhacabsxpal.logger.error("{} too long a mobile number".format(bookingdict['passenger_mobile']))
 			valid=False
-	if len(bookingdict['passenger_mobile'])>12:
-		sakhacabsxpal.logger.error("{} too long a mobile number".format(bookingdict['passenger_mobile']))
-		valid=False
 	return valid
 
 def validate_driver_dict(driverdict):
@@ -225,7 +231,14 @@ def update_booking(booking_id,respdict):
 		if "_id" in respdict.keys():
 			respdict.pop("_id")
 		booking.update(**respdict)
-		
+		booking.reload()
+		assignment=documents.Assignment.objects.with_id(booking.assignment)
+		if "pickup_timestamp" in respdict.keys():
+			assignment.reporting_timestamp=booking.pickup_timestamp
+		if "pickup_location" in respdict.keys():
+			assignment.reporting_location=booking.pickup_location
+		assignment.save()
+			
 		return [booking]
 
 def save_assignment(assignmentdict,assignment_id=None):

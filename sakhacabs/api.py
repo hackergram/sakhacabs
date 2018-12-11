@@ -195,12 +195,12 @@ class BookingResource(Resource):
 			return jsonify({"resp":[fileloc],"status":"success"})
         if docid:
             if xpal.documents.Booking.objects.with_id(docid):
-                return jsonify({"resp": [json.loads(xpal.documents.Booking.objects.with_id(docid).to_json())]})
+                return jsonify({"resp": json.loads(xpal.documents.Booking.objects.with_id(docid).to_json()),"status":"success"})
             else:
                 return jsonify({"resp":[]})
         if booking_id:
-			if xpal.documents.Booking.objects(booking_id=booking_id):
-				return jsonify({"resp": [json.loads(xpal.documents.Booking.objects(booking_id=booking_id).to_json())]})
+			if xpal.documents.Booking.objects(booking_id=booking_id)!=[]:
+				return jsonify({"resp": json.loads(xpal.documents.Booking.objects(booking_id=booking_id).to_json()),"status":"success"})
 			else:
 				return jsonify({"resp":[]})
         else:
@@ -225,10 +225,16 @@ class BookingResource(Resource):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
 		if 'created_timestamp' in respdict.keys():
-			respdict['created_timestamp']=datetime.datetime.fromtimestamp(respdict['created_timestamp']['$date']/1000)
+			respdict.pop("created_timestamp")
 		if 'pickup_timestamp' in respdict.keys():
-			respdict['pickup_timestamp']=datetime.datetime.fromtimestamp(respdict['pickup_timestamp']['$date']/1000)
-		if xpal.validate_booking_dict(respdict):
+			app.logger.info("Type for pickup_timestamp {}".format(type(respdict['pickup_timestamp'])))
+			if type(respdict['pickup_timestamp'])==dict:
+				respdict['pickup_timestamp']=datetime.datetime.fromtimestamp(respdict['pickup_timestamp']['$date']/1000)
+			if type(respdict['pickup_timestamp'])==unicode:
+				respdict['pickup_timestamp']=xpal.utils.get_utc_ts(datetime.datetime.strptime(respdict['pickup_timestamp'],"%Y-%m-%d %H:%M:%S"))
+				
+			app.logger.info("Timestamp - {}".format(respdict['pickup_timestamp']))
+		if xpal.validate_booking_dict(respdict, new=False):
 			resp=xpal.update_booking(booking_id,respdict)
 		if type(resp)!=list:
 			status="error"
@@ -252,7 +258,7 @@ class AssignmentResource(Resource):
     def get(self,docid=None):
         if docid:
 			queryset=xpal.documents.Assignment.objects.with_id(docid)
-			app.logger.info("Getting assignment {}".format(queryset))
+			#app.logger.info("Getting assignment {}".format(queryset))
         else:
 			queryset=xpal.documents.Assignment.objects.order_by("reporting_timestamp").all()
         
@@ -390,11 +396,25 @@ class DutySlipResource(Resource):
 		if "_id" in respdict.keys():
 			del respdict['_id']
 		if 'created_time' in respdict.keys():
-			respdict['created_time']=datetime.datetime.fromtimestamp(respdict['created_time']/1000)
+			#respdict['created_time']=datetime.datetime.fromtimestamp(respdict['created_time']/1000)
+			respdict.pop('created_time')
+			
 		if 'open_time' in respdict.keys():
-			respdict['open_time']=datetime.datetime.fromtimestamp(respdict['open_time']/1000)
+			#respdict['open_time']=datetime.datetime.fromtimestamp(respdict['open_time']/1000)
+			app.logger.info("Type for open_time {}".format(type(respdict['open_time'])))
+			if type(respdict['open_time'])==dict:
+				respdict['open_time']=datetime.datetime.fromtimestamp(respdict['open_time']['$date']/1000)
+			if type(respdict['open_time'])==unicode:
+				respdict['open_time']=xpal.utils.get_utc_ts(datetime.datetime.strptime(respdict['open_time'],"%Y-%m-%d %H:%M:%S"))
+			app.logger.info("Timestamp - {}".format(respdict['open_time']))
 		if 'close_time' in respdict.keys():
-			respdict['close_time']=datetime.datetime.fromtimestamp(respdict['close_time']/1000)
+			#respdict['close_time']=datetime.datetime.fromtimestamp(respdict['close_time']/1000)
+			app.logger.info("Type for close_time {}".format(type(respdict['close_time'])))
+			if type(respdict['close_time'])==dict:
+				respdict['close_time']=datetime.datetime.fromtimestamp(respdict['close_time']['$date']/1000)
+			if type(respdict['close_time'])==unicode:
+				respdict['close_time']=xpal.utils.get_utc_ts(datetime.datetime.strptime(respdict['close_time'],"%Y-%m-%d %H:%M:%S"))
+			app.logger.info("Timestamp - {}".format(respdict['close_time']))
 		#TODO: dutyslip=xpal.update_dutyslip(docid,respdict) #82
 		dutyslip=xpal.documents.DutySlip.objects.with_id(docid)
 		app.logger.info(dutyslip.to_json())
@@ -409,7 +429,11 @@ class DutySlipResource(Resource):
     def delete(self,docid):
 		#TODO: xpal.delete_dutyslip(docid) for #82
 		if len(xpal.documents.DutySlip.objects.with_id(docid))>0:
-			xpal.documents.DutySlip.objects.with_id(docid).delete()
+			ds=xpal.documents.DutySlip.objects.with_id(docid)
+			assignment=ds.assignment
+			ds.delete()
+			if len(xpal.documents.DutySlip.objects(assignment=assignment))==0:
+				xpal.documents.Assignment.objecs.with_id(assignment).delete()
 			return jsonify({"resp":[True]})
 		else:
 			return jsonify({"resp":[False]})
