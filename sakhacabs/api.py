@@ -245,7 +245,18 @@ class BookingResource(Resource):
     def delete(self,booking_id):
 		if len(xpal.documents.Booking.objects(booking_id=booking_id))>0:
 			#TODO: xpal.delete_booking(booking_id) #81
-			xpal.documents.Booking.objects(booking_id=booking_id).delete()
+			booking=xpal.documents.Booking.objects(booking_id=booking_id)
+			assignment=booking.assignment
+			booking.delete()
+			if assignment!=None:
+				if (xpal.documents.Booking.objects(assignment=assignment))==0:
+					documents.Assignment.objects.with_id(assignment).delete()	
+				else:
+					assignmentobj=documents.Assignment.objects.with_id(assignment)
+					assignmentobj.reporting_location=assignmentobj.bookings[0].pickup_location
+					assignmentobj.reporting_timestamp=assignmentobj.bookings[0].pickup_timestamp
+					assignmentobj.save()
+					
 			return jsonify({"resp":[],"status":"success"})
 		else:
 			return jsonify({"resp":[],"status":"error"})
