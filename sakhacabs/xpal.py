@@ -15,12 +15,15 @@ from sakhacabs import documents,utils
 
 sakhacabsxpal=xetrapal.Xetrapal(configfile="/opt/sakhacabs-appdata/sakhacabsxpal.conf")
 sakhacabsgd=sakhacabsxpal.get_googledriver()
-datasheet=sakhacabsgd.open_by_key(sakhacabsxpal.config.get("SakhaCabs","datasheetkey"))
-bookingsheet=datasheet.worksheet_by_title("bookings")
-custsheet=datasheet.worksheet_by_title("customers")
-carsheet=datasheet.worksheet_by_title("cars")
-driversheet=datasheet.worksheet_by_title("drivers")
-prodsheet=datasheet.worksheet_by_title("product")
+try:
+	datasheet=sakhacabsgd.open_by_key(sakhacabsxpal.config.get("SakhaCabs","datasheetkey"))
+	bookingsheet=datasheet.worksheet_by_title("bookings")
+	custsheet=datasheet.worksheet_by_title("customers")
+	carsheet=datasheet.worksheet_by_title("cars")
+	driversheet=datasheet.worksheet_by_title("drivers")
+	prodsheet=datasheet.worksheet_by_title("product")
+except Exception as e:
+	sakhacabsxpal.logger.error("Error connecting to Google Drive, check connectivity - {} {}".format(repr(e),str(e)))
 
 #Setting up mongoengine connections
 sakhacabsxpal.logger.info("Setting up MongoEngine")
@@ -29,18 +32,27 @@ mongoengine.connect('sakhacabs', alias='default')
 
 
 #Remote sync functionality
-def validate_booking_dict(bookingdict):
+def validate_booking_dict(bookingdict,new=True):
 	valid=True
-	required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
-	for key in required_keys:
-		if key not in bookingdict.keys():
+	if new==True:
+			required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
+			for key in required_keys:
+				if key not in bookingdict.keys():
+					sakhacabsxpal.logger.error("{} missing".format(key))
+					valid=False
+				if bookingdict[key]==None:
+					sakhacabsxpal.logger.error("{} can't be None".format(key))
+					valid=False
+	string_keys=["cust_id","product_id","passenger_detail","passenger_mobile"]
+	for key in string_keys:
+		if key in bookingdict.keys():
+			if utils.nospec.search(str(bookingdict[key])):
+				sakhacabsxpal.logger.error("{} has special character".format(key))
+				valid=False
+	if "passenger_mobile" in bookingdict.keys():
+		if len(bookingdict['passenger_mobile'])>12:
+			sakhacabsxpal.logger.error("{} too long a mobile number".format(bookingdict['passenger_mobile']))
 			valid=False
-		if bookingdict[key]==None:
-			valid=False
-		if utils.nospec.search(bookingdict[key]):
-			valid=False
-	if len(bookingdict['passenger_mobile'])>12:
-		valid=False
 	return valid
 
 def validate_driver_dict(driverdict):
@@ -201,7 +213,34 @@ def new_booking(respdict):
 	b.reload()
 	sakhacabsxpal.logger.info("{}".format(b))
 	return b
-	
+
+
+def update_booking(booking_id,respdict):
+	#Update Booking should 
+		# 1. Update the booking
+		# 2. Update the assignment
+	#TODO #70 #79
+	#TODO Write logic for updating assignment if change in bookings and duty slips #70
+		
+	booking=documents.Booking.objects(booking_id=booking_id)
+	if len(booking)==0:
+		return "No booking by that id"
+	else:
+		booking=booking[0]
+		sakhacabsxpal.logger.info("Trying to update booking with id {}".format(booking.booking_id))
+		if "_id" in respdict.keys():
+			respdict.pop("_id")
+		booking.update(**respdict)
+		booking.reload()
+		assignment=documents.Assignment.objects.with_id(booking.assignment)
+		if "pickup_timestamp" in respdict.keys():
+			assignment.reporting_timestamp=booking.pickup_timestamp
+		if "pickup_location" in respdict.keys():
+			assignment.reporting_location=booking.pickup_location
+		assignment.save()
+			
+		return [booking]
+
 def save_assignment(assignmentdict,assignment_id=None):
     '''
     Creates a new assignment/Updates an existing assignment with the provided bookings and duty slips
@@ -215,7 +254,6 @@ def save_assignment(assignmentdict,assignment_id=None):
 		assignment.status="new"
 		sakhacabsxpal.logger.info("Created new assignment at {}".format(assignment.created_timestamp.strftime("%Y-%m-%d %H:%M:%S")))
     else:
-		#TODO Write logic for updating assignment if change in bookings and duty slips #70
 		sakhacabsxpal.logger.info("Saving existing assignment {}".format(assignment_id))
 		assignment=documents.Assignment.objects.with_id(assignment_id)
 		assignment.bookings=bookings
