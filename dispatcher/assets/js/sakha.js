@@ -753,11 +753,13 @@ var sakha={
                     console.log(response)
                     if(response.status==="success"){
                        document.getElementById("driverstatus").innerHTML="<span style='color:green'>Success!</span>"
+                        alert("Saved Driver Successfully!")
                         console.log("success")
                     }
                     
                     if (response.status==="error"){
                         console.log("error")
+                        alert("Failed to Save Driver!")
                          document.getElementById("driverstatus").innerHTML="<span style='color:red'>"+response.resp+"</span>" 
                     }
                     
