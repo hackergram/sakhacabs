@@ -14171,7 +14171,7 @@ h2.title {
 }
 
 .dropdown-menu.bootstrap-datetimepicker-widget {
-  opacity: 0;
+  opacity: 1;
   transform: scale(0);
   transition-duration: 0.3s;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -14180,7 +14180,7 @@ h2.title {
   top: 0;
 }
 .bootstrap-datetimepicker-widget {
-  opacity: 0;
+  opacity: 1;
   transform: scale(0);
   transition-duration: 0.3s;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
