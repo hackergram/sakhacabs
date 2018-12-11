@@ -207,7 +207,7 @@
                      <div id="driverstatus" class="card-category"></div>
                     </div>
                     <div class="card-body">
-                      <form>
+                      <form id="driverform">
                         <div class="row">
                           <div class="col-md-6">
                             <div class="form-group bmd-form-group">
@@ -263,7 +263,7 @@
                       <h5 class="card-category"><span id="created_time"><b>Created at: </b></span></h5>   
                     </div>
                     <div class="card-body">
-                        <form>
+                        <form id="dutyslipform">
                             <div class="row">
                               <div class="col-md-12">
                                 <div class="form-group bmd-form-group">
@@ -415,7 +415,7 @@
               <h5 class="card-category"><b>Created at: </b><span id="booking_created_timestamp"></span></h5>   
             </div>
             <div class="card-body">
-                <form>
+                <form id="bookingform">
                     <div class="row">
                       <div class="col-md-12">
                         <div class="form-group bmd-form-group">
@@ -944,6 +944,7 @@
                     window.location.reload(false);
             })
             $("#createdriverform").on('hide.bs.modal', function (event) {
+                    document.getElementById("driverform").reset()
                     window.location.reload(false);
             })
             $("#editdutyslipform").on('show.bs.modal', function (event) {
@@ -959,6 +960,7 @@
             })
             $("#editdutyslipform").on('hide.bs.modal', function (event) {
                 console.log("closing duty slip modal")
+                document.getElementById("dutyslipform").reset()
                 window.location.reload(false);
             })
             $("#editbookingform").on('show.bs.modal', function (event) {
@@ -969,7 +971,8 @@
                 sakha.fillBookingModal(bookingid)
             })
             $("#editbookingform").on('hide.bs.modal', function (event) {
-                console.log("closing duty slip modal")
+                document.getElementById("bookingform").reset()
+                console.log("closing booking  modal")
                 window.location.reload(false);
             })
     	});
