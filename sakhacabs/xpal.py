@@ -78,14 +78,36 @@ def validate_dutyslip_dict(dutyslipdict,new=True):
 		sakhacabsxpal.logger.error("dutyslipdict: "+validation['message'])
 	return validation
 
-def validate_assignment_dict(dutyslipdict,new=True):
+def validate_assignment_dict(assignmentdict,new=True):
 	validation={}
 	validation['status']=True
-	validation['message']="Valid dutyslip"
+	validation['message']="Valid assignment"
+	
+	if assignmentdict['dutyslips']==[]:
+		validation['status']=False
+		validation['message']="At least one driver must be assigned to create an assignment."
+        if assignmentdict['assignment']['bookings']==[]:
+			validation['status']=False
+			validation['message']= "At least one booking must be assigned to create an assignment."
+        bookings=[documents.Booking.objects.with_id(x['_id']['$oid']) for x in assignmentdict['assignment']['bookings']]
+        for booking in bookings:
+			if hasattr(booking,"assignment"):
+				validation['status']=False
+				validation['message']= "Booking is already assigned! Please delete the old assignment before creating a new one."
+			if booking.cust_id!=assignmentdict['assignment']['cust_id']:
+				validation['status']=False
+				validation['message']="Bookings from different customers cannot be assigned together."
+        seenvehicles=[]
+        for dutyslip in assignmentdict['dutyslips']:
+			if "vehicle" in dutyslip.keys():
+				if dutyslip['vehicle'] in seenvehicles:
+					validation['status']=False
+					validation['message']="Can't assign the same vehicle to more than one driver in the same assignment."
+				seenvehicles.append(dutyslip['vehicle'])
 	if validation['status']==True:
-		sakhacabsxpal.logger.info("dutyslipdict: "+validation['message'])
+		sakhacabsxpal.logger.info("assignmentdict: "+validation['message'])
 	else:
-		sakhacabsxpal.logger.error("dutyslipdict: "+validation['message'])
+		sakhacabsxpal.logger.error("assignmentdict: "+validation['message'])
 	return validation
 	
 def sync_remote():
