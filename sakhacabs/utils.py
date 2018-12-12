@@ -13,8 +13,9 @@ nospec=re.compile(r"[^A-Za-z0-9\n '-]+")
 notnum=re.compile(r"[^0-9]+")
 
 def validate_dict(dictionary, required_keys=[],string_keys=[],mobile_nums=[],emails=[]):
-	returndict={}
-	valid=True
+	validation={}
+	validation['status']=True
+	validation['message']="Valid dictionary"
 	for key in required_keys:
 		if key not in dictionary.keys():
 			message="{} - missing required field".format(key)

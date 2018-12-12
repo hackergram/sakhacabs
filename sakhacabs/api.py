@@ -56,9 +56,12 @@ class DriverResource(Resource):
 			return jsonify({"status":"error","resp":"Driver with that ID Exists"})
 		else:
 			if xpal.validate_driver_dict(respdict)['status']==True:
-				driver=xpal.documents.Driver.from_json(json.dumps(respdict))
-				driver.save()
-				return jsonify({"status":"success","resp":[driver]})
+				try:
+					driver=xpal.documents.Driver.from_json(json.dumps(respdict))
+					driver.save()
+					return jsonify({"status":"success","resp":[driver]})
+				except Exception as e:
+					return jsonify({"status":"error","resp":"{} {}".format(repr(e),str(e)})
 			else:
 				return jsonify({"status":"error","resp":xpal.validate_driver_dict(respdict)['message']})
     def put(self,driver_id):
