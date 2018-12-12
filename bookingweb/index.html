@@ -234,7 +234,13 @@
                             http.setRequestHeader("Content-type", "application/json");
                             http.onreadystatechange = function() {//Call a function when the state changes.
                                 if(http.readyState == 4 && http.status == 200) {
-                                     alert(http.responseText)
+                                     response=JSON.parse(http.responseText)
+                                     if(response.status==="success"){
+                                         alert("Successfully saved booking")
+                                     }
+                                    else{
+                                        alert("Failed to save booking \n"+response.resp)
+                                    }
                                     window.location.reload(true);
                                 }
                             }
