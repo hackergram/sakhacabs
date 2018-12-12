@@ -32,9 +32,9 @@ mongoengine.connect('sakhacabs', alias='default')
 
 #Remote sync functionality
 def validate_booking_dict(bookingdict,new=True):
-	returndict={}
-	valid=True
-	message="Valid booking"
+	validation={}
+	validation['status']=True
+	validation['message']="Valid booking"
 	required_keys=[]
 	if new==True:
 		required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
@@ -42,15 +42,15 @@ def validate_booking_dict(bookingdict,new=True):
 	mobile_nums=["passenger_mobile"]
 	validation=utils.validate_dict(bookingdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)			
 	if validation['status']==True:
-		sakhacabsxpal.logger.info("bookingdict: "+message)
+		sakhacabsxpal.logger.info("bookingdict: "+validation['message'])
 	else:
-		sakhacabsxpal.logger.error("bookingdict: "+message)
+		sakhacabsxpal.logger.error("bookingdict: "+validation['message'])
 	return validation
 
 def validate_driver_dict(driverdict,new=True):
-	returndict={}
-	valid=True
-	message="Valid dictionary"
+	validation={}
+	validation['status']=True
+	validation['message']="Valid driver"
 	required_keys=[]
 	if new==True:
 		required_keys=["driver_id","moble_num"]
@@ -58,11 +58,20 @@ def validate_driver_dict(driverdict,new=True):
 	mobile_nums=["mobile_num"]
 	validation=utils.validate(driverdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)
 	if validation['status']==True:
-		sakhacabsxpal.logger.info("driverdict: "+message)
+		sakhacabsxpal.logger.info("driverdict: "+validation['message'])
 	else:
-		sakhacabsxpal.logger.error("driverdict: "+message)
+		sakhacabsxpal.logger.error("driverdict: "+validation['message'])
 	return validation
-	
+
+def validate_dutyslip_dict(dutyslipdict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid dutyslip"
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("dutyslipdict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("dutyslipdict: "+validation['message'])
+	return validation
 def sync_remote():
     custlist=custsheet.get_as_df().to_dict(orient="records")
     driverlist=driversheet.get_as_df().to_dict(orient="records")
