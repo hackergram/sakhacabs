@@ -38,7 +38,7 @@ def validate_booking_dict(bookingdict,new=True):
 	required_keys=[]
 	if new==True:
 		required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
-	string_keys=["cust_id","product_id","passenger_detail","passenger_mobile"]
+	string_keys=["cust_id","product_id","passenger_detail","passenger_mobile","remarks"]
 	mobile_nums=["passenger_mobile"]
 	validation=utils.validate_dict(bookingdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)			
 	if validation['status']==True:
@@ -56,7 +56,7 @@ def validate_driver_dict(driverdict,new=True):
 		required_keys=["driver_id","moble_num"]
 	string_keys=["first_name","last_name","mobile_num","name","driver_id"]
 	mobile_nums=["mobile_num"]
-	validation=utils.validate(driverdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)
+	validation=utils.validate_dict(driverdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)
 	if validation['status']==True:
 		sakhacabsxpal.logger.info("driverdict: "+validation['message'])
 	else:
@@ -67,11 +67,27 @@ def validate_dutyslip_dict(dutyslipdict,new=True):
 	validation={}
 	validation['status']=True
 	validation['message']="Valid dutyslip"
+	required_keys=[]
+	if new==True:
+		required_keys=["driver","assignment"]
+	string_keys=["driver","vehicle","remarks"]
+	validation=utils.validate_dict(dutyslipdict,required_keys=required_keys,string_keys=string_keys)
 	if validation['status']==True:
 		sakhacabsxpal.logger.info("dutyslipdict: "+validation['message'])
 	else:
 		sakhacabsxpal.logger.error("dutyslipdict: "+validation['message'])
 	return validation
+
+def validate_assignment_dict(dutyslipdict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid dutyslip"
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("dutyslipdict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("dutyslipdict: "+validation['message'])
+	return validation
+	
 def sync_remote():
     custlist=custsheet.get_as_df().to_dict(orient="records")
     driverlist=driversheet.get_as_df().to_dict(orient="records")
