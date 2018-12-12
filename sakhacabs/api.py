@@ -55,12 +55,12 @@ class DriverResource(Resource):
 			driver=driver[0]
 			return jsonify({"status":"error","resp":"Driver with that ID Exists"})
 		else:
-			if validate_driver_dict(respdict):
+			if xpal.validate_driver_dict(respdict)['status']==True:
 				driver=xpal.documents.Driver.from_json(json.dumps(respdict))
 				driver.save()
 				return jsonify({"status":"success","resp":[driver]})
 			else:
-				return jsonify({"status":"error","resp":"Invalid!"})
+				return jsonify({"status":"error","resp":xpal.validate_driver_dict(respdict)['message']})
     def put(self,driver_id):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -75,10 +75,13 @@ class DriverResource(Resource):
 			if respdict['driver_id']!=driver_id:
 				return jsonify({"status":"error","resp":"Driver ID mismatch"})
 			del respdict['driver_id']
-		driver.update(**respdict)
-		driver.save()
-		driver.reload()
-		return jsonify({"status":"success","resp":[driver]})
+		if xpal.validate_driver_dict(respdict)['status']==True:
+			driver.update(**respdict)
+			driver.save()
+			driver.reload()
+			return jsonify({"status":"success","resp":[driver]})
+		else:
+			return jsonify({"status":"error","resp":xpal.validate_driver_dict(respdict)['message']})
     def delete(self,driver_id):
 		if len(xpal.documents.Driver.objects(driver_id=driver_id))>0:
 			xpal.documents.Driver.objects(driver_id=driver_id).delete()
@@ -123,9 +126,6 @@ api.add_resource(VehicleResource,"/vehicle",endpoint="vehicle")
 api.add_resource(VehicleResource,"/vehicle/by_id/<string:docid>",endpoint="vehicle_docid")
 api.add_resource(VehicleResource,"/vehicle/by_vehicle_id/<string:vehicle_id>",endpoint="vehicleid")
 api.add_resource(VehicleResource,"/vehicle/<string:command>",endpoint="vehicle_command")
-
-
-
 
 class LocationUpdateResource(Resource):
     def get(self,docid=None,command=None):
@@ -209,7 +209,7 @@ class BookingResource(Resource):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
 		if command=="single":
-			if xpal.validate_booking_dict(respdict):
+			if xpal.validate_booking_dict(respdict)['status']==True:
 				booking=xpal.new_booking(respdict)
 				return jsonify({"resp":[booking],"status":"success"})
 			else:
@@ -234,7 +234,7 @@ class BookingResource(Resource):
 				respdict['pickup_timestamp']=xpal.utils.get_utc_ts(datetime.datetime.strptime(respdict['pickup_timestamp'],"%Y-%m-%d %H:%M:%S"))
 				
 			app.logger.info("Timestamp - {}".format(respdict['pickup_timestamp']))
-		if xpal.validate_booking_dict(respdict, new=False):
+		if xpal.validate_booking_dict(respdict, new=False)['status']:
 			resp=xpal.update_booking(booking_id,respdict)
 		if type(resp)!=list:
 			status="error"

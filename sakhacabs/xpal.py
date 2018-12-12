@@ -30,34 +30,38 @@ sakhacabsxpal.logger.info("Setting up MongoEngine")
 mongoengine.connect('sakhacabs', alias='default')
 
 
-
 #Remote sync functionality
 def validate_booking_dict(bookingdict,new=True):
+	returndict={}
 	valid=True
+	message="Valid booking"
+	required_keys=[]
 	if new==True:
-			required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
-			for key in required_keys:
-				if key not in bookingdict.keys():
-					sakhacabsxpal.logger.error("{} missing".format(key))
-					valid=False
-				if bookingdict[key]==None:
-					sakhacabsxpal.logger.error("{} can't be None".format(key))
-					valid=False
+		required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
 	string_keys=["cust_id","product_id","passenger_detail","passenger_mobile"]
-	for key in string_keys:
-		if key in bookingdict.keys():
-			if utils.nospec.search(str(bookingdict[key])):
-				sakhacabsxpal.logger.error("{} has special character".format(key))
-				valid=False
-	if "passenger_mobile" in bookingdict.keys():
-		if len(bookingdict['passenger_mobile'])>12:
-			sakhacabsxpal.logger.error("{} too long a mobile number".format(bookingdict['passenger_mobile']))
-			valid=False
-	return valid
+	mobile_nums=["passenger_mobile"]
+	validation=utils.validate_dict(bookingdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)			
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("bookingdict: "+message)
+	else:
+		sakhacabsxpal.logger.error("bookingdict: "+message)
+	return validation
 
-def validate_driver_dict(driverdict):
+def validate_driver_dict(driverdict,new=True):
+	returndict={}
 	valid=True
-	return valid
+	message="Valid dictionary"
+	required_keys=[]
+	if new==True:
+		required_keys=["driver_id","moble_num"]
+	string_keys=["first_name","last_name","mobile_num","name","driver_id"]
+	mobile_nums=["mobile_num"]
+	validation=utils.validate(driverdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("driverdict: "+message)
+	else:
+		sakhacabsxpal.logger.error("driverdict: "+message)
+	return validation
 	
 def sync_remote():
     custlist=custsheet.get_as_df().to_dict(orient="records")
@@ -108,48 +112,8 @@ def sync_remote():
     productdf=pandas.DataFrame(json.loads(documents.Product.objects.to_json()))
     productdf['_id']=productdf['_id'].apply(lambda x: x['$oid'])
     prodsheet.set_dataframe(productdf,(1,1))
-    '''
-    bookingdf=bookingsheet.get_as_df()
-    bookingdf.created_timestamp=bookingdf.created_timestamp.apply(pandas.to_datetime).apply(utils.get_utc_ts)
-    bookingdf.pickup_timestamp=bookingdf.pickup_timestamp.apply(pandas.to_datetime).apply(utils.get_utc_ts)
-    bookinglist=bookingdf.to_dict(orient="records")
-    delkeys=["passenger_detail", "created_timestamp", "pickup_timestamp", "pickup_location", "drop_location", "product_id", "cust_id", "booking_channel","booking_id","_id","cust_meta"]
-    for booking in bookinglist:
-        
-        if booking["booking_id"]=="":
-            while True:
-                booking_id=utils.new_booking_id()
-                if len(documents.Booking.objects(booking_id=booking_id,cust_id=booking['cust_id']))==0:
-                    break
-            b=documents.Booking(booking_id=booking_id,created_timestamp=booking['created_timestamp'],passenger_detail=booking['passenger_detail'],
-                pickup_timestamp=booking['pickup_timestamp'],pickup_location=booking['pickup_location'],
-                drop_location=booking['drop_location'],product_id=booking['product_id'],cust_id=booking['cust_id'],
-                booking_channel=booking['booking_channel'])
-            print booking['cust_meta']
-            
-            b.cust_meta=json.loads(booking['cust_meta'])
-            newdelkeys=[]
-            for key,value in booking.iteritems():
-                if value=="":
-                    newdelkeys.append(key)
-            
-            #print delkeys
-            for key in delkeys:
-                booking.pop(key,None)
-            for key in newdelkeys:
-                booking.pop(key,None)
-                    
-            
-            print b.to_json()
-            b.save()
-    newbookingsdf=pandas.DataFrame(json.loads(documents.Booking.objects.to_json()))
-    if len(newbookingsdf)>0:
-		newbookingsdf.created_timestamp= newbookingsdf.created_timestamp.apply(lambda x: datetime.datetime.fromtimestamp(x['$date']/1000).strftime("%Y-%m-%d %H:%M:%S"))
-		newbookingsdf.pickup_timestamp= newbookingsdf.pickup_timestamp.apply(lambda x: datetime.datetime.fromtimestamp(x['$date']/1000).strftime("%Y-%m-%d %H:%M:%S"))
-		newbookingsdf['_id']=newbookingsdf['_id'].apply(lambda x: x['$oid'])
-		newbookingsdf.cust_meta=newbookingsdf.cust_meta.astype(str)
-		bookingsheet.set_dataframe(newbookingsdf,(1,1))
 
+'''
 LocationUpdate CRUD functionality
 Fix to check if vehicle is already  taken.
 '''
@@ -193,7 +157,6 @@ Assignments are collections of one or more bookings grouped together for assignm
 DutySlips record assignment execution. DutySlips are issued by the dispatcher and can be created and deleted but not updated.
 A DutySlip can not be deleted once the open time has been set by the driver, i.e. after execution on an assignment has begun.
 '''
-
 '''
 Bookings
 '''
@@ -311,7 +274,6 @@ def search_assignments(cust_id=None,date_frm=None,date_to=None):
 	return assignments
 
 
-
 '''
 Duty Slips
 '''
@@ -355,14 +317,9 @@ def get_vehicle_by_vid(vid):
         return None
 
 
-
-	
 '''
 Invoices
 '''
-
-
-
 def get_invoice(to_settle):
 	invoice_lines=[]
 	for ass in to_settle:
