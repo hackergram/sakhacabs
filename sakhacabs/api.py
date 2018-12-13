@@ -227,13 +227,19 @@ class BookingResource(Resource):
 			app.logger.info("BookingResource: Trying to save single booking")
 			if xpal.validate_booking_dict(respdict)['status']==True:
 				try:
-					booking=xpal.new_booking(respdict)
-					return jsonify({"resp":[booking],"status":"success"})
+					resp=xpal.new_booking(respdict)
+					if type(resp)!=list:
+						status="error"
+					else:
+						status="success"
 				except Exception as e:
-					app.logger.error("{} {}".format(type(e),str(e)))
-					return jsonify({"resp":"{} {}".format(type(e),str(e)),"status":"error"})
+					resp="{} {}".format(type(e),str(e))
+					status="error"
+				
 			else:
-				return jsonify({"resp":xpal.validate_booking_dict(respdict)['message'],"status":"error"})
+				resp=xpal.validate_booking_dict(respdict)['message']
+				status="error"
+			return jsonify({"resp":resp,"status":status})
 		if command=="import":
 			try:
 				#replace with bookinglist=xpal.importbookings(respdict) #91 #83
@@ -241,51 +247,49 @@ class BookingResource(Resource):
 				return jsonify({"resp":bookinglist,"status":"success"})
 			except Exception as e:
 				app.logger.error("{} {}".format(type(e),str(e)))
-				return jsonify({"resp":"{} {}".format(type(e),str(e)),"status":"error"})
-			
-		return jsonify({"resp":"No command provided","status":"success"})
+				return jsonify({"resp":"{} {}".format(type(e),str(e)),"status":"error"})	
+		return jsonify({"resp":"Unrecognized command or no provided","status":"success"})
     def put(self,booking_id=None):
 		#PUT to /booking/by_booking_id/<booking_id>
         #Training Note: If more than one booking is linked in an assignment, the assignment reporting time will reflect that of the last updated booking. If something else is needed best to delete the assignment and create a new one. 
-        
-		app.logger.info("{}".format(request.get_json()))
-		respdict=request.get_json()
-		if 'created_timestamp' in respdict.keys():
-			respdict.pop("created_timestamp")
-		if 'pickup_timestamp' in respdict.keys():
-			app.logger.info("Type for pickup_timestamp {}".format(type(respdict['pickup_timestamp'])))
-			if type(respdict['pickup_timestamp'])==dict:
-				respdict['pickup_timestamp']=datetime.datetime.fromtimestamp(respdict['pickup_timestamp']['$date']/1000)
-			if type(respdict['pickup_timestamp'])==unicode:
-				respdict['pickup_timestamp']=xpal.utils.get_utc_ts(datetime.datetime.strptime(respdict['pickup_timestamp'],"%Y-%m-%d %H:%M:%S"))
-				
-			app.logger.info("Timestamp - {}".format(respdict['pickup_timestamp']))
-		if xpal.validate_booking_dict(respdict, new=False)['status']:
-			resp=xpal.update_booking(booking_id,respdict)
-		if type(resp)!=list:
+        if booking_id==None:
+			resp="No booking id provided"
+			status="error"
+        else:
+			app.logger.info("Trying to update booking id {} with data {}".format(booking_id,request.get_json()))
+			respdict=request.get_json()
+			if xpal.validate_booking_dict(respdict, new=False)['status']==True:
+				try:
+					resp=xpal.update_booking(booking_id,respdict)
+					if type(resp)!=list:
+						status="error"
+					else:
+						status="success"
+				except Exception as e:
+					resp="{} {}".format(type(e),str(e))
+					status="error"
+			else:
+				resp=xpal.validate_booking_dict(respdict)['message']
+				status="error"
+        return jsonify({"resp":resp,"status":status})
+    
+    def delete(self,booking_id=None):
+		if booking_id==None:
+			resp="No booking id provided"
 			status="error"
 		else:
-			status="success"
-		return jsonify({"resp":resp,"status":status})
-    
-    def delete(self,booking_id):
-		if len(xpal.documents.Booking.objects(booking_id=booking_id))>0:
-			#TODO: xpal.delete_booking(booking_id) #81
-			booking=xpal.documents.Booking.objects(booking_id=booking_id)
-			assignment=booking.assignment
-			booking.delete()
-			if assignment!=None:
-				if (xpal.documents.Booking.objects(assignment=assignment))==0:
-					documents.Assignment.objects.with_id(assignment).delete()	
+			app.logger.info("Trying to delete booking id {}".format(booking_id))
+			try:
+				resp=xpal.delete_booking(booking_id)
+				if type(resp)!=list:
+					status="error"
 				else:
-					assignmentobj=documents.Assignment.objects.with_id(assignment)
-					assignmentobj.reporting_location=assignmentobj.bookings[0].pickup_location
-					assignmentobj.reporting_timestamp=assignmentobj.bookings[0].pickup_timestamp
-					assignmentobj.save()
-					
-			return jsonify({"resp":[],"status":"success"})
-		else:
-			return jsonify({"resp":[],"status":"error"})
+					status="success"
+			except Exception as e:
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		return jsonify({"resp":resp,"status":status})
+
 api.add_resource(BookingResource,"/booking",endpoint="booking")
 api.add_resource(BookingResource,"/booking/by_id/<string:docid>",endpoint="booking_docid")
 api.add_resource(BookingResource,"/booking/by_booking_id/<string:booking_id>",endpoint="booking_id")

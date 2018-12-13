@@ -31,21 +31,6 @@ mongoengine.connect('sakhacabs', alias='default')
 
 
 #Remote sync functionality
-def validate_booking_dict(bookingdict,new=True):
-	validation={}
-	validation['status']=True
-	validation['message']="Valid booking"
-	required_keys=[]
-	if new==True:
-		required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
-	string_keys=["cust_id","product_id","passenger_detail","passenger_mobile","remarks"]
-	mobile_nums=["passenger_mobile"]
-	validation=utils.validate_dict(bookingdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)			
-	if validation['status']==True:
-		sakhacabsxpal.logger.info("bookingdict: "+validation['message'])
-	else:
-		sakhacabsxpal.logger.error("bookingdict: "+validation['message'])
-	return validation
 
 def validate_driver_dict(driverdict,new=True):
 	validation={}
@@ -207,6 +192,22 @@ A DutySlip can not be deleted once the open time has been set by the driver, i.e
 '''
 Bookings
 '''
+def validate_booking_dict(bookingdict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid booking"
+	required_keys=[]
+	if new==True:
+		required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
+	string_keys=["cust_id","product_id","passenger_detail","passenger_mobile","remarks"]
+	mobile_nums=["passenger_mobile"]
+	validation=utils.validate_dict(bookingdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)			
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("bookingdict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("bookingdict: "+validation['message'])
+	return validation
+
 def new_booking(respdict):
 	bookingdict={}
 	sakhacabsxpal.logger.info("Creating new booking")
@@ -215,23 +216,23 @@ def new_booking(respdict):
 		if key in ["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","drop_location","booking_channel","num_passengers"]:
 			bookingdict[key]=respdict[key]
 			respdict.pop(key)
-		
+	if "_id" in respdict.keys():
+		respdict.pop("_id")
+	if "created_timestamp" in respdict.keys():
+		respdict.pop("created_timestamp")
 	sakhacabsxpal.logger.info("{}".format(respdict))
-	b=documents.Booking(booking_id=utils.new_booking_id(),**bookingdict)
-	b.cust_meta=respdict
-	b.save()
-	b.reload()
-	sakhacabsxpal.logger.info("{}".format(b))
-	return b
+	try:
+		b=documents.Booking(booking_id=utils.new_booking_id(),**bookingdict)
+		b.cust_meta=respdict
+		b.save()
+		b.reload()
+		sakhacabsxpal.logger.info("{}".format(b))
+		return [b]
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
 
 
 def update_booking(booking_id,respdict):
-	#Update Booking should 
-		# 1. Update the booking
-		# 2. Update the assignment
-	#TODO #70 #79
-	#TODO Write logic for updating assignment if change in bookings and duty slips #70
-		
 	booking=documents.Booking.objects(booking_id=booking_id)
 	if len(booking)==0:
 		return "No booking by that id"
@@ -240,17 +241,50 @@ def update_booking(booking_id,respdict):
 		sakhacabsxpal.logger.info("Trying to update booking with id {}".format(booking.booking_id))
 		if "_id" in respdict.keys():
 			respdict.pop("_id")
-		booking.update(**respdict)
-		booking.reload()
-		assignment=documents.Assignment.objects.with_id(booking.assignment)
-		if "pickup_timestamp" in respdict.keys():
-			assignment.reporting_timestamp=booking.pickup_timestamp
-		if "pickup_location" in respdict.keys():
-			assignment.reporting_location=booking.pickup_location
-		assignment.save()
-			
-		return [booking]
+		if "created_timestamp" in respdict.keys():
+			respdict.pop("created_timestamp")
+		try:
+			booking.update(**respdict)
+			booking.reload()
+			if booking.assignment!=None:
+				assignment=documents.Assignment.objects.with_id(booking.assignment)
+				if "pickup_timestamp" in respdict.keys():
+					assignment.reporting_timestamp=booking.pickup_timestamp
+				if "pickup_location" in respdict.keys():
+					assignment.reporting_location=booking.pickup_location
+				assignment.save()
+					
+			return [booking]
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
 
+
+def delete_booking(booking_id):
+	if len(documents.Booking.objects(booking_id=booking_id))>0:
+		try:
+			booking=documents.Booking.objects(booking_id=booking_id)[0]
+			assignment=booking.assignment
+			booking.delete()
+			if assignment!=None:
+				if len(documents.Booking.objects(assignment=assignment))==0:
+					sakhacabsxpal.logger.info("No more bookings in assignment. Deleting!")
+					documents.Assignment.objects.with_id(assignment).delete()	
+				else:
+					sakhacabsxpal.logger.info("Updating assignment reporting time to first booking!")
+					assignmentobj=documents.Assignment.objects.with_id(assignment)
+					assignmentobj.reporting_location=assignmentobj.bookings[0].pickup_location
+					assignmentobj.reporting_timestamp=assignmentobj.bookings[0].pickup_timestamp
+					assignmentobj.save()
+			return []
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	else:
+		return "No booking by that id"
+
+			
+'''
+Assignment
+'''
 def save_assignment(assignmentdict,assignment_id=None):
     '''
     Creates a new assignment/Updates an existing assignment with the provided bookings and duty slips
@@ -506,7 +540,7 @@ def import_gadv(bookinglist):
 			#b.cust_meta=booking
 		else:
 			sakhacabsxpal.logger.info("New Booking") #TODO - Merge with single booking workflow #83
-			b=documents.Booking(booking_id=utils.new_booking_id(),cust_meta=booking,cust_id="gadventures")
+			   
 			b.passenger_detail=str(b.cust_meta['Booking ID'])+"\n"+b.cust_meta['Trip Code']+"\n"+b.cust_meta['Passengers']
 			b.pickup_location="Intl Airport, Flight #"+str(b.cust_meta['Pick-Up'])
 			b.drop_location=b.cust_meta['Drop-Off']
@@ -523,3 +557,5 @@ def import_gadv(bookinglist):
 			    
 	return bookinglist
 
+#def import_bookings(bookinglist):
+	
