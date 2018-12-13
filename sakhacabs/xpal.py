@@ -220,16 +220,22 @@ def new_booking(respdict):
 		respdict.pop("_id")
 	if "created_timestamp" in respdict.keys():
 		respdict.pop("created_timestamp")
+	
 	sakhacabsxpal.logger.info("{}".format(respdict))
-	try:
-		b=documents.Booking(booking_id=utils.new_booking_id(),**bookingdict)
-		b.cust_meta=respdict
-		b.save()
-		b.reload()
-		sakhacabsxpal.logger.info("{}".format(b))
-		return [b]
-	except Exception as e:
-		return "{} {}".format(type(e),str(e))
+	dupbookings=documents.Booking.objects(cust_meta=respdict)
+	if len(dupbookings)>0:
+		sakhacabsxpal.logger.info("Duplicate booking {}".format(dupbookings))
+		return "Duplicate of {}".format(dupbookings[0].booking_id)
+	else:
+		try:
+			b=documents.Booking(booking_id=utils.new_booking_id(),**bookingdict)
+			b.cust_meta=respdict
+			b.save()
+			b.reload()
+			sakhacabsxpal.logger.info("{}".format(b))
+			return [b]
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
 
 
 def update_booking(booking_id,respdict):
@@ -540,7 +546,6 @@ def import_gadv(bookinglist):
 			#b.cust_meta=booking
 		else:
 			sakhacabsxpal.logger.info("New Booking") #TODO - Merge with single booking workflow #83
-			   
 			b.passenger_detail=str(b.cust_meta['Booking ID'])+"\n"+b.cust_meta['Trip Code']+"\n"+b.cust_meta['Passengers']
 			b.pickup_location="Intl Airport, Flight #"+str(b.cust_meta['Pick-Up'])
 			b.drop_location=b.cust_meta['Drop-Off']
@@ -557,5 +562,19 @@ def import_gadv(bookinglist):
 			    
 	return bookinglist
 
-#def import_bookings(bookinglist):
-	
+def import_bookings(bookinglist):
+	try:
+		for booking in bookinglist:
+				try:
+					b=new_booking(booking)
+					if type(b)==list:
+						booking['booking_id']=b[0].booking_id
+					else:
+						booking['booking_id']=b
+				except Exception as e:
+					booking['booking_id']="{} {}".format(type(e),str(e))
+		return bookinglist
+	except Exception as e:
+			return "{} {}".format(type(e),str(e))
+		
+			

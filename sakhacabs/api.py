@@ -197,28 +197,36 @@ class BookingResource(Resource):
 			app.logger.info("BookingResource: Received Command {}".format(command))
 			if command=="export":
 				try:
-					fileloc=xpal.export_bookings()
-					return jsonify({"resp":[fileloc],"status":"success"})
+					resp=xpal.export_bookings()
+					status="success"
 				except Exception as e:
 					app.logger.error("{} {}".format(type(e),str(e)))
-					return jsonify({"resp":"{} {}".format(type(e),str(e)),"status":"error"})	
+					resp="{} {}".format(type(e),str(e))
+					status="error"	
 			else:
-				return jsonify({"resp":"Unrecognized command","status":"error"})	
-		if docid!=None:
+				resp="Unrecognized command"
+				status="error"	
+		elif docid!=None:
 			app.logger.info("BookingResource: Booking Get By Doc ID {}".format(docid))
 			if xpal.documents.Booking.objects.with_id(docid):
-				return jsonify({"resp": json.loads(xpal.documents.Booking.objects.with_id(docid).to_json()),"status":"success"})
+				resp=json.loads(xpal.documents.Booking.objects.with_id(docid).to_json())
+				status="success"
 			else:
-				return jsonify({"resp":[],"status":"error"})
-		if booking_id!=None:
+				resp="No booking with that id"
+				status="error"
+		elif booking_id!=None:
 			app.logger.info("BookingResource: Booking Get By Booking ID {}".format(booking_id))
 			if xpal.documents.Booking.objects(booking_id=booking_id)!=[]:
-				return jsonify({"resp": json.loads(xpal.documents.Booking.objects(booking_id=booking_id).to_json()),"status":"success"})
+				resp=json.loads(xpal.documents.Booking.objects(booking_id=booking_id).to_json())
+				status="success"
 			else:
-				return jsonify({"resp":[],"status":"error"})
+				resp="No booking with that id"
+				status="error"
 		else:
 			app.logger.info("BookingResource: Getting all Bookings")
-			return jsonify({"resp": json.loads(xpal.documents.Booking.objects.to_json()),"status":"success"})
+			resp=json.loads(xpal.documents.Booking.objects.to_json())
+			status="success"
+		return jsonify({"resp":resp,"status":status})
     def post(self,command=None):	
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
