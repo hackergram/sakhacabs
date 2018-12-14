@@ -139,7 +139,7 @@ def validate_assignment_dict(assignmentdict,new=True):
         for booking in bookings:
 			if booking.assignment!=None:
 				validation['status']=False
-				validation['message']= "Booking is already assigned! Please delete the old assignment before creating a new one."
+				validation['message']= "Booking is already assigned {}! Please delete the old assignment before creating a new one.".format(booking.assignment)
 			if booking.cust_id!=assignmentdict['assignment']['cust_id']:
 				validation['status']=False
 				validation['message']="Bookings from different customers cannot be assigned together."
