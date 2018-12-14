@@ -348,7 +348,7 @@ def save_assignment(assignmentdict,assignment_id=None):
 		booking.assignment=str(assignment.id)
 		booking.save()
     sakhacabsxpal.logger.info("Saved assignment {}".format(assignment.to_json()))
-    return assignment
+    return [assignment]
 
 def search_assignments(cust_id=None,date_frm=None,date_to=None):
 	assignments=documents.Assignment.objects
@@ -360,6 +360,21 @@ def search_assignments(cust_id=None,date_frm=None,date_to=None):
 		assignments=assignments.filter(reporting_timestamp__lt=date_to)
 	return assignments
 
+def delete_assignment(assignmentid):
+	if len(xpal.documents.Assignment.objects.with_id(assignment))>0:
+			dutyslips=xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(assignmentid))
+			app.logger.info("Deleting DutySlips {}".format(dutyslips.to_json()))
+			dutyslips.delete()
+			bookings=xpal.documents.Booking.objects(assignment=assignmentid)
+			app.logger.info("Removing Assignment reference from  Bookings {}".format(bookings.to_json()))
+			
+			for booking in bookings:
+				del(booking.assignment)
+				booking.save()
+			xpal.documents.Assignment.objects.with_id(assignment).delete()
+			return []
+	else:
+		return "Assignment with that ID does not exist"
 
 '''
 Duty Slips

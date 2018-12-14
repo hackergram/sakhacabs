@@ -228,7 +228,7 @@ class BookingResource(Resource):
 			status="success"
 		return jsonify({"resp":resp,"status":status})
     def post(self,command=None):	
-		app.logger.info("{}".format(request.get_json()))
+		app.logger.info("BookingResource: {}".format(request.get_json()))
 		respdict=request.get_json()
 		app.logger.info("BookingResource: Received Command {}".format(command))
 		if command=="single":
@@ -247,16 +247,22 @@ class BookingResource(Resource):
 			else:
 				resp=xpal.validate_booking_dict(respdict)['message']
 				status="error"
-			return jsonify({"resp":resp,"status":status})
-		if command=="import":
+			
+		elif command=="import":
 			try:
 				#replace with bookinglist=xpal.importbookings(respdict) #91 #83
-				bookinglist=xpal.import_gadv(respdict)
-				return jsonify({"resp":bookinglist,"status":"success"})
+				resp=xpal.import_bookings(respdict)
+				if type(resp)!=list:
+					status="error"
+				else:
+					status="success"
 			except Exception as e:
-				app.logger.error("{} {}".format(type(e),str(e)))
-				return jsonify({"resp":"{} {}".format(type(e),str(e)),"status":"error"})	
-		return jsonify({"resp":"Unrecognized command or no provided","status":"success"})
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		else:	
+			resp="Unrecognized command or no provided"
+			status="success"
+		return jsonify({"resp":resp,"status":status})	
     def put(self,booking_id=None):
 		#PUT to /booking/by_booking_id/<booking_id>
         #Training Note: If more than one booking is linked in an assignment, the assignment reporting time will reflect that of the last updated booking. If something else is needed best to delete the assignment and create a new one. 
@@ -279,8 +285,7 @@ class BookingResource(Resource):
 			else:
 				resp=xpal.validate_booking_dict(respdict)['message']
 				status="error"
-        return jsonify({"resp":resp,"status":status})
-    
+        return jsonify({"resp":resp,"status":status})  
     def delete(self,booking_id=None):
 		if booking_id==None:
 			resp="No booking id provided"
@@ -297,7 +302,6 @@ class BookingResource(Resource):
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		return jsonify({"resp":resp,"status":status})
-
 api.add_resource(BookingResource,"/booking",endpoint="booking")
 api.add_resource(BookingResource,"/booking/by_id/<string:docid>",endpoint="booking_docid")
 api.add_resource(BookingResource,"/booking/by_booking_id/<string:booking_id>",endpoint="booking_id")
@@ -305,90 +309,110 @@ api.add_resource(BookingResource,"/booking/<string:command>",endpoint="booking_c
 
 class AssignmentResource(Resource):
     def get(self,docid=None):
-        if docid:
-			queryset=xpal.documents.Assignment.objects.with_id(docid)
+        if docid!=None:
+			app.logger.info("AssignmentResource: Getting assignment with id {}".format(docid))
+			queryset=[xpal.documents.Assignment.objects.with_id(docid)]
 			#app.logger.info("Getting assignment {}".format(queryset))
         else:
+			app.logger.info("AssignmentResource: Getting all assignments")
 			queryset=xpal.documents.Assignment.objects.order_by("reporting_timestamp").all()
-        
-        assignmentlist=[]
-        for assignment in queryset:
-			assignmentdict={}
-			assignmentdict['assignment']=json.loads(assignment.to_json())
-			assignmentdict['dutyslips']=json.loads(xpal.documents.DutySlip.objects(assignment=assignment).to_json())
-			assignmentlist.append(assignmentdict)
-        #return jsonify({"resp": json.loads(queryset.to_json())})
-        return jsonify({"resp": assignmentlist,"status":"success"})
-    def post(self,command=None):
-        app.logger.info("{}".format(request.get_json()))
-        respdict=request.get_json()
-        if command=="updatestatus":
-			assignment=xpal.documents.Assignment.objects.with_id(respdict['assignment_id'])
-			assignment.status=respdict['status']
-			assignment.save()
-			for booking in assignment.bookings:
-				booking.status=assignment.status
-				booking.save()
-			return jsonify({"resp": "Status updated.","status":"success"})	
-        if command=="search":
-			search_keys=respdict
-			date_frm=None
-			date_to=None
-			cust_id=None
-			app.logger.info(search_keys)
-			if "date_frm" in search_keys and search_keys['date_frm']!="":
-				date_frm=datetime.datetime.strptime(search_keys['date_frm'],"%Y-%m-%d %H:%M:%S")
-			if "date_to" in search_keys and search_keys['date_to']!="":
-				date_to=datetime.datetime.strptime(search_keys['date_to'],"%Y-%m-%d %H:%M:%S")
-			if "cust_id" in search_keys and search_keys['cust_id']!="0":
-				cust_id=search_keys['cust_id']
-			queryset=xpal.search_assignments(cust_id=cust_id,date_frm=date_frm,date_to=date_to)
+        try:
+			app.logger.info("AssignmentResource: Trying to fill dutyslips in assignments")
 			assignmentlist=[]
-			app.logger.info(queryset)
 			for assignment in queryset:
 				assignmentdict={}
 				assignmentdict['assignment']=json.loads(assignment.to_json())
 				assignmentdict['dutyslips']=json.loads(xpal.documents.DutySlip.objects(assignment=assignment).to_json())
 				assignmentlist.append(assignmentdict)
-			return jsonify({"resp": assignmentlist	,"status":"success"})
-        app.logger.info("Validating assignmentdict")
-        bookings=[xpal.documents.Booking.objects.with_id(x['_id']['$oid']) for x in respdict['assignment']['bookings']]
-        respdict['assignment']['cust_id']=bookings[0].cust_id
-        if xpal.validate_assignment_dict(respdict)['status']==True:
+			#return jsonify({"resp": json.loads(queryset.to_json())})
+			resp=assignmentlist
+			status="success"
+		except Exception as e:
+			app.logger.error("{} {}".format(type(e),str(e)))
+			resp="{} {}".format(type(e),str(e))
+			status="error"
+        return jsonify({"resp": resp,"status":status})
+    def post(self,command=None):
+        app.logger.info("AssignmentResource: {}".format(request.get_json()))
+        respdict=request.get_json()
+        if command==None:
+			app.logger.info("AssignmentResource: Trying to create new assignment")
 			try:
-				assignment=xpal.save_assignment(respdict)
-				return jsonify({"resp": [json.loads(assignment.to_json())],"status":"success"})
+				bookings=[xpal.documents.Booking.objects.with_id(x['_id']['$oid']) for x in respdict['assignment']['bookings']]
+				respdict['assignment']['cust_id']=bookings[0].cust_id
+				if xpal.validate_assignment_dict(respdict)['status']==True:
+					resp=xpal.save_assignment(respdict)
+					status="success"
+					#return jsonify({"resp": [json.loads(assignment.to_json())],"status":"success"})
+				else:
+					resp=xpal.validate_assignment_dict(respdict)['message']
+					status="error"
 			except Exception as e:
 				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
-				return jsonify({"resp":"{} {} \n {}".format(type(e),str(e),respdict),"status":"error"})
-        else:
-			return jsonify({"resp":xpal.validate_assignment_dict(respdict)['message'],"status":"error"})
-        return jsonify({"resp":[]})
-    def put(self,docid):
-		app.logger.info("{}".format(request.get_json()))
-		respdict=request.get_json()
-		try:
-			assignment=xpal.save_assignment(respdict,docid)
-			return jsonify({"resp": [json.loads(assignment.to_json())]})
-		except Exception as e:
-			app.logger.info("{}".format(str(e)))
-		return jsonify({"resp":"Error creating assignment!","status":"error"})   
-		
+				resp="{} {}".format(type(e),str(e)
+				status="error"
+        elif command=="updatestatus":
+			app.logger.info("AssignmentResource: Trying to update assignment status")
+			try:
+				assignment=xpal.documents.Assignment.objects.with_id(respdict['assignment_id'])
+				assignment.status=respdict['status']
+				assignment.save()
+				for booking in assignment.bookings:
+					booking.status=assignment.status
+					booking.save()
+				resp="Status updated successfully"
+				status="success"
+				#return jsonify({"resp": "Status updated.","status":"success"})
+			except Exception as e:
+				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
+				resp="{} {}".format(type(e),str(e)
+				status="error"	
+        elif command=="search":
+			app.logger.info("AssignmentResource: Searching assignments")
+			try:
+				search_keys=respdict
+				date_frm=None
+				date_to=None
+				cust_id=None
+				app.logger.info(search_keys)
+				if "date_frm" in search_keys and search_keys['date_frm']!="":
+					date_frm=datetime.datetime.strptime(search_keysr['date_frm'],"%Y-%m-%d %H:%M:%S")
+				if "date_to" in search_keys and search_keys['date_to']!="":
+					date_to=datetime.datetime.strptime(search_keys['date_to'],"%Y-%m-%d %H:%M:%S")
+				if "cust_id" in search_keys and search_keys['cust_id']!="0":
+					cust_id=search_keys['cust_id']
+				queryset=xpal.search_assignments(cust_id=cust_id,date_frm=date_frm,date_to=date_to)
+				assignmentlist=[]
+				app.logger.info(queryset)
+				for assignment in queryset:
+					assignmentdict={}
+					assignmentdict['assignment']=json.loads(assignment.to_json())
+					assignmentdict['dutyslips']=json.loads(xpal.documents.DutySlip.objects(assignment=assignment).to_json())
+					assignmentlist.append(assignmentdict)
+				resp=assignmentlist
+				status="success"
+			except Exception as e:
+				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
+				resp="{} {}".format(type(e),str(e)
+				status="error"        
+        return jsonify({"resp":resp,"status":status})
     def delete(self,docid):
-		if len(xpal.documents.Assignment.objects.with_id(docid))>0:
-			dutyslips=xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(docid))
-			app.logger.info("Deleting DutySlips {}".format(dutyslips.to_json()))
-			dutyslips.delete()
-			bookings=xpal.documents.Booking.objects(assignment=docid)
-			app.logger.info("Removing Assignment reference from  Bookings {}".format(bookings.to_json()))
-			
-			for booking in bookings:
-				del(booking.assignment)
-				booking.save()
-			xpal.documents.Assignment.objects.with_id(docid).delete()
-			return jsonify({"resp":[True]})
+		if docid==None:
+			resp="No assignment ID"
+			status="error"
 		else:
-			return jsonify({"resp":[False]})
+			app.logger.info("AssignmentResource: Trying to delete assignment {}".format(docid))
+			try:
+				resp=xpal.delete_assignment(docid)
+				if type(resp)==list:
+					status="success"
+				else:
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e)
+				status="error"
+		return jsonify({"resp":resp,"status":status})
 api.add_resource(AssignmentResource,"/assignment",endpoint="assignment")
 api.add_resource(AssignmentResource,"/assignment/by_id/<string:docid>",endpoint="assignment_docid")
 api.add_resource(AssignmentResource,"/assignment/<string:command>",endpoint="assignment_command")
