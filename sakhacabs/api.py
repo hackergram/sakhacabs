@@ -46,15 +46,18 @@ class DriverResource(Resource):
 				status="error"	
 		elif docid!=None:
 			resp=[xpal.documents.documents.Driver.objects.with_id(docid)]
-		elif tgid:
+		elif tgid!=None:
 			resp=xpal.documents.Driver.objects(tgid=tgid)
-		elif mobile_num:
+		elif mobile_num!=None:
 			resp=xpal.documents.Driver.objects(mobile_num=mobile_num)
-		elif driver_id:
+		elif driver_id!=None:
 			resp=xpal.documents.Driver.objects(driver_id=driver_id)
 		else:
-			resp=xpal.documents.Driver.objects
-		status="success"
+			resp=xpal.documents.Driver.objects.all()
+		if resp==[]:
+			status="error"
+		else:
+			status="success"
 		return jsonify({"resp":resp,"status":status}) 
     def post(self, command=None):
 		app.logger.info("{}".format(request.get_json()))
@@ -69,7 +72,7 @@ class DriverResource(Resource):
 						status="success"
 				else:
 					status="error"
-					resp=xpal.validate_driver_dict(respdict)['message']})
+					resp=xpal.validate_driver_dict(respdict)['message']
 			except Exception as e:
 				app.logger.error("{} {}".format(type(e),str(e)))
 				resp="{} {}".format(type(e),str(e))
@@ -85,12 +88,12 @@ class DriverResource(Resource):
 			if xpal.validate_driver_dict(respdict,new=False)['status']==True:
 				resp=xpal.update_driver(driver_id,respdict)
 				if type(resp)!=list:
-						status="error"
-					else:
-						status="success"
+					status="error"
+				else:
+					status="success"
 			else:
 				status="error"
-				resp=xpal.validate_driver_dict(respdict,new=False)['message']})
+				resp=xpal.validate_driver_dict(respdict,new=False)['message']
 		except Exception as e:
 			app.logger.error("{} {}".format(type(e),str(e)))
 			resp="{} {}".format(type(e),str(e))
@@ -122,31 +125,88 @@ api.add_resource(DriverResource,"/driver/<string:command>",endpoint="driver_comm
 
 class VehicleResource(Resource):
     def get(self,vehicle_id=None,docid=None,command=None):
-        if command=="export":
-			fileloc=export_vehicles()
-			return jsonify({"resp":[fileloc],"status":"success"})
+        if command!=None:
+			app.logger.info("BookingResource: Received Command {}".format(command))
+			if command=="export":
+				try:
+					resp=xpal.export_vehicles()
+					status="success"
+				except Exception as e:
+					app.logger.error("{} {}".format(type(e),str(e)))
+					resp="{} {}".format(type(e),str(e))
+					status="error"	
+			else:
+				resp="Unrecognized command"
+				status="error"	
 		
-        if docid:
-            if xpal.documents.Vehicle.objects.with_id(docid):
-                return jsonify({"resp": [json.loads(xpal.documents.Vehicle.objects.with_id(docid).to_json())]})
-            else:
-                return jsonify({"resp":[]})
-        elif vehicle_id:
-            return jsonify({"resp": json.loads(xpal.documents.Vehicle.objects(vehicle_id=vehicle_id).to_json())})
+        elif docid!=None:
+            resp=[xpal.documents.Vehicle.objects.with_id(docid)]
+        elif vehicle_id!=None:
+            resp=xpal.documents.Vehicle.objects(vehicle_id=vehicle_id)
         else:
-            return jsonify({"resp": json.loads(xpal.documents.Vehicle.objects.to_json())})
-    def post(self,vehicle_id=None,docid=None):
+            resp=xpal.documents.Vehicle.objects.all()
+        if resp==[]:
+			status="error"
+        else:
+			status="success"
+        return jsonify({"resp":resp,"status":status}) 
+    def post(self,command=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		return jsonify({"resp":[]})
-    def put(self,vehicle_id=None,docid=None):
-        return jsonify({"resp":[]})
-	def delete(self,docid):
-		if len(xpal.documents.Vehicle.objects.with_id(docid))>0:
-			xpal.documents.Vehicle.objects.with_id(docid).delete()
-			return jsonify({"resp":[True]})
+		if command==None:
+			try:
+				if xpal.validate_vehicle_dict(respdict)['status']==True:
+					resp=xpal.create_vehicle(respdict)
+					if type(resp)!=list:
+						status="error"
+					else:
+						status="success"
+				else:
+					status="error"
+					resp=xpal.validate_vehicle_dict(respdict)['message']
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"			
 		else:
-			return jsonify({"resp":[False]})
+			resp="Unrecognized command"
+			status="error"
+		return jsonify({"resp":resp,"status":status}) 
+    def put(self,vehicle_id=None):
+        app.logger.info("{}".format(request.get_json()))
+		respdict=request.get_json()
+		try:
+			if xpal.validate_vehicle_dict(respdict,new=False)['status']==True:
+				resp=xpal.update_vehicle(vehicle_id,respdict)
+				if type(resp)!=list:
+					status="error"
+				else:
+					status="success"
+			else:
+				status="error"
+				resp=xpal.validate_vehicle_dict(respdict,new=False)['message']
+		except Exception as e:
+			app.logger.error("{} {}".format(type(e),str(e)))
+			resp="{} {}".format(type(e),str(e))
+			status="error"
+		return jsonify({"resp":resp,"status":status})	
+    def delete(self,vehicle_id=None):
+		if vehicle_id==None:
+			resp="No vehicle ID"
+			status="error"
+		else:
+			app.logger.info("vehicleResource: Trying to delete vehicle {}".format(vehicle_id))
+			try:
+				resp=xpal.delete_vehicle(vehicle_id)
+				if type(resp)==list:
+					status="success"
+				else:
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		return jsonify({"resp":resp,"status":status})
 api.add_resource(VehicleResource,"/vehicle",endpoint="vehicle")
 api.add_resource(VehicleResource,"/vehicle/by_id/<string:docid>",endpoint="vehicle_docid")
 api.add_resource(VehicleResource,"/vehicle/by_vehicle_id/<string:vehicle_id>",endpoint="vehicleid")

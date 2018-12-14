@@ -32,6 +32,21 @@ mongoengine.connect('sakhacabs', alias='default')
 
 #Remote sync functionality
 
+def validate_vehicle_dict(vehicledict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid vehicle"
+	required_keys=[]
+	if new==True:
+		required_keys=["vehcile_id"]
+	string_keys=["vehicle_id"]
+	validation=utils.validate_dict(vehicledict,required_keys=required_keys,string_keys=string_keys)
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("vehicledict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("vehicledict: "+validation['message'])
+	return validation
+
 def validate_driver_dict(driverdict,new=True):
 	validation={}
 	validation['status']=True
@@ -190,7 +205,7 @@ DutySlips record assignment execution. DutySlips are issued by the dispatcher an
 A DutySlip can not be deleted once the open time has been set by the driver, i.e. after execution on an assignment has begun.
 '''
 '''
-Bookings
+Bookings CRUD
 '''
 def validate_booking_dict(bookingdict,new=True):
 	validation={}
@@ -289,7 +304,7 @@ def delete_booking(booking_id):
 
 			
 '''
-Assignment
+Assignment CRUD
 '''
 def save_assignment(assignmentdict,assignment_id=None):
     '''
@@ -377,7 +392,7 @@ def delete_assignment(assignmentid):
 		return "Assignment with that ID does not exist"
 
 '''
-Duty Slips
+Duty Slip CRUD
 '''
 def get_duties_for_driver(driver_id):
 	d=documents.DutySlip.objects(driver=driver_id,status__ne="verified")
@@ -411,7 +426,7 @@ def create_driver(respdict):
 	if "_id" in respdict.keys():
 		respdict.pop('_id')			
 	try:
-		driver=xpal.documents.Driver.from_json(json.dumps(respdict))
+		driver=xpal.documents.Driver(**respdict)
 		driver.save()
 		return [driver]
 	except Exception as e:
@@ -436,9 +451,7 @@ def update_driver(driver_id,respdict):
 		return [driver]
 	except Exception as e:
 		return "{} {}".format(type(e),str(e))
-'''
-Vehicle CRUD functionality
-'''
+
 
 def delete_driver(driver_id):
 	if len(documents.Driver.objects(driver_id=driver_id))>0:
@@ -449,9 +462,11 @@ def delete_driver(driver_id):
 		except Exception as e:
 			return "{} {}".format(type(e),str(e))
 	else:
-		return "No booking by that id"
+		return "No driver by that id"
 
-
+'''
+Vehicle CRUD functionality
+'''
 
 def get_vehicle_by_vid(vid):
     #t=db.view("vehicle/all_by_vnum",keys=[vnum]).all()
@@ -462,6 +477,53 @@ def get_vehicle_by_vid(vid):
         return t[0]
     else:
         return None
+
+
+def create_vehicle(respdict):
+	vehicle=xpal.documents.Vehicle.objects(vehicle_id=respdict['vehicle_id'])
+	if len(vehicle)>0:
+		return "Vehicle with that ID Exists"
+	if "_id" in respdict.keys():
+		respdict.pop('_id')			
+	try:
+		vehicle=xpal.documents.Vehicle(**respdict)
+		vehicle.save()
+		return [vehicle]
+	except Exception as e:
+		return "{} {}".format(repr(e),str(e))
+	
+def update_vehicle(vehicle_id,respdict):
+	vehicle=documents.Vehicle.objects(vehicle_id=vehicle_id)
+	if len(vehicle)==0:
+		return "No Vehicle by ID {}".format(vehicle_id)
+	else:
+		vehicle=vehicle[0]
+	if "_id" in respdict.keys():
+		respdict.pop('_id')
+	if "vehicle_id" in respdict.keys():
+		if respdict['vehicle_id']!=vehicle_id:
+			return "vehicle ID mismatch {} {}".format(vehicle_id,respdict['vehicle_id'])
+		respdict.pop('vehicle_id')
+	try:
+		vehicle.update(**respdict)
+		vehicle.save()
+		vehicle.reload()
+		return [vehicle]
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
+
+
+def delete_vehicle(vehicle_id):
+	if len(documents.Vehicle.objects(vehicle_id=vehicle_id))>0:
+		try:
+			vehicle=documents.Vehicle.objects(vehicle_id=vehicle_id)[0]
+			vehicle.delete()
+			return []
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	else:
+		return "No vehicle by that id"
+
 
 
 '''
