@@ -432,7 +432,7 @@ def delete_assignment(assignmentid):
 			app.logger.info("Removing Assignment reference from  Bookings {}".format(bookings.to_json()))
 			
 			for booking in bookings:
-				del(booking.assignment)
+				booking.assignment=None
 				booking.save()
 			xpal.documents.Assignment.objects.with_id(assignment).delete()
 			return []
