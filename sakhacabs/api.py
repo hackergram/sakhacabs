@@ -44,7 +44,7 @@ class DriverResource(Resource):
 			queryset=xpal.documents.Driver.objects(driver_id=driver_id)
 		else:
 			queryset=xpal.documents.Driver.objects
-		return jsonify({"resp":json.loads(queryset.to_json()),"status":"success"}) 
+		return jsonify({"resp":queryset,"status":"success"}) 
     def post(self):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
