@@ -38,13 +38,43 @@ def validate_vehicle_dict(vehicledict,new=True):
 	validation['message']="Valid vehicle"
 	required_keys=[]
 	if new==True:
-		required_keys=["vehcile_id"]
+		required_keys=["vehicle_id"]
 	string_keys=["vehicle_id"]
 	validation=utils.validate_dict(vehicledict,required_keys=required_keys,string_keys=string_keys)
 	if validation['status']==True:
 		sakhacabsxpal.logger.info("vehicledict: "+validation['message'])
 	else:
 		sakhacabsxpal.logger.error("vehicledict: "+validation['message'])
+	return validation
+
+def validate_customer_dict(customerdict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid customer"
+	required_keys=[]
+	if new==True:
+		required_keys=["cust_id"]
+	string_keys=["cust_id"]
+	validation=utils.validate_dict(customerdict,required_keys=required_keys,string_keys=string_keys)
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("customerdict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("customerdict: "+validation['message'])
+	return validation
+
+def validate_product_dict(productdict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid product"
+	required_keys=[]
+	if new==True:
+		required_keys=["product_id"]
+	string_keys=["product_id"]
+	validation=utils.validate_dict(productdict,required_keys=required_keys,string_keys=string_keys)
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("productdict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("productdict: "+validation['message'])
 	return validation
 
 def validate_driver_dict(driverdict,new=True):
@@ -523,6 +553,111 @@ def delete_vehicle(vehicle_id):
 			return "{} {}".format(type(e),str(e))
 	else:
 		return "No vehicle by that id"
+
+
+
+
+'''
+Customer
+'''
+
+def create_customer(respdict):
+	customer=xpal.documents.Customer.objects(cust_id=respdict['cust_id'])
+	if len(customer)>0:
+		return "Customer with that ID Exists"
+	if "_id" in respdict.keys():
+		respdict.pop('_id')			
+	try:
+		customer=xpal.documents.Customer(**respdict)
+		customer.save()
+		return [customer]
+	except Exception as e:
+		return "{} {}".format(repr(e),str(e))
+	
+def update_customer(cust_id,respdict):
+	customer=documents.Customer.objects(cust_id=cust_id)
+	if len(customer)==0:
+		return "No Customer by ID {}".format(cust_id)
+	else:
+		customer=customer[0]
+	if "_id" in respdict.keys():
+		respdict.pop('_id')
+	if "cust_id" in respdict.keys():
+		if respdict['cust_id']!=cust_id:
+			return "customer ID mismatch {} {}".format(cust_id,respdict['cust_id'])
+		respdict.pop('cust_id')
+	try:
+		customer.update(**respdict)
+		customer.save()
+		customer.reload()
+		return [customer]
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
+
+
+def delete_customer(cust_id):
+	if len(documents.Customer.objects(cust_id=cust_id))>0:
+		try:
+			customer=documents.Customer.objects(cust_id=cust_id)[0]
+			customer.delete()
+			return []
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	else:
+		return "No customer by that id"
+
+
+
+
+'''
+Product
+'''
+
+def create_product(respdict):
+	product=xpal.documents.Product.objects(product_id=respdict['product_id'])
+	if len(product)>0:
+		return "Product with that ID Exists"
+	if "_id" in respdict.keys():
+		respdict.pop('_id')			
+	try:
+		product=xpal.documents.Product(**respdict)
+		product.save()
+		return [product]
+	except Exception as e:
+		return "{} {}".format(repr(e),str(e))
+	
+def update_product(product_id,respdict):
+	product=documents.Product.objects(product_id=product_id)
+	if len(product)==0:
+		return "No Product by ID {}".format(product_id)
+	else:
+		product=product[0]
+	if "_id" in respdict.keys():
+		respdict.pop('_id')
+	if "product_id" in respdict.keys():
+		if respdict['product_id']!=product_id:
+			return "product ID mismatch {} {}".format(product_id,respdict['product_id'])
+		respdict.pop('product_id')
+	try:
+		product.update(**respdict)
+		product.save()
+		product.reload()
+		return [product]
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
+
+
+def delete_product(product_id):
+	if len(documents.Product.objects(product_id=product_id))>0:
+		try:
+			product=documents.Product.objects(product_id=product_id)[0]
+			product.delete()
+			return []
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	else:
+		return "No product by that id"
+
 
 
 
