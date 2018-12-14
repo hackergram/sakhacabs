@@ -99,7 +99,7 @@ def validate_driver_dict(driverdict,new=True):
 	validation['message']="Valid driver"
 	required_keys=[]
 	if new==True:
-		required_keys=["driver_id","moble_num"]
+		required_keys=["driver_id","mobile_num"]
 	string_keys=["first_name","last_name","mobile_num","name","driver_id"]
 	mobile_nums=["mobile_num"]
 	validation=utils.validate_dict(driverdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)
