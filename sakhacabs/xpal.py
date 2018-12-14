@@ -428,7 +428,30 @@ def get_duties_for_driver(driver_id):
 	d=documents.DutySlip.objects(driver=driver_id,status__ne="verified")
 	if len(d)>0:
 		return d
-	
+
+def update_dutyslip(dsid,respdict):
+	dutyslip=xpal.documents.DutySlip.objects.with_id(docid)
+	if dutyslip==None:
+		return "No dutyslip with that id found"
+	try:
+		dutyslip.update(**respdict)
+		dutyslip.save()
+		dutyslip.reload()
+		return [dutyslip]
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
+
+def delete_dutyslip(dsid):
+	if len(documents.DutySlip.objects.with_id(dsid))>0:
+		ds=documents.DutySlip.objects.with_id(dsid)
+		assignment=ds.assignment
+		ds.delete()
+		if len(documents.DutySlip.objects(assignment=assignment))==0:
+			documents.Assignment.objecs.with_id(assignment).delete()
+		return []
+	else:
+		return "No Dutyslip by that ID"
+			
 '''
 Driver CRUD functionality
 '''

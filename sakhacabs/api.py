@@ -329,7 +329,18 @@ class BookingResource(Resource):
 			else:
 				resp=xpal.validate_booking_dict(respdict)['message']
 				status="error"
-			
+		elif command=="updatestatus":
+				try:
+					#TODO xpal.update_dutyslip_status(dsid), move to put and take dsid from by_id - needs fix in UI as well #82
+					booking=xpal.documents.Booking.objects.with_id(respdict['booking_id'])
+					booking.status=respdict['status']
+					booking.save()
+					resp="Status updated."
+					status="success"
+				except Exception as e:
+					app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
+					resp="{} {}".format(type(e),str(e))
+					status="error"	
 		elif command=="import":
 			try:
 				#replace with bookinglist=xpal.importbookings(respdict) #91 #83
@@ -501,38 +512,40 @@ api.add_resource(AssignmentResource,"/assignment/<string:command>",endpoint="ass
 
 class DutySlipResource(Resource):
     def get(self,docid=None,assignment_id=None,driver_id=None):
-        if docid:
-            if xpal.documents.DutySlip.objects.with_id(docid):
-                return jsonify({"resp": [json.loads(xpal.documents.DutySlip.objects.with_id(docid).to_json())]})
-            else:
-                return jsonify({"resp":[]})
-        elif assignment_id:
-            if xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(assignment_id)):
-                return jsonify({"resp": [json.loads(xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(assignment_id)).to_json())]})
-            else:
-                
-                return jsonify({"resp":[]})
-        elif driver_id:
-            if xpal.documents.DutySlip.objects(driver=driver_id):
-                return jsonify({"resp": [json.loads(xpal.documents.DutySlip.objects(driver=driver_id).to_json())]})
-            else:
-                return jsonify({"resp":[]})
+        if docid!=None:
+            resp=[xpal.documents.DutySlip.objects.with_id(docid)]
+        elif assignment_id!=None:
+			resp=xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(assignment_id))
+        elif driver_id!=None:
+            resp=xpal.documents.DutySlip.objects(driver=driver_id)
         else:
-            return jsonify({"resp": json.loads(xpal.documents.DutySlip.objects.to_json())})
-    
+            resp=xpal.documents.DutySlip.objects.all()
+        if resp==[]:
+			status="error"
+        else:
+			status="success"
+        return jsonify({"resp": resp,"status":status})
+		
     def post(self,command=None):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
         if command=="updatestatus":
-			#TODO xpal.update_dutyslip_status(dsid), move to put and take dsid from by_id - needs fix in UI as well #82
-			dutyslip=xpal.documents.DutySlip.objects.with_id(respdict['dsid'])
-			dutyslip.status=respdict['status']
-			dutyslip.save()
-			return jsonify({"resp": "Status updated.","status":"success"})	
-    
+			try:
+				dutyslip=xpal.documents.DutySlip.objects.with_id(respdict['dsid'])
+				dutyslip.status=respdict['status']
+				dutyslip.save()
+				resp="Status updated."
+				status="success"
+			except Exception as e:
+				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
+				resp="{} {}".format(type(e),str(e))
+				status="error"	
+        else:
+			resp="Unrecognized command or no command provided"
+			status="error"
+        return jsonify({"resp": resp,"status":status})
     
     def put(self,docid):
-		
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
 		if "_id" in respdict.keys():
@@ -540,7 +553,7 @@ class DutySlipResource(Resource):
 		if 'created_time' in respdict.keys():
 			#respdict['created_time']=datetime.datetime.fromtimestamp(respdict['created_time']/1000)
 			respdict.pop('created_time')
-			
+		'''	
 		if 'open_time' in respdict.keys():
 			#respdict['open_time']=datetime.datetime.fromtimestamp(respdict['open_time']/1000)
 			app.logger.info("Type for open_time {}".format(type(respdict['open_time'])))
@@ -557,31 +570,42 @@ class DutySlipResource(Resource):
 			if type(respdict['close_time'])==unicode:
 				respdict['close_time']=xpal.utils.get_utc_ts(datetime.datetime.strptime(respdict['close_time'],"%Y-%m-%d %H:%M:%S"))
 			app.logger.info("Timestamp - {}".format(respdict['close_time']))
+		'''
 		#TODO: dutyslip=xpal.update_dutyslip(docid,respdict) #82
-		dutyslip=xpal.documents.DutySlip.objects.with_id(docid)
-		app.logger.info(dutyslip.to_json())
-		if dutyslip==None:
-			return jsonify({"status":"error","resp":"No dutyslip found"})
 		if xpal.validate_dutyslip_dict(respdict,False)['status']==True:
-			dutyslip.update(**respdict)
-			dutyslip.save()
-			dutyslip.reload()
-			return jsonify({"status":"success","resp":[dutyslip]})
+			try:
+				resp=xpal.update_dutyslip(docid,respdict)
+				if type(resp)==list:
+					status="success"
+				else:
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
+				resp="{} {}".format(type(e),str(e))
+				status="error"        
 		else:
-			return jsonify({"status":"error","resp":xpal.validate_dutyslip_dict(respdict,False)['messages']})
-    
+			resp=xpal.validate_dutyslip_dict(respdict,False)['messages']
+			status="error"
+		return jsonify({"resp": resp,"status":status})
 
     def delete(self,docid):
 		#TODO: xpal.delete_dutyslip(docid) for #82
-		if len(xpal.documents.DutySlip.objects.with_id(docid))>0:
-			ds=xpal.documents.DutySlip.objects.with_id(docid)
-			assignment=ds.assignment
-			ds.delete()
-			if len(xpal.documents.DutySlip.objects(assignment=assignment))==0:
-				xpal.documents.Assignment.objecs.with_id(assignment).delete()
-			return jsonify({"resp":[True]})
+		if docid==None:
+			resp="No dutyslip ID"
+			status="error"
 		else:
-			return jsonify({"resp":[False]})
+			app.logger.info("DutySlipResource: Trying to delete dutyslip {}".format(docid))
+			try:
+				resp=xpal.delete_dutyslip(docid)
+				if type(resp)==list:
+					status="success"
+				else:
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		return jsonify({"resp":resp,"status":status})
 api.add_resource(DutySlipResource,"/dutyslip",endpoint="dutyslip")
 api.add_resource(DutySlipResource,"/dutyslip/by_id/<string:docid>",endpoint="dutyslip_docid")
 api.add_resource(DutySlipResource,"/dutyslip/by_assignment_id/<string:assignment_id>",endpoint="dutyslip_assid")
@@ -696,11 +720,11 @@ class ProductResource(Resource):
 				status="error"	
 		
         elif docid!=None:
-            resp=[xpal.documents.Vehicle.objects.with_id(docid)]
+            resp=[xpal.documents.Product.objects.with_id(docid)]
         elif product_id!=None:
-            resp=xpal.documents.Vehicle.objects(product_id=product_id)
+            resp=xpal.documents.Product.objects(product_id=product_id)
         else:
-            resp=xpal.documents.Vehicle.objects.all()
+            resp=xpal.documents.Product.objects.all()
         if resp==[]:
 			status="error"
         else:
