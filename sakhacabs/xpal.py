@@ -47,6 +47,19 @@ def validate_vehicle_dict(vehicledict,new=True):
 		sakhacabsxpal.logger.error("vehicledict: "+validation['message'])
 	return validation
 
+def validate_invoice_dict(invoicedict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid vehicle"
+	required_keys=[]
+	if new==True:
+		required_keys=["invoicelines","cust_id","invoice_date"]
+	validation=utils.validate_dict(invoicedict,required_keys=required_keys)
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("invoicedict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("invoicedict: "+validation['message'])
+	return validation
 
 def validate_locupdate_dict(locupdatedict,new=True):
 	validation={}
@@ -705,7 +718,7 @@ def delete_product(product_id):
 '''
 Invoices
 '''
-def get_invoice(to_settle):
+def generate_invoice(to_settle):
 	invoice_lines=[]
 	for ass in to_settle:
 		covered_hrs=0;
@@ -774,14 +787,57 @@ def get_invoice(to_settle):
 	invoice={}
 	invoice['invoicelines']=invoice_lines
 	invoice['cust_id']=to_settle[0].cust_id
+	invoice['taxes']=[]
+	'''
 	total=0
 	for line in invoice_lines:
 		total+=line['amount']
 	invoice['total']=total
+	'''
 	return invoice
 
-
-
+def get_invoice_total(invoice_id):
+	if len(documents.Invoice.objects(invoice_id=invoice_id))>0:
+		try:
+			invoice=documents.Invoice.objects(invoice_id=invoice_id)[0]
+			resp={}
+			resp['total']=0.0
+			resp['grand_total']=0.0
+			resp['tax']=0.0
+			for line in invoice.invoicelines:
+				resp['total']+=line['amount']
+			resp['grand_total']=resp['total']
+			for tax in invoice.taxes:
+				resp['tax']+=tax['rate']*resp['total']
+			resp['grand_total']+=resp['tax']
+			return resp
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	else:
+		return "No such invoice"
+			
+def create_invoice(invoicedict):
+	try:
+		invoice=documents.Invoice(invoice_id=utils.new_invoice_id(),**invoicedict)
+		invoice.save()
+		invoice.total=get_invoice_total(invoice.invoice_id)
+		return[invoice]
+	except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	
+	
+def update_invoice(invoice_id,invoicedict):
+	return "Not Implemented"
+def delete_invoice(invoice_id):
+	if len(documents.Invoice.objects(invoice_id=invoice_id))==0:
+		return "No Invoice by that ID"
+	else:
+		try:
+			invoice=documents.Invoice.objects(invoice_id=invoice_id)
+			invoice.delete()
+			return []
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
 
 
 '''
