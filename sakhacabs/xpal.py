@@ -425,17 +425,17 @@ def search_assignments(cust_id=None,date_frm=None,date_to=None):
 
 def delete_assignment(assignmentid):
 	if len(xpal.documents.Assignment.objects.with_id(assignment))>0:
-			dutyslips=xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(assignmentid))
-			app.logger.info("Deleting DutySlips {}".format(dutyslips.to_json()))
-			dutyslips.delete()
-			bookings=xpal.documents.Booking.objects(assignment=assignmentid)
-			app.logger.info("Removing Assignment reference from  Bookings {}".format(bookings.to_json()))
-			
-			for booking in bookings:
-				booking.assignment=None
-				booking.save()
-			xpal.documents.Assignment.objects.with_id(assignment).delete()
-			return []
+		dutyslips=xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(assignmentid))
+		app.logger.info("Deleting DutySlips {}".format(dutyslips.to_json()))
+		dutyslips.delete()
+		bookings=xpal.documents.Booking.objects(assignment=assignmentid)
+		app.logger.info("Removing Assignment reference from  Bookings {}".format(bookings.to_json()))
+		
+		for booking in bookings:
+			booking.assignment=None
+			booking.save()
+		xpal.documents.Assignment.objects.with_id(assignment).delete()
+		return []
 	else:
 		return "Assignment with that ID does not exist"
 

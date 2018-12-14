@@ -324,7 +324,7 @@ class BookingResource(Resource):
 				status="error"
 		else:
 			app.logger.info("BookingResource: Getting all Bookings")
-			resp=json.loads(xpal.documents.Booking.objects.to_json())
+			resp=xpal.documents.Booking.objects.all()
 			status="success"
 		return jsonify({"resp":resp,"status":status})
     def post(self,command=None):	
