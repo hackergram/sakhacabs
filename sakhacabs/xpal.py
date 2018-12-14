@@ -137,7 +137,7 @@ def validate_assignment_dict(assignmentdict,new=True):
 			validation['message']= "At least one booking must be assigned to create an assignment."
         bookings=[documents.Booking.objects.with_id(x['_id']['$oid']) for x in assignmentdict['assignment']['bookings']]
         for booking in bookings:
-			if hasattr(booking,"assignment"):
+			if booking.assignment!=None:
 				validation['status']=False
 				validation['message']= "Booking is already assigned! Please delete the old assignment before creating a new one."
 			if booking.cust_id!=assignmentdict['assignment']['cust_id']:
