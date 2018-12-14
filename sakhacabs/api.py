@@ -54,10 +54,10 @@ class DriverResource(Resource):
 			resp=xpal.documents.Driver.objects(driver_id=driver_id)
 		else:
 			resp=xpal.documents.Driver.objects.all()
-		if resp==[]:
-			status="error"
-		else:
+		if type(resp)==list and resp!=[]:
 			status="success"
+		else:
+			status="error"
 		return jsonify({"resp":resp,"status":status}) 
     def post(self, command=None):
 		app.logger.info("{}".format(request.get_json()))
@@ -145,10 +145,10 @@ class VehicleResource(Resource):
             resp=xpal.documents.Vehicle.objects(vehicle_id=vehicle_id)
         else:
             resp=xpal.documents.Vehicle.objects.all()
-        if resp==[]:
-			status="error"
-        else:
+        if type(resp)==list and resp!=[]:
 			status="success"
+        else:
+			status="error"
         return jsonify({"resp":resp,"status":status}) 
     def post(self,command=None):
 		app.logger.info("{}".format(request.get_json()))
@@ -214,35 +214,53 @@ api.add_resource(VehicleResource,"/vehicle/<string:command>",endpoint="vehicle_c
 
 class LocationUpdateResource(Resource):
     def get(self,docid=None,command=None):
-		if command=="export":
-			fileloc=export_locupdates()
-			return jsonify({"resp":[fileloc],"status":"success"})
-		if docid:
-			if xpal.documents.LocationUpdate.objects.with_id(docid):
-				return jsonify({"resp": [json.loads(xpal.documents.LocationUpdate.objects.with_id(docid).to_json())]})
+		if command!=None:
+			app.logger.info("LocationUpdateResource: Received Command {}".format(command))
+			if command=="export":
+				try:
+					resp=xpal.export_locupdates()
+					status="success"
+				except Exception as e:
+					app.logger.error("{} {}".format(type(e),str(e)))
+					resp="{} {}".format(type(e),str(e))
+					status="error"	
 			else:
-				return jsonify({"resp":[]})
+				resp="Unrecognized command"
+				status="error"	
+		elif docid:
+			resp=[xpal.documents.LocationUpdate.objects.with_id(docid)]
 		else:
-			return jsonify({"resp": json.loads(xpal.documents.LocationUpdate.objects.to_json())})
+			resp=xpal.documents.LocationUpdate.objects.all()
+		if type(resp)==list and resp !=[]:
+			status="success"
+		else:
+			status="error"
+		return jsonify({"resp":resp,"status":status})
     def post(self):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
         try:
-            driver=xpal.documents.Driver.objects(driver_id=respdict["driver_id"])[0]
-            timestamp=datetime.datetime.fromtimestamp(respdict['timestamp']['$date']/1000)
-            if respdict["vehicle_id"]:
-                vehicle=xpal.documents.Vehicle.objects(vehicle_id=respdict["vehicle_id"])[0]
-            else:
-                vehicle=None
-            locupdate=new_locationupdate(driver,timestamp,vehicle=vehicle)
-            #locupdate=xpal.documents.LocationUpdate.from_json(json.dumps(request.get_json()))
-            app.logger.info("{}".format(locupdate.to_json()))
-            locupdate.save()
-            return jsonify({"resp": [json.loads(locupdate.to_json())]})
+			if xpal.validate_locupdate_dict(respdict)['status']==True:
+				driver=xpal.documents.Driver.objects(driver_id=respdict["driver_id"])[0]
+				timestamp=datetime.datetime.fromtimestamp(respdict['timestamp']['$date']/1000)
+				if respdict["vehicle_id"]:
+					vehicle=xpal.documents.Vehicle.objects(vehicle_id=respdict["vehicle_id"])[0]
+				else:
+					vehicle=None
+				locupdate=new_locationupdate(driver,timestamp,vehicle=vehicle)
+				#locupdate=xpal.documents.LocationUpdate.from_json(json.dumps(request.get_json()))
+				app.logger.info("{}".format(locupdate.to_json()))
+				locupdate.save()
+				resp =[locupdate]
+				status="success"
+			else:
+				resp=xpal.validate_locupdate_dict(respdict)['message']
+				status="error"
         except Exception as e:
-            app.logger.info("{}".format(str(e)))
-            return jsonify({"resp":[]})   
-        return "{}"
+			app.logger.error("{} {}".format(type(e),str(e)))
+			resp="{} {}".format(type(e),str(e))
+			status="error"	
+        return jsonify({"resp":resp,"status":status})
     def put(self,docid=None):
         app.logger.info("{} {}".format(docid,request.get_json()))
         respdict=request.get_json()

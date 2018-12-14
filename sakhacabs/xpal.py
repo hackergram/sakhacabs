@@ -47,6 +47,22 @@ def validate_vehicle_dict(vehicledict,new=True):
 		sakhacabsxpal.logger.error("vehicledict: "+validation['message'])
 	return validation
 
+
+def validate_locupdate_dict(locupdatedict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid location update"
+	required_keys=[]
+	if new==True:
+		required_keys=["driver_id","timestamp"]
+	string_keys=["driver_id"]
+	validation=utils.validate_dict(locupdatedict,required_keys=required_keys,string_keys=string_keys)
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("locupdatedict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("locupdatedict: "+validation['message'])
+	return validation
+
 def validate_customer_dict(customerdict,new=True):
 	validation={}
 	validation['status']=True
@@ -227,6 +243,8 @@ def new_locationupdate(driver,timestamp,checkin=True,location=None,vehicle=None,
 		logger.info(u"Checkout from driver with id {} at {} from {}".format(locationupdate.driver_id,locationupdate.timestamp,locationupdate.location))
 	locationupdate.save()
 	return locationupdate
+
+
 
 '''
 Bookings, Assignments and DutySlips

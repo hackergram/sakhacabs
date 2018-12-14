@@ -74,7 +74,7 @@ class LocationUpdate(PPrintMixin,Document):
     driver_id=fields.StringField(required=True)
     timestamp=fields.DateTimeField(required=True)
     location=fields.StringField()
-    checkin=fields.BooleanField()
+    checkin=fields.BooleanField(required=True,default=True)
     vehicle_id=fields.StringField()
     handoff=fields.StringField()
     
