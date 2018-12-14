@@ -31,66 +31,88 @@ parser = reqparse.RequestParser()
 
 class DriverResource(Resource):
     def get(self,tgid=None,mobile_num=None,docid=None,driver_id=None, command=None):
-		if command=="export":
-			fileloc=export_drivers()
-			return jsonify({"resp":[fileloc],"status":"success"})
-		if docid:
-			queryset=xpal.documents.documents.Driver.objects.with_id(docid)
+		if command!=None:
+			app.logger.info("BookingResource: Received Command {}".format(command))
+			if command=="export":
+				try:
+					resp=xpal.export_drivers()
+					status="success"
+				except Exception as e:
+					app.logger.error("{} {}".format(type(e),str(e)))
+					resp="{} {}".format(type(e),str(e))
+					status="error"	
+			else:
+				resp="Unrecognized command"
+				status="error"	
+		elif docid!=None:
+			resp=[xpal.documents.documents.Driver.objects.with_id(docid)]
 		elif tgid:
-			queryset=xpal.documents.Driver.objects(tgid=tgid)
+			resp=xpal.documents.Driver.objects(tgid=tgid)
 		elif mobile_num:
-			queryset=xpal.documents.Driver.objects(mobile_num=mobile_num)
+			resp=xpal.documents.Driver.objects(mobile_num=mobile_num)
 		elif driver_id:
-			queryset=xpal.documents.Driver.objects(driver_id=driver_id)
+			resp=xpal.documents.Driver.objects(driver_id=driver_id)
 		else:
-			queryset=xpal.documents.Driver.objects
-		return jsonify({"resp":queryset,"status":"success"}) 
-    def post(self):
+			resp=xpal.documents.Driver.objects
+		status="success"
+		return jsonify({"resp":resp,"status":status}) 
+    def post(self, command=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		if "_id" in respdict.keys():
-			del respdict['_id']
-		driver=xpal.documents.Driver.objects(driver_id=respdict['driver_id'])
-		if len(driver)>0:
-			driver=driver[0]
-			return jsonify({"status":"error","resp":"Driver with that ID Exists"})
+		if command==None:
+			try:
+				if xpal.validate_driver_dict(respdict)['status']==True:
+					resp=xpal.create_driver(respdict)
+					if type(resp)!=list:
+						status="error"
+					else:
+						status="success"
+				else:
+					status="error"
+					resp=xpal.validate_driver_dict(respdict)['message']})
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"			
 		else:
-			if xpal.validate_driver_dict(respdict)['status']==True:
-				try:
-					driver=xpal.documents.Driver.from_json(json.dumps(respdict))
-					driver.save()
-					return jsonify({"status":"success","resp":[driver]})
-				except Exception as e:
-					return jsonify({"status":"error","resp":"{} {}".format(repr(e),str(e))})
-			else:
-				return jsonify({"status":"error","resp":xpal.validate_driver_dict(respdict)['message']})
+			resp="Unrecognized command"
+			status="error"
+		return jsonify({"resp":resp,"status":status}) 
     def put(self,driver_id):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		driver=xpal.documents.Driver.objects(driver_id=driver_id)
-		if len(driver)==0:
-			return jsonify({"status":"error","resp":"No driver found"})
+		try:
+			if xpal.validate_driver_dict(respdict,new=False)['status']==True:
+				resp=xpal.update_driver(driver_id,respdict)
+				if type(resp)!=list:
+						status="error"
+					else:
+						status="success"
+			else:
+				status="error"
+				resp=xpal.validate_driver_dict(respdict,new=False)['message']})
+		except Exception as e:
+			app.logger.error("{} {}".format(type(e),str(e)))
+			resp="{} {}".format(type(e),str(e))
+			status="error"
+		return jsonify({"resp":resp,"status":status}) 		
+    def delete(self,driver_id=None):
+		if driver_id==None:
+			resp="No driver ID"
+			status="error"
 		else:
-			driver=driver[0]
-		if "_id" in respdict.keys():
-			del respdict['_id']
-		if "driver_id" in respdict.keys():
-			if respdict['driver_id']!=driver_id:
-				return jsonify({"status":"error","resp":"Driver ID mismatch"})
-			del respdict['driver_id']
-		if xpal.validate_driver_dict(respdict)['status']==True:
-			driver.update(**respdict)
-			driver.save()
-			driver.reload()
-			return jsonify({"status":"success","resp":[driver]})
-		else:
-			return jsonify({"status":"error","resp":xpal.validate_driver_dict(respdict)['message']})
-    def delete(self,driver_id):
-		if len(xpal.documents.Driver.objects(driver_id=driver_id))>0:
-			xpal.documents.Driver.objects(driver_id=driver_id).delete()
-			return jsonify({"resp":[True]})
-		else:
-			return jsonify({"resp":[False]})
+			app.logger.info("DriverResource: Trying to delete driver {}".format(driver_id))
+			try:
+				resp=xpal.delete_driver(driver_id)
+				if type(resp)==list:
+					status="success"
+				else:
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		return jsonify({"resp":resp,"status":status})
 api.add_resource(DriverResource,"/driver",endpoint="driver")
 api.add_resource(DriverResource,"/driver/by_tgid/<int:tgid>",endpoint="tgid")
 api.add_resource(DriverResource,"/driver/by_mobile/<string:mobile_num>",endpoint="mobile")
@@ -283,7 +305,7 @@ class BookingResource(Resource):
 					resp="{} {}".format(type(e),str(e))
 					status="error"
 			else:
-				resp=xpal.validate_booking_dict(respdict)['message']
+				resp=xpal.validate_booking_dict(respdict,new=False)['message']
 				status="error"
         return jsonify({"resp":resp,"status":status})  
     def delete(self,booking_id=None):
@@ -327,7 +349,7 @@ class AssignmentResource(Resource):
 			#return jsonify({"resp": json.loads(queryset.to_json())})
 			resp=assignmentlist
 			status="success"
-		except Exception as e:
+        except Exception as e:
 			app.logger.error("{} {}".format(type(e),str(e)))
 			resp="{} {}".format(type(e),str(e))
 			status="error"
@@ -349,7 +371,7 @@ class AssignmentResource(Resource):
 					status="error"
 			except Exception as e:
 				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
-				resp="{} {}".format(type(e),str(e)
+				resp="{} {}".format(type(e),str(e))
 				status="error"
         elif command=="updatestatus":
 			app.logger.info("AssignmentResource: Trying to update assignment status")
@@ -365,7 +387,7 @@ class AssignmentResource(Resource):
 				#return jsonify({"resp": "Status updated.","status":"success"})
 			except Exception as e:
 				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
-				resp="{} {}".format(type(e),str(e)
+				resp="{} {}".format(type(e),str(e))
 				status="error"	
         elif command=="search":
 			app.logger.info("AssignmentResource: Searching assignments")
@@ -393,10 +415,10 @@ class AssignmentResource(Resource):
 				status="success"
 			except Exception as e:
 				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
-				resp="{} {}".format(type(e),str(e)
+				resp="{} {}".format(type(e),str(e))
 				status="error"        
         return jsonify({"resp":resp,"status":status})
-    def delete(self,docid):
+    def delete(self,docid=None):
 		if docid==None:
 			resp="No assignment ID"
 			status="error"
@@ -410,7 +432,7 @@ class AssignmentResource(Resource):
 					status="error"
 			except Exception as e:
 				app.logger.error("{} {}".format(type(e),str(e)))
-				resp="{} {}".format(type(e),str(e)
+				resp="{} {}".format(type(e),str(e))
 				status="error"
 		return jsonify({"resp":resp,"status":status})
 api.add_resource(AssignmentResource,"/assignment",endpoint="assignment")

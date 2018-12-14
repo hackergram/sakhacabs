@@ -404,10 +404,55 @@ def get_driver_by_tgid(tgid):
         return t[0]
     else:
         return None
-
+def create_driver(respdict):
+	driver=xpal.documents.Driver.objects(driver_id=respdict['driver_id'])
+	if len(driver)>0:
+		return "Driver with that ID Exists"
+	if "_id" in respdict.keys():
+		respdict.pop('_id')			
+	try:
+		driver=xpal.documents.Driver.from_json(json.dumps(respdict))
+		driver.save()
+		return [driver]
+	except Exception as e:
+		return "{} {}".format(repr(e),str(e))
+	
+def update_driver(driver_id,respdict):
+	driver=documents.Driver.objects(driver_id=driver_id)
+	if len(driver)==0:
+		return "No driver by ID {}".format(driver_id)
+	else:
+		driver=driver[0]
+	if "_id" in respdict.keys():
+		respdict.pop('_id')
+	if "driver_id" in respdict.keys():
+		if respdict['driver_id']!=driver_id:
+			return "Driver ID mismatch {} {}".format(driver_id,respdict['driver_id'])
+		respdict.pop('driver_id')
+	try:
+		driver.update(**respdict)
+		driver.save()
+		driver.reload()
+		return [driver]
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
 '''
 Vehicle CRUD functionality
 '''
+
+def delete_driver(driver_id):
+	if len(documents.Driver.objects(driver_id=driver_id))>0:
+		try:
+			driver=documents.Driver.objects(driver_id=driver_id)[0]
+			driver.delete()
+			return []
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	else:
+		return "No booking by that id"
+
+
+
 def get_vehicle_by_vid(vid):
     #t=db.view("vehicle/all_by_vnum",keys=[vnum]).all()
     t=documents.Vehicle.objects(vehicle_id=vid)
