@@ -731,7 +731,9 @@ var sakha={
         driverdict.mobile_num=$("#mobnum").val()
         driverdict.first_name=$("#firstname").val()
         driverdict.last_name=$("#lastname").val()
+        console.log(driverdict)
         var params = JSON.stringify(driverdict);
+        
         var http = new XMLHttpRequest(); 
         if(driverid==="newdriver"){
             //$.post("http://"+serverip+":5000/assignment",assignmentdict)
