@@ -491,13 +491,13 @@ def get_driver_by_tgid(tgid):
     else:
         return None
 def create_driver(respdict):
-	driver=xpal.documents.Driver.objects(driver_id=respdict['driver_id'])
+	driver=documents.Driver.objects(driver_id=respdict['driver_id'])
 	if len(driver)>0:
 		return "Driver with that ID Exists"
 	if "_id" in respdict.keys():
 		respdict.pop('_id')			
 	try:
-		driver=xpal.documents.Driver(**respdict)
+		driver=documents.Driver(**respdict)
 		driver.save()
 		return [driver]
 	except Exception as e:
@@ -551,13 +551,13 @@ def get_vehicle_by_vid(vid):
 
 
 def create_vehicle(respdict):
-	vehicle=xpal.documents.Vehicle.objects(vehicle_id=respdict['vehicle_id'])
+	vehicle=documents.Vehicle.objects(vehicle_id=respdict['vehicle_id'])
 	if len(vehicle)>0:
 		return "Vehicle with that ID Exists"
 	if "_id" in respdict.keys():
 		respdict.pop('_id')			
 	try:
-		vehicle=xpal.documents.Vehicle(**respdict)
+		vehicle=documents.Vehicle(**respdict)
 		vehicle.save()
 		return [vehicle]
 	except Exception as e:
@@ -603,13 +603,13 @@ Customer
 '''
 
 def create_customer(respdict):
-	customer=xpal.documents.Customer.objects(cust_id=respdict['cust_id'])
+	customer=documents.Customer.objects(cust_id=respdict['cust_id'])
 	if len(customer)>0:
 		return "Customer with that ID Exists"
 	if "_id" in respdict.keys():
 		respdict.pop('_id')			
 	try:
-		customer=xpal.documents.Customer(**respdict)
+		customer=documents.Customer(**respdict)
 		customer.save()
 		return [customer]
 	except Exception as e:
@@ -655,13 +655,13 @@ Product
 '''
 
 def create_product(respdict):
-	product=xpal.documents.Product.objects(product_id=respdict['product_id'])
+	product=documents.Product.objects(product_id=respdict['product_id'])
 	if len(product)>0:
 		return "Product with that ID Exists"
 	if "_id" in respdict.keys():
 		respdict.pop('_id')			
 	try:
-		product=xpal.documents.Product(**respdict)
+		product=documents.Product(**respdict)
 		product.save()
 		return [product]
 	except Exception as e:
