@@ -31,66 +31,91 @@ parser = reqparse.RequestParser()
 
 class DriverResource(Resource):
     def get(self,tgid=None,mobile_num=None,docid=None,driver_id=None, command=None):
-		if command=="export":
-			fileloc=export_drivers()
-			return jsonify({"resp":[fileloc],"status":"success"})
-		if docid:
-			queryset=xpal.documents.documents.Driver.objects.with_id(docid)
-		elif tgid:
-			queryset=xpal.documents.Driver.objects(tgid=tgid)
-		elif mobile_num:
-			queryset=xpal.documents.Driver.objects(mobile_num=mobile_num)
-		elif driver_id:
-			queryset=xpal.documents.Driver.objects(driver_id=driver_id)
+		if command!=None:
+			app.logger.info("DriverResource: Received Command {}".format(command))
+			if command=="export":
+				try:
+					resp=xpal.export_drivers()
+					status="success"
+				except Exception as e:
+					app.logger.error("{} {}".format(type(e),str(e)))
+					resp="{} {}".format(type(e),str(e))
+					status="error"	
+			else:
+				resp="Unrecognized command"
+				status="error"	
+		elif docid!=None:
+			resp=[xpal.documents.documents.Driver.objects.with_id(docid)]
+		elif tgid!=None:
+			resp=xpal.documents.Driver.objects(tgid=tgid)
+		elif mobile_num!=None:
+			resp=xpal.documents.Driver.objects(mobile_num=mobile_num)
+		elif driver_id!=None:
+			resp=xpal.documents.Driver.objects(driver_id=driver_id)
 		else:
-			queryset=xpal.documents.Driver.objects
-		return jsonify({"resp":json.loads(queryset.to_json()),"status":"success"}) 
-    def post(self):
+			resp=xpal.documents.Driver.objects.all()
+		if type(resp)==list and resp!=[]:
+			status="success"
+		else:
+			status="error"
+		return jsonify({"resp":resp,"status":status}) 
+    def post(self, command=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		if "_id" in respdict.keys():
-			del respdict['_id']
-		driver=xpal.documents.Driver.objects(driver_id=respdict['driver_id'])
-		if len(driver)>0:
-			driver=driver[0]
-			return jsonify({"status":"error","resp":"Driver with that ID Exists"})
+		if command==None:
+			try:
+				if xpal.validate_driver_dict(respdict)['status']==True:
+					resp=xpal.create_driver(respdict)
+					if type(resp)!=list:
+						status="error"
+					else:
+						status="success"
+				else:
+					status="error"
+					resp=xpal.validate_driver_dict(respdict)['message']
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"			
 		else:
-			if xpal.validate_driver_dict(respdict)['status']==True:
-				try:
-					driver=xpal.documents.Driver.from_json(json.dumps(respdict))
-					driver.save()
-					return jsonify({"status":"success","resp":[driver]})
-				except Exception as e:
-					return jsonify({"status":"error","resp":"{} {}".format(repr(e),str(e))})
-			else:
-				return jsonify({"status":"error","resp":xpal.validate_driver_dict(respdict)['message']})
+			resp="Unrecognized command"
+			status="error"
+		return jsonify({"resp":resp,"status":status}) 
     def put(self,driver_id):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		driver=xpal.documents.Driver.objects(driver_id=driver_id)
-		if len(driver)==0:
-			return jsonify({"status":"error","resp":"No driver found"})
+		try:
+			if xpal.validate_driver_dict(respdict,new=False)['status']==True:
+				resp=xpal.update_driver(driver_id,respdict)
+				if type(resp)!=list:
+					status="error"
+				else:
+					status="success"
+			else:
+				status="error"
+				resp=xpal.validate_driver_dict(respdict,new=False)['message']
+		except Exception as e:
+			app.logger.error("{} {}".format(type(e),str(e)))
+			resp="{} {}".format(type(e),str(e))
+			status="error"
+		return jsonify({"resp":resp,"status":status}) 		
+    def delete(self,driver_id=None):
+		if driver_id==None:
+			resp="No driver ID"
+			status="error"
 		else:
-			driver=driver[0]
-		if "_id" in respdict.keys():
-			del respdict['_id']
-		if "driver_id" in respdict.keys():
-			if respdict['driver_id']!=driver_id:
-				return jsonify({"status":"error","resp":"Driver ID mismatch"})
-			del respdict['driver_id']
-		if xpal.validate_driver_dict(respdict)['status']==True:
-			driver.update(**respdict)
-			driver.save()
-			driver.reload()
-			return jsonify({"status":"success","resp":[driver]})
-		else:
-			return jsonify({"status":"error","resp":xpal.validate_driver_dict(respdict)['message']})
-    def delete(self,driver_id):
-		if len(xpal.documents.Driver.objects(driver_id=driver_id))>0:
-			xpal.documents.Driver.objects(driver_id=driver_id).delete()
-			return jsonify({"resp":[True]})
-		else:
-			return jsonify({"resp":[False]})
+			app.logger.info("DriverResource: Trying to delete driver {}".format(driver_id))
+			try:
+				resp=xpal.delete_driver(driver_id)
+				if type(resp)==list:
+					status="success"
+				else:
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		return jsonify({"resp":resp,"status":status})
 api.add_resource(DriverResource,"/driver",endpoint="driver")
 api.add_resource(DriverResource,"/driver/by_tgid/<int:tgid>",endpoint="tgid")
 api.add_resource(DriverResource,"/driver/by_mobile/<string:mobile_num>",endpoint="mobile")
@@ -100,31 +125,88 @@ api.add_resource(DriverResource,"/driver/<string:command>",endpoint="driver_comm
 
 class VehicleResource(Resource):
     def get(self,vehicle_id=None,docid=None,command=None):
-        if command=="export":
-			fileloc=export_vehicles()
-			return jsonify({"resp":[fileloc],"status":"success"})
+        if command!=None:
+			app.logger.info("BookingResource: Received Command {}".format(command))
+			if command=="export":
+				try:
+					resp=xpal.export_vehicles()
+					status="success"
+				except Exception as e:
+					app.logger.error("{} {}".format(type(e),str(e)))
+					resp="{} {}".format(type(e),str(e))
+					status="error"	
+			else:
+				resp="Unrecognized command"
+				status="error"	
 		
-        if docid:
-            if xpal.documents.Vehicle.objects.with_id(docid):
-                return jsonify({"resp": [json.loads(xpal.documents.Vehicle.objects.with_id(docid).to_json())]})
-            else:
-                return jsonify({"resp":[]})
-        elif vehicle_id:
-            return jsonify({"resp": json.loads(xpal.documents.Vehicle.objects(vehicle_id=vehicle_id).to_json())})
+        elif docid!=None:
+            resp=[xpal.documents.Vehicle.objects.with_id(docid)]
+        elif vehicle_id!=None:
+            resp=xpal.documents.Vehicle.objects(vehicle_id=vehicle_id)
         else:
-            return jsonify({"resp": json.loads(xpal.documents.Vehicle.objects.to_json())})
-    def post(self,vehicle_id=None,docid=None):
+            resp=xpal.documents.Vehicle.objects.all()
+        if type(resp)==list and resp!=[]:
+			status="success"
+        else:
+			status="error"
+        return jsonify({"resp":resp,"status":status}) 
+    def post(self,command=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		return jsonify({"resp":[]})
-    def put(self,vehicle_id=None,docid=None):
-        return jsonify({"resp":[]})
-	def delete(self,docid):
-		if len(xpal.documents.Vehicle.objects.with_id(docid))>0:
-			xpal.documents.Vehicle.objects.with_id(docid).delete()
-			return jsonify({"resp":[True]})
+		if command==None:
+			try:
+				if xpal.validate_vehicle_dict(respdict)['status']==True:
+					resp=xpal.create_vehicle(respdict)
+					if type(resp)!=list:
+						status="error"
+					else:
+						status="success"
+				else:
+					status="error"
+					resp=xpal.validate_vehicle_dict(respdict)['message']
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"			
 		else:
-			return jsonify({"resp":[False]})
+			resp="Unrecognized command"
+			status="error"
+		return jsonify({"resp":resp,"status":status}) 
+    def put(self,vehicle_id=None):
+		app.logger.info("{}".format(request.get_json()))
+		respdict=request.get_json()
+		try:
+			if xpal.validate_vehicle_dict(respdict,new=False)['status']==True:
+				resp=xpal.update_vehicle(vehicle_id,respdict)
+				if type(resp)!=list:
+					status="error"
+				else:
+					status="success"
+			else:
+				status="error"
+				resp=xpal.validate_vehicle_dict(respdict,new=False)['message']
+		except Exception as e:
+			app.logger.error("{} {}".format(type(e),str(e)))
+			resp="{} {}".format(type(e),str(e))
+			status="error"
+		return jsonify({"resp":resp,"status":status})	
+    def delete(self,vehicle_id=None):
+		if vehicle_id==None:
+			resp="No vehicle ID"
+			status="error"
+		else:
+			app.logger.info("vehicleResource: Trying to delete vehicle {}".format(vehicle_id))
+			try:
+				resp=xpal.delete_vehicle(vehicle_id)
+				if type(resp)==list:
+					status="success"
+				else:
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		return jsonify({"resp":resp,"status":status})
 api.add_resource(VehicleResource,"/vehicle",endpoint="vehicle")
 api.add_resource(VehicleResource,"/vehicle/by_id/<string:docid>",endpoint="vehicle_docid")
 api.add_resource(VehicleResource,"/vehicle/by_vehicle_id/<string:vehicle_id>",endpoint="vehicleid")
@@ -132,35 +214,53 @@ api.add_resource(VehicleResource,"/vehicle/<string:command>",endpoint="vehicle_c
 
 class LocationUpdateResource(Resource):
     def get(self,docid=None,command=None):
-		if command=="export":
-			fileloc=export_locupdates()
-			return jsonify({"resp":[fileloc],"status":"success"})
-		if docid:
-			if xpal.documents.LocationUpdate.objects.with_id(docid):
-				return jsonify({"resp": [json.loads(xpal.documents.LocationUpdate.objects.with_id(docid).to_json())]})
+		if command!=None:
+			app.logger.info("LocationUpdateResource: Received Command {}".format(command))
+			if command=="export":
+				try:
+					resp=xpal.export_locupdates()
+					status="success"
+				except Exception as e:
+					app.logger.error("{} {}".format(type(e),str(e)))
+					resp="{} {}".format(type(e),str(e))
+					status="error"	
 			else:
-				return jsonify({"resp":[]})
+				resp="Unrecognized command"
+				status="error"	
+		elif docid:
+			resp=[xpal.documents.LocationUpdate.objects.with_id(docid)]
 		else:
-			return jsonify({"resp": json.loads(xpal.documents.LocationUpdate.objects.to_json())})
+			resp=xpal.documents.LocationUpdate.objects.all()
+		if type(resp)==list and resp !=[]:
+			status="success"
+		else:
+			status="error"
+		return jsonify({"resp":resp,"status":status})
     def post(self):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
         try:
-            driver=xpal.documents.Driver.objects(driver_id=respdict["driver_id"])[0]
-            timestamp=datetime.datetime.fromtimestamp(respdict['timestamp']['$date']/1000)
-            if respdict["vehicle_id"]:
-                vehicle=xpal.documents.Vehicle.objects(vehicle_id=respdict["vehicle_id"])[0]
-            else:
-                vehicle=None
-            locupdate=new_locationupdate(driver,timestamp,vehicle=vehicle)
-            #locupdate=xpal.documents.LocationUpdate.from_json(json.dumps(request.get_json()))
-            app.logger.info("{}".format(locupdate.to_json()))
-            locupdate.save()
-            return jsonify({"resp": [json.loads(locupdate.to_json())]})
+			if xpal.validate_locupdate_dict(respdict)['status']==True:
+				driver=xpal.documents.Driver.objects(driver_id=respdict["driver_id"])[0]
+				timestamp=datetime.datetime.fromtimestamp(respdict['timestamp']['$date']/1000)
+				if respdict["vehicle_id"]:
+					vehicle=xpal.documents.Vehicle.objects(vehicle_id=respdict["vehicle_id"])[0]
+				else:
+					vehicle=None
+				locupdate=new_locationupdate(driver,timestamp,vehicle=vehicle)
+				#locupdate=xpal.documents.LocationUpdate.from_json(json.dumps(request.get_json()))
+				app.logger.info("{}".format(locupdate.to_json()))
+				locupdate.save()
+				resp =[locupdate]
+				status="success"
+			else:
+				resp=xpal.validate_locupdate_dict(respdict)['message']
+				status="error"
         except Exception as e:
-            app.logger.info("{}".format(str(e)))
-            return jsonify({"resp":[]})   
-        return "{}"
+			app.logger.error("{} {}".format(type(e),str(e)))
+			resp="{} {}".format(type(e),str(e))
+			status="error"	
+        return jsonify({"resp":resp,"status":status})
     def put(self,docid=None):
         app.logger.info("{} {}".format(docid,request.get_json()))
         respdict=request.get_json()
@@ -193,76 +293,126 @@ api.add_resource(LocationUpdateResource,"/locupdate/<string:command>",endpoint="
 
 class BookingResource(Resource):
     def get(self,docid=None,booking_id=None,command=None):
-        if command=="export":
-			fileloc=export_bookings()
-			return jsonify({"resp":[fileloc],"status":"success"})
-        if docid:
-            if xpal.documents.Booking.objects.with_id(docid):
-                return jsonify({"resp": json.loads(xpal.documents.Booking.objects.with_id(docid).to_json()),"status":"success"})
-            else:
-                return jsonify({"resp":[]})
-        if booking_id:
+		if command!=None:
+			app.logger.info("BookingResource: Received Command {}".format(command))
+			if command=="export":
+				try:
+					resp=xpal.export_bookings()
+					status="success"
+				except Exception as e:
+					app.logger.error("{} {}".format(type(e),str(e)))
+					resp="{} {}".format(type(e),str(e))
+					status="error"	
+			else:
+				resp="Unrecognized command"
+				status="error"	
+		elif docid!=None:
+			app.logger.info("BookingResource: Booking Get By Doc ID {}".format(docid))
+			if xpal.documents.Booking.objects.with_id(docid):
+				resp=json.loads(xpal.documents.Booking.objects.with_id(docid).to_json())
+				status="success"
+			else:
+				resp="No booking with that id"
+				status="error"
+		elif booking_id!=None:
+			app.logger.info("BookingResource: Booking Get By Booking ID {}".format(booking_id))
 			if xpal.documents.Booking.objects(booking_id=booking_id)!=[]:
-				return jsonify({"resp": json.loads(xpal.documents.Booking.objects(booking_id=booking_id).to_json()),"status":"success"})
+				resp=json.loads(xpal.documents.Booking.objects(booking_id=booking_id).to_json())
+				status="success"
 			else:
-				return jsonify({"resp":[]})
-        else:
-            return jsonify({"resp": json.loads(xpal.documents.Booking.objects.to_json())})
+				resp="No booking with that id"
+				status="error"
+		else:
+			app.logger.info("BookingResource: Getting all Bookings")
+			resp=xpal.documents.Booking.objects.all()
+			status="success"
+		return jsonify({"resp":resp,"status":status})
     def post(self,command=None):	
-		app.logger.info("{}".format(request.get_json()))
+		app.logger.info("BookingResource: {}".format(request.get_json()))
 		respdict=request.get_json()
+		app.logger.info("BookingResource: Received Command {}".format(command))
 		if command=="single":
+			app.logger.info("BookingResource: Trying to save single booking")
 			if xpal.validate_booking_dict(respdict)['status']==True:
-				booking=xpal.new_booking(respdict)
-				return jsonify({"resp":[booking],"status":"success"})
+				try:
+					resp=xpal.new_booking(respdict)
+					if type(resp)!=list:
+						status="error"
+					else:
+						status="success"
+				except Exception as e:
+					resp="{} {}".format(type(e),str(e))
+					status="error"
+				
 			else:
-				return jsonify({"resp":"Invalid Input","status":"error"})
-		if command=="import":
-			bookinglist=xpal.import_gadv(respdict)
-			return jsonify({"resp":bookinglist,"status":"success"})
-		return jsonify({"resp":[]})
+				resp=xpal.validate_booking_dict(respdict)['message']
+				status="error"
+		elif command=="updatestatus":
+				try:
+					#TODO xpal.update_dutyslip_status(dsid), move to put and take dsid from by_id - needs fix in UI as well #82
+					booking=xpal.documents.Booking.objects.with_id(respdict['booking_id'])
+					booking.status=respdict['status']
+					booking.save()
+					resp="Status updated."
+					status="success"
+				except Exception as e:
+					app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
+					resp="{} {}".format(type(e),str(e))
+					status="error"	
+		elif command=="import":
+			try:
+				#replace with bookinglist=xpal.importbookings(respdict) #91 #83
+				resp=xpal.import_bookings(respdict)
+				if type(resp)!=list:
+					status="error"
+				else:
+					status="success"
+			except Exception as e:
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		else:	
+			resp="Unrecognized command or no provided"
+			status="success"
+		return jsonify({"resp":resp,"status":status})	
     def put(self,booking_id=None):
 		#PUT to /booking/by_booking_id/<booking_id>
         #Training Note: If more than one booking is linked in an assignment, the assignment reporting time will reflect that of the last updated booking. If something else is needed best to delete the assignment and create a new one. 
-        
-		app.logger.info("{}".format(request.get_json()))
-		respdict=request.get_json()
-		if 'created_timestamp' in respdict.keys():
-			respdict.pop("created_timestamp")
-		if 'pickup_timestamp' in respdict.keys():
-			app.logger.info("Type for pickup_timestamp {}".format(type(respdict['pickup_timestamp'])))
-			if type(respdict['pickup_timestamp'])==dict:
-				respdict['pickup_timestamp']=datetime.datetime.fromtimestamp(respdict['pickup_timestamp']['$date']/1000)
-			if type(respdict['pickup_timestamp'])==unicode:
-				respdict['pickup_timestamp']=xpal.utils.get_utc_ts(datetime.datetime.strptime(respdict['pickup_timestamp'],"%Y-%m-%d %H:%M:%S"))
-				
-			app.logger.info("Timestamp - {}".format(respdict['pickup_timestamp']))
-		if xpal.validate_booking_dict(respdict, new=False)['status']:
-			resp=xpal.update_booking(booking_id,respdict)
-		if type(resp)!=list:
+        if booking_id==None:
+			resp="No booking id provided"
+			status="error"
+        else:
+			app.logger.info("Trying to update booking id {} with data {}".format(booking_id,request.get_json()))
+			respdict=request.get_json()
+			if xpal.validate_booking_dict(respdict, new=False)['status']==True:
+				try:
+					resp=xpal.update_booking(booking_id,respdict)
+					if type(resp)!=list:
+						status="error"
+					else:
+						status="success"
+				except Exception as e:
+					resp="{} {}".format(type(e),str(e))
+					status="error"
+			else:
+				resp=xpal.validate_booking_dict(respdict,new=False)['message']
+				status="error"
+        return jsonify({"resp":resp,"status":status})  
+    def delete(self,booking_id=None):
+		if booking_id==None:
+			resp="No booking id provided"
 			status="error"
 		else:
-			status="success"
-		return jsonify({"resp":resp,"status":status})
-    
-    def delete(self,booking_id):
-		if len(xpal.documents.Booking.objects(booking_id=booking_id))>0:
-			#TODO: xpal.delete_booking(booking_id) #81
-			booking=xpal.documents.Booking.objects(booking_id=booking_id)
-			assignment=booking.assignment
-			booking.delete()
-			if assignment!=None:
-				if (xpal.documents.Booking.objects(assignment=assignment))==0:
-					documents.Assignment.objects.with_id(assignment).delete()	
+			app.logger.info("Trying to delete booking id {}".format(booking_id))
+			try:
+				resp=xpal.delete_booking(booking_id)
+				if type(resp)!=list:
+					status="error"
 				else:
-					assignmentobj=documents.Assignment.objects.with_id(assignment)
-					assignmentobj.reporting_location=assignmentobj.bookings[0].pickup_location
-					assignmentobj.reporting_timestamp=assignmentobj.bookings[0].pickup_timestamp
-					assignmentobj.save()
-					
-			return jsonify({"resp":[],"status":"success"})
-		else:
-			return jsonify({"resp":[],"status":"error"})
+					status="success"
+			except Exception as e:
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		return jsonify({"resp":resp,"status":status})
 api.add_resource(BookingResource,"/booking",endpoint="booking")
 api.add_resource(BookingResource,"/booking/by_id/<string:docid>",endpoint="booking_docid")
 api.add_resource(BookingResource,"/booking/by_booking_id/<string:booking_id>",endpoint="booking_id")
@@ -270,141 +420,155 @@ api.add_resource(BookingResource,"/booking/<string:command>",endpoint="booking_c
 
 class AssignmentResource(Resource):
     def get(self,docid=None):
-        if docid:
-			queryset=xpal.documents.Assignment.objects.with_id(docid)
+        if docid!=None:
+			app.logger.info("AssignmentResource: Getting assignment with id {}".format(docid))
+			queryset=[xpal.documents.Assignment.objects.with_id(docid)]
 			#app.logger.info("Getting assignment {}".format(queryset))
         else:
+			app.logger.info("AssignmentResource: Getting all assignments")
 			queryset=xpal.documents.Assignment.objects.order_by("reporting_timestamp").all()
-        
-        assignmentlist=[]
-        for assignment in queryset:
-			assignmentdict={}
-			assignmentdict['assignment']=json.loads(assignment.to_json())
-			assignmentdict['dutyslips']=json.loads(xpal.documents.DutySlip.objects(assignment=assignment).to_json())
-			assignmentlist.append(assignmentdict)
-        #return jsonify({"resp": json.loads(queryset.to_json())})
-        return jsonify({"resp": assignmentlist,"status":"success"})
-    def post(self,command=None):
-        app.logger.info("{}".format(request.get_json()))
-        respdict=request.get_json()
-        if command=="updatestatus":
-			assignment=xpal.documents.Assignment.objects.with_id(respdict['assignment_id'])
-			assignment.status=respdict['status']
-			assignment.save()
-			for booking in assignment.bookings:
-				booking.status=assignment.status
-				booking.save()
-			return jsonify({"resp": "Status updated.","status":"success"})	
-        if command=="search":
-			search_keys=respdict
-			date_frm=None
-			date_to=None
-			cust_id=None
-			app.logger.info(search_keys)
-			if "date_frm" in search_keys and search_keys['date_frm']!="":
-				date_frm=datetime.datetime.strptime(search_keys['date_frm'],"%Y-%m-%d %H:%M:%S")
-			if "date_to" in search_keys and search_keys['date_to']!="":
-				date_to=datetime.datetime.strptime(search_keys['date_to'],"%Y-%m-%d %H:%M:%S")
-			if "cust_id" in search_keys and search_keys['cust_id']!="0":
-				cust_id=search_keys['cust_id']
-			queryset=xpal.search_assignments(cust_id=cust_id,date_frm=date_frm,date_to=date_to)
+        try:
+			app.logger.info("AssignmentResource: Trying to fill dutyslips in assignments")
 			assignmentlist=[]
-			app.logger.info(queryset)
 			for assignment in queryset:
 				assignmentdict={}
 				assignmentdict['assignment']=json.loads(assignment.to_json())
 				assignmentdict['dutyslips']=json.loads(xpal.documents.DutySlip.objects(assignment=assignment).to_json())
 				assignmentlist.append(assignmentdict)
-			return jsonify({"resp": assignmentlist	,"status":"success"})
-        app.logger.info("Validating assignmentdict")
-        if respdict['dutyslips']==[]:
-				return jsonify({"resp": "At least one driver must be assigned to create an assignment.","status":"error"})
-        if respdict['assignment']['bookings']==[]:
-				return jsonify({"resp": "At least one booking must be assigned to create an assignment.","status":"error"})
-        bookings=[xpal.documents.Booking.objects.with_id(x['_id']['$oid']) for x in respdict['assignment']['bookings']]
-        respdict['assignment']['cust_id']=bookings[0].cust_id
-        for booking in bookings:
-			if hasattr(booking,"assignment"):
-				return jsonify({"resp": "Booking is already assigned! Please delete the old assignment before creating a new one.","status":"error"}) 
-			if booking.cust_id!=respdict['assignment']['cust_id']:
-				return jsonify({"resp": "Bookings from different customers cannot be assigned together.","status":"error"}) 
-        seenvehicles=[]
-        for dutyslip in respdict['dutyslips']:
-			if "vehicle" in dutyslip.keys():
-				if dutyslip['vehicle'] in seenvehicles:
-					return jsonify({"resp": "Can't assign the same vehicle to more than one driver in the same assignment.","status":"error"}) 
-				seenvehicles.append(dutyslip['vehicle'])
-				
-        try:
-            assignment=xpal.save_assignment(respdict)
-            return jsonify({"resp": [json.loads(assignment.to_json())],"status":"success"})
+			#return jsonify({"resp": json.loads(queryset.to_json())})
+			resp=assignmentlist
+			status="success"
         except Exception as e:
-            app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
-            return jsonify({"resp":"Saving assignment failed","status":"error"})   
-        return jsonify({"resp":[]})
-    def put(self,docid):
-		app.logger.info("{}".format(request.get_json()))
-		respdict=request.get_json()
-		try:
-			assignment=xpal.save_assignment(respdict,docid)
-			return jsonify({"resp": [json.loads(assignment.to_json())]})
-		except Exception as e:
-			app.logger.info("{}".format(str(e)))
-		return jsonify({"resp":"Error creating assignment!","status":"error"})   
-		
-    def delete(self,docid):
-		if len(xpal.documents.Assignment.objects.with_id(docid))>0:
-			dutyslips=xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(docid))
-			app.logger.info("Deleting DutySlips {}".format(dutyslips.to_json()))
-			dutyslips.delete()
-			bookings=xpal.documents.Booking.objects(assignment=docid)
-			app.logger.info("Removing Assignment reference from  Bookings {}".format(bookings.to_json()))
-			
-			for booking in bookings:
-				del(booking.assignment)
-				booking.save()
-			xpal.documents.Assignment.objects.with_id(docid).delete()
-			return jsonify({"resp":[True]})
+			app.logger.error("{} {}".format(type(e),str(e)))
+			resp="{} {}".format(type(e),str(e))
+			status="error"
+        return jsonify({"resp": resp,"status":status})
+    def post(self,command=None):
+        app.logger.info("AssignmentResource: {}".format(request.get_json()))
+        respdict=request.get_json()
+        if command==None:
+			app.logger.info("AssignmentResource: Trying to create new assignment")
+			try:
+				bookings=[xpal.documents.Booking.objects.with_id(x['_id']['$oid']) for x in respdict['assignment']['bookings']]
+				respdict['assignment']['cust_id']=bookings[0].cust_id
+				if xpal.validate_assignment_dict(respdict)['status']==True:
+					resp=xpal.save_assignment(respdict)
+					status="success"
+					#return jsonify({"resp": [json.loads(assignment.to_json())],"status":"success"})
+				else:
+					resp=xpal.validate_assignment_dict(respdict)['message']
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+        elif command=="updatestatus":
+			app.logger.info("AssignmentResource: Trying to update assignment status")
+			try:
+				assignment=xpal.documents.Assignment.objects.with_id(respdict['assignment_id'])
+				assignment.status=respdict['status']
+				assignment.save()
+				for booking in assignment.bookings:
+					if assignment.status!="cancelled":
+						booking.status=assignment.status
+					booking.save()
+				for dutyslip in xpal.documents.DutySlip.objects(assignment=assignment):
+					if assignment.status!="cancelled":
+						dutyslip.status=assignment.status
+						dutyslip.save()
+				resp="Status updated successfully"
+				status="success"
+				#return jsonify({"resp": "Status updated.","status":"success"})
+			except Exception as e:
+				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
+				resp="{} {}".format(type(e),str(e))
+				status="error"	
+        elif command=="search":
+			app.logger.info("AssignmentResource: Searching assignments")
+			try:
+				search_keys=respdict
+				date_frm=None
+				date_to=None
+				cust_id=None
+				app.logger.info(search_keys)
+				if "date_frm" in search_keys and search_keys['date_frm']!="":
+					date_frm=datetime.datetime.strptime(search_keysr['date_frm'],"%Y-%m-%d %H:%M:%S")
+				if "date_to" in search_keys and search_keys['date_to']!="":
+					date_to=datetime.datetime.strptime(search_keys['date_to'],"%Y-%m-%d %H:%M:%S")
+				if "cust_id" in search_keys and search_keys['cust_id']!="0":
+					cust_id=search_keys['cust_id']
+				queryset=xpal.search_assignments(cust_id=cust_id,date_frm=date_frm,date_to=date_to)
+				assignmentlist=[]
+				app.logger.info(queryset)
+				for assignment in queryset:
+					assignmentdict={}
+					assignmentdict['assignment']=json.loads(assignment.to_json())
+					assignmentdict['dutyslips']=json.loads(xpal.documents.DutySlip.objects(assignment=assignment).to_json())
+					assignmentlist.append(assignmentdict)
+				resp=assignmentlist
+				status="success"
+			except Exception as e:
+				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
+				resp="{} {}".format(type(e),str(e))
+				status="error"        
+        return jsonify({"resp":resp,"status":status})
+    def delete(self,docid=None):
+		if docid==None:
+			resp="No assignment ID"
+			status="error"
 		else:
-			return jsonify({"resp":[False]})
+			app.logger.info("AssignmentResource: Trying to delete assignment {}".format(docid))
+			try:
+				resp=xpal.delete_assignment(docid)
+				if type(resp)==list:
+					status="success"
+				else:
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		return jsonify({"resp":resp,"status":status})
 api.add_resource(AssignmentResource,"/assignment",endpoint="assignment")
 api.add_resource(AssignmentResource,"/assignment/by_id/<string:docid>",endpoint="assignment_docid")
 api.add_resource(AssignmentResource,"/assignment/<string:command>",endpoint="assignment_command")
 
 class DutySlipResource(Resource):
     def get(self,docid=None,assignment_id=None,driver_id=None):
-        if docid:
-            if xpal.documents.DutySlip.objects.with_id(docid):
-                return jsonify({"resp": [json.loads(xpal.documents.DutySlip.objects.with_id(docid).to_json())]})
-            else:
-                return jsonify({"resp":[]})
-        elif assignment_id:
-            if xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(assignment_id)):
-                return jsonify({"resp": [json.loads(xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(assignment_id)).to_json())]})
-            else:
-                
-                return jsonify({"resp":[]})
-        elif driver_id:
-            if xpal.documents.DutySlip.objects(driver=driver_id):
-                return jsonify({"resp": [json.loads(xpal.documents.DutySlip.objects(driver=driver_id).to_json())]})
-            else:
-                return jsonify({"resp":[]})
+        if docid!=None:
+            resp=[xpal.documents.DutySlip.objects.with_id(docid)]
+        elif assignment_id!=None:
+			resp=xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(assignment_id))
+        elif driver_id!=None:
+            resp=xpal.documents.DutySlip.objects(driver=driver_id)
         else:
-            return jsonify({"resp": json.loads(xpal.documents.DutySlip.objects.to_json())})
-    
+            resp=xpal.documents.DutySlip.objects.all()
+        if resp==[]:
+			status="error"
+        else:
+			status="success"
+        return jsonify({"resp": resp,"status":status})
+		
     def post(self,command=None):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
         if command=="updatestatus":
-			#TODO xpal.update_dutyslip_status(dsid), move to put and take dsid from by_id - needs fix in UI as well #82
-			dutyslip=xpal.documents.DutySlip.objects.with_id(respdict['dsid'])
-			dutyslip.status=respdict['status']
-			dutyslip.save()
-			return jsonify({"resp": "Status updated.","status":"success"})	
-    
+			try:
+				dutyslip=xpal.documents.DutySlip.objects.with_id(respdict['dsid'])
+				dutyslip.status=respdict['status']
+				dutyslip.save()
+				resp="Status updated."
+				status="success"
+			except Exception as e:
+				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
+				resp="{} {}".format(type(e),str(e))
+				status="error"	
+        else:
+			resp="Unrecognized command or no command provided"
+			status="error"
+        return jsonify({"resp": resp,"status":status})
     
     def put(self,docid):
-		
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
 		if "_id" in respdict.keys():
@@ -412,7 +576,7 @@ class DutySlipResource(Resource):
 		if 'created_time' in respdict.keys():
 			#respdict['created_time']=datetime.datetime.fromtimestamp(respdict['created_time']/1000)
 			respdict.pop('created_time')
-			
+		'''	
 		if 'open_time' in respdict.keys():
 			#respdict['open_time']=datetime.datetime.fromtimestamp(respdict['open_time']/1000)
 			app.logger.info("Type for open_time {}".format(type(respdict['open_time'])))
@@ -429,28 +593,42 @@ class DutySlipResource(Resource):
 			if type(respdict['close_time'])==unicode:
 				respdict['close_time']=xpal.utils.get_utc_ts(datetime.datetime.strptime(respdict['close_time'],"%Y-%m-%d %H:%M:%S"))
 			app.logger.info("Timestamp - {}".format(respdict['close_time']))
+		'''
 		#TODO: dutyslip=xpal.update_dutyslip(docid,respdict) #82
-		dutyslip=xpal.documents.DutySlip.objects.with_id(docid)
-		app.logger.info(dutyslip.to_json())
-		if dutyslip==None:
-			return jsonify({"status":"error","resp":"No dutyslip found"})
-		dutyslip.update(**respdict)
-		dutyslip.save()
-		dutyslip.reload()
-		return jsonify({"status":"success","resp":[dutyslip]})
-    
+		if xpal.validate_dutyslip_dict(respdict,False)['status']==True:
+			try:
+				resp=xpal.update_dutyslip(docid,respdict)
+				if type(resp)==list:
+					status="success"
+				else:
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
+				resp="{} {}".format(type(e),str(e))
+				status="error"        
+		else:
+			resp=xpal.validate_dutyslip_dict(respdict,False)['messages']
+			status="error"
+		return jsonify({"resp": resp,"status":status})
 
     def delete(self,docid):
 		#TODO: xpal.delete_dutyslip(docid) for #82
-		if len(xpal.documents.DutySlip.objects.with_id(docid))>0:
-			ds=xpal.documents.DutySlip.objects.with_id(docid)
-			assignment=ds.assignment
-			ds.delete()
-			if len(xpal.documents.DutySlip.objects(assignment=assignment))==0:
-				xpal.documents.Assignment.objecs.with_id(assignment).delete()
-			return jsonify({"resp":[True]})
+		if docid==None:
+			resp="No dutyslip ID"
+			status="error"
 		else:
-			return jsonify({"resp":[False]})
+			app.logger.info("DutySlipResource: Trying to delete dutyslip {}".format(docid))
+			try:
+				resp=xpal.delete_dutyslip(docid)
+				if type(resp)==list:
+					status="success"
+				else:
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		return jsonify({"resp":resp,"status":status})
 api.add_resource(DutySlipResource,"/dutyslip",endpoint="dutyslip")
 api.add_resource(DutySlipResource,"/dutyslip/by_id/<string:docid>",endpoint="dutyslip_docid")
 api.add_resource(DutySlipResource,"/dutyslip/by_assignment_id/<string:assignment_id>",endpoint="dutyslip_assid")
@@ -458,55 +636,90 @@ api.add_resource(DutySlipResource,"/dutyslip/by_driver_id/<string:driver_id>",en
 api.add_resource(DutySlipResource,"/dutyslip/<string:command>",endpoint="dutyslip_command")
 
 class CustomerResource(Resource):
-    def get(self,tgid=None,mobile_num=None,docid=None,cust_id=None):
-        if docid:
-            queryset=xpal.documents.Customer.objects.with_id(docid)
-        elif tgid:
-            queryset=xpal.documents.Customer.objects(tgid=tgid)
-        elif mobile_num:
-			queryset=xpal.documents.Customer.objects(mobile_num=mobile_num)
-        elif cust_id:
-            queryset=xpal.documents.Customer.objects(cust_id=cust_id)
+    def get(self,cust_id=None,docid=None,command=None):
+        if command!=None:
+			app.logger.info("ProductResource: Received Command {}".format(command))
+			if command=="export":
+				try:
+					resp=xpal.export_customers()
+					status="success"
+				except Exception as e:
+					app.logger.error("{} {}".format(type(e),str(e)))
+					resp="{} {}".format(type(e),str(e))
+					status="error"	
+			else:
+				resp="Unrecognized command"
+				status="error"	
+		
+        elif docid!=None:
+            resp=[xpal.documents.Customer.objects.with_id(docid)]
+        elif cust_id!=None:
+            resp=xpal.documents.Customer.objects(cust_id=cust_id)
         else:
-            queryset=xpal.documents.Customer.objects
-        return jsonify({"resp":json.loads(queryset.to_json()),"status":"success"}) 
-    def post(self):
+            resp=xpal.documents.Customer.objects.all()
+        if resp==[]:
+			status="error"
+        else:
+			status="success"
+        return jsonify({"resp":resp,"status":status}) 
+    def post(self,command=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		if "_id" in respdict.keys():
-			del respdict['_id']
-		customer=xpal.documents.Customer.objects(cust_id=respdict['cust_id'])
-		if len(customer)>0:
-			customer=customer[0]
-			return jsonify({"status":"error","resp":"Customer with that ID Exists"})
+		if command==None:
+			try:
+				if xpal.validate_customer_dict(respdict)['status']==True:
+					resp=xpal.create_customer(respdict)
+					if type(resp)!=list:
+						status="error"
+					else:
+						status="success"
+				else:
+					status="error"
+					resp=xpal.validate_customer_dict(respdict)['message']
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"			
 		else:
-			customer=xpal.documents.Customer.from_json(json.dumps(respdict))
-		customer.save()
-		return jsonify({"status":"success","resp":[customer]})
-    def put(self,cust_id):
+			resp="Unrecognized command"
+			status="error"
+		return jsonify({"resp":resp,"status":status}) 
+    def put(self,cust_id=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		customer=xpal.documents.Customer.objects(cust_id=cust_id)
-		if len(customer)==0:
-			return jsonify({"status":"error","resp":"No customer found"})
+		try:
+			if xpal.validate_customer_dict(respdict,new=False)['status']==True:
+				resp=xpal.update_customer(cust_id,respdict)
+				if type(resp)!=list:
+					status="error"
+				else:
+					status="success"
+			else:
+				status="error"
+				resp=xpal.validate_customer_dict(respdict,new=False)['message']
+		except Exception as e:
+			app.logger.error("{} {}".format(type(e),str(e)))
+			resp="{} {}".format(type(e),str(e))
+			status="error"
+		return jsonify({"resp":resp,"status":status})	
+    def delete(self,cust_id=None):
+		if cust_id==None:
+			resp="No customer ID"
+			status="error"
 		else:
-			customer=customer[0]
-		if "_id" in respdict.keys():
-			del respdict['_id']
-		if "cust_id" in respdict.keys():
-			if respdict['cust_id']!=cust_id:
-				return jsonify({"status":"error","resp":"Customer ID mismatch"})
-			del respdict['cust_id']
-		customer.update(**respdict)
-		customer.save()
-		customer.reload()
-		return jsonify({"status":"success","resp":[customer]})
-    def delete(self,docid):
-		if len(xpal.documents.Customer.objects.with_id(docid))>0:
-			xpal.documents.Customer.objects.with_id(docid).delete()
-			return jsonify({"resp":[True]})
-		else:
-			return jsonify({"resp":[False]})
+			app.logger.info("customerResource: Trying to delete customer {}".format(cust_id))
+			try:
+				resp=xpal.delete_customer(cust_id)
+				if type(resp)==list:
+					status="success"
+				else:
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		return jsonify({"resp":resp,"status":status})
+		
 api.add_resource(CustomerResource,"/customer",endpoint="customer")
 api.add_resource(CustomerResource,"/customer/by_tgid/<int:tgid>",endpoint="cust_tgid")
 api.add_resource(CustomerResource,"/customer/by_mobile/<string:mobile_num>",endpoint="cust_mobile")
@@ -514,49 +727,194 @@ api.add_resource(CustomerResource,"/customer/by_id/<string:docid>",endpoint="cus
 api.add_resource(CustomerResource,"/customer/by_cust_id/<string:cust_id>",endpoint="cust_id")
 
 class ProductResource(Resource):
-    def get(self,docid=None,product_id=None):
-        if docid:
-            if xpal.documents.Product.objects.with_id(docid):
-                return jsonify({"resp": [json.loads(xpal.documents.Product.objects.with_id(docid).to_json())]})
-            else:
-                return jsonify({"resp":[]})
-        if product_id:
-			if xpal.documents.Product.objects(product_id=product_id):
-				return jsonify({"resp": [json.loads(xpal.documents.Product.objects(product_id=product_id).to_json())]})
+    def get(self,product_id=None,docid=None,command=None):
+        if command!=None:
+			app.logger.info("ProductResource: Received Command {}".format(command))
+			if command=="export":
+				try:
+					resp=xpal.export_products()
+					status="success"
+				except Exception as e:
+					app.logger.error("{} {}".format(type(e),str(e)))
+					resp="{} {}".format(type(e),str(e))
+					status="error"	
 			else:
-				return jsonify({"resp":[]})
+				resp="Unrecognized command"
+				status="error"	
+		
+        elif docid!=None:
+            resp=[xpal.documents.Product.objects.with_id(docid)]
+        elif product_id!=None:
+            resp=xpal.documents.Product.objects(product_id=product_id)
         else:
-            return jsonify({"resp": json.loads(xpal.documents.Product.objects.to_json())})
-    def post(self,command=None):	
+            resp=xpal.documents.Product.objects.all()
+        if resp==[]:
+			status="error"
+        else:
+			status="success"
+        return jsonify({"resp":resp,"status":status})
+    def post(self,command=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		if command=="import":
-			productlist=import_gadv(respdict)
-			return jsonify({"resp":productlist})
-		return jsonify({"resp":[]})
-    def put(self,docid=None):
-        return jsonify({"resp":[]})
-    
-    def delete(self,docid):
-		if len(xpal.documents.Product.objects.with_id(docid))>0:
-			xpal.documents.Product.objects.with_id(docid).delete()
-			return jsonify({"resp":[True]})
+		if command==None:
+			try:
+				if xpal.validate_product_dict(respdict)['status']==True:
+					resp=xpal.create_product(respdict)
+					if type(resp)!=list:
+						status="error"
+					else:
+						status="success"
+				else:
+					status="error"
+					resp=xpal.validate_product_dict(respdict)['message']
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"			
 		else:
-			return jsonify({"resp":[False]})
+			resp="Unrecognized command"
+			status="error"
+		return jsonify({"resp":resp,"status":status}) 
+    def put(self,product_id=None):
+		app.logger.info("{}".format(request.get_json()))
+		respdict=request.get_json()
+		try:
+			if xpal.validate_product_dict(respdict,new=False)['status']==True:
+				resp=xpal.update_product(product_id,respdict)
+				if type(resp)!=list:
+					status="error"
+				else:
+					status="success"
+			else:
+				status="error"
+				resp=xpal.validate_product_dict(respdict,new=False)['message']
+		except Exception as e:
+			app.logger.error("{} {}".format(type(e),str(e)))
+			resp="{} {}".format(type(e),str(e))
+			status="error"
+		return jsonify({"resp":resp,"status":status})	
+    def delete(self,product_id=None):
+		if product_id==None:
+			resp="No product ID"
+			status="error"
+		else:
+			app.logger.info("productResource: Trying to delete product {}".format(product_id))
+			try:
+				resp=xpal.delete_product(product_id)
+				if type(resp)==list:
+					status="success"
+				else:
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		return jsonify({"resp":resp,"status":status})
 api.add_resource(ProductResource,"/product",endpoint="product")
 api.add_resource(ProductResource,"/product/by_id/<string:docid>",endpoint="product_docid")
 api.add_resource(ProductResource,"/product/by_product_id/<string:product_id>",endpoint="product_id")
 api.add_resource(ProductResource,"/product/<string:command>",endpoint="product_command")
 
 class InvoiceResource(Resource):
-	def post(self):
+    def get(self,invoice_id=None,docid=None,command=None):
+        if command!=None:
+			app.logger.info("InvoiceResource: Received Command {}".format(command))
+			if command=="export":
+				try:
+					resp=xpal.export_invoices()
+					status="success"
+				except Exception as e:
+					app.logger.error("{} {}".format(type(e),str(e)))
+					resp="{} {}".format(type(e),str(e))
+					status="error"	
+			else:
+				resp="Unrecognized command"
+				status="error"	
+		
+        elif docid!=None:
+            resp=[xpal.documents.Invoice.objects.with_id(docid)]
+        elif invoice_id!=None:
+            resp=xpal.documents.Invoice.objects(invoice_id=invoice_id)
+        else:
+            resp=xpal.documents.Invoice.objects.all()
+        if type(resp)==list and resp!=[]:
+			status="success"
+        else:
+			status="error"
+        return jsonify({"resp":resp,"status":status}) 
+    def post(self,command=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
-		assignments=xpal.documents.Assignment.objects.filter(id__in=respdict)
-		invoice=get_invoice(assignments)
-	
-		return jsonify({"resp":invoice,"status":"success"})
+		if command==None:
+			try:
+				if xpal.validate_invoice_dict(respdict)['status']==True:
+					resp=xpal.create_invoice(respdict)
+					if type(resp)!=list:
+						status="error"
+					else:
+						status="success"
+				else:
+					status="error"
+					resp=xpal.validate_invoice_dict(respdict)['message']
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"			
+		elif command=="generateinvoice":
+			try:
+				assignments=xpal.documents.Assignment.objects.filter(id__in=respdict)
+				resp=get_invoice(assignments)
+				if type(resp)==dict:
+					status=="success"
+				else:
+					status=="error"
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"		
+		else:
+			resp="Unrecognized command"
+			status="error"
+		return jsonify({"resp":resp,"status":status}) 
+    def put(self,invoice_id=None):
+		app.logger.info("{}".format(request.get_json()))
+		respdict=request.get_json()
+		try:
+			if xpal.validate_invoice_dict(respdict,new=False)['status']==True:
+				resp=xpal.update_invoice(invoice_id,respdict)
+				if type(resp)!=list:
+					status="error"
+				else:
+					status="success"
+			else:
+				status="error"
+				resp=xpal.validate_invoice_dict(respdict,new=False)['message']
+		except Exception as e:
+			app.logger.error("{} {}".format(type(e),str(e)))
+			resp="{} {}".format(type(e),str(e))
+			status="error"
+		return jsonify({"resp":resp,"status":status})	
+    def delete(self,invoice_id=None):
+		if invoice_id==None:
+			resp="No invoice ID"
+			status="error"
+		else:
+			app.logger.info("invoiceResource: Trying to delete invoice {}".format(invoice_id))
+			try:
+				resp=xpal.delete_invoice(invoice_id)
+				if type(resp)==list:
+					status="success"
+				else:
+					status="error"
+			except Exception as e:
+				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		return jsonify({"resp":resp,"status":status})
 api.add_resource(InvoiceResource,"/invoice",endpoint="invoice")
+api.add_resource(InvoiceResource,"/invoice/by_id/<string:docid>",endpoint="invoice_docid")
+api.add_resource(InvoiceResource,"/invoice/by_invoice_id/<string:invoice_id>",endpoint="invoiceid")
+api.add_resource(InvoiceResource,"/invoice/<string:command>",endpoint="invoice_command")
 
 if __name__ == '__main__':
    app.run(host="0.0.0.0")

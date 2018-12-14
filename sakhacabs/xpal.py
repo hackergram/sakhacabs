@@ -31,20 +31,79 @@ mongoengine.connect('sakhacabs', alias='default')
 
 
 #Remote sync functionality
-def validate_booking_dict(bookingdict,new=True):
+
+def validate_vehicle_dict(vehicledict,new=True):
 	validation={}
 	validation['status']=True
-	validation['message']="Valid booking"
+	validation['message']="Valid vehicle"
 	required_keys=[]
 	if new==True:
-		required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
-	string_keys=["cust_id","product_id","passenger_detail","passenger_mobile"]
-	mobile_nums=["passenger_mobile"]
-	validation=utils.validate_dict(bookingdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)			
+		required_keys=["vehicle_id"]
+	string_keys=["vehicle_id"]
+	validation=utils.validate_dict(vehicledict,required_keys=required_keys,string_keys=string_keys)
 	if validation['status']==True:
-		sakhacabsxpal.logger.info("bookingdict: "+validation['message'])
+		sakhacabsxpal.logger.info("vehicledict: "+validation['message'])
 	else:
-		sakhacabsxpal.logger.error("bookingdict: "+validation['message'])
+		sakhacabsxpal.logger.error("vehicledict: "+validation['message'])
+	return validation
+
+def validate_invoice_dict(invoicedict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid vehicle"
+	required_keys=[]
+	if new==True:
+		required_keys=["invoicelines","cust_id","invoice_date"]
+	validation=utils.validate_dict(invoicedict,required_keys=required_keys)
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("invoicedict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("invoicedict: "+validation['message'])
+	return validation
+
+def validate_locupdate_dict(locupdatedict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid location update"
+	required_keys=[]
+	if new==True:
+		required_keys=["driver_id","timestamp"]
+	string_keys=["driver_id"]
+	validation=utils.validate_dict(locupdatedict,required_keys=required_keys,string_keys=string_keys)
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("locupdatedict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("locupdatedict: "+validation['message'])
+	return validation
+
+def validate_customer_dict(customerdict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid customer"
+	required_keys=[]
+	if new==True:
+		required_keys=["cust_id"]
+	string_keys=["cust_id"]
+	validation=utils.validate_dict(customerdict,required_keys=required_keys,string_keys=string_keys)
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("customerdict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("customerdict: "+validation['message'])
+	return validation
+
+def validate_product_dict(productdict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid product"
+	required_keys=[]
+	if new==True:
+		required_keys=["product_id"]
+	string_keys=["product_id"]
+	validation=utils.validate_dict(productdict,required_keys=required_keys,string_keys=string_keys)
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("productdict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("productdict: "+validation['message'])
 	return validation
 
 def validate_driver_dict(driverdict,new=True):
@@ -53,10 +112,10 @@ def validate_driver_dict(driverdict,new=True):
 	validation['message']="Valid driver"
 	required_keys=[]
 	if new==True:
-		required_keys=["driver_id","moble_num"]
+		required_keys=["driver_id","mobile_num"]
 	string_keys=["first_name","last_name","mobile_num","name","driver_id"]
 	mobile_nums=["mobile_num"]
-	validation=utils.validate(driverdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)
+	validation=utils.validate_dict(driverdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)
 	if validation['status']==True:
 		sakhacabsxpal.logger.info("driverdict: "+validation['message'])
 	else:
@@ -67,11 +126,49 @@ def validate_dutyslip_dict(dutyslipdict,new=True):
 	validation={}
 	validation['status']=True
 	validation['message']="Valid dutyslip"
+	required_keys=[]
+	if new==True:
+		required_keys=["driver","assignment"]
+	string_keys=["driver","vehicle","remarks"]
+	validation=utils.validate_dict(dutyslipdict,required_keys=required_keys,string_keys=string_keys)
 	if validation['status']==True:
 		sakhacabsxpal.logger.info("dutyslipdict: "+validation['message'])
 	else:
 		sakhacabsxpal.logger.error("dutyslipdict: "+validation['message'])
 	return validation
+
+def validate_assignment_dict(assignmentdict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid assignment"
+	
+	if assignmentdict['dutyslips']==[]:
+		validation['status']=False
+		validation['message']="At least one driver must be assigned to create an assignment."
+        if assignmentdict['assignment']['bookings']==[]:
+			validation['status']=False
+			validation['message']= "At least one booking must be assigned to create an assignment."
+        bookings=[documents.Booking.objects.with_id(x['_id']['$oid']) for x in assignmentdict['assignment']['bookings']]
+        for booking in bookings:
+			if booking.assignment!=None:
+				validation['status']=False
+				validation['message']= "Booking is already assigned {}! Please delete the old assignment before creating a new one.".format(booking.assignment)
+			if booking.cust_id!=assignmentdict['assignment']['cust_id']:
+				validation['status']=False
+				validation['message']="Bookings from different customers cannot be assigned together."
+        seenvehicles=[]
+        for dutyslip in assignmentdict['dutyslips']:
+			if "vehicle" in dutyslip.keys():
+				if dutyslip['vehicle'] in seenvehicles:
+					validation['status']=False
+					validation['message']="Can't assign the same vehicle to more than one driver in the same assignment."
+				seenvehicles.append(dutyslip['vehicle'])
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("assignmentdict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("assignmentdict: "+validation['message'])
+	return validation
+	
 def sync_remote():
     custlist=custsheet.get_as_df().to_dict(orient="records")
     driverlist=driversheet.get_as_df().to_dict(orient="records")
@@ -160,6 +257,8 @@ def new_locationupdate(driver,timestamp,checkin=True,location=None,vehicle=None,
 	locationupdate.save()
 	return locationupdate
 
+
+
 '''
 Bookings, Assignments and DutySlips
 Assignments are collections of one or more bookings grouped together for assignment of vehicles/drivers
@@ -167,8 +266,24 @@ DutySlips record assignment execution. DutySlips are issued by the dispatcher an
 A DutySlip can not be deleted once the open time has been set by the driver, i.e. after execution on an assignment has begun.
 '''
 '''
-Bookings
+Bookings CRUD
 '''
+def validate_booking_dict(bookingdict,new=True):
+	validation={}
+	validation['status']=True
+	validation['message']="Valid booking"
+	required_keys=[]
+	if new==True:
+		required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
+	string_keys=["cust_id","product_id","passenger_detail","passenger_mobile","remarks"]
+	mobile_nums=["passenger_mobile"]
+	validation=utils.validate_dict(bookingdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)			
+	if validation['status']==True:
+		sakhacabsxpal.logger.info("bookingdict: "+validation['message'])
+	else:
+		sakhacabsxpal.logger.error("bookingdict: "+validation['message'])
+	return validation
+
 def new_booking(respdict):
 	bookingdict={}
 	sakhacabsxpal.logger.info("Creating new booking")
@@ -177,23 +292,29 @@ def new_booking(respdict):
 		if key in ["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","drop_location","booking_channel","num_passengers"]:
 			bookingdict[key]=respdict[key]
 			respdict.pop(key)
-		
+	if "_id" in respdict.keys():
+		respdict.pop("_id")
+	if "created_timestamp" in respdict.keys():
+		respdict.pop("created_timestamp")
+	
 	sakhacabsxpal.logger.info("{}".format(respdict))
-	b=documents.Booking(booking_id=utils.new_booking_id(),**bookingdict)
-	b.cust_meta=respdict
-	b.save()
-	b.reload()
-	sakhacabsxpal.logger.info("{}".format(b))
-	return b
+	dupbookings=documents.Booking.objects(cust_meta=respdict)
+	if len(dupbookings)>0:
+		sakhacabsxpal.logger.info("Duplicate booking {}".format(dupbookings))
+		return "Duplicate of {}".format(dupbookings[0].booking_id)
+	else:
+		try:
+			b=documents.Booking(booking_id=utils.new_booking_id(),**bookingdict)
+			b.cust_meta=respdict
+			b.save()
+			b.reload()
+			sakhacabsxpal.logger.info("{}".format(b))
+			return [b]
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
 
 
 def update_booking(booking_id,respdict):
-	#Update Booking should 
-		# 1. Update the booking
-		# 2. Update the assignment
-	#TODO #70 #79
-	#TODO Write logic for updating assignment if change in bookings and duty slips #70
-		
 	booking=documents.Booking.objects(booking_id=booking_id)
 	if len(booking)==0:
 		return "No booking by that id"
@@ -202,17 +323,50 @@ def update_booking(booking_id,respdict):
 		sakhacabsxpal.logger.info("Trying to update booking with id {}".format(booking.booking_id))
 		if "_id" in respdict.keys():
 			respdict.pop("_id")
-		booking.update(**respdict)
-		booking.reload()
-		assignment=documents.Assignment.objects.with_id(booking.assignment)
-		if "pickup_timestamp" in respdict.keys():
-			assignment.reporting_timestamp=booking.pickup_timestamp
-		if "pickup_location" in respdict.keys():
-			assignment.reporting_location=booking.pickup_location
-		assignment.save()
-			
-		return [booking]
+		if "created_timestamp" in respdict.keys():
+			respdict.pop("created_timestamp")
+		try:
+			booking.update(**respdict)
+			booking.reload()
+			if booking.assignment!=None:
+				assignment=documents.Assignment.objects.with_id(booking.assignment)
+				if "pickup_timestamp" in respdict.keys():
+					assignment.reporting_timestamp=booking.pickup_timestamp
+				if "pickup_location" in respdict.keys():
+					assignment.reporting_location=booking.pickup_location
+				assignment.save()
+					
+			return [booking]
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
 
+
+def delete_booking(booking_id):
+	if len(documents.Booking.objects(booking_id=booking_id))>0:
+		try:
+			booking=documents.Booking.objects(booking_id=booking_id)[0]
+			assignment=booking.assignment
+			booking.delete()
+			if assignment!=None:
+				if len(documents.Booking.objects(assignment=assignment))==0:
+					sakhacabsxpal.logger.info("No more bookings in assignment. Deleting!")
+					documents.Assignment.objects.with_id(assignment).delete()	
+				else:
+					sakhacabsxpal.logger.info("Updating assignment reporting time to first booking!")
+					assignmentobj=documents.Assignment.objects.with_id(assignment)
+					assignmentobj.reporting_location=assignmentobj.bookings[0].pickup_location
+					assignmentobj.reporting_timestamp=assignmentobj.bookings[0].pickup_timestamp
+					assignmentobj.save()
+			return []
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	else:
+		return "No booking by that id"
+
+			
+'''
+Assignment CRUD
+'''
 def save_assignment(assignmentdict,assignment_id=None):
     '''
     Creates a new assignment/Updates an existing assignment with the provided bookings and duty slips
@@ -270,7 +424,7 @@ def save_assignment(assignmentdict,assignment_id=None):
 		booking.assignment=str(assignment.id)
 		booking.save()
     sakhacabsxpal.logger.info("Saved assignment {}".format(assignment.to_json()))
-    return assignment
+    return [assignment]
 
 def search_assignments(cust_id=None,date_frm=None,date_to=None):
 	assignments=documents.Assignment.objects
@@ -282,15 +436,53 @@ def search_assignments(cust_id=None,date_frm=None,date_to=None):
 		assignments=assignments.filter(reporting_timestamp__lt=date_to)
 	return assignments
 
+def delete_assignment(assignmentid):
+	if len(xpal.documents.Assignment.objects.with_id(assignment))>0:
+		dutyslips=xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(assignmentid))
+		app.logger.info("Deleting DutySlips {}".format(dutyslips.to_json()))
+		dutyslips.delete()
+		bookings=xpal.documents.Booking.objects(assignment=assignmentid)
+		app.logger.info("Removing Assignment reference from  Bookings {}".format(bookings.to_json()))
+		
+		for booking in bookings:
+			booking.assignment=None
+			booking.save()
+		xpal.documents.Assignment.objects.with_id(assignment).delete()
+		return []
+	else:
+		return "Assignment with that ID does not exist"
 
 '''
-Duty Slips
+Duty Slip CRUD
 '''
 def get_duties_for_driver(driver_id):
 	d=documents.DutySlip.objects(driver=driver_id,status__ne="verified")
 	if len(d)>0:
 		return d
-	
+
+def update_dutyslip(dsid,respdict):
+	dutyslip=xpal.documents.DutySlip.objects.with_id(docid)
+	if dutyslip==None:
+		return "No dutyslip with that id found"
+	try:
+		dutyslip.update(**respdict)
+		dutyslip.save()
+		dutyslip.reload()
+		return [dutyslip]
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
+
+def delete_dutyslip(dsid):
+	if len(documents.DutySlip.objects.with_id(dsid))>0:
+		ds=documents.DutySlip.objects.with_id(dsid)
+		assignment=ds.assignment
+		ds.delete()
+		if len(documents.DutySlip.objects(assignment=assignment))==0:
+			documents.Assignment.objecs.with_id(assignment).delete()
+		return []
+	else:
+		return "No Dutyslip by that ID"
+			
 '''
 Driver CRUD functionality
 '''
@@ -311,10 +503,55 @@ def get_driver_by_tgid(tgid):
         return t[0]
     else:
         return None
+def create_driver(respdict):
+	driver=documents.Driver.objects(driver_id=respdict['driver_id'])
+	if len(driver)>0:
+		return "Driver with that ID Exists"
+	if "_id" in respdict.keys():
+		respdict.pop('_id')			
+	try:
+		driver=documents.Driver(**respdict)
+		driver.save()
+		return [driver]
+	except Exception as e:
+		return "{} {}".format(repr(e),str(e))
+	
+def update_driver(driver_id,respdict):
+	driver=documents.Driver.objects(driver_id=driver_id)
+	if len(driver)==0:
+		return "No driver by ID {}".format(driver_id)
+	else:
+		driver=driver[0]
+	if "_id" in respdict.keys():
+		respdict.pop('_id')
+	if "driver_id" in respdict.keys():
+		if respdict['driver_id']!=driver_id:
+			return "Driver ID mismatch {} {}".format(driver_id,respdict['driver_id'])
+		respdict.pop('driver_id')
+	try:
+		driver.update(**respdict)
+		driver.save()
+		driver.reload()
+		return [driver]
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
+
+
+def delete_driver(driver_id):
+	if len(documents.Driver.objects(driver_id=driver_id))>0:
+		try:
+			driver=documents.Driver.objects(driver_id=driver_id)[0]
+			driver.delete()
+			return []
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	else:
+		return "No driver by that id"
 
 '''
 Vehicle CRUD functionality
 '''
+
 def get_vehicle_by_vid(vid):
     #t=db.view("vehicle/all_by_vnum",keys=[vnum]).all()
     t=documents.Vehicle.objects(vehicle_id=vid)
@@ -326,10 +563,162 @@ def get_vehicle_by_vid(vid):
         return None
 
 
+def create_vehicle(respdict):
+	vehicle=documents.Vehicle.objects(vehicle_id=respdict['vehicle_id'])
+	if len(vehicle)>0:
+		return "Vehicle with that ID Exists"
+	if "_id" in respdict.keys():
+		respdict.pop('_id')			
+	try:
+		vehicle=documents.Vehicle(**respdict)
+		vehicle.save()
+		return [vehicle]
+	except Exception as e:
+		return "{} {}".format(repr(e),str(e))
+	
+def update_vehicle(vehicle_id,respdict):
+	vehicle=documents.Vehicle.objects(vehicle_id=vehicle_id)
+	if len(vehicle)==0:
+		return "No Vehicle by ID {}".format(vehicle_id)
+	else:
+		vehicle=vehicle[0]
+	if "_id" in respdict.keys():
+		respdict.pop('_id')
+	if "vehicle_id" in respdict.keys():
+		if respdict['vehicle_id']!=vehicle_id:
+			return "vehicle ID mismatch {} {}".format(vehicle_id,respdict['vehicle_id'])
+		respdict.pop('vehicle_id')
+	try:
+		vehicle.update(**respdict)
+		vehicle.save()
+		vehicle.reload()
+		return [vehicle]
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
+
+
+def delete_vehicle(vehicle_id):
+	if len(documents.Vehicle.objects(vehicle_id=vehicle_id))>0:
+		try:
+			vehicle=documents.Vehicle.objects(vehicle_id=vehicle_id)[0]
+			vehicle.delete()
+			return []
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	else:
+		return "No vehicle by that id"
+
+
+
+
+'''
+Customer
+'''
+
+def create_customer(respdict):
+	customer=documents.Customer.objects(cust_id=respdict['cust_id'])
+	if len(customer)>0:
+		return "Customer with that ID Exists"
+	if "_id" in respdict.keys():
+		respdict.pop('_id')			
+	try:
+		customer=documents.Customer(**respdict)
+		customer.save()
+		return [customer]
+	except Exception as e:
+		return "{} {}".format(repr(e),str(e))
+	
+def update_customer(cust_id,respdict):
+	customer=documents.Customer.objects(cust_id=cust_id)
+	if len(customer)==0:
+		return "No Customer by ID {}".format(cust_id)
+	else:
+		customer=customer[0]
+	if "_id" in respdict.keys():
+		respdict.pop('_id')
+	if "cust_id" in respdict.keys():
+		if respdict['cust_id']!=cust_id:
+			return "customer ID mismatch {} {}".format(cust_id,respdict['cust_id'])
+		respdict.pop('cust_id')
+	try:
+		customer.update(**respdict)
+		customer.save()
+		customer.reload()
+		return [customer]
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
+
+
+def delete_customer(cust_id):
+	if len(documents.Customer.objects(cust_id=cust_id))>0:
+		try:
+			customer=documents.Customer.objects(cust_id=cust_id)[0]
+			customer.delete()
+			return []
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	else:
+		return "No customer by that id"
+
+
+
+
+'''
+Product
+'''
+
+def create_product(respdict):
+	product=documents.Product.objects(product_id=respdict['product_id'])
+	if len(product)>0:
+		return "Product with that ID Exists"
+	if "_id" in respdict.keys():
+		respdict.pop('_id')			
+	try:
+		product=documents.Product(**respdict)
+		product.save()
+		return [product]
+	except Exception as e:
+		return "{} {}".format(repr(e),str(e))
+	
+def update_product(product_id,respdict):
+	product=documents.Product.objects(product_id=product_id)
+	if len(product)==0:
+		return "No Product by ID {}".format(product_id)
+	else:
+		product=product[0]
+	if "_id" in respdict.keys():
+		respdict.pop('_id')
+	if "product_id" in respdict.keys():
+		if respdict['product_id']!=product_id:
+			return "product ID mismatch {} {}".format(product_id,respdict['product_id'])
+		respdict.pop('product_id')
+	try:
+		product.update(**respdict)
+		product.save()
+		product.reload()
+		return [product]
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
+
+
+def delete_product(product_id):
+	if len(documents.Product.objects(product_id=product_id))>0:
+		try:
+			product=documents.Product.objects(product_id=product_id)[0]
+			product.delete()
+			return []
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	else:
+		return "No product by that id"
+
+
+
+
 '''
 Invoices
 '''
-def get_invoice(to_settle):
+def generate_invoice(to_settle):
 	invoice_lines=[]
 	for ass in to_settle:
 		covered_hrs=0;
@@ -398,14 +787,57 @@ def get_invoice(to_settle):
 	invoice={}
 	invoice['invoicelines']=invoice_lines
 	invoice['cust_id']=to_settle[0].cust_id
+	invoice['taxes']=[]
+	'''
 	total=0
 	for line in invoice_lines:
 		total+=line['amount']
 	invoice['total']=total
+	'''
 	return invoice
 
-
-
+def get_invoice_total(invoice_id):
+	if len(documents.Invoice.objects(invoice_id=invoice_id))>0:
+		try:
+			invoice=documents.Invoice.objects(invoice_id=invoice_id)[0]
+			resp={}
+			resp['total']=0.0
+			resp['grand_total']=0.0
+			resp['tax']=0.0
+			for line in invoice.invoicelines:
+				resp['total']+=line['amount']
+			resp['grand_total']=resp['total']
+			for tax in invoice.taxes:
+				resp['tax']+=tax['rate']*resp['total']
+			resp['grand_total']+=resp['tax']
+			return resp
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	else:
+		return "No such invoice"
+			
+def create_invoice(invoicedict):
+	try:
+		invoice=documents.Invoice(invoice_id=utils.new_invoice_id(),**invoicedict)
+		invoice.save()
+		invoice.total=get_invoice_total(invoice.invoice_id)
+		return[invoice]
+	except Exception as e:
+			return "{} {}".format(type(e),str(e))
+	
+	
+def update_invoice(invoice_id,invoicedict):
+	return "Not Implemented"
+def delete_invoice(invoice_id):
+	if len(documents.Invoice.objects(invoice_id=invoice_id))==0:
+		return "No Invoice by that ID"
+	else:
+		try:
+			invoice=documents.Invoice.objects(invoice_id=invoice_id)
+			invoice.delete()
+			return []
+		except Exception as e:
+			return "{} {}".format(type(e),str(e))
 
 
 '''
@@ -468,7 +900,6 @@ def import_gadv(bookinglist):
 			#b.cust_meta=booking
 		else:
 			sakhacabsxpal.logger.info("New Booking") #TODO - Merge with single booking workflow #83
-			b=documents.Booking(booking_id=utils.new_booking_id(),cust_meta=booking,cust_id="gadventures")
 			b.passenger_detail=str(b.cust_meta['Booking ID'])+"\n"+b.cust_meta['Trip Code']+"\n"+b.cust_meta['Passengers']
 			b.pickup_location="Intl Airport, Flight #"+str(b.cust_meta['Pick-Up'])
 			b.drop_location=b.cust_meta['Drop-Off']
@@ -485,3 +916,19 @@ def import_gadv(bookinglist):
 			    
 	return bookinglist
 
+def import_bookings(bookinglist):
+	try:
+		for booking in bookinglist:
+				try:
+					b=new_booking(booking)
+					if type(b)==list:
+						booking['booking_id']=b[0].booking_id
+					else:
+						booking['booking_id']=b
+				except Exception as e:
+					booking['booking_id']="{} {}".format(type(e),str(e))
+		return bookinglist
+	except Exception as e:
+			return "{} {}".format(type(e),str(e))
+		
+			

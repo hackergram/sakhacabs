@@ -9,7 +9,7 @@ Created on Sun Sep 30 10:43:19 2018
 import random,datetime,re
 charstring="ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"
 UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
-nospec=re.compile(r"[^A-Za-z0-9\n '-]+")
+nospec=re.compile(r"[^A-Za-z0-9\n @.'-]+")
 notnum=re.compile(r"[^0-9]+")
 
 def validate_dict(dictionary, required_keys=[],string_keys=[],mobile_nums=[],emails=[]):
@@ -18,27 +18,25 @@ def validate_dict(dictionary, required_keys=[],string_keys=[],mobile_nums=[],ema
 	validation['message']="Valid dictionary"
 	for key in required_keys:
 		if key not in dictionary.keys():
-			message="{} - missing required field".format(key)
-			valid=False
-		if dictionary[key]==None:
-			message="{} - can't be None ".format(key)
-			valid=False
+			validation['message']="{} - missing required field".format(key)
+			validation['status']=False
+		elif dictionary[key]==None:
+			validation['message']="{} - can't be None ".format(key)
+			validation['status']=False
 	for key in string_keys:
 		if key in dictionary.keys():
 			if nospec.search(str(dictionary[key])):
-				message="{} - has special character".format(key)
-				valid=False
+				validation['message']="{} - has special character {}".format(key,nospec.search(str(dictionary[key])))
+				validation['status']=False
 	for key in mobile_nums:
 		if key in dictionary.keys():
 			if len(dictionary[key])>12:
 				validation['message']="{} too long a mobile number".format(bookingdict['passenger_mobile'])
 				validation['status']=False
-			if utils.notnum.search(dictionary[key]):
+			if notnum.search(dictionary[key]):
 				validation['message']="{} non numeric in mobile number".format(bookingdict['passenger_mobile'])
 				validation['status']=False
-	returndict['status']=valid
-	returndict['message']=message
-	return returndict
+	return validation
 
 def ran_gen(size, chars=charstring): 
     return ''.join(random.choice(chars) for x in range(size))

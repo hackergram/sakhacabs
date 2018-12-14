@@ -74,7 +74,7 @@ class LocationUpdate(PPrintMixin,Document):
     driver_id=fields.StringField(required=True)
     timestamp=fields.DateTimeField(required=True)
     location=fields.StringField()
-    checkin=fields.BooleanField()
+    checkin=fields.BooleanField(required=True,default=True)
     vehicle_id=fields.StringField()
     handoff=fields.StringField()
     
@@ -111,6 +111,9 @@ class DutySlip(PPrintMixin,Document):
     remarks=fields.StringField()
     
 class Invoice(PPrintMixin,DynamicDocument):
-	cust_id=fields.StringField()
+	invoice_id=fields.StringField(unique=True,required=True)
+	cust_id=fields.StringField(required=True)
 	invoice_date=fields.DateTimeField()
 	invoicelines=fields.ListField(fields.DictField())
+	taxes=fields.ListField(fields.DictField)
+	status=fields.StringField(default="new")
