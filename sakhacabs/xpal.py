@@ -426,7 +426,7 @@ def save_assignment(assignmentdict,assignment_id=None):
     sakhacabsxpal.logger.info("Saved assignment {}".format(assignment.to_json()))
     return [assignment]
 
-def search_assignments(cust_id=None,date_frm=None,date_to=None):
+def search_assignments(cust_id=None,date_frm=None,date_to=None,status=None):
 	assignments=documents.Assignment.objects
 	if cust_id!=None:
 		assignments=assignments.filter(cust_id=cust_id)
@@ -434,6 +434,9 @@ def search_assignments(cust_id=None,date_frm=None,date_to=None):
 		assignments=assignments.filter(reporting_timestamp__gt=date_frm)
 	if date_to!=None:
 		assignments=assignments.filter(reporting_timestamp__lt=date_to)
+	if status!=None:
+		assignments=assignments.filter(status=status)
+	
 	return assignments
 
 def delete_assignment(assignmentid):
@@ -719,74 +722,80 @@ def delete_product(product_id):
 Invoices
 '''
 def generate_invoice(to_settle):
+	sakhacabsxpal.logger.info("Generating invoice for assignments {}".format(to_settle))
 	invoice_lines=[]
-	for ass in to_settle:
-		covered_hrs=0;
-		covered_kms=0;
-		for booking in ass.bookings:
-			invoiceline={}
-			invoiceline['date']=utils.get_local_ts(booking.pickup_timestamp).strftime("%Y-%m-%d")
-			invoiceline['particulars']=booking.booking_id+" "+booking.passenger_detail
-			invoiceline['product']=booking.product_id
-			invoiceline['qty']=1
-			invoiceline['rate']=documents.Product.objects(product_id=booking.product_id)[0].price
-			invoiceline['amount']=invoiceline['qty']*invoiceline['rate']
-			invoice_lines.append(invoiceline)
-			covered_hrs+=documents.Product.objects(product_id=booking.product_id)[0].hrs
-			covered_kms+=documents.Product.objects(product_id=booking.product_id)[0].kms
-		consumed_hrs=0;
-		consumed_kms=0;
-		for ds in documents.DutySlip.objects(assignment=ass):
-			print repr(ds)
-			kms=ds.close_kms-ds.open_kms
-			consumed_kms+=kms
-			hrs=ds.close_time-ds.open_time
-			consumed_hrs+=int(hrs.total_seconds()/3600)
-			if ds.parking_charges!=None:
-				invoiceline={}                                               
-				invoiceline['date']=utils.get_local_ts(ass.reporting_timestamp).strftime("%Y-%m-%d")
-				invoiceline['particulars']="Parking Charges"
-				invoiceline['product']="PARKINGCHRGS"
-				invoiceline['rate']=int(ds.parking_charges)
+	try:
+		for ass in to_settle:
+			covered_hrs=0;
+			covered_kms=0;
+		
+			for booking in ass.bookings:
+				invoiceline={}
+				invoiceline['date']=utils.get_local_ts(booking.pickup_timestamp).strftime("%Y-%m-%d")
+				invoiceline['particulars']=booking.booking_id+" "+booking.passenger_detail
+				invoiceline['product']=booking.product_id
 				invoiceline['qty']=1
+				invoiceline['rate']=documents.Product.objects(product_id=booking.product_id)[0].price
+				invoiceline['amount']=invoiceline['qty']*invoiceline['rate']
+				invoice_lines.append(invoiceline)
+				covered_hrs+=documents.Product.objects(product_id=booking.product_id)[0].hrs
+				covered_kms+=documents.Product.objects(product_id=booking.product_id)[0].kms
+			consumed_hrs=0;
+			consumed_kms=0;
+			for ds in documents.DutySlip.objects(assignment=ass):
+				print repr(ds)
+				kms=ds.close_kms-ds.open_kms
+				consumed_kms+=kms
+				hrs=ds.close_time-ds.open_time
+				consumed_hrs+=int(hrs.total_seconds()/3600)
+				if ds.parking_charges!=None:
+					invoiceline={}                                               
+					invoiceline['date']=utils.get_local_ts(ass.reporting_timestamp).strftime("%Y-%m-%d")
+					invoiceline['particulars']="Parking Charges"
+					invoiceline['product']="PARKINGCHRGS"
+					invoiceline['rate']=int(ds.parking_charges)
+					invoiceline['qty']=1
+					invoiceline['amount']=invoiceline['qty']*invoiceline['rate']
+					if invoiceline['amount']!=0:
+						invoice_lines.append(invoiceline)
+				if ds.toll_charges!=None:
+					invoiceline={}                                               
+					invoiceline['date']=utils.get_local_ts(ass.reporting_timestamp).strftime("%Y-%m-%d")
+					invoiceline['particulars']="Toll Charges"
+					invoiceline['product']="TOLLCHRGS"
+					invoiceline['rate']=int(ds.toll_charges)
+					invoiceline['qty']=1
+					invoiceline['amount']=invoiceline['qty']*invoiceline['rate']
+					if invoiceline['amount']!=0:
+						invoice_lines.append(invoiceline)
+			if consumed_kms>covered_kms:
+				extrakms=consumed_kms-covered_kms
+				invoiceline={}                   
+				invoiceline['date']=utils.get_local_ts(ass.reporting_timestamp).strftime("%Y-%m-%d")
+				invoiceline['particulars']="Extra Kms "+str(ds.dutyslip_id)
+				invoiceline['product']="EXTRAKMS"                               
+				invoiceline['rate']=20                                         
+				invoiceline['qty']=extrahrs                                     
+				invoiceline['amount']=invoiceline['qty']*invoiceline['rate']    
+				if invoiceline['amount']!=0:
+					invoice_lines.append(invoiceline)
+			if consumed_hrs>covered_hrs:
+				extrahrs=consumed_hrs-covered_hrs
+				invoiceline={}
+				invoiceline['date']=utils.get_local_ts(ass.reporting_timestamp).strftime("%Y-%m-%d")
+				invoiceline['particulars']="Extra Hours "+str(ds.dutyslip_id)
+				invoiceline['product']="EXTRAHRS"
+				invoiceline['rate']=100
+				invoiceline['qty']=extrahrs
 				invoiceline['amount']=invoiceline['qty']*invoiceline['rate']
 				if invoiceline['amount']!=0:
 					invoice_lines.append(invoiceline)
-			if ds.toll_charges!=None:
-				invoiceline={}                                               
-				invoiceline['date']=utils.get_local_ts(ass.reporting_timestamp).strftime("%Y-%m-%d")
-				invoiceline['particulars']="Toll Charges"
-				invoiceline['product']="TOLLCHRGS"
-				invoiceline['rate']=int(ds.toll_charges)
-				invoiceline['qty']=1
-				invoiceline['amount']=invoiceline['qty']*invoiceline['rate']
-				if invoiceline['amount']!=0:
-					invoice_lines.append(invoiceline)
-		if consumed_kms>covered_kms:
-			extrakms=consumed_kms-covered_kms
-			invoiceline={}                   
-			invoiceline['date']=utils.get_local_ts(ass.reporting_timestamp).strftime("%Y-%m-%d")
-			invoiceline['particulars']="Extra Kms "+str(ds.dutyslip_id)
-			invoiceline['product']="EXTRAKMS"                               
-			invoiceline['rate']=20                                         
-			invoiceline['qty']=extrahrs                                     
-			invoiceline['amount']=invoiceline['qty']*invoiceline['rate']    
-			if invoiceline['amount']!=0:
-				invoice_lines.append(invoiceline)
-		if consumed_hrs>covered_hrs:
-			extrahrs=consumed_hrs-covered_hrs
-			invoiceline={}
-			invoiceline['date']=utils.get_local_ts(ass.reporting_timestamp).strftime("%Y-%m-%d")
-			invoiceline['particulars']="Extra Hours "+str(ds.dutyslip_id)
-			invoiceline['product']="EXTRAHRS"
-			invoiceline['rate']=100
-			invoiceline['qty']=extrahrs
-			invoiceline['amount']=invoiceline['qty']*invoiceline['rate']
-			if invoiceline['amount']!=0:
-				invoice_lines.append(invoiceline)
+	except Exception as e:
+		sakhacabsxpal.logger.error("{} {}".format(type(e),str(e)))
 	invoice={}
 	invoice['invoicelines']=invoice_lines
-	invoice['cust_id']=to_settle[0].cust_id
+	if len(to_settle)>0:
+		invoice['cust_id']=to_settle[0].cust_id
 	invoice['taxes']=[]
 	'''
 	total=0
