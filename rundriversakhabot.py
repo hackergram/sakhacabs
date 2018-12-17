@@ -20,4 +20,6 @@ from sakhacabs.driversakhabot import *
 if __name__ == '__main__':
 	setup()
 	driversakhabot.updater.start_polling()
+	sakhacabsxpal.logger.info("Bot is trying to poll for new messages")
+  
 	driversakhabot.updater.idle()
