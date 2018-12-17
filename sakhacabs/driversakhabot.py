@@ -266,7 +266,7 @@ def received_dutyslip_information(bot, update, user_data):
     if field=="openkms":
 		try:
 			if utils.notnum.search(text):
-				update.message.reply_text("Numbers only for open kms")
+				update.message.reply_text("Numbers only for open kms\nOpen Kms?")
 				return DUTYSLIP_FORM
 			user_data['current_duty_slip'].open_kms=float(text)
 			user_data['current_duty_slip'].open_time=utils.get_utc_ts(update.message.date)
@@ -292,7 +292,7 @@ def received_dutyslip_information(bot, update, user_data):
 		try:
 			if utils.notnum.search(text):
 				markup = ReplyKeyboardMarkup(driver_base_keyboard)
-				update.message.reply_text("Numbers only for close kms")
+				update.message.reply_text("Numbers only for close kms\nClose Kms?")
 				return DUTYSLIP_OPEN
 			user_data['current_duty_slip'].close_kms=float(text)
 			if user_data['current_duty_slip'].close_kms<user_data['current_duty_slip'].open_kms:
@@ -312,7 +312,7 @@ def received_dutyslip_information(bot, update, user_data):
     if field=="parking":
 		try:
 			if utils.notnum.search(text):
-				update.message.reply_text("Numbers only for parking")
+				update.message.reply_text("Numbers only for parking\nParking Charges? Enter 0 if none")
 				return DUTYSLIP_FORM
 			
 			user_data['current_duty_slip'].parking_charges=float(text)
@@ -329,7 +329,7 @@ def received_dutyslip_information(bot, update, user_data):
     if field=="toll":
 		try:
 			if utils.notnum.search(text):
-				update.message.reply_text("Numbers only for toll")
+				update.message.reply_text("Numbers only for toll\nToll Charges? Enter 0 if none")
 				return DUTYSLIP_FORM
 			user_data['current_duty_slip'].toll_charges=float(text)
 			user_data['field']="payment_mode"
@@ -348,7 +348,10 @@ def received_dutyslip_information(bot, update, user_data):
 			logger.info("Payment mode is : " + text)
 			user_data['current_duty_slip'].payment_mode=text
 			logger.info("{}".format(user_data))
-			update.message.reply_text("Remarks?")
+			user_data['field']="amount"
+			
+			update.message.reply_text("Amount Received? Enter 0 if none")
+			
 			return DUTYSLIP_FORM
 		except Exception as e:
 			logger.error(str(e))
@@ -359,12 +362,13 @@ def received_dutyslip_information(bot, update, user_data):
     if field=="amount":
 		try:
 			if utils.notnum.search(text):
-				update.message.reply_text("Numbers only for amount")
+				update.message.reply_text("Numbers only for amount\n Amount Received? Enter 0 if none")
 				return DUTYSLIP_FORM
 			user_data['current_duty_slip'].amount=float(text)
 			user_data['field']="remarks"
 			logger.info("{}".format(user_data))
-			update.message.reply_text("Amount Received? Enter 0 if none")
+			update.message.reply_text("Remarks?")
+			
 			return DUTYSLIP_FORM
 		except Exception as e:
 			logger.error(str(e))
