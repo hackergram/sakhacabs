@@ -98,7 +98,9 @@ def open_duty_slip(bot,update,user_data):
 			replytext="Vehicle: {}\n".format(dutyslip.vehicle)+replytext
 		
 		for booking in dutyslip.assignment.bookings:
-			replytext=replytext+"\nBooking ID: "+booking.booking_id+"\nPassenger Detail: "+booking.passenger_detail+"\nDrop Localtion: "+booking.drop_location
+			replytext=replytext+"\nBooking ID: "+booking.booking_id+"\nPassenger Detail: "+booking.passenger_detail
+			if booking.drop_location:
+				replytext=replytext+"\nDrop Localtion: "+booking.drop_location #fixes 117
 		update.message.reply_text(replytext,
 				reply_markup=markup)
 		#return MENU_CHOICE

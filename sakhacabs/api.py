@@ -490,14 +490,17 @@ class AssignmentResource(Resource):
 				date_frm=None
 				date_to=None
 				cust_id=None
+				status=None
 				app.logger.info(search_keys)
 				if "date_frm" in search_keys and search_keys['date_frm']!="":
-					date_frm=datetime.datetime.strptime(search_keysr['date_frm'],"%Y-%m-%d %H:%M:%S")
+					date_frm=datetime.datetime.strptime(search_keys['date_frm'],"%Y-%m-%d %H:%M:%S")
 				if "date_to" in search_keys and search_keys['date_to']!="":
 					date_to=datetime.datetime.strptime(search_keys['date_to'],"%Y-%m-%d %H:%M:%S")
 				if "cust_id" in search_keys and search_keys['cust_id']!="0":
 					cust_id=search_keys['cust_id']
-				queryset=xpal.search_assignments(cust_id=cust_id,date_frm=date_frm,date_to=date_to)
+				if "status" in search_keys and search_keys['status']!="0":
+					status=search_keys['status']
+				queryset=xpal.search_assignments(cust_id=cust_id,date_frm=date_frm,date_to=date_to,status=status)
 				assignmentlist=[]
 				app.logger.info(queryset)
 				for assignment in queryset:
@@ -861,13 +864,20 @@ class InvoiceResource(Resource):
 				resp="{} {}".format(type(e),str(e))
 				status="error"			
 		elif command=="generateinvoice":
+			app.logger.info("Trying to generate invoice")
 			try:
+				#if respdict!=[]:
 				assignments=xpal.documents.Assignment.objects.filter(id__in=respdict)
-				resp=get_invoice(assignments)
+				app.logger.info(assignments)
+				resp=xpal.generate_invoice(assignments)
 				if type(resp)==dict:
-					status=="success"
+					status="success"
 				else:
-					status=="error"
+					status="error"
+				#else:
+				
+				#	status="error"
+				#	resp="No assignments in list provided"
 			except Exception as e:
 				app.logger.error("{} {}".format(type(e),str(e)))
 				resp="{} {}".format(type(e),str(e))
