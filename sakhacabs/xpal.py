@@ -930,8 +930,13 @@ def import_bookings(bookinglist):
 		for booking in bookinglist:
 				try:
 					b=new_booking(booking)
+					
 					if type(b)==list:
-						booking['booking_id']=b[0].booking_id
+						b=b[0]
+						b.pickup_timestamp=utils.get_utc_ts(b.pickup_timestamp)
+						b.save()
+						b.reload()
+						booking['booking_id']=b.booking_id
 					else:
 						booking['booking_id']=b
 				except Exception as e:
