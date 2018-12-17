@@ -296,22 +296,18 @@ def new_booking(respdict):
 	if "created_timestamp" in respdict.keys():
 		respdict.pop("created_timestamp")
 	
-	dupbookings=documents.Booking.objects.filter(cust_meta=respdict)
-	if len(dupbookings)>0:
-		dup=dupbookings.first()
-		sakhacabsxpal.logger.info("Duplicate booking {}".format(dup))
-		return "Duplicate of {}".format(dup.booking_id)
-	else:
-		try:
-			b=documents.Booking(booking_id=utils.new_booking_id(),**bookingdict)
-			sakhacabsxpal.logger.info("Saving cust-meta as: {}".format(respdict))
-			b.cust_meta=respdict
-			b.save()
-			b.reload()
-			sakhacabsxpal.logger.info("{}".format(b))
-			return [b]
-		except Exception as e:
-			return "{} {}".format(type(e),str(e))
+	
+	
+	try:
+		b=documents.Booking(booking_id=utils.new_booking_id(),**bookingdict)
+		sakhacabsxpal.logger.info("Saving cust-meta as: {}".format(respdict))
+		b.cust_meta=respdict
+		b.save()
+		b.reload()
+		sakhacabsxpal.logger.info("{}".format(b))
+		return [b]
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
 
 
 def update_booking(booking_id,respdict):
