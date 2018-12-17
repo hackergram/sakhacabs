@@ -83,7 +83,7 @@ class LocationUpdate(PPrintMixin,Document):
 			retval=retval+"\nCheck In\n"
 		else:
 			retval=retval+"\nCheck Out\n"
-		retval=retval+"Timestamp: "+self.timestamp.strftime("%Y-%m-%d %H:%M:%S")+"\n"
+		retval=retval+"Timestamp: "+utils.get_local_ts(self.timestamp).strftime("%Y-%m-%d %H:%M:%S")+"\n"
 		if self.location:
 			retval=retval+"Location: "+self.location+"\n"
 		if self.vehicle_id:
