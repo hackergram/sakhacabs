@@ -93,7 +93,7 @@ def open_duty_slip(bot,update,user_data):
 		dutyslip=documents.DutySlip.objects.with_id(update.message.text.split(" ")[1])
 		user_data['current_duty_slip']=dutyslip
 		logger.info("Curr DS ={}".format(dutyslip))
-		replytext="Reporting Time: "+dutyslip.assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S")+"\n"+"Reporting Location: "+dutyslip.assignment.reporting_location+"\nBookings:"
+		replytext="Reporting Time: "+utils.get_local_ts(dutyslip.assignment.reporting_timestamp).strftime("%Y-%m-%d %H:%M:%S")+"\n"+"Reporting Location: "+dutyslip.assignment.reporting_location+"\nBookings:"
 		if hasattr(dutyslip,"vehicle"):
 			replytext="Vehicle: {}\n".format(dutyslip.vehicle)+replytext
 		
@@ -129,7 +129,7 @@ def get_duty_slips(bot, update, user_data):
         for duty in user_data['duties']:
             logger.info("{}".format(duty.to_json()))
             #keytext=["Status: "+duty.status.upper()+" ID: "+unicode("..."+str(duty.id)[:10])+" "+unicode(duty.assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S"))]
-            keytext=["ID: "+unicode(duty.id)+" "+unicode(duty.assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S"))]
+            keytext=["ID: "+unicode(duty.id)+" "+unicode(utils.get_local_ts(duty.assignment.reporting_timestamp).strftime("%Y-%m-%d %H:%M:%S"))]
             updatekeys.append(keytext)
             logger.info("{}".format(updatekeys))
         keytext=[cancel_text]
