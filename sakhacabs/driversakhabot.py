@@ -347,7 +347,6 @@ def received_dutyslip_information(bot, update, user_data):
 		try:
 			logger.info("Payment mode is : " + text)
 			user_data['current_duty_slip'].payment_mode=text
-			user_data['field']="remarks"
 			logger.info("{}".format(user_data))
 			update.message.reply_text("Remarks?")
 			return DUTYSLIP_FORM
@@ -357,11 +356,13 @@ def received_dutyslip_information(bot, update, user_data):
 			update.message.reply_text("An error occurred, please start over",reply_markup=markup)
 			return MENU_CHOICE
 	
-    if field=="remarks":
+    if field=="amount":
 		try:
-			logger.info("Remarks : " + text)
-			user_data['current_duty_slip'].remarks=text
-			user_data['field']="amount"
+			if utils.notnum.search(text):
+				update.message.reply_text("Numbers only for amount")
+				return DUTYSLIP_FORM
+			user_data['current_duty_slip'].amount=float(text)
+			user_data['field']="remarks"
 			logger.info("{}".format(user_data))
 			update.message.reply_text("Amount Received? Enter 0 if none")
 			return DUTYSLIP_FORM
@@ -372,14 +373,13 @@ def received_dutyslip_information(bot, update, user_data):
 			return MENU_CHOICE
 	
     
-    if field=="amount":
+    
+    if field=="remarks":
 		try:
-			if utils.notnum.search(text):
-				update.message.reply_text("Numbers only for amount")
-				return DUTYSLIP_FORM
-			user_data['current_duty_slip'].amount=float(text)
-			user_data['field']="amount"
+			logger.info("Remarks : " + text)
+			user_data['current_duty_slip'].remarks=text
 			logger.info("{}".format(user_data))
+	
 			markup = ReplyKeyboardMarkup(dutyslip_submit_keyboard)
 			#logger.info("{}".format(facts_to_str(user_data['current_duty_slip'].to_json())))
 			update.message.reply_text("Trip Details - \n{}\n Submit Trip?".format(repr(user_data['current_duty_slip'])),reply_markup=markup)
