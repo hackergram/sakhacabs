@@ -747,8 +747,8 @@ var sakha={
         if (driverdict.driver_id.length>4){
             http.setRequestHeader("Content-type", "application/json");
             http.onreadystatechange = function() {//Call a function when the state changes.
-            if(http.readyState == 4 && http.status == 200) {
-                    //alert(http.responseText);
+            if(http.readyState == 4 ) {
+                if(http.status == 200){
                     response=JSON.parse(http.responseText)
                     console.log(response)
                     if(response.status==="success"){
@@ -762,11 +762,12 @@ var sakha={
                         alert("Failed to Save Driver!")
                          document.getElementById("driverstatus").innerHTML="<span style='color:red'>"+response.resp+"</span>" 
                     }
-                    
                 }
                 else{
                     alert("Network Error Saving Driver")
                 }
+                }
+                
             }
             http.send(params);
         }
