@@ -101,6 +101,7 @@ def open_duty_slip(bot,update,user_data):
 			replytext=replytext+"\nBooking ID: "+booking.booking_id+"\nPassenger Detail: "+booking.passenger_detail
 			if booking.drop_location:
 				replytext=replytext+"\nDrop Localtion: "+booking.drop_location #fixes 117
+		#replytext=replytext+"\n"+repr(dutyslip)
 		update.message.reply_text(replytext,
 				reply_markup=markup)
 		#return MENU_CHOICE
@@ -222,7 +223,7 @@ def submit_location_update(bot, update, user_data):
         location_update.save()
         update.message.reply_text(u"Saved!"
                                   u"{}"
-                                  u"What would you like to do".format(facts_to_str(user_data)), reply_markup=markup)
+                                  u"What would you like to do".format(repr(location_update)), reply_markup=markup)
     except Exception as e:
         logger.error("Errored "+str(e))
         update.message.reply_text(u"Could Not Submit, Try again"
@@ -268,7 +269,7 @@ def received_dutyslip_information(bot, update, user_data):
 				update.message.reply_text("Numbers only for open kms")
 				return DUTYSLIP_FORM
 			user_data['current_duty_slip'].open_kms=float(text)
-			user_data['current_duty_slip'].open_time=update.message.date
+			user_data['current_duty_slip'].open_time=utils.get_utc_ts(update.message.date)
 			user_data['current_duty_slip'].status="open"
 			user_data['current_duty_slip'].save()
 			user_data['current_duty_slip'].assignment.status="open"
@@ -278,7 +279,7 @@ def received_dutyslip_information(bot, update, user_data):
 				booking.save()
 			user_data['field']="closekms"
 			logger.info("{}".format(user_data))
-			markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard)
+			markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard,one_time_keyboard=True)
 			update.message.reply_text("Trip in progress. Stop Trip?",reply_markup=markup)
 			return DUTYSLIP_OPEN
 		except Exception as e:
@@ -297,7 +298,7 @@ def received_dutyslip_information(bot, update, user_data):
 			if user_data['current_duty_slip'].close_kms<user_data['current_duty_slip'].open_kms:
 				update.message.reply_text("Close kms cant be less than open kms, please start over")
 				return DUTYSLIP_OPEN
-			user_data['current_duty_slip'].close_time=update.message.date
+			user_data['current_duty_slip'].close_time=utils.get_utc_ts(update.message.date)
 			user_data['field']="parking"
 			logger.info("{}".format(user_data))
 			update.message.reply_text("Parking Charges? Enter 0 if none")
@@ -333,7 +334,7 @@ def received_dutyslip_information(bot, update, user_data):
 			user_data['current_duty_slip'].toll_charges=float(text)
 			user_data['field']="payment_mode"
 			logger.info("{}".format(user_data))
-			markup=ReplyKeyboardMarkup(payment_mode_keyboard)
+			markup=ReplyKeyboardMarkup(payment_mode_keyboard,one_time_keyboard=True)
 			update.message.reply_text("Payment Mode?",reply_markup=markup)
 			return DUTYSLIP_FORM
 		except Exception as e:
@@ -346,6 +347,20 @@ def received_dutyslip_information(bot, update, user_data):
 		try:
 			logger.info("Payment mode is : " + text)
 			user_data['current_duty_slip'].payment_mode=text
+			user_data['field']="remarks"
+			logger.info("{}".format(user_data))
+			update.message.reply_text("Remarks?")
+			return DUTYSLIP_FORM
+		except Exception as e:
+			logger.error(str(e))
+			markup = ReplyKeyboardMarkup(driver_base_keyboard)
+			update.message.reply_text("An error occurred, please start over",reply_markup=markup)
+			return MENU_CHOICE
+	
+    if field=="remarks":
+		try:
+			logger.info("Remarks : " + text)
+			user_data['current_duty_slip'].remarks=text
 			user_data['field']="amount"
 			logger.info("{}".format(user_data))
 			update.message.reply_text("Amount Received? Enter 0 if none")
@@ -356,17 +371,18 @@ def received_dutyslip_information(bot, update, user_data):
 			update.message.reply_text("An error occurred, please start over",reply_markup=markup)
 			return MENU_CHOICE
 	
+    
     if field=="amount":
 		try:
 			if utils.notnum.search(text):
 				update.message.reply_text("Numbers only for amount")
 				return DUTYSLIP_FORM
 			user_data['current_duty_slip'].amount=float(text)
-			#user_data['field']="amount"
+			user_data['field']="amount"
 			logger.info("{}".format(user_data))
 			markup = ReplyKeyboardMarkup(dutyslip_submit_keyboard)
 			#logger.info("{}".format(facts_to_str(user_data['current_duty_slip'].to_json())))
-			update.message.reply_text("Trip Details - {} Submit Trip?".format(repr(user_data['current_duty_slip'])),reply_markup=markup)
+			update.message.reply_text("Trip Details - \n{}\n Submit Trip?".format(repr(user_data['current_duty_slip'])),reply_markup=markup)
 			return DUTYSLIP_OPEN
 		except Exception as e:
 			logger.error(str(e))
@@ -463,7 +479,7 @@ def stop_duty(bot, update, user_data):
 def submit_duty(bot, update, user_data):
     markup = ReplyKeyboardMarkup(driver_base_keyboard)
     try:
-        sakhacabsxpal.logger.info("Submitting Duty {}".format(user_data['current_duty_slip'].to_json()))
+        sakhacabsxpal.logger.info("Submitting Duty {}".format(user_data['current_duty_slip']))
         user_data['current_duty_slip'].status="closed"
         user_data['current_duty_slip'].save()
         update.message.reply_text("Trip Saved",reply_markup=markup)        
