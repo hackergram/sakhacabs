@@ -31,10 +31,10 @@ def validate_dict(dictionary, required_keys=[],string_keys=[],mobile_nums=[],ema
 	for key in mobile_nums:
 		if key in dictionary.keys():
 			if len(dictionary[key])>12:
-				validation['message']="{} too long a mobile number".format(bookingdict['passenger_mobile'])
+				validation['message']="{} too long a mobile number".format(dictionary['passenger_mobile'])
 				validation['status']=False
 			if notnum.search(dictionary[key]):
-				validation['message']="{} non numeric in mobile number".format(bookingdict['passenger_mobile'])
+				validation['message']="{} non numeric in mobile number".format(dictionary['passenger_mobile'])
 				validation['status']=False
 	return validation
 
