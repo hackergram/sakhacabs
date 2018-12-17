@@ -464,7 +464,7 @@ def get_duties_for_driver(driver_id):
 		return d
 
 def update_dutyslip(dsid,respdict):
-	dutyslip=xpal.documents.DutySlip.objects.with_id(docid)
+	dutyslip=documents.DutySlip.objects.with_id(dsid)
 	if dutyslip==None:
 		return "No dutyslip with that id found"
 	try:

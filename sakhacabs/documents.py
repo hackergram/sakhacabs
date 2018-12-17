@@ -10,7 +10,7 @@ from mongoengine import Document, fields, DynamicDocument
 import datetime
 import bson,json
 from flask_mongoengine import QuerySet
-
+from sakhacabs import utils
 
 class PPrintMixin(object):
     def __str__(self):
@@ -77,6 +77,22 @@ class LocationUpdate(PPrintMixin,Document):
     checkin=fields.BooleanField(required=True,default=True)
     vehicle_id=fields.StringField()
     handoff=fields.StringField()
+    def __repr__(self):
+		retval=""
+		if self.checkin:
+			retval=retval+"\nCheck In\n"
+		else:
+			retval=retval+"\nCheck Out\n"
+		retval=retval+"Timestamp: "+self.timestamp.strftime("%Y-%m-%d %H:%M:%S")+"\n"
+		if self.location:
+			retval=retval+"Location: "+self.location+"\n"
+		if self.vehicle_id:
+			retval=retval+"Vehicle: "+str(self.vehicle_id)+"\n"
+		if self.handoff:
+			retval=retval+"Handoff: "+self.handoff+"\n"
+			
+		return retval
+		
     
 class Assignment(PPrintMixin,Document):
     cust_id=fields.StringField()
@@ -109,11 +125,24 @@ class DutySlip(PPrintMixin,Document):
     status=fields.StringField(default="new")
     payment_mode=fields.StringField(default=None)
     remarks=fields.StringField(default=None)
-    
+    def __repr__(self):
+		if self.open_time:
+			ot=utils.get_local_ts(self.open_time).strftime("%Y-%m-%d %H:%M")
+		else:
+			ot="Not Set"
+		if self.close_time:
+			ct=utils.get_local_ts(self.close_time).strftime("%Y-%m-%d %H:%M")
+		else:
+			ct="Not Set"
+		if ot!="Not Set" and ct!="Not Set":
+			td=round(float((self.close_time-self.open_time).total_seconds()/3600),1)
+		else:
+			td=0.0
+		return "DutySlip #{}\nOpen Time: {}\nClose Time: {}\nTotal Hours: {}\nOpen KMs: {}\nClose KMs: {}\nTotal KMs: {}\nParking Charges: {}\nToll Charges: {}\nAmount: {}\nRemarks: {}".format(self.dutyslip_id,ot,ct,td,self.open_kms,self.close_kms,self.close_kms-self.open_kms,self.parking_charges,self.toll_charges,self.amount,self.remarks)
 class Invoice(PPrintMixin,DynamicDocument):
 	invoice_id=fields.StringField(unique=True,required=True)
 	cust_id=fields.StringField(required=True)
 	invoice_date=fields.DateTimeField()
 	invoicelines=fields.ListField(fields.DictField())
-	taxes=fields.ListField(fields.DictField)
+	taxes=fields.ListField(fields.DictField())
 	status=fields.StringField(default="new")

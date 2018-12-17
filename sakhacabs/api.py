@@ -840,7 +840,7 @@ class InvoiceResource(Resource):
             resp=xpal.documents.Invoice.objects(invoice_id=invoice_id)
         else:
             resp=xpal.documents.Invoice.objects.all()
-        if type(resp)==list and resp!=[]:
+        if type(resp)!=str and resp!=[]:
 			status="success"
         else:
 			status="error"
