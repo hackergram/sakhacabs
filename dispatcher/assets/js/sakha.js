@@ -764,6 +764,9 @@ var sakha={
                     }
                     
                 }
+                else{
+                    alert("Network Error Saving Driver")
+                }
             }
             http.send(params);
         }
