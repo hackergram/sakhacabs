@@ -233,8 +233,17 @@
                             //Send the proper header information along with the request
                             http.setRequestHeader("Content-type", "application/json");
                             http.onreadystatechange = function() {//Call a function when the state changes.
-                                if(http.readyState == 4 && http.status == 200) {
-                                     response=JSON.parse(http.responseText)
+                                if(http.readyState == 4) {
+                                    
+                                    if(http.status == 200){
+                                       response=JSON.parse(http.responseText)
+                                     if(response.status==="success"){
+                                         alert("Successfully saved booking")
+                                     }
+                                    else{
+                                        alert("Failed to save booking \n"+response.resp)
+                                    }
+                                    window.location.reload(true);response=JSON.parse(http.responseText)
                                      if(response.status==="success"){
                                          alert("Successfully saved booking")
                                      }
@@ -242,6 +251,11 @@
                                         alert("Failed to save booking \n"+response.resp)
                                     }
                                     window.location.reload(true);
+                                    }
+                                    else{
+                                        alert("Uncaught Error in Creating Booking")
+                                    }
+                                     
                                 }
                             }
                             http.send(params);

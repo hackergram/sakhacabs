@@ -538,6 +538,7 @@ var sakha={
                 dutyslips[i].vehicle=null
             }
         }
+        
         console.log(assignmentdict)
         var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
         var url = "http://"+serverip+":5000/assignment";
@@ -546,6 +547,7 @@ var sakha={
 
         //Send the proper header information along with the request
         http.setRequestHeader("Content-type", "application/json");
+        
         http.onreadystatechange = function() {//Call a function when the state changes.
             if(http.readyState == 4 && http.status == 200) {
                 response=JSON.parse(http.responseText)
