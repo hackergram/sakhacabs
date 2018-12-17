@@ -67,6 +67,7 @@ class Booking(PPrintMixin,DynamicDocument):
     status=fields.StringField(default="new")
     remarks=fields.StringField()
     assignment=fields.StringField(default=None)
+    cust_meta=fields.DictField(unique=True)
 class Product(PPrintMixin,DynamicDocument):
     product_id=fields.StringField(unique=True,required=True)
     

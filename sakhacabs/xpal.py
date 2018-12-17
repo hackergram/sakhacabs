@@ -286,8 +286,7 @@ def validate_booking_dict(bookingdict,new=True):
 
 def new_booking(respdict):
 	bookingdict={}
-	sakhacabsxpal.logger.info("Creating new booking")
-	sakhacabsxpal.logger.info("{}".format(respdict))
+	sakhacabsxpal.logger.info("Creating new booking from dictionary\n{}".format(respdict))
 	for key in respdict.keys():
 		if key in ["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","drop_location","booking_channel","num_passengers"]:
 			bookingdict[key]=respdict[key]
@@ -297,14 +296,15 @@ def new_booking(respdict):
 	if "created_timestamp" in respdict.keys():
 		respdict.pop("created_timestamp")
 	
-	sakhacabsxpal.logger.info("{}".format(respdict))
-	dupbookings=documents.Booking.objects(cust_meta=respdict)
+	dupbookings=documents.Booking.objects.filter(cust_meta=respdict)
 	if len(dupbookings)>0:
-		sakhacabsxpal.logger.info("Duplicate booking {}".format(dupbookings))
-		return "Duplicate of {}".format(dupbookings[0].booking_id)
+		dup=dupbookings.first()
+		sakhacabsxpal.logger.info("Duplicate booking {}".format(dup))
+		return "Duplicate of {}".format(dup.booking_id)
 	else:
 		try:
 			b=documents.Booking(booking_id=utils.new_booking_id(),**bookingdict)
+			sakhacabsxpal.logger.info("Saving cust-meta as: {}".format(respdict))
 			b.cust_meta=respdict
 			b.save()
 			b.reload()
@@ -440,17 +440,17 @@ def search_assignments(cust_id=None,date_frm=None,date_to=None,status=None):
 	return assignments
 
 def delete_assignment(assignmentid):
-	if len(xpal.documents.Assignment.objects.with_id(assignment))>0:
-		dutyslips=xpal.documents.DutySlip.objects(assignment=xpal.documents.Assignment.objects.with_id(assignmentid))
-		app.logger.info("Deleting DutySlips {}".format(dutyslips.to_json()))
+	if len(documents.Assignment.objects.with_id(assignmentid))>0:
+		dutyslips=documents.DutySlip.objects(assignment=documents.Assignment.objects.with_id(assignmentid))
+		sakhacabsxpal.logger.info("Deleting DutySlips {}".format(dutyslips.to_json()))
 		dutyslips.delete()
-		bookings=xpal.documents.Booking.objects(assignment=assignmentid)
-		app.logger.info("Removing Assignment reference from  Bookings {}".format(bookings.to_json()))
+		bookings=documents.Booking.objects(assignment=assignmentid)
+		sakhacabsxpal.logger.info("Removing Assignment reference from  Bookings {}".format(bookings.to_json()))
 		
 		for booking in bookings:
 			booking.assignment=None
 			booking.save()
-		xpal.documents.Assignment.objects.with_id(assignment).delete()
+		documents.Assignment.objects.with_id(assignmentid).delete()
 		return []
 	else:
 		return "Assignment with that ID does not exist"
