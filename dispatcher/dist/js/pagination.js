@@ -25,7 +25,7 @@ const paginationApp = new Vue({
                     config: { headers: {'Content-Type': 'application/json' }}
             })
             .then(response => {
-                
+                console.log(response.data)
                 this.posts = response.data.resp;
                 this.posts = this.posts.sort(function(a,b){
                   // Turn your strings into dates, and then subtract them

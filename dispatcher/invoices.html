@@ -16,15 +16,29 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
-   
+     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" src="assets/css/select.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" src="assets/css/responsive.dataTables.min.css">
+
     
     
     <style>
         .row {
             padding: .25em;
         }
+        
+        .card .card-body {
+
+            padding: 0.5rem 5px;
+            position: relative;
+
+        }
     </style>
     <link href="dist/css/pagination-style.css" rel="stylesheet">
+
+  
     <link rel="stylesheet" type="text/css" href="assets/css/sakha.css">
 
     
@@ -44,7 +58,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
     <script type="text/javascript" src="https://rawgit.com/tempusdominus/bootstrap-4/master/build/js/tempusdominus-bootstrap-4.js"></script>
     <script src="assets/js/sakha.js"></script>
-    <main role="main" id="pagination-app">
+    
         <div class="container">
             <div class="row">
                 <div class="page-header clearfix">
@@ -55,22 +69,22 @@
                 </div>
             </div>
             <div class="row">
-                <div id="system_details" class="form-group clearfix">
+                <div id="system_details" class="col-lg-12">
                     <div class="row">
                         <div class="col-sm-12 small-cols">
                             <label>System Details</label>
                         </div>
                         </div>
                     <div class="row">
-                        <div class="col-sm-6 ">
+                        <div class="col-sm-3">
                             <select name="cust_id" id="cust_id" class="form-control">
                                 <option value="0" selected="selected">Select Customer</option>
                             </select>
                         </div>
-                        <div class="col-sm-6 " id="cust_details"></div>
+                        <div class="col-sm-9 " id="cust_details"></div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-6 small-cols date-picker-wrap">
+                        <div class="col-sm-4 small-cols date-picker-wrap">
                             <div class="form-group">
                                 <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
                                     <input type="text" id="date_frm" class="form-control datetimepicker-input" placeholder="Date From" data-target="#datetimepicker1" />
@@ -80,7 +94,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6 small-cols date-picker-wrap">
+                        <div class="col-sm-4 small-cols date-picker-wrap">
                             <div class="form-group">
                                 <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
                                     <input type="text" id="date_to" class="form-control datetimepicker-input" placeholder="Date To" data-target="#datetimepicker2" />
@@ -88,6 +102,18 @@
                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 small-cols date-picker-wrap">
+                            <div class="form-group">
+                                <select class="form-control" id="status">
+                                     <option value="all">ALL</option>
+                                    <option value="verified">VERIFIED</option>
+                                    <option value="cancelled">CANCELLED</option>
+                                    <option value="closed">CLOSED</option>
+                                    <option value="open">OPEN</option>
+                                    <option value="new">NEW</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -100,8 +126,11 @@
                     </div>
                 </div>
             </div>
+           
             <div class="row">
+                
                 <div class="col-lg-6">
+                     <!--<main role="main" id="pagination-app">
                     <div class="album py-2 bg-light">
                         <div class="container" v-cloak>
                             <div class="row">
@@ -113,7 +142,6 @@
                             <div class="row">
                                 <div class="col-md-6" v-for="post in displayedPosts">
                                     <div class="card mb-4 box-shadow post-cards">
-                                    <!-- <img class="card-img-top" src="dist/img/placeholder-blue-800x600px.png" alt="Card image cap"> -->
                                     <div class="card-body">
                                         <div class="container">
                                             <div class="row">
@@ -179,15 +207,126 @@
                           </div>
                         </div>
                     </div>
-                 
+                   </main>-->
+                <main role="main" id="pagination-app">
+
+                                        <div class="container" v-cloak>
+                                            
+                                           <div class="row">
+                                               <div class="col-sm-4 small-cols">
+                                                    <p class="text-right">Sort By: </p >
+                                                </div>
+                                                <div class="col-sm-4 small-cols">
+                                                    <select id="assign_sort" name="assign_sort" class="form-control" onchange="sortAssignments()">
+                                                        <option value="created_timestamp">Created Time</option>
+                                                        <option value="reporting_timestamp" selected="selected">Reporting Time</option>
+                                                    </select>
+                                                </div>
+                                               <div class="col-sm-4 small-cols">
+                                                    <select id="assign_order" name="assign_order" class="form-control" onchange="sortAssignments()">
+                                                        <option value="ascending" selected="selected">Ascending</option>
+                                                        <option value="descending">Descending</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6" v-for="post in displayedPosts">
+                                                  <div class="card mb-4 box-shadow post-cards">
+                                                    <!-- <img class="card-img-top" src="dist/img/placeholder-blue-800x600px.png" alt="Card image cap"> -->
+                                                    <div class="card-header" v-bind:class="'card-header-'+post.assignment.status">
+                                                                <h4 class="card-title">{{post.assignment.cust_id.toUpperCase()}}</h4>
+                                                                <h5 class="card-title"><b>RT: </b>  {{moment(post.assignment.reporting_timestamp.$date).format('MMM DD YYYY, h:mm:ss a')}}</h5>
+                                                                <h5 class="card-title"><b>CT: </b> {{moment(post.assignment.created_timestamp.$date).format('MMM DD YYYY, h:mm:ss a')}}</h5>
+                                                                <h5><b>Status: </b>{{post.assignment.status}}</h5>
+                                                            </div>
+
+                                                      <div class="card-body">
+                                                        <div class="container">
+                                                            <div class="row">
+                                                               <div class="btn-group">
+
+                                                                <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                                                        @click="sakha.deleteAssignment(post.assignment._id.$oid)">Delete</button>
+
+                                                                <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'cancelled')">Cancel</button>
+                                                                    <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'closed')">Mark Closed</button>
+                                                                <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'new')">Mark New</button>
+                                                                <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'open')">Mark Open</button>
+                                                                </div>
+                                                            </div>
+                                                              <div class="row">
+                                                              <input type="checkbox" v-bind:id="post.assignment._id.$oid+'-checked'" @change="toggleassignment(post.assignment._id.$oid)" :checked="(assignments.includes(post.assignment._id.$oid))">
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-12">
+                                                                    <div class="row">
+                                                                    <h5 class="card-title">Bookings</h5>
+                                                                    </div>
+                                                                    <div class="row" v-for="booking in post.assignment.bookings">
+                                                                        <div class="col-lg-12">
+                                                                      <div class="card">
+                                                                          <div v-bind:class="'card-header-'+booking.status">{{booking.booking_id}}</div>
+                                                                          <div class="card-body">
+                                                                              <b>Pickup Time:</b> <span>{{moment(booking.pickup_timestamp.$date).format('MMM DD YYYY, h:mm:ss a')}}</span>
+                                                                              <br><b> Passenger Detail:</b><span>{{booking.passenger_detail}}</span> 
+
+                                                                        </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    </div>
+                                                                </div>  
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-12">
+                                                                    <div class="row">
+                                                                    <h5 class="card-title">Duty Slips</h5>
+                                                                    </div>
+                                                            <div class="row" v-for="dutyslip in post.dutyslips">
+                                                                    <div class="col-lg-12">
+                                                                    <div class="card">
+                                                                        <div v-bind:class="'card-header-'+dutyslip.status">{{dutyslip.dutyslip_id}}</div>
+                                                                        <div class="card-body">
+
+                                                                            <b>Driver: </b><span>{{dutyslip.driver}}</span>
+                                                                            <b>Vehicle: </b><span>{{dutyslip.vehicle}}</span>
+                                                                          <div v-if="dutyslip.open_time && dutyslip.open_kms && dutyslip.close_time && dutyslip.close_kms">
+                                                                            <br><b>Open Time: </b><span>{{moment(dutyslip.open_time.$date).format('MMMM Do YYYY, h:mm:ss a')}}</span>
+                                                                            <br><b>KMS: </b><span>{{dutyslip.close_kms-dutyslip.open_kms}}</span>
+                                                                            <b>HRS: </b><span>{{moment(dutyslip.close_time.$date).diff(moment(dutyslip.open_time.$date),"hours",true).toFixed(2)}}</span>
+                                                                              </div>
+                                                                        </div>
+                                                                    </div>    
+                                                                        </div>
+
+                                                            </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                  </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="clearfix btn-group col-md-2 offset-md-5">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" v-if="page != 1" @click="page--"> << </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" v-for="pageNumber in pages.slice(page-1, page+5)" @click="page = pageNumber"> {{pageNumber}} </button>
+                                            <button type="button" @click="page++" v-if="page < pages.length" class="btn btn-sm btn-outline-secondary"> >> </button>
+                                          </div>
+
+                                        </div>
+
+                                     </main>      
+
                 </div>
+              
+                
                 <div class="col-lg-6">
                     <div class="album py-2 bg-light">
                         
                        <div class="row">
                                 <div class="col-md-12">
                                     <h3>Current Invoice</h3>
-                                     <button class="btn btn-sm btn-outline-secondary" onclick="updateInvoice()">Update</button>    
+                                     <button class="btn btn-sm btn-outline-secondary" onclick="clearInvoice()">Clear</button>    
                                     
                                     </div>
                             </div>
@@ -197,17 +336,31 @@
                                 <!-- <img class="card-img-top" src="dist/img/placeholder-blue-800x600px.png" alt="Card image cap"> -->
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-sm-12 small-cols date-picker-wrap">
+                                        <div class="col-sm-3">
+                                            <select name="cust_id2" id="cust_id2" class="form-control">
+                                                <option value="0" selected="selected">Select Customer</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-9 " id="cust_details2"></div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6 small-cols date-picker-wrap">
                                             <div class="form-group">
                                                 <div class="input-group date" id="datetimepicker3" data-target-input="nearest">
-                                                    <input type="text" id="date_frm" class="form-control datetimepicker-input" placeholder="Invoice Date" data-target="#datetimepicker3" />
+                                                    <input type="text" id="invoice_date" class="form-control datetimepicker-input" placeholder="Invoice Date" data-target="#datetimepicker3" />
                                                     <div class="input-group-append" data-target="#datetimepicker3" data-toggle="datetimepicker">
                                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                     </div>
                                                 </div>
                                             </div>
+                                           
                                         </div>
+                                         <div class="col-sm-6">
+                                            
+                                            <input type="text" readonly id="invoice_id" placeholder="New Invoice">
+                                            </div>
                                     </div>
+                                    
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="card-body" id="invoicetable">
@@ -215,12 +368,14 @@
                                                      <div class="col-lg-12">
                                                     <table id="invoicelines" class="display" style="width:100%">
                                                         <thead>
+                                                            <th style="width: 2%">Select</th>
                                                             <th>Date</th>
                                                             <th >Particulars</th>
                                                             <th >Product</th>
                                                             <th >Rate</th>
                                                             <th >Quantity</th>
                                                             <th >Amount</th>
+                                                            
                                                         </thead>
                                                         <tbody></tbody>
                                                     </table>
@@ -231,6 +386,20 @@
                                                     <div class="col-lg-12 px-5"><p class="text-right" id="invoicetotal"></p>
                                                     </div>
                                                 
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                    <input type="text" id="taxname" size="10" placeholder="Tax Name"><input type="text" size="5" id="taxrate" placeholder="Rate">%
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <button onclick="addTax()">Add Tax</button>
+                                                        <button onclick="clearTax()">Clear Taxes</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        
+                                                    </div>
                                                 </div>
                                             </div>
                                          
@@ -246,75 +415,233 @@
                                 </div>
                             </div>
                         </div>
-                        
+                              
+                       <div class="row">
+                                <div class="col-md-12">
+                                    
+                                     <button class="btn btn-sm btn-outline-secondary" onclick="clearInvoice()">Clear</button>    
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="saveInvoice()">Save Invoice</button>    
+                                    </div>
+                            </div>
                     </div>
                 </div>
             </div>  
-            <div class="row">
-
-
-            
-            </div>
+        
+               <div class="row" style="min-height: 500px">
+                      <div class="col-lg-12 col-md-12">
+                        <div class="card">
+                            <div class="card-header card-header-primary">
+                              <h4 class="card-title">Invoices</h4>
+                              <p class="card-category">Current Invoices</p>
+                            </div>
+                            <div class="card-body table-responsive">
+                               <table class="table table-striped" id="invoicelist">
+                                    <thead>
+                                         <th >Action</th>
+                                        <th >Invoice ID</th>
+                                        <th >Date</th>
+                                        <th >Custome ID</th>
+                                        <th >Amount</th>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
         </div>
-    </main>
+   
     <script>
         var serverip="192.168.56.101"
         var assignments=[]
         var assperpage=2
         var sort_field="created_timestamp"
         var sort_order="ascending"
-        var current_invoice={}
+        var current_invoice={"cust_id":"","invoice_lines":[],"taxes":[]}
         var search_query={}
         var table = null;
         var updateInvoice=function(){
+            var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+            var url = "http://"+serverip+":5000/invoice/generateinvoice";
+            var params = JSON.stringify(assignments);
+            console.log(url)
+            http.open("POST", url, true);
 
+            //Send the proper header information along with the request
+            http.setRequestHeader("Content-type", "application/json");
+            http.onreadystatechange = function() {//Call a function when the state changes.
+                if(http.readyState == 4 && http.status == 200) {
+                    /*$("#invoice").empty()
+                    $("#invoice").append(http.responseText);*/
+                    current_invoice=JSON.parse(http.responseText).resp
+                    console.log(current_invoice) //$("#assignmentdetail").text(http.responseText)
+                    render_current_invoice()
+
+                }
+            }
+            console.log(assignments)
+            http.send(params)
+        }
+        updateInvoice()
+        var clearInvoice=function(){
+            assignments=[]
+            current_invoice={"cust_id":"","invoice_lines":[],"taxes":[]}
+            render_current_invoice()
+        }
+        var render_current_invoice=function(){
+            
+            // if(current_invoice.invoicelines.length>0){
+                if(table!=null){ 
+                    table.destroy()
+                     $("#invoicelines").empty()
+                        }
+                        console.log("trying to make table")
+                     table=$('#invoicelines').DataTable(
+                     {
+                        data: current_invoice.invoicelines,
+                        select: true,
+                           columnDefs: [ {
+                            orderable: false,
+                            className: 'select-checkbox',
+                            targets:   0
+                        } ],
+                          select: {
+                            style:    'os',
+                            selector: 'td:first-child'
+                        },
+                        columns: [
+                                //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
+                              {width:"2%", defaultContent:""},    
+                            {title:"Date", width:"10%",data: 'date',defaultContent:"None"},
+                                {title:"Particulars",width:"43%", data: 'particulars',defaultContent:"None",render: function(data){if(data){return data}}},
+                                 {title:"Product",width:"10%", data: 'product',defaultContent:"None",render: function(data){if(data){return data}}},
+
+                                {title:"Rate",width:"10%", data: 'rate',defaultContent:"None",render: function(data){if(data){return data}}},
+                                {title:"Qty",width:"10%", data: 'qty', defaultContent:"None", render: function(data){if(data){return data}}},
+                                {title:"Amount",width:"15%", data: 'amount', defaultContent:"None", render: function(data){if(data){return data}}},
+                               
+                            ]
+
+
+                     });
+          //  }
+            updateinvoicetotal()
+            if (current_invoice.hasOwnProperty("invoice_id")){
+                $("#invoice_id").val(current_invoice.invoice_id)
+            }
+
+        }
+        var saveInvoice=function(){
+            if ($("#invoice_date").val()===""){
+                alert("No Date Provided")
+            }
+            else{
+                current_invoice.invoice_date=$("#invoice_date").val()
+          
+            console.log(current_invoice)
+            t=confirm("Really Save Invoice")
+            if(t===true){           
+                
                 var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
-                var url = "http://"+serverip+":5000/invoice";
-                var params = JSON.stringify(assignments);
-                console.log(url)
+                var url = "http://"+serverip+":5000/invoice"
+                var params = JSON.stringify(current_invoice);
                 http.open("POST", url, true);
-
-                //Send the proper header information along with the request
                 http.setRequestHeader("Content-type", "application/json");
                 http.onreadystatechange = function() {//Call a function when the state changes.
-                    if(http.readyState == 4 && http.status == 200) {
-                        /*$("#invoice").empty()
-                        $("#invoice").append(http.responseText);*/
-                        current_invoice=JSON.parse(http.responseText).resp
-                            console.log(current_invoice) //$("#assignmentdetail").text(http.responseText)
-                        if(table!=null){ 
-                        table.destroy()
-                         $("#invoicelines").empty()
-                            }
-                         table=$('#invoicelines').DataTable(
-                         {
-                            data: current_invoice.invoicelines,
-                            columns: [
-                                    //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
-                                    {title:"Date", width:"15%",data: 'date',defaultContent:"None"},
-                                    {title:"Particulars",width:"35%", data: 'particulars',defaultContent:"None",render: function(data){if(data){return data}}},
-                                     {title:"Product",width:"10%", data: 'product',defaultContent:"None",render: function(data){if(data){return data}}},
-
-                                    {title:"Rate",width:"10%", data: 'rate',defaultContent:"None",render: function(data){if(data){return data}}},
-                                    {title:"Qty",width:"10%", data: 'qty', defaultContent:"None", render: function(data){if(data){return data}}},
-                                    {title:"Amount",width:"20%", data: 'amount', defaultContent:"None", render: function(data){if(data){return data}}}
-                                ]
-
-
-                         });
-                        $("#invoicetotal").empty()
-                        $("#invoicetotal").append("<b>Total: </b>"+ current_invoice.total)
+                if(http.readyState == 4 && http.status == 200) {
+                    if (JSON.parse(http.responseText).status==="success"){
+                        alert("Successfully saved invoice!")
+                    current_invoice=JSON.parse(http.responseText).resp[0]
+                    console.log(current_invoice) //$("#assignmentdetail").text(http.responseText)
+                    render_current_invoice()
+                    }
+                    else{
+                        alert("Failed to save invoice : "+ JSON.parse(http.responseText).resp)
                     }
                 }
-                http.send(params);
-
             }
+            console.log(assignments)
+            http.send(params)
+
+           }
+                  }
+            
+        }
+        var clearTax=function(){
+            current_invoice.taxes=[]
+            render_current_invoice()
+        }
+        var addTax=function(){
+            taxdict={}
+            taxdict.name=$("#taxname").val()
+            taxdict.rate=parseFloat($("#taxrate").val())/100
+            $("#taxname").val(null)
+            $("#taxrate").val(null)
+            if (isNaN(taxdict.rate)){
+            
+                alert("Bad value!")
+            }
+            else{
+            current_invoice.taxes.push(taxdict)
+            render_current_invoice()
+            }
+        }
+        
+        var getinvoicetotal=function(invoice){
+            totals={}
+            total=0.0
+            grand_total=0.0
+            if(invoice.hasOwnProperty("invoicelines")){    
+                for (i=0;i<invoice.invoicelines.length;i++){
+                    total=total+invoice.invoicelines[i].amount
+                }
+            }
+            grand_total=total
+            for (i=0;i<invoice.taxes.length;i++){
+                tax=invoice.taxes[i]
+                console.log(tax)
+                grand_total=grand_total+total*tax.rate
+            }
+            totals.total=total
+            totals.grand_total=grand_total
+            return totals
+        }
+        var updateinvoicetotal=function(){
+           
+            totals=getinvoicetotal(current_invoice)
+            
+            $("#invoicetotal").empty()
+            $("#invoicetotal").append("<b>Total: </b>"+ totals.total)
+             for (i=0;i<current_invoice.taxes.length;i++){
+                 tax=current_invoice.taxes[i]
+                $("#invoicetotal").append("<br><b>"+tax.name+"("+tax.rate*100+"%): </b>"+totals.total*tax.rate)
+             }
+            $("#invoicetotal").append("<br><b>Grand Total: </b>"+ totals.grand_total)
+            
+        }
+        var addInvoiceLine=function(line){
+            if(current_invoice.invoicelines.includes(line)===false){
+                    current_invoice.invoicelines.push(line)
+                }
+                console.log(current_invoice)
+                updateInvoice()
+        }
+        var removeInvoiceLine=function(line){
+            if(current_invoice.invoicelines.includes(line)===true){
+                   var index = current_invoice.invoicelines.indexOf(assid);
+                        if (index > -1) {
+                          current_invoice.invoicelines.splice(index, 1);
+                        }
+                }
+                console.log(current_invoice.invoicelines)
+                updateInvoice()
+        }
         var addassignment=function(assid){
                 if(assignments.includes(assid)===false){
                     assignments.push(assid)
                 }
                 console.log(assignments)
-
+                updateInvoice()
             } 
         var removeassignment=function(assid){
                 if(assignments.includes(assid)===true){
@@ -324,7 +651,7 @@
                         }
                 }
                 console.log(assignments)
-
+                updateInvoice()
             }  
         var addAll=function(){
 
@@ -338,13 +665,34 @@
                 search_query.date_frm=$("#date_frm").val()
                 search_query.date_to=$("#date_to").val()
                 search_query.cust_id=$("#cust_id").val()
-                //console.log(search_query)
+                search_query.status=$("#status").val()
+                if (search_query.status==="all"){
+                    search_query.status=null
+                }
+                console.log(search_query)
                 paginationApp.getPosts()
             }
+          var sortAssignments=function(){
+            sort_order=$("#assign_order").val()
+            sort_field=$("#assign_sort").val()
+            console.log("Re-getting assignments")
+            paginationApp.getPosts()
+        }
+        var toggleassignment=function(assid){
+              var eventsrc = $("#"+assid+"-checked")
+            console.log(eventsrc[0].checked, assid)
+            if(eventsrc[0].checked===true){
+                addassignment(assid)
+            }else{
+                removeassignment(assid)
+                
+            }
+        }
         var get_cust_list=function(){
 
                 $.getJSON('http://'+serverip+':5000/customer',function(data){
                     //console.log(data.resp)
+                    
                     for (i=0;i<data.resp.length;i++){
                         $("#cust_id").append('<option>' + data.resp[i].cust_id + '</option>');
                     }
@@ -355,12 +703,80 @@
                         $("#cust_data").remove()
                         $("#cust_details").append("<div id='cust_data'>"+this.value+"</div>")
                     } );
+                     for (i=0;i<data.resp.length;i++){
+                        $("#cust_id2").append('<option>' + data.resp[i].cust_id + '</option>');
+                    }
+                    $("#cust_id2").append('<option>retail</option>');
+
+                    $("#cust_id2").on("change", function(event) { 
+                        //console.log(this.value)
+                        $("#cust_data2").remove()
+                        $("#cust_details2").append("<div id='cust_data2'>"+this.value+"</div>")
+                    } );
                 })
 
         }
-        get_cust_list();  
+        get_cust_list(); 
+        var fillInvoices = function(){
+        console.log("Filling bookings data");
+        /*
+        $.getJSON('http://'+serverip+':5984/sakhacabs/_design/user/_view/drivers_check_in', function(data) {
+            myItems = data['rows'];
+            console.log(myItems);
+        });
+        */
+        var table2=$('#invoicelist').DataTable({
+            select: true,
+            ajax: {
+                url: 'http://'+serverip+':5000/invoice',
+                dataSrc: 'resp'
+            },
+            columns: [
+                //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
+                { width:"5%",data: null,render: function(data){
+                    invoice_id='"'+data.invoice_id+'"'
+                    return "<button onclick='deleteInvoice("+invoice_id+")'>Delete</button>"
+                   
+                }},
+                {width:"20%", data: 'invoice_id', defaultContent:"None", render: function(data){
+                    if(data){
+                        invoice_id='"'+data+'"'
+                        var invoiceid="<a class='nav-link' onclick='editBooking("+invoice_id+")'>"+data+"</a>"
+                    
+                        return invoiceid
+                        
+                    
+                    }
+                }},
+                
+                { width:"25%",data: 'invoice_date',defaultContent:"None",render: function(data){
+                    
+                    //console.log(data)    
+                    return moment(data.$date).format("YYYY-MMM-DD HH:mm:ss")
+                    }},
+                {width:"25%", data: 'cust_id',defaultContent:"None",render: function(data){if(data){
+                    return data
+                    }}},
+                {width:"25%", data: null, defaultContent:"None", render: function(data){if(data){
+                    totals=getinvoicetotal(data)
+                    
+                    return totals.grand_total
+                }}}
+            ],
+            scrollY: 200,
+            scrollX:true
+        });
+        setInterval( function () {
+                table2.ajax.reload( null, false ); // user paging is not reset on reload
+        }, 30000 );
+       
+        
+    }
+        
+        fillInvoices()
     </script>
     <script src="dist/js/pagination.js"></script>
+    
     <script>
         $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
         $('#datetimepicker2').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
