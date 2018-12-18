@@ -47,13 +47,13 @@ class DriverResource(Resource):
 		elif docid!=None:
 			resp=[xpal.documents.documents.Driver.objects.with_id(docid)]
 		elif tgid!=None:
-			resp=xpal.documents.Driver.objects(tgid=tgid)
+			resp=list(xpal.documents.Driver.objects(tgid=tgid))
 		elif mobile_num!=None:
-			resp=xpal.documents.Driver.objects(mobile_num=mobile_num)
+			resp=list(xpal.documents.Driver.objects(mobile_num=mobile_num))
 		elif driver_id!=None:
-			resp=xpal.documents.Driver.objects(driver_id=driver_id)
+			resp=list(xpal.documents.Driver.objects(driver_id=driver_id))
 		else:
-			resp=xpal.documents.Driver.objects.all()
+			resp=list(xpal.documents.Driver.objects.all())
 		if type(resp)==list and resp!=[]:
 			status="success"
 		else:
@@ -142,9 +142,9 @@ class VehicleResource(Resource):
         elif docid!=None:
             resp=[xpal.documents.Vehicle.objects.with_id(docid)]
         elif vehicle_id!=None:
-            resp=xpal.documents.Vehicle.objects(vehicle_id=vehicle_id)
+            resp=list(xpal.documents.Vehicle.objects(vehicle_id=vehicle_id))
         else:
-            resp=xpal.documents.Vehicle.objects.all()
+            resp=list(xpal.documents.Vehicle.objects.all())
         if type(resp)==list and resp!=[]:
 			status="success"
         else:
