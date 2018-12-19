@@ -4,11 +4,10 @@
 
 ## Prerequisites:
 
-'''
-mongod (community edition)
+
+'''mongod (community edition)
 apache2
-xetrapal 
-'''
+xetrapal'''
 
 ## first clone the repository to your system :
 
