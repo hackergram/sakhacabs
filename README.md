@@ -11,7 +11,7 @@ xetrapal
 
 ## first clone the repository to your system :
 
-
+'''clone
 git clone https://github.com/hackegram/sakhacabs
 
 '''
