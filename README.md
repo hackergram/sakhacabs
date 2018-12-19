@@ -1,12 +1,64 @@
-# Sakha Cabs Booking and Billing System
-[Sakha Cabs](http://sakhaconsultingwings.com/ "Sakha Cabs Homepage") operates a taxi service in multiple Indian cities. The taxi service is operated by women for women. The requirement for the current project is to develop a system that can consolidate and streamline the booking and billing process for the taxi service and also integrate with a customer relationship management system (CRM) for the three verticals that Sakha Cabs currently offers to customers :
-1. Long term chauffeur placement 
-2. Chauffeur on Call
-3. Individual rides
-
-Project being developed in open source by [हैकरgram](http://hackergram.org "हैकरgram Home Page") team members
-
-[Requirements document](https://docs.google.com/document/d/1DTBryBIFLBzfttRF7hFAj4w6Pp_xgRu8raRjgPQueZ0/)
+#readme.md for sakhacabs(kindly install Xetrapal first)
+======
 
 
-## 
+##Prerequisites:
+======
+
+###mongod (community edition)
+###apache2
+###xetrapal 
+
+
+##first clone the repository to your system :
+======
+
+git clone [I'm an inline-style link] (https://github.com/hackegram/sakhacabs)
+
+
+##install the dependencies:
+======
+
+cd sakhacabs/
+sudo -H pip install -r requirements.txt
+sudo -H pip install configparser
+sudo -H pip install oauth2client
+
+
+##create the symbolic link of the file in /opt directory:
+======
+
+sudo ln -s /home/username/sakhacabs /opt/sakhacabs
+
+
+##copy the folder sakhacabs-appdata to /opt:
+======
+
+
+##edit the config files of the sakhacabs-appdata and make the changes:
+======
+
+ /opt/sakhacabs-appdata in place of /home/arjun/sakhacabs 
+
+
+##now, create the symbolic link of the file bookingweb:
+======
+
+sudo ln -s /opt/sakhacabs/bookingweb /var/www/html/bookingweb
+
+
+##Now deploy the ip address:
+======
+
+cd /home/username/sakhacabs
+ sh deploy.sh 192.168.56.101 <your ip address>
+
+
+##Now, go to sakhacabs and run the dispatcher:
+======
+
+cd /home/username/location/sakhacabs
+python dispatcherapi.py
+
+
+
