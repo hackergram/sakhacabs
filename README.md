@@ -5,9 +5,11 @@
 ## Prerequisites:
 
 
-'mongod (community edition)
+'''python
+mongod (community edition)
 apache2
-xetrapal'
+xetrapal
+'''
 
 ## first clone the repository to your system :
 
