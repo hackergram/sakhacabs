@@ -11,21 +11,20 @@ xetrapal
 
 ## first clone the repository to your system :
 
-'''clone
+```
 git clone https://github.com/hackegram/sakhacabs
 
-'''
-
+```
 
 ## install the dependencies:
 
 cd sakhacabs/
 
-'''
+```
 sudo -H pip install -r requirements.txt
 sudo -H pip install configparser
 sudo -H pip install oauth2client
-'''
+```
 
 
 create the symbolic link of the file in /opt directory:
