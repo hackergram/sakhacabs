@@ -49,7 +49,8 @@ sudo -H pip install flask_restful flask_cors
 
 ## now, create the symbolic link of the file bookingweb:
 
-```sudo ln -s /opt/sakhacabs/bookingweb /var/www/html/bookingweb     
+```
+sudo ln -s /opt/sakhacabs/bookingweb /var/www/html/bookingweb     
 ```
 
 ## now, create the symbolic link of the file sakhadispatcher:
