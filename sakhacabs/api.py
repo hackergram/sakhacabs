@@ -367,6 +367,9 @@ class BookingResource(Resource):
 					status="error"
 				else:
 					status="success"
+				for booking in resp:
+					if "error" in booking['booking_id'].lower():
+						status="error"
 			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
