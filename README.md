@@ -67,7 +67,8 @@ sudo ln -s /opt/sakhacabs/bookingweb /var/www/html/bookingweb
 
 ## Now, go to sakhacabs and run the dispatcher:
 
-```sudo service mongod start
+```
+sudo service mongod start
 cd /home/username/location/sakhacabs
 python dispatcherapi.py
 ```
