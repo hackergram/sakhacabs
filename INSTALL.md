@@ -1,4 +1,4 @@
-# README for sakhacabs
+# INSTALLATION for sakhacabs
 (kindly install Xetrapal first)
 ---
 
@@ -37,10 +37,12 @@ sudo -H pip install flask_restful flask_cors
 ```sudo ln -s /home/username/sakhacabs /opt/sakhacabs```
 
 
-## copy the file sakhacabs-appdata to /opt:
+## copy the folder sakhacabs-appdata to /opt:
 
-``` since the file sakhacabs-appdata contains some senstive data so it cant be shared on the repository, if you want to access the file you can mail me on gaursurya33@protonmail.com```
+ We are still actively developing this project. The ```sakhacabs-appdata``` folder has the configuration files. We have not yet created an instruction document for creating the config files. 
+If you would like to test the project, we can provide a sample config on demand. Please write to gaursurya33@protonmail.com`and listener@hackergram.org and file an issue here to let us know you've asked!
 
+```
 
 ## edit the config files of the sakhacabs-appdata and make the changes:
 
