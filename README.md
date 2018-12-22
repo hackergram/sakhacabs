@@ -62,12 +62,13 @@ sudo ln -s /opt/sakhacabs/bookingweb /var/www/html/bookingweb
 ## Now deploy the ip address:
 
 ```cd /home/username/sakhacabs
-   sh deploy.sh 192.168.56.101  /your/ IP/ address/
+   sh deploy.sh 192.168.56.101  <your IP address>
  ``` 
 
 ## Now, go to sakhacabs and run the dispatcher:
 
-```cd /home/username/location/sakhacabs
+```sudo service mongod start
+cd /home/username/location/sakhacabs
 python dispatcherapi.py
 ```
 
