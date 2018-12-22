@@ -49,9 +49,7 @@ sudo -H pip install flask_restful flask_cors
 
 ## now, create the symbolic link of the file bookingweb and sakhadispatcher:
 
-```sudo ln -s /opt/sakhacabs/bookingweb /var/www/html/bookingweb
-
-   sudo ln -s /opt/sakhacabs/dispatcher /var/www/html/sakhadispatcher
+```sudo ln -s /opt/sakhacabs/bookingweb /var/www/html/bookingweb      sudo ln -s /opt/sakhacabs/dispatcher /var/www/html/sakhadispatcher
 ```
  ## Now deploy the ip address:
 
