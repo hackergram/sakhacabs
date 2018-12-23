@@ -142,6 +142,8 @@ a { text-decoration: none }
                                     <thead>
                                         <th>Selected</th>
                                            <th>product ID</th>
+                                           <th>Hours</th>
+                                           <th>Kms</th>
 
 
                                     </thead>
@@ -231,6 +233,9 @@ var parse_rows=function(rows){
 
 var process_output=function(){
   var product_id_map=$("#product_id_map").val()
+  var hrs_map=$("#hrs_map").val()
+  var kms_map=$("#kms_map").val()
+
   var rows=[]
   dic=JSON.parse(global_output)
  // try{
@@ -241,6 +246,19 @@ var process_output=function(){
             productlist=parsed_output;
           for (i=0;i<productlist.length;i++){
               productlist[i]['product_id']=Mustache.render(product_id_map,productlist[i])
+              hrs=Mustache.render(hrs_map,productlist[i])
+              console.log(hrs)
+
+              productlist[i]['hrs']=parseFloat(hrs)
+              kms=Mustache.render(kms_map,productlist[i])
+              productlist[i]['kms']=parseFloat(kms)
+              if(isNaN(productlist[i]['hrs'])){
+                productlist[i]['hrs']=0.0
+              }
+              if(isNaN(productlist[i]['kms'])){
+                productlist[i]['kms']=0.0
+              }
+
               console.log(productlist[i])
             }
         }
@@ -407,6 +425,8 @@ var do_file = (function() {
                 {width:"5%", defaultContent:""},
 
                 {data: 'product_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: 'hrs', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: 'kms', defaultContent:"None", render: function(data){if(data){return data}}},
 
             ],
             scrollY: 400
