@@ -437,10 +437,12 @@
                             <div class="card-header card-header-primary">
                               <h4 class="card-title">Invoices</h4>
                               <p class="card-category">Current Invoices</p>
+                                <button id="deleteselectedinvoices">Delete Selected</button>
                             </div>
                             <div class="card-body table-responsive">
                                <table class="table table-striped" id="invoicelist">
                                     <thead>
+                                      <th>Select</th>
                                          <th >Action</th>
                                         <th >Invoice ID</th>
                                         <th >Date</th>
@@ -493,7 +495,7 @@
             render_current_invoice()
         }
         var render_current_invoice=function(){
-
+              $("#invoice_id").val(current_invoice['invoice_id'])
             // if(current_invoice.invoicelines.length>0){
                 if(table!=null){
                     table.destroy()
@@ -731,11 +733,22 @@
         */
         var table2=$('#invoicelist').DataTable({
             select: true,
+            columnDefs: [ {
+                           orderable: false,
+                           className: 'select-checkbox',
+                           targets:   0
+                       } ],
+            select: {
+                           style:    'os',
+                           selector: 'td:first-child'
+                       },
             ajax: {
                 url: 'http://'+serverip+':5000/invoice',
                 dataSrc: 'resp'
             },
             columns: [
+              {width:"5%", defaultContent:""},
+
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
                 { width:"5%",data: null,render: function(data){
                     invoice_id='"'+data.invoice_id+'"'
@@ -773,7 +786,37 @@
         setInterval( function () {
                 table2.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
+        $("#deleteselectedinvoices").on("click", function(){
+          var delvids=[]
+          selectedinvoices=$("#invoicelist").DataTable().rows({selected: true }).data()
+          for (i=0;i<selectedinvoices.length;i++){
+              delvids.push(selectedinvoices[i].invoice_id)
+          }
+          console.log("Deleting invoices")
+          console.log(delvids)
+          params=JSON.stringify(delvids)
+          var url = "http://"+serverip+":5000/invoice/bulkdelete";
+          var http = new XMLHttpRequest();
+          http.open("POST", url, true);
+          http.setRequestHeader("Content-type", "application/json");
+          http.onreadystatechange = function() {//Call a function when the state changes.
+              if(http.readyState == 4 && http.status == 200) {
+                  response=JSON.parse(http.responseText)
+                  console.log(response)
+                  if (response.status==="success"){
+                      alert("Successfully deleted invoices!")
+                      window.location.reload(false);
 
+                  }
+                  else{
+                      alert("Something went wrong!")
+                  }
+
+              }
+
+          }
+          http.send(params);
+        })
 
     }
 

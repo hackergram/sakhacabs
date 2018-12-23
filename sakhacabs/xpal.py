@@ -475,10 +475,13 @@ def update_dutyslip(dsid,respdict):
 def delete_dutyslip(dsid):
 	if len(documents.DutySlip.objects.with_id(dsid))>0:
 		ds=documents.DutySlip.objects.with_id(dsid)
-		assignment=ds.assignment
+		assignment=ds.assignment.id
 		ds.delete()
+		sakhacabsxpal.logger.info("Checking if this is the last booking for assignment {}".format(assignment))
 		if len(documents.DutySlip.objects(assignment=assignment))==0:
-			documents.Assignment.objecs.with_id(assignment).delete()
+			sakhacabsxpal.logger.info("Deleting assignments")
+			#documents.Assignment.objecs.with_id(assignment).delete()
+			delete_assignment(assignment)
 		return []
 	else:
 		return "No Dutyslip by that ID"

@@ -101,7 +101,7 @@ class DriverResource(Resource):
 						xpal.delete_driver(driver_id)
 					resp="Deleted drivers {}".format(respdict)
 					status="success"
-			except:
+			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		else:
@@ -219,7 +219,7 @@ class VehicleResource(Resource):
 						xpal.delete_vehicle(vehicle_id)
 					resp="Deleted vehicles {}".format(respdict)
 					status="success"
-			except:
+			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		else:
@@ -437,7 +437,7 @@ class BookingResource(Resource):
 						xpal.delete_booking(booking_id)
 					resp="Deleted Bookings {}".format(respdict)
 					status="success"
-			except:
+			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		else:
@@ -777,7 +777,7 @@ class CustomerResource(Resource):
 						xpal.delete_customer(cust_id)
 					resp="Deleted customers"
 					status="success"
-			except:
+			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		else:
@@ -897,7 +897,7 @@ class ProductResource(Resource):
 						xpal.delete_product(product_id)
 					resp = "Deleted products"
 					status = "success"
-			except:
+			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		else:
@@ -956,6 +956,7 @@ class InvoiceResource(Resource):
 					app.logger.error("{} {}".format(type(e),str(e)))
 					resp="{} {}".format(type(e),str(e))
 					status="error"
+
 			else:
 				resp="Unrecognized command"
 				status="error"
@@ -1006,6 +1007,19 @@ class InvoiceResource(Resource):
 				#	resp="No assignments in list provided"
 			except Exception as e:
 				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		elif command=="bulkdelete":
+			try:
+				if type(respdict)!=list:
+					status="error"
+					resp="Bulk Delete Expects a list of invoice ids"
+				else:
+					for invoice_id in respdict:
+						xpal.delete_invoice(invoice_id)
+					resp = "Deleted invoices"
+					status = "success"
+			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		else:
