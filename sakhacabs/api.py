@@ -86,7 +86,7 @@ class DriverResource(Resource):
 				else:
 					status="success"
 				for driver in resp:
-					if "error" in driver['driver_id'].lower():
+					if "error" in driver['status'].lower():
 						status="error"
 			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
@@ -99,6 +99,8 @@ class DriverResource(Resource):
 				else:
 					for driver_id in respdict:
 						xpal.delete_driver(driver_id)
+					resp="Deleted drivers {}".format(respdict)
+					status="success"
 			except:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
@@ -420,7 +422,7 @@ class BookingResource(Resource):
 				else:
 					status="success"
 				for booking in resp:
-					if "error" in booking['booking_id'].lower():
+					if "error" in booking['status'].lower():
 						status="error"
 			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
