@@ -65,7 +65,7 @@ var sakha={
          $("#exportbookings").on("click",function(){
              console.log("exporing bookings")
             $.getJSON('http://'+serverip+':5000/booking/export',function(data){
-                window.open(data.resp[0],"_blank")
+                window.open(data.resp,"_blank")
             })
         })
 
@@ -98,7 +98,7 @@ var sakha={
         }, 30000 );
           $("#exportlocupdates").on("click",function(){
             $.getJSON('http://'+serverip+':5000/locupdate/export',function(data){
-                window.open(data.resp[0],"_blank")
+                window.open(data.resp,"_blank")
             })
         })
     },
@@ -150,7 +150,7 @@ var sakha={
         $("#exportdrivers").on("click",function(){
             $.getJSON('http://'+serverip+':5000/driver/export',function(data){
                 console.log(data.resp)
-                window.open(data.resp[0],"_blank")
+                window.open(data.resp,"_blank")
             })
         })
     },

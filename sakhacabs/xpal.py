@@ -346,7 +346,8 @@ def delete_booking(booking_id):
 			if assignment!=None:
 				if len(documents.Booking.objects(assignment=assignment))==0:
 					sakhacabsxpal.logger.info("No more bookings in assignment. Deleting!")
-					documents.Assignment.objects.with_id(assignment).delete()
+					#documents.Assignment.objects.with_id(assignment).delete()
+					delete_assignment(assignment)
 				else:
 					sakhacabsxpal.logger.info("Updating assignment reporting time to first booking!")
 					assignmentobj=documents.Assignment.objects.with_id(assignment)
@@ -948,7 +949,7 @@ def import_drivers(driverlist):
 	try:
 		for driver in driverlist:
 			try:
-				if validate_driver_dict(driver)==True:
+				if validate_driver_dict(driver)['status']==True:
 					d=create_driver(driver)
 					if type(d)==list:
 						d=d[0]
@@ -958,7 +959,7 @@ def import_drivers(driverlist):
 					else:
 						driver['status']=d
 				else:
-					driver['status']=validate_driver_dict(driver)
+					driver['status']=validate_driver_dict(driver)['message']
 			except Exception as e:
 				driver['status']="{} {}".format(type(e),str(e))
 		return driverlist
