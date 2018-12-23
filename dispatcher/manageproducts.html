@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Manage Products</title>
+<title>Manage products</title>
 <link rel="stylesheet" href="dist/css/mdi-icons.css">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
@@ -59,13 +59,12 @@ a { text-decoration: none }
 
 <div class="container">
   <div class="row">
-    <div class="card-header"><h2>Manage Products</h2>  <a href="../sakhadispatcher" id="backlink">(Back)</a></div>
+    <div class="card-header"><h2>Manage products</h2>  <a href="../sakhadispatcher" id="backlink">(Back)</a></div>
 
   </div>
   <div class="row">
-      <div class="card-header"><h3>Import Bulk Products </h3></div>
+      <div class="card-header"><h3>Import Bulk products </h3></div>
   </div>
-
 <div class="row">
     <div class="col-md-4">
         <div class="row">
@@ -89,17 +88,19 @@ a { text-decoration: none }
             </div>
 
         </div>
-        <div class="row"><div class="col-md-12">Customer ID: <select name="customer" id="customer"></select><br/></div>
-        </div>
-        <div class="row"> <div class="col-md-12">Product ID: <select name="product" id="product"></select><br/></div>
-       </div>
         <div class="row"><div class="col-md-12">
-        Pickup Timestamp Template: <input type="text" size="30" id="pickup_timestamp_map"><br>
-        Passenger Detail Template: <input type="text" size="30" id="passenger_detail_map"><br>
-        Pickup Location Template: <input type="text" size="30" id="pickup_location_map"><br>
-        Drop Location Template: <input type="text"  size="30" id="drop_location_map"><br>
+        product ID Template: <input type="text" size="30" id="product_id_map"><br>
+          </div>
             </div>
-            </div>
+          <div class="row"><div class="col-md-12">
+            Hours: <input type="text" size="30" id="hrs_map"><br>
+              </div>
+                </div>
+            <div class="row"><div class="col-md-12">
+                Kms: <input type="text" size="30" id="kms_map"><br>
+                  </div>
+                    </div>
+
         <div class="row">
 
     <button id="process" onclick="process_output()">Process!</button>
@@ -131,23 +132,20 @@ a { text-decoration: none }
   <div class="row" style="min-height: 500px">
                       <div class="col-lg-12 col-md-12">
                         <div class="card">
-                            <div class="card-header card-header-primary">
-                              <h4 class="card-title">Bookings</h4>
-                              <p class="card-category">Current Bookings</p>
+                          <div class="card-header card-header-primary">
+                              <h4 class="card-title">products</h4>
+                              <p class="card-category">Current products</p>
+                              <button id="deleteselectedproducts">Delete Selected</button>
                             </div>
                             <div class="card-body table-responsive">
-                               <table class="table table-striped" id="bookinglist">
+                               <table class="table table-striped" id="productlist">
                                     <thead>
                                         <th>Selected</th>
-                                           <th>Created Time</th>
+                                           <th>product ID</th>
+                                           <th>Hours</th>
+                                           <th>Kms</th>
 
-                                        <th>Pickup Time</th>
-                                        <th >Pickup Location</th>
-                                        <th >Drop Location</th>
-                                        <th >Passenger Detail</th>
-                                        <th >Customer ID</th>
-                                        <th >Booking ID</th>
-                                        <th >Assignment ID</th>
+
                                     </thead>
                                     <tbody></tbody>
                                 </table>
@@ -180,39 +178,17 @@ var XW = {
 	worker: './assets/js/jsxlsx/xlsxworker.js'
 };
 
-var get_cust_list=function(){
-     $.getJSON('http://'+serverip+':5000/customer',function(data){
-                console.log(data.resp)
-                for (i=0;i<data.resp.length;i++){
-                    $("#customer").append('<option>' + data.resp[i].cust_id + '</option>');
-                }
-                $("#customer").append('<option>retail</option>');
-            })
-}
 
-
-var get_prod_list=function(){
-     $.getJSON('http://'+serverip+':5000/product',function(data){
-                console.log(data.resp)
-                for (i=0;i<data.resp.length;i++){
-                    $("#product").append('<option>' + data.resp[i].product_id + '</option>');
-                }
-                $("#product").append('<option>SINGLTRP</option>');
-            })
-}
 var global_wb;
 var global_output;
-var bookinglist=[];
 var serverip="192.168.56.101"
-var bookinglist=[]
-get_cust_list();
-    get_prod_list();
+var productlist=[]
 var submit_output=function(){
     var OUT = document.getElementById('out');
-    console.log("Submitting bookings")
-    console.log(bookinglist)
-    params=JSON.stringify(bookinglist)
-    var url = "http://"+serverip+":5000/booking/import";
+    console.log("Submitting products")
+    console.log(productlist)
+    params=JSON.stringify(productlist)
+    var url = "http://"+serverip+":5000/product/import";
     var http = new XMLHttpRequest();
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/json");
@@ -221,7 +197,7 @@ var submit_output=function(){
             response=JSON.parse(http.responseText)
             console.log(response)
             if (response.status==="success"){
-                alert("Successfully imported bookings!")
+                alert("Successfully imported products!")
 
 
             }
@@ -256,42 +232,38 @@ var parse_rows=function(rows){
 
 
 var process_output=function(){
+  var product_id_map=$("#product_id_map").val()
+  var hrs_map=$("#hrs_map").val()
+  var kms_map=$("#kms_map").val()
 
+  var rows=[]
+  dic=JSON.parse(global_output)
+ // try{
+      for (sheet in dic){
+          rows=rows.concat(dic[sheet])
+          parsed_output=parse_rows(rows)
+          console.log(parsed_output)
+            productlist=parsed_output;
+          for (i=0;i<productlist.length;i++){
+              productlist[i]['product_id']=Mustache.render(product_id_map,productlist[i])
+              hrs=Mustache.render(hrs_map,productlist[i])
+              console.log(hrs)
 
-    //var pickup_timestamp_map="{{Date}} {{Flight Time}}"
-    var pickup_timestamp_map=$("#pickup_timestamp_map").val()
-    //var pickup_location_map="Intl Airport, Flight # {{Pick-Up}}"
-    var pickup_location_map=$("#pickup_location_map").val()
-    //var passenger_details_map="{{Booking ID}}\n{{Trip Code}}\n{{Passengers}}"
-    var passenger_detail_map=$("#passenger_detail_map").val()
-    var drop_location_map=$("#drop_location_map").val()
+              productlist[i]['hrs']=parseFloat(hrs)
+              kms=Mustache.render(kms_map,productlist[i])
+              productlist[i]['kms']=parseFloat(kms)
+              if(isNaN(productlist[i]['hrs'])){
+                productlist[i]['hrs']=0.0
+              }
+              if(isNaN(productlist[i]['kms'])){
+                productlist[i]['kms']=0.0
+              }
 
-    var product_id=$("#product").val()
-    var booking_channel="bulk"
-    var cust_id=$("#customer").val()
-    var rows=[]
-    dic=JSON.parse(global_output)
-   // try{
-        for (sheet in dic){
-            rows=rows.concat(dic[sheet])
-            parsed_output=parse_rows(rows)
-            console.log(parsed_output)
-
-            bookinglist=parsed_output;
-            for (i=0;i<bookinglist.length;i++){
-                bookinglist[i]['passenger_detail']=Mustache.render(passenger_detail_map,bookinglist[i])
-                bookinglist[i]['pickup_location']=Mustache.render(pickup_location_map,bookinglist[i])
-                bookinglist[i]['product_id']=product_id
-                bookinglist[i]['pickup_timestamp']=Mustache.render(pickup_timestamp_map,bookinglist[i])
-                bookinglist[i]['booking_channel']=booking_channel
-                bookinglist[i]['cust_id']=cust_id
-                bookinglist[i]['drop_location']=Mustache.render(drop_location_map,bookinglist[i])
-
-                console.log(bookinglist[i])
+              console.log(productlist[i])
             }
         }
-        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(bookinglist[0],2,2);
-	   else HTMLOUT.innerText = JSON.stringify(bookinglist[0],2,2);
+        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(productlist[0],2,2);
+	   else HTMLOUT.innerText = JSON.stringify(productlist[0],2,2);
     //}
     //catch(err){
     //    alert("Something went wrong!")
@@ -323,42 +295,7 @@ var process_wb = (function() {
 		});
 		return JSON.stringify(result, 2, 2);
 	};
-/*
-	var to_csv = function to_csv(workbook) {
-		var result = [];
-		workbook.SheetNames.forEach(function(sheetName) {
-			var csv = X.utils.sheet_to_csv(workbook.Sheets[sheetName]);
-			if(csv.length){
-				result.push("SHEET: " + sheetName);
-				result.push("");
-				result.push(csv);
-			}
-		});
-		return result.join("\n");
-	};
 
-	var to_fmla = function to_fmla(workbook) {
-		var result = [];
-		workbook.SheetNames.forEach(function(sheetName) {
-			var formulae = X.utils.get_formulae(workbook.Sheets[sheetName]);
-			if(formulae.length){
-				result.push("SHEET: " + sheetName);
-				result.push("");
-				result.push(formulae.join("\n"));
-			}
-		});
-		return result.join("\n");
-	};
-
-	var to_html = function to_html(workbook) {
-		HTMLOUT.innerHTML = "";
-		workbook.SheetNames.forEach(function(sheetName) {
-			var htmlstr = X.write(workbook, {sheet:sheetName, type:'string', bookType:'html'});
-			HTMLOUT.innerHTML += htmlstr;
-		});
-		return "";
-	};
-*/
 	return function process_wb(wb) {
 		global_wb = wb;
 		var output = "";
@@ -392,16 +329,6 @@ var process_wb = (function() {
 
 var setfmt = window.setfmt = function setfmt() { if(global_wb) process_wb(global_wb); };
 
-/*
-var b64it = window.b64it = (function() {
-	var tarea = document.getElementById('b64data');
-	return function b64it() {
-		if(typeof console !== 'undefined') console.log("onload", new Date());
-		var wb = X.read(tarea.value, {type:'base64', WTF:false});
-		process_wb(wb);
-	};
-})();
-*/
 var do_file = (function() {
 	var rABS = typeof FileReader !== "undefined" && (FileReader.prototype||{}).readAsBinaryString;
 	var domrabs = document.getElementsByName("userabs")[0];
@@ -467,19 +394,21 @@ var do_file = (function() {
 	function handleFile(e) { do_file(e.target.files); }
 	xlf.addEventListener('change', handleFile, false);
 })();
+
+
     table=null
-    var updateassignmentbookinglist = function(){
+    var updateassignmentproductlist = function(){
      if(table!=null)
      {
          table.destroy()
      }
      else
      {
-        var table=$('#bookinglist').DataTable({
+        var table=$('#productlist').DataTable({
             select: true,
             responsive: true,
             ajax: {
-                url: 'http://'+serverip+':5000/booking',
+                url: 'http://'+serverip+':5000/product',
                 dataSrc: 'resp'
             },
              columnDefs: [ {
@@ -494,30 +423,49 @@ var do_file = (function() {
             columns: [
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
                 {width:"5%", defaultContent:""},
-                { width:"10%",data: 'created_timestamp',defaultContent:"None",render: function(data){
 
-                    return new moment(data['$date']).format('YYYY-MM-DD HH:mm')
-                }},
-                { width:"10%",data: 'pickup_timestamp',defaultContent:"None",render: function(data){
+                {data: 'product_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: 'hrs', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: 'kms', defaultContent:"None", render: function(data){if(data){return data}}},
 
-                    return new moment(data['$date']).format('YYYY-MM-DD HH:mm')
-                }},
-                {width:"15%", data: 'pickup_location',defaultContent:"None",render: function(data){if(data){return data}}},
-                {width:"15%", data: 'drop_location',defaultContent:"None",render: function(data){if(data){return data}}},
-
-                {width:"25%", data: 'passenger_detail',defaultContent:"None",render: function(data){if(data){return data}}},
-                {width:"10%", data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
-                {width:"5%", data: 'booking_id', defaultContent:"None", render: function(data){if(data){return data}}},
-                {width:"5%", data: 'assignment', defaultContent:"None", render: function(data){if(data){
-                    return "Assigned"
-                }}}
             ],
             scrollY: 400
 
         });
       }
+      $("#deleteselectedproducts").on("click", function(){
+        var delvids=[]
+        selectedproducts=$("#productlist").DataTable().rows({selected: true }).data()
+        for (i=0;i<selectedproducts.length;i++){
+            delvids.push(selectedproducts[i].product_id)
+        }
+        console.log("Deleting products")
+        console.log(delvids)
+        params=JSON.stringify(delvids)
+        var url = "http://"+serverip+":5000/product/bulkdelete";
+        var http = new XMLHttpRequest();
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/json");
+        http.onreadystatechange = function() {//Call a function when the state changes.
+            if(http.readyState == 4 && http.status == 200) {
+                response=JSON.parse(http.responseText)
+                console.log(response)
+                if (response.status==="success"){
+                    alert("Successfully deleted products!")
+
+
+                }
+                else{
+                    alert("Something went wrong!")
+                }
+
+            }
+
+        }
+        http.send(params);
+      })
     }
-    updateassignmentbookinglist()
+    updateassignmentproductlist()
 </script>
 </body>
 </html>
