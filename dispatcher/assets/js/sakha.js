@@ -149,6 +149,7 @@ var sakha={
         }, 30000 );
         $("#exportdrivers").on("click",function(){
             $.getJSON('http://'+serverip+':5000/driver/export',function(data){
+                console.log(data.resp)
                 window.open(data.resp[0],"_blank")
             })
         })
@@ -180,7 +181,8 @@ var sakha={
         }, 30000 );
           $("#exportvehicles").on("click",function(){
             $.getJSON('http://'+serverip+':5000/vehicle/export',function(data){
-                window.open(data.resp[0],"_blank")
+                console.log(data.resp)
+                window.open(data.resp,"_blank")
             })
         })
 
