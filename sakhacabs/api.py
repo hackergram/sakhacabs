@@ -101,7 +101,7 @@ class DriverResource(Resource):
 						xpal.delete_driver(driver_id)
 					resp="Deleted drivers {}".format(respdict)
 					status="success"
-			except:
+			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		else:
@@ -219,7 +219,7 @@ class VehicleResource(Resource):
 						xpal.delete_vehicle(vehicle_id)
 					resp="Deleted vehicles {}".format(respdict)
 					status="success"
-			except:
+			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		else:
@@ -437,7 +437,7 @@ class BookingResource(Resource):
 						xpal.delete_booking(booking_id)
 					resp="Deleted Bookings {}".format(respdict)
 					status="success"
-			except:
+			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		else:
@@ -649,24 +649,7 @@ class DutySlipResource(Resource):
 		if 'created_time' in respdict.keys():
 			#respdict['created_time']=datetime.datetime.fromtimestamp(respdict['created_time']/1000)
 			respdict.pop('created_time')
-		'''
-		if 'open_time' in respdict.keys():
-			#respdict['open_time']=datetime.datetime.fromtimestamp(respdict['open_time']/1000)
-			app.logger.info("Type for open_time {}".format(type(respdict['open_time'])))
-			if type(respdict['open_time'])==dict:
-				respdict['open_time']=datetime.datetime.fromtimestamp(respdict['open_time']['$date']/1000)
-			if type(respdict['open_time'])==unicode:
-				respdict['open_time']=xpal.utils.get_utc_ts(datetime.datetime.strptime(respdict['open_time'],"%Y-%m-%d %H:%M:%S"))
-			app.logger.info("Timestamp - {}".format(respdict['open_time']))
-		if 'close_time' in respdict.keys():
-			#respdict['close_time']=datetime.datetime.fromtimestamp(respdict['close_time']/1000)
-			app.logger.info("Type for close_time {}".format(type(respdict['close_time'])))
-			if type(respdict['close_time'])==dict:
-				respdict['close_time']=datetime.datetime.fromtimestamp(respdict['close_time']['$date']/1000)
-			if type(respdict['close_time'])==unicode:
-				respdict['close_time']=xpal.utils.get_utc_ts(datetime.datetime.strptime(respdict['close_time'],"%Y-%m-%d %H:%M:%S"))
-			app.logger.info("Timestamp - {}".format(respdict['close_time']))
-		'''
+
 		#TODO: dutyslip=xpal.update_dutyslip(docid,respdict) #82
 		if xpal.validate_dutyslip_dict(respdict,False)['status']==True:
 			try:
@@ -777,7 +760,7 @@ class CustomerResource(Resource):
 						xpal.delete_customer(cust_id)
 					resp="Deleted customers"
 					status="success"
-			except:
+			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		else:
@@ -897,7 +880,7 @@ class ProductResource(Resource):
 						xpal.delete_product(product_id)
 					resp = "Deleted products"
 					status = "success"
-			except:
+			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		else:
@@ -956,6 +939,7 @@ class InvoiceResource(Resource):
 					app.logger.error("{} {}".format(type(e),str(e)))
 					resp="{} {}".format(type(e),str(e))
 					status="error"
+
 			else:
 				resp="Unrecognized command"
 				status="error"
@@ -1006,6 +990,19 @@ class InvoiceResource(Resource):
 				#	resp="No assignments in list provided"
 			except Exception as e:
 				app.logger.error("{} {}".format(type(e),str(e)))
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		elif command=="bulkdelete":
+			try:
+				if type(respdict)!=list:
+					status="error"
+					resp="Bulk Delete Expects a list of invoice ids"
+				else:
+					for invoice_id in respdict:
+						xpal.delete_invoice(invoice_id)
+					resp = "Deleted invoices"
+					status = "success"
+			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		else:

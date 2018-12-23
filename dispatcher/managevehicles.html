@@ -187,7 +187,7 @@ var submit_output=function(){
             console.log(response)
             if (response.status==="success"){
                 alert("Successfully imported vehicles!")
-
+                  window.location.reload(false);
 
             }
             else{
@@ -423,7 +423,7 @@ var do_file = (function() {
                 console.log(response)
                 if (response.status==="success"){
                     alert("Successfully deleted vehicles!")
-
+                    window.location.reload(false);
 
                 }
                 else{

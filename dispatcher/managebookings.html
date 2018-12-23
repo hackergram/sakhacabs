@@ -224,7 +224,7 @@ var submit_output=function(){
             console.log(response)
             if (response.status==="success"){
                 alert("Successfully imported bookings!")
-
+                window.location.reload(false);
 
             }
             else{
@@ -537,7 +537,7 @@ var do_file = (function() {
                 console.log(response)
                 if (response.status==="success"){
                     alert("Successfully deleted bookings!")
-
+                    window.location.reload(false);
 
                 }
                 else{

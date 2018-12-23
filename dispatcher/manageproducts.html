@@ -100,6 +100,10 @@ a { text-decoration: none }
                 Kms: <input type="text" size="30" id="kms_map"><br>
                   </div>
                     </div>
+            <div class="row"><div class="col-md-12">
+                        Price: <input type="text" size="30" id="price_map"><br>
+                          </div>
+                            </div>
 
         <div class="row">
 
@@ -198,7 +202,7 @@ var submit_output=function(){
             console.log(response)
             if (response.status==="success"){
                 alert("Successfully imported products!")
-
+                window.location.reload(false);
 
             }
             else{
@@ -235,6 +239,7 @@ var process_output=function(){
   var product_id_map=$("#product_id_map").val()
   var hrs_map=$("#hrs_map").val()
   var kms_map=$("#kms_map").val()
+  var price_map=$("#price_map").val()
 
   var rows=[]
   dic=JSON.parse(global_output)
@@ -252,11 +257,17 @@ var process_output=function(){
               productlist[i]['hrs']=parseFloat(hrs)
               kms=Mustache.render(kms_map,productlist[i])
               productlist[i]['kms']=parseFloat(kms)
+              price=Mustache.render(kms_map,productlist[i])
+              productlist[i]['price']=parseFloat(price)
+
               if(isNaN(productlist[i]['hrs'])){
                 productlist[i]['hrs']=0.0
               }
               if(isNaN(productlist[i]['kms'])){
                 productlist[i]['kms']=0.0
+              }
+              if(isNaN(productlist[i]['price'])){
+                productlist[i]['price']=0.0
               }
 
               console.log(productlist[i])
@@ -452,7 +463,7 @@ var do_file = (function() {
                 console.log(response)
                 if (response.status==="success"){
                     alert("Successfully deleted products!")
-
+                    window.location.reload(false);
 
                 }
                 else{

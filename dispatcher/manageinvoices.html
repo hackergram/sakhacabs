@@ -437,10 +437,12 @@
                             <div class="card-header card-header-primary">
                               <h4 class="card-title">Invoices</h4>
                               <p class="card-category">Current Invoices</p>
+                                <button id="deleteselectedinvoices">Delete Selected</button>
                             </div>
                             <div class="card-body table-responsive">
                                <table class="table table-striped" id="invoicelist">
                                     <thead>
+                                      <th>Select</th>
                                          <th >Action</th>
                                         <th >Invoice ID</th>
                                         <th >Date</th>
@@ -461,7 +463,7 @@
         var assperpage=2
         var sort_field="created_timestamp"
         var sort_order="ascending"
-        var current_invoice={"cust_id":"","invoice_lines":[],"taxes":[]}
+        var current_invoice={"cust_id":null,"invoice_lines":[],"taxes":[],invoice_date:null}
         var search_query={}
         var table = null;
         var updateInvoice=function(){
@@ -489,11 +491,19 @@
         updateInvoice()
         var clearInvoice=function(){
             assignments=[]
-            current_invoice={"cust_id":"","invoice_lines":[],"taxes":[]}
+            current_invoice={"cust_id":null,"invoice_lines":[],"taxes":[],invoice_date:null}
             render_current_invoice()
+            updateInvoice()
         }
         var render_current_invoice=function(){
-
+              $("#invoice_id").val(current_invoice['invoice_id'])
+              $("#cust_id2").val(current_invoice['cust_id'])
+              if(!(current_invoice.invoice_date)){
+                $("#invoice_date").val("")
+              }
+              else{
+                $("#invoice_date").val(moment(current_invoice['invoice_date'].$date).format("YYYY-MM-DD HH:mm"))
+              }
             // if(current_invoice.invoicelines.length>0){
                 if(table!=null){
                     table.destroy()
@@ -520,9 +530,9 @@
                                 {title:"Particulars",width:"43%", data: 'particulars',defaultContent:"None",render: function(data){if(data){return data}}},
                                  {title:"Product",width:"10%", data: 'product',defaultContent:"None",render: function(data){if(data){return data}}},
 
-                                {title:"Rate",width:"10%", data: 'rate',defaultContent:"None",render: function(data){if(data){return data}}},
+                                {title:"Rate",width:"10%", data: 'rate',defaultContent:"None",render: function(data){if(data){return "₹"+data}}},
                                 {title:"Qty",width:"10%", data: 'qty', defaultContent:"None", render: function(data){if(data){return data}}},
-                                {title:"Amount",width:"15%", data: 'amount', defaultContent:"None", render: function(data){if(data){return data}}},
+                                {title:"Amount",width:"15%", data: 'amount', defaultContent:"None", render: function(data){if(data){return "₹"+data}}},
 
                             ]
 
@@ -545,16 +555,24 @@
             console.log(current_invoice)
             t=confirm("Really Save Invoice")
             if(t===true){
-
+                if(current_invoice.invoice_id){
+                  var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+                  var url = "http://"+serverip+":5000/invoice/by_invoice_id/"+current_invoice.invoice_id
+                  var params = JSON.stringify(current_invoice);
+                  http.open("PUT", url, true);
+                }
+                else{
                 var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
                 var url = "http://"+serverip+":5000/invoice"
                 var params = JSON.stringify(current_invoice);
                 http.open("POST", url, true);
+                }
                 http.setRequestHeader("Content-type", "application/json");
                 http.onreadystatechange = function() {//Call a function when the state changes.
                 if(http.readyState == 4 && http.status == 200) {
                     if (JSON.parse(http.responseText).status==="success"){
                         alert("Successfully saved invoice!")
+                        window.location.reload(false);
                     current_invoice=JSON.parse(http.responseText).resp[0]
                     console.log(current_invoice) //$("#assignmentdetail").text(http.responseText)
                     render_current_invoice()
@@ -615,12 +633,12 @@
             totals=getinvoicetotal(current_invoice)
 
             $("#invoicetotal").empty()
-            $("#invoicetotal").append("<b>Total: </b>"+ totals.total)
+            $("#invoicetotal").append("<b>Total: ₹</b>"+ totals.total)
              for (i=0;i<current_invoice.taxes.length;i++){
                  tax=current_invoice.taxes[i]
-                $("#invoicetotal").append("<br><b>"+tax.name+"("+tax.rate*100+"%): </b>"+totals.total*tax.rate)
+                $("#invoicetotal").append("<br><b>"+tax.name+"("+tax.rate*100+"%): ₹</b>"+totals.total*tax.rate)
              }
-            $("#invoicetotal").append("<br><b>Grand Total: </b>"+ totals.grand_total)
+            $("#invoicetotal").append("<br><b>Grand Total: ₹</b>"+ totals.grand_total)
 
         }
         var addInvoiceLine=function(line){
@@ -664,6 +682,15 @@
                 }
 
             }
+        var editInvoice = function(invoice_id){
+          console.log("http://"+serverip+":5000/invoice/by_invoice_id/"+invoice_id)
+          $.getJSON("http://"+serverip+":5000/invoice/by_invoice_id/"+invoice_id,function(data){
+              console.log(data)
+              current_invoice=data.resp[0]
+              render_current_invoice()
+
+          })
+        }
         var searchAssignments=function(){
                 search_query={}
                 search_query.date_frm=$("#date_frm").val()
@@ -731,11 +758,22 @@
         */
         var table2=$('#invoicelist').DataTable({
             select: true,
+            columnDefs: [ {
+                           orderable: false,
+                           className: 'select-checkbox',
+                           targets:   0
+                       } ],
+            select: {
+                           style:    'os',
+                           selector: 'td:first-child'
+                       },
             ajax: {
                 url: 'http://'+serverip+':5000/invoice',
                 dataSrc: 'resp'
             },
             columns: [
+              {width:"5%", defaultContent:""},
+
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
                 { width:"5%",data: null,render: function(data){
                     invoice_id='"'+data.invoice_id+'"'
@@ -745,7 +783,7 @@
                 {width:"20%", data: 'invoice_id', defaultContent:"None", render: function(data){
                     if(data){
                         invoice_id='"'+data+'"'
-                        var invoiceid="<a class='nav-link' onclick='editBooking("+invoice_id+")'>"+data+"</a>"
+                        var invoiceid="<a class='nav-link' onclick='editInvoice("+invoice_id+")'>"+data+"</a>"
 
                         return invoiceid
 
@@ -773,7 +811,37 @@
         setInterval( function () {
                 table2.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
+        $("#deleteselectedinvoices").on("click", function(){
+          var delvids=[]
+          selectedinvoices=$("#invoicelist").DataTable().rows({selected: true }).data()
+          for (i=0;i<selectedinvoices.length;i++){
+              delvids.push(selectedinvoices[i].invoice_id)
+          }
+          console.log("Deleting invoices")
+          console.log(delvids)
+          params=JSON.stringify(delvids)
+          var url = "http://"+serverip+":5000/invoice/bulkdelete";
+          var http = new XMLHttpRequest();
+          http.open("POST", url, true);
+          http.setRequestHeader("Content-type", "application/json");
+          http.onreadystatechange = function() {//Call a function when the state changes.
+              if(http.readyState == 4 && http.status == 200) {
+                  response=JSON.parse(http.responseText)
+                  console.log(response)
+                  if (response.status==="success"){
+                      alert("Successfully deleted invoices!")
+                      window.location.reload(false);
 
+                  }
+                  else{
+                      alert("Something went wrong!")
+                  }
+
+              }
+
+          }
+          http.send(params);
+        })
 
     }
 

@@ -475,10 +475,13 @@ def update_dutyslip(dsid,respdict):
 def delete_dutyslip(dsid):
 	if len(documents.DutySlip.objects.with_id(dsid))>0:
 		ds=documents.DutySlip.objects.with_id(dsid)
-		assignment=ds.assignment
+		assignment=ds.assignment.id
 		ds.delete()
+		sakhacabsxpal.logger.info("Checking if this is the last booking for assignment {}".format(assignment))
 		if len(documents.DutySlip.objects(assignment=assignment))==0:
-			documents.Assignment.objecs.with_id(assignment).delete()
+			sakhacabsxpal.logger.info("Deleting assignments")
+			#documents.Assignment.objecs.with_id(assignment).delete()
+			delete_assignment(assignment)
 		return []
 	else:
 		return "No Dutyslip by that ID"
@@ -833,7 +836,17 @@ def create_invoice(invoicedict):
 
 
 def update_invoice(invoice_id,invoicedict):
-	return "Not Implemented"
+	try:
+		if "_id" in invoicedict:
+			invoicedict.pop("_id")
+		invoice=documents.Invoice.objects(invoice_id=invoice_id)[0]
+		invoice.update(**invoicedict)
+		invoice.save()
+		invoice.total=get_invoice_total(invoice.invoice_id)
+		return[invoice]
+	except Exception as e:
+			return "{} {}".format(type(e),str(e))
+
 def delete_invoice(invoice_id):
 	if len(documents.Invoice.objects(invoice_id=invoice_id))==0:
 		return "No Invoice by that ID"
