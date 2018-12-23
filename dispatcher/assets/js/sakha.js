@@ -1,13 +1,13 @@
 var sakha={
     fillData: function(){
         console.log("Filling data");
-        
+
         this.fillDrivers();
         this.fillBookings();
         this.fillVehicles();
         this.fillLocationUpdates();
         this.fillDutySlips();
-        
+
     },
     fillBookings: function(){
         console.log("Filling bookings data");
@@ -28,24 +28,24 @@ var sakha={
                 { width:"5%",data: null,render: function(data){
                     bookingid='"'+data.booking_id+'"'
                     return "<button onclick='sakha.deleteBooking("+bookingid+")'>Delete</button>"
-                   
+
                 }},
                 {width:"10%", data: 'booking_id', defaultContent:"None", render: function(data){
                     if(data){
-                    
+
                         var bookingid='<a class="nav-link" data-toggle="modal" data-target="#editbookingform" data-bookingid="'+data+'">\
                         <i class="material-icons">content_paste</i> '+data+'\
                         </a>'
-                    
+
                         return bookingid
-                        
-                    
+
+
                     }
                 }},
-                
+
                 { width:"15%",data: 'pickup_timestamp',defaultContent:"None",render: function(data){
-                    
-                    //console.log(data)    
+
+                    //console.log(data)
                     return moment(data.$date).format("YYYY-MMM-DD HH:mm:ss")
                     }},
                 {width:"25%", data: 'pickup_location',defaultContent:"None",render: function(data){if(data){
@@ -54,7 +54,7 @@ var sakha={
                 {width:"25%", data: 'passenger_detail', defaultContent:"None", render: function(data){if(data){return data}}},
                 {width:"10%", data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
                 {width:"10%", data: 'assignment', defaultContent:"None", render: function(data){if(data){return data}}},
-                
+
             ],
             scrollY: 200,
             scrollX:true
@@ -65,10 +65,10 @@ var sakha={
          $("#exportbookings").on("click",function(){
              console.log("exporing bookings")
             $.getJSON('http://'+serverip+':5000/booking/export',function(data){
-                window.open(data.resp[0],"_blank")
+                window.open(data.resp,"_blank")
             })
         })
-        
+
     },
     fillLocationUpdates: function(){
         console.log("Filling location data");
@@ -98,7 +98,7 @@ var sakha={
         }, 30000 );
           $("#exportlocupdates").on("click",function(){
             $.getJSON('http://'+serverip+':5000/locupdate/export',function(data){
-                window.open(data.resp[0],"_blank")
+                window.open(data.resp,"_blank")
             })
         })
     },
@@ -112,17 +112,17 @@ var sakha={
             ],
             ajax: {
                 url: 'http://'+serverip+':5000/driver',
-                dataSrc: "resp" 
+                dataSrc: "resp"
             },
-            
+
             columns: [
                 //{ data: function (row){retturn'metadata.first_name' + "metadata.last_name" }},
                 { data: null, render: function (data){
-                    
+
                     var driverid='<a class="nav-link" data-toggle="modal" data-target="#createdriverform" data-driverid="'+data.driver_id+'">\
                         <i class="material-icons">content_paste</i> '+data.driver_id+'\
                         </a>'
-                    return driverid 
+                    return driverid
                 }},
                 { data: null,render: function(data){
                     if(data.mobile_num){
@@ -138,30 +138,31 @@ var sakha={
                     driverid='"'+data.driver_id+'"'
                     return "<button onclick='sakha.deleteDriver("+driverid+")'>Delete</button>"
                 }}
- 
-                
+
+
             ],
             scrollY: 200
         });
-         
+
         setInterval( function () {
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
         $("#exportdrivers").on("click",function(){
             $.getJSON('http://'+serverip+':5000/driver/export',function(data){
-                window.open(data.resp[0],"_blank")
+                console.log(data.resp)
+                window.open(data.resp,"_blank")
             })
         })
     },
     fillVehicles: function(){
         console.log("Filling vehicle data");
-        
+
         var table = $('#vehicletable').DataTable({
             //ajax: 'http://'+serverip+':5000/driver/all'
             select: true,
             ajax: {
                 url: 'http://'+serverip+':5000/vehicle',
-                dataSrc: "resp" 
+                dataSrc: "resp"
             },
             columns: [
                 //{ data: function (row){retturn'metadata.first_name' + "metadata.last_name" }},
@@ -170,20 +171,21 @@ var sakha={
                 { data: 'vehicle_id', defaultContent: "None"},
                 { data: 'driver_id', defaultContent: "None", render:function(data){if(data){return data}else{return "Checked Out"}}  },
                 { data: 'reg_num', defaultContent: "Unknown", render:function(data){return data}  }
-                
+
             ],
             scrollY: 200
-            
+
         });
         setInterval( function () {
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
           $("#exportvehicles").on("click",function(){
             $.getJSON('http://'+serverip+':5000/vehicle/export',function(data){
-                window.open(data.resp[0],"_blank")
+                console.log(data.resp)
+                window.open(data.resp,"_blank")
             })
         })
-        
+
     },
     fillDutySlips: function(){
          console.log("Filling dutyslip data");
@@ -192,16 +194,16 @@ var sakha={
             select: true,
             ajax: {
                 url: 'http://'+serverip+':5000/dutyslip',
-                dataSrc: "resp" 
+                dataSrc: "resp"
             },
             columns: [
                 //{ data: function (row){retturn'metadata.first_name' + "metadata.last_name" }},
                 { data: null, render: function (data){
-                    
+
                     var dutyslip_id='<a class="nav-link" data-toggle="modal" data-target="#editdutyslipform" data-dsid="'+data._id.$oid+'">\
                         <i class="material-icons">content_paste</i> '+data.dutyslip_id+'\
                         </a>'
-                    return dutyslip_id 
+                    return dutyslip_id
                 }},
                 { data: null,render: function(data){
                     if(data.created_time){
@@ -280,16 +282,16 @@ var sakha={
                     return "<button onclick='sakha.deleteDutySlip("+dsid+")'>Delete</button>\
                             <button onclick='sakha.updateDutySlipStatus("+dsid+",\"verified\")'>Verify</button>"
                 }}
-                
+
             ]
         });
-         
+
         setInterval( function () {
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
     },
-    
-    
+
+
     fillAssignmentModal: function(assignmentid){
         console.log("Editing Assignment - " +  assignmentid);
         if(assignmentid=="newassignment"){
@@ -299,47 +301,47 @@ var sakha={
         this.updateassignmentbookinglist();
         this.updateassignmentvehiclelist();
         this.updateassignmentdutysliplist();
-        
-        
-        
+
+
+
     },
     updateassignmentdutysliplist: function(){
      var table,dutysliplist,driverlist,vehiclelist;
      dutysliplist=[];
      driverlist=[];
      vehiclelist=[];
-        
+
         if($.fn.dataTable.isDataTable("#dutysliplist"))
      {
          if ($('#dutysliplist').hasClass("editing")) {
             $('#dutysliplist').removeClass("editing");
          }
          table=$('#dutysliplist').DataTable();
-         table.clear().destroy();         
+         table.clear().destroy();
          $('#dutysliplist tbody').empty();
          //builddutysliptable()
      }
      //else
-     //{  
+     //{
          console.log("Building dutyslip table")
          var gotdrivers=false;
          var gotvehicles=false;
-         
+
          $.getJSON("http://"+serverip+":5000/driver",function(data){
-             
+
              driverlist=data.resp;
              console.log(driverlist);
              gotdrivers=true;
              if(gotvehicles){
                  builddutysliptable();
-                 
+
              }
              else{
                  console.log("vehicles not set")
              }
           });
          $.getJSON("http://"+serverip+":5000/vehicle",function(data){
-             
+
              //console.log(data);
              //vehiclelist=data.resp;
              for (i=0;i<data.resp.length;i++){
@@ -354,7 +356,7 @@ var sakha={
                  console.log("drivers not set")
              }
           });
-       //}  
+       //}
         builddutysliptable = function(){
               for (i=0;i<driverlist.length;i++){
                      var dutyslip={}
@@ -383,7 +385,7 @@ var sakha={
                             dataSrc: 'resp'
                         },
                         */
-                        data: dutysliplist, 
+                        data: dutysliplist,
                         columns: [
                               {width:"15%", defaultContent:""},
                               {data: 'driver',defaultContent:"None"},
@@ -392,18 +394,18 @@ var sakha={
                                             return row.vehicle;
                                     }
                                   //console.log(row);
-                                  
+
                                 }
                               }
                         ],
                         scrollY: 100
                     });
-                  
-            }  
-      
+
+            }
+
       $('#dutysliplist').on('click',"tr", function() {
            // var row = this.parentElement;
-          console.log(table.row(this).id())  
+          console.log(table.row(this).id())
           //if (!$('#dutysliplist').hasClass("editing")) {
                 $('#dutysliplist').addClass("editing");
                 var data = table.row(this).data();
@@ -431,7 +433,7 @@ var sakha={
                 $("#Vehicle_" + data.driver.driver_id).val(thisVehicleText)
             //}
         });
-        
+
       $('#dutysliplist').on("change", ".changeVehicle", function() {
             var $this = $(this);
             //console.log(table.row($this.parent("td").parent("tr")).data())
@@ -468,7 +470,7 @@ var sakha={
             });
           }
 
-        
+
     },
     updateassignmentbookinglist: function(){
      if($.fn.dataTable.isDataTable("#bookinglist"))
@@ -497,12 +499,12 @@ var sakha={
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
                  {width:"5%", defaultContent:""},
                 { width:"15%",data: 'pickup_timestamp',defaultContent:"None",render: function(data){
-                    
+
                     return new moment(data['$date']).format('MMMM Do YYYY, h:mm:ss a')
                 }},
                 {width:"15%", data: 'pickup_location',defaultContent:"None",render: function(data){if(data){return data}}},
                  {width:"15%", data: 'drop_location',defaultContent:"None",render: function(data){if(data){return data}}},
-               
+
                 {width:"25%", data: 'passenger_detail',defaultContent:"None",render: function(data){if(data){return data}}},
                 {width:"10%", data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
                 {width:"5%", data: 'booking_id', defaultContent:"None", render: function(data){if(data){return data}}},
@@ -511,7 +513,7 @@ var sakha={
                 }}}
             ],
             scrollY: 400
-         
+
         });
       }
     },
@@ -520,7 +522,7 @@ var sakha={
         assignmentdict['assignment']={}
         assignmentdict.assignment['bookings']=[]
         assignmentdict['dutyslips']=[]
-        
+
         bookings=$("#bookinglist").DataTable().rows({selected: true }).data()
         for (i=0;i<bookings.length;i++){
             assignmentdict.assignment.bookings.push(bookings[i])
@@ -538,8 +540,11 @@ var sakha={
                 dutyslips[i].vehicle=null
             }
         }
-        
+        var createassign=true;
         console.log(assignmentdict)
+        if( moment(assignmentdict.assignment.bookings[0].pickup_timestamp).valueOf() < moment().valueOf()){
+          createassign=confirm("Pickup Time Has Already Passed! Still create assignment?")
+        }
         var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
         var url = "http://"+serverip+":5000/assignment";
         var params = JSON.stringify(assignmentdict);
@@ -547,7 +552,7 @@ var sakha={
 
         //Send the proper header information along with the request
         http.setRequestHeader("Content-type", "application/json");
-        
+
         http.onreadystatechange = function() {//Call a function when the state changes.
             if(http.readyState == 4 && http.status == 200) {
                 response=JSON.parse(http.responseText)
@@ -560,10 +565,13 @@ var sakha={
                     alert("Failed to create assignment");
                     $("#assignmentdetail").text(response.resp)
                 }
-                
+
             }
         }
-        http.send(params);
+        if (createassign===true){
+            http.send(params);
+        }
+
     },
     updateAssignmentStatus: function(assignment_id,status){
         dict={}
@@ -573,7 +581,7 @@ var sakha={
         var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
         var url = "http://"+serverip+":5000/assignment/updatestatus";
         http.open("POST", url, true);
-        
+
         //Send the proper header information along with the request
         http.setRequestHeader("Content-type", "application/json");
         http.onreadystatechange = function() {//Call a function when the state changes.
@@ -608,12 +616,12 @@ var sakha={
     },
     deleteAssignment: function(id){
        console.log("Clicked "+ id)
-       //console.log("Deleting assignment with id: "+ id.split("_")[1]+" and associated duty slips")    
-       console.log("Deleting assignment with id: "+ id+" and associated duty slips")    
-       
+       //console.log("Deleting assignment with id: "+ id.split("_")[1]+" and associated duty slips")
+       console.log("Deleting assignment with id: "+ id+" and associated duty slips")
+
         var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
           var url = "http://"+serverip+":5000/assignment/by_id/"+id;
-     
+
         //var url = "http://"+serverip+":5000/assignment/by_id/"+id.split("_")[1];
         //var params = JSON.stringify(assignmentdict);
         http.open("DELETE", url, true);
@@ -636,7 +644,7 @@ var sakha={
             $("#mobnum").val("")
             $("#firstname").val("")
             $("#lastname").val("")
-            
+
         }
         else{
             console.log("editing driver "+driverid)
@@ -648,15 +656,15 @@ var sakha={
                 $("#lastname").val(data.resp[0].last_name)
             })
         }
-       
+
        document.getElementById("savedriver").setAttribute("onclick","sakha.saveDriver('"+driverid+"')")
-                    
+
     },
     fillDutySlipModal: function(dsid){
        console.log("editing dutyslip "+dsid)
        var url = 'http://'+serverip+':5000/dutyslip/by_id/'+dsid
        console.log("getting url "+url)
-       
+
             $.getJSON(url,function(data){
                 console.log(data.resp[0])
                 $("#driver").val(data.resp[0].driver)
@@ -667,16 +675,16 @@ var sakha={
                 $("#created_time").empty()
                 $("#created_time").append( moment(data.resp[0].created_time.$date).format('ddd MMM Do YYYY, h:mm:ss a'));
                 if (data.resp[0].hasOwnProperty("open_time")){
-                    $("#open_time").val(moment(data.resp[0].open_time.$date).format('YYYY-MM-DD HH:mm:ss'));    
+                    $("#open_time").val(moment(data.resp[0].open_time.$date).format('YYYY-MM-DD HH:mm:ss'));
                 }
                 else{
                     $("#open_time").val(null)
                 }
                 if (data.resp[0].hasOwnProperty("close_time")){
-                
-                    $("#close_time").val(moment(data.resp[0].close_time.$date).format('YYYY-MM-DD HH:mm:ss')); 
+
+                    $("#close_time").val(moment(data.resp[0].close_time.$date).format('YYYY-MM-DD HH:mm:ss'));
                    $("#total_time").val(moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2));
-            
+
                     //'YYYY-MM-DD HH:mm'
                 }     //$("#total_time").text=moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2);
                 $("#open_kms").val(data.resp[0].open_kms)
@@ -687,29 +695,29 @@ var sakha={
                 $("#toll_charges").val(data.resp[0].toll_charges)
                 $("#amount").val(data.resp[0].amount)
             })
-       
+
        document.getElementById("savedutyslip").setAttribute("onclick","sakha.saveDutySlip('"+dsid+"')")
-                    
+
     },
     fillBookingModal: function(bookingid){
        console.log("editing booking "+bookingid)
        var url = 'http://'+serverip+':5000/booking/by_booking_id/'+bookingid
        console.log("getting url "+url)
-       
+
             $.getJSON(url,function(data){
                 console.log(data.resp[0])
                 $("#booking_pickup_timestamp").empty()
                 $("#booking_id").append(data.resp[0].booking_id )
                 $("#booking_cust_id").val(data.resp[0].cust_id)
-              
+
                 $("#booking_product_id").val(data.resp[0].product_id)
                 $("#booking_status").val(data.resp[0].status).change()
                 //$("#created_time").val(moment(data.resp[0].created_time.$date).format('MMMM Do YYYY, h:mm:ss a'));
                 //$("#booking_pickup_timestamp").empty()
                 $("#booking_pickup_timestamp").val(moment(data.resp[0].pickup_timestamp.$date+1).format('YYYY-MM-DD HH:mm:ss'))
-                
+
                 $("#booking_created_timestamp").empty()
-                
+
                 $("#booking_created_timestamp").append(moment(data.resp[0].created_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a'));
                $("#booking_channel").val(data.resp[0].booking_channel);
                 //$("#total_time").text=moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2);
@@ -717,14 +725,14 @@ var sakha={
                 $("#booking_remarks").val(data.resp[0].remarks)
                 $("#booking_passenger_mobile").val(data.resp[0].passenger_mobile)
                 $("#booking_passenger_detail").val(data.resp[0].passenger_detail)
-               
+
                 $("#booking_pickup_location").val(data.resp[0].pickup_location)
                 $("#booking_drop_location").val(data.resp[0].drop_location)
-                
+
             })
-       
+
        document.getElementById("savebooking").setAttribute("onclick","sakha.saveBooking('"+bookingid+"')")
-                    
+
     },
     saveDriver: function(driverid){
         console.log("Trying to save "+driverid)
@@ -734,7 +742,7 @@ var sakha={
         driverdict.first_name=$("#firstname").val()
         driverdict.last_name=$("#lastname").val()
         var params = JSON.stringify(driverdict);
-        var http = new XMLHttpRequest(); 
+        var http = new XMLHttpRequest();
         if(driverid==="newdriver"){
             //$.post("http://"+serverip+":5000/assignment",assignmentdict)
             var url = "http://"+serverip+":5000/driver";
@@ -758,18 +766,18 @@ var sakha={
                         alert("Saved Driver Successfully!")
                         console.log("success")
                     }
-                    
+
                     if (response.status==="error"){
                         console.log("error")
                         alert("Failed to Save Driver!")
-                         document.getElementById("driverstatus").innerHTML="<span style='color:red'>"+response.resp+"</span>" 
+                         document.getElementById("driverstatus").innerHTML="<span style='color:red'>"+response.resp+"</span>"
                     }
                 }
                 else{
                     alert("Network Error Saving Driver")
                 }
                 }
-                
+
             }
             http.send(params);
         }
@@ -780,7 +788,7 @@ var sakha={
     deleteDutySlip: function(dsid){
         t=confirm("Really Delete Duty Slip with ID "+dsid)
         if (t===true){
-            
+
             var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
             var url = "http://"+serverip+":5000/dutyslip/by_id/"+dsid;
             //var params = JSON.stringify(assignmentdict);
@@ -806,7 +814,7 @@ var sakha={
     deleteDriver: function(driverid){
         t=confirm("Really Delete Driver with ID "+driverid)
         if (t===true){
-            
+
             var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
             var url = "http://"+serverip+":5000/driver/by_driver_id/"+driverid;
             //var params = JSON.stringify(assignmentdict);
@@ -867,7 +875,7 @@ var sakha={
         booking_dict.passenger_mobile=$("#booking_passenger_mobile").val()
         booking_dict.passenger_detail=$("#booking_passenger_detail").val()
         console.log(booking_dict)
-        
+
         params=JSON.stringify(booking_dict)
         console.log(params)
         var url = "http://"+serverip+":5000/booking/by_booking_id/"+booking_id;
@@ -891,11 +899,11 @@ var sakha={
                 else{
                     alert("Uncaught Error saving booking!")
                 }
-               
+
             }
         }
         http.send(params);
-        
+
     },
     saveDutySlip: function(dsid){
         console.log("Saving duty slip with ID "+dsid)
@@ -942,11 +950,11 @@ var sakha={
                 else{
                     alert("Uncaught Error saving duty slip!")
                 }
-               
+
             }
         }
         http.send(params);
-    
+
     },
     JSONtoCSV: function(jsonstring){
         console.log(jsonstring)
@@ -975,7 +983,7 @@ var sakha={
 
             return encodeURIComponent(csvStr);;
         }
-        
+
         function exportToCsvFile(jsonData) {
             let csvStr = parseJSONToCSVStr(jsonData);
             let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
@@ -991,4 +999,3 @@ var sakha={
         exportToCsvFile(jsonstring)
     }
 }
-

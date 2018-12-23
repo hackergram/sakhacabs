@@ -6,29 +6,29 @@
     <title>Invoicing | Sakha Consulting Wings</title>
 
 
-   
-    <!-- Bootstrap core CSS 
+
+    <!-- Bootstrap core CSS
     <link href="dist/css/bootstrap.min.css" rel="stylesheet">-->
 
     <!-- Custom styles for this template -->
    <link rel="stylesheet" href="dist/css/mdi-icons.css">
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
      <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
-    
+
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
     <link rel="stylesheet" type="text/css" src="assets/css/select.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" src="assets/css/responsive.dataTables.min.css">
 
-    
-    
+
+
     <style>
         .row {
             padding: .25em;
         }
-        
+
         .card .card-body {
 
             padding: 0.5rem 5px;
@@ -38,13 +38,13 @@
     </style>
     <link href="dist/css/pagination-style.css" rel="stylesheet">
 
-  
+
     <link rel="stylesheet" type="text/css" href="assets/css/sakha.css">
 
-    
+
 </head>
 <body>
-    <!-- 
+    <!--
     <script src="dist/js/jquery.min.js"></script>
     <script src="dist/js/popper.min.js"></script>
     <script src="dist/js/bootstrap.min.js"></script>
@@ -58,15 +58,16 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
     <script type="text/javascript" src="https://rawgit.com/tempusdominus/bootstrap-4/master/build/js/tempusdominus-bootstrap-4.js"></script>
     <script type="text/javascript" charset="utf8" src="assets/js/dataTables.select.min.js"></script>
-    
+
 
     <script src="assets/js/sakha.js"></script>
-    
+
         <div class="container">
             <div class="row">
                 <div class="page-header clearfix">
                     <div class="col-sm-12 small-cols">
                     <h1 class="medium-bold-title">Generate Invoices</h1>
+                     <a href="../sakhadispatcher" id="backlink">(Back)</a>
                     <span></span>
                 </div>
                 </div>
@@ -129,9 +130,9 @@
                     </div>
                 </div>
             </div>
-           
+
             <div class="row">
-                
+
                 <div class="col-lg-6">
                      <!--<main role="main" id="pagination-app">
                     <div class="album py-2 bg-light">
@@ -139,7 +140,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <h3>Assignments</h3>
-                              <button class="btn btn-sm btn-outline-secondary" onclick="addAll()">Add All</button>    
+                              <button class="btn btn-sm btn-outline-secondary" onclick="addAll()">Add All</button>
                                     </div>
                             </div>
                             <div class="row">
@@ -168,13 +169,13 @@
                                                               <div class="card-header">{{booking.booking_id}}</div>
                                                               <div class="card-body">
                                                                   <b>Pickup Time:</b> <span>{{moment(booking.pickup_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a')}}</span>
-                                                                  <br><b> Passenger Detail:</b><span>{{booking.passenger_detail}}</span> 
+                                                                  <br><b> Passenger Detail:</b><span>{{booking.passenger_detail}}</span>
 
                                                             </div>
                                                         </div>
                                                     </div>
                                                     </div>
-                                                </div>  
+                                                </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-12">
@@ -192,9 +193,9 @@
                                                                     <br><b>KMS: </b><span>{{dutyslip.close_kms-dutyslip.open_kms}}</span>
                                                                     <br><b>HRS: </b><span>{{moment(dutyslip.close_time.$date).diff(moment(dutyslip.open_time.$date),"hours",true).toFixed(2)}}</span>
                                                             </div>
-                                                        </div>    
+                                                        </div>
                                                     </div>
-                                          
+
                                         </div>
                                                 </div>
                                             </div>
@@ -214,7 +215,7 @@
                 <main role="main" id="pagination-app">
 
                                         <div class="container" v-cloak>
-                                            
+
                                            <div class="row">
                                                <div class="col-sm-4 small-cols">
                                                     <p class="text-right">Sort By: </p >
@@ -248,7 +249,7 @@
                                                             <div class="row">
                                                                <div class="btn-group">
 
-                                                                <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                                                <button type="button" class="btn btn-sm btn-outline-secondary"
                                                                         @click="sakha.deleteAssignment(post.assignment._id.$oid)">Delete</button>
 
                                                                 <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'cancelled')">Cancel</button>
@@ -271,13 +272,13 @@
                                                                           <div v-bind:class="'card-header-'+booking.status">{{booking.booking_id}}</div>
                                                                           <div class="card-body">
                                                                               <b>Pickup Time:</b> <span>{{moment(booking.pickup_timestamp.$date).format('MMM DD YYYY, h:mm:ss a')}}</span>
-                                                                              <br><b> Passenger Detail:</b><span>{{booking.passenger_detail}}</span> 
+                                                                              <br><b> Passenger Detail:</b><span>{{booking.passenger_detail}}</span>
 
                                                                         </div>
                                                                         </div>
                                                                     </div>
                                                                     </div>
-                                                                </div>  
+                                                                </div>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-lg-12">
@@ -298,7 +299,7 @@
                                                                             <b>HRS: </b><span>{{moment(dutyslip.close_time.$date).diff(moment(dutyslip.open_time.$date),"hours",true).toFixed(2)}}</span>
                                                                               </div>
                                                                         </div>
-                                                                    </div>    
+                                                                    </div>
                                                                         </div>
 
                                                             </div>
@@ -318,19 +319,19 @@
 
                                         </div>
 
-                                     </main>      
+                                     </main>
 
                 </div>
-              
-                
+
+
                 <div class="col-lg-6">
                     <div class="album py-2 bg-light">
-                        
+
                        <div class="row">
                                 <div class="col-md-12">
                                     <h3>Current Invoice</h3>
-                                     <button class="btn btn-sm btn-outline-secondary" onclick="clearInvoice()">Clear</button>    
-                                    
+                                     <button class="btn btn-sm btn-outline-secondary" onclick="clearInvoice()">Clear</button>
+
                                     </div>
                             </div>
                         <div class="row">
@@ -356,14 +357,14 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                           
+
                                         </div>
                                          <div class="col-sm-6">
-                                            
+
                                             <input type="text" readonly id="invoice_id" placeholder="New Invoice">
                                             </div>
                                     </div>
-                                    
+
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="card-body" id="invoicetable">
@@ -378,17 +379,17 @@
                                                             <th >Rate</th>
                                                             <th >Quantity</th>
                                                             <th >Amount</th>
-                                                            
+
                                                         </thead>
                                                         <tbody></tbody>
                                                     </table>
-                                                        
+
                                                          </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-lg-12 px-5"><p class="text-right" id="invoicetotal"></p>
                                                     </div>
-                                                
+
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-4">
@@ -401,45 +402,47 @@
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        
+
                                                     </div>
                                                 </div>
                                             </div>
-                                         
+
                                         </div>
                                     </div>
                                     <div class="row">
                                         `
                                         <div class="col-md-12" id="invoice">
-                                         
+
                                         </div>
                                     </div>
                                   </div>
                                 </div>
                             </div>
                         </div>
-                              
+
                        <div class="row">
                                 <div class="col-md-12">
-                                    
-                                     <button class="btn btn-sm btn-outline-secondary" onclick="clearInvoice()">Clear</button>    
-                                    <button class="btn btn-sm btn-outline-secondary" onclick="saveInvoice()">Save Invoice</button>    
+
+                                     <button class="btn btn-sm btn-outline-secondary" onclick="clearInvoice()">Clear</button>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="saveInvoice()">Save Invoice</button>
                                     </div>
                             </div>
                     </div>
                 </div>
-            </div>  
-        
+            </div>
+
                <div class="row" style="min-height: 500px">
                       <div class="col-lg-12 col-md-12">
                         <div class="card">
                             <div class="card-header card-header-primary">
                               <h4 class="card-title">Invoices</h4>
                               <p class="card-category">Current Invoices</p>
+                                <button id="deleteselectedinvoices">Delete Selected</button>
                             </div>
                             <div class="card-body table-responsive">
                                <table class="table table-striped" id="invoicelist">
                                     <thead>
+                                      <th>Select</th>
                                          <th >Action</th>
                                         <th >Invoice ID</th>
                                         <th >Date</th>
@@ -453,14 +456,14 @@
                       </div>
                     </div>
         </div>
-   
+
     <script>
         var serverip="192.168.56.101"
         var assignments=[]
         var assperpage=2
         var sort_field="created_timestamp"
         var sort_order="ascending"
-        var current_invoice={"cust_id":"","invoice_lines":[],"taxes":[]}
+        var current_invoice={"cust_id":null,"invoice_lines":[],"taxes":[],invoice_date:null}
         var search_query={}
         var table = null;
         var updateInvoice=function(){
@@ -488,13 +491,21 @@
         updateInvoice()
         var clearInvoice=function(){
             assignments=[]
-            current_invoice={"cust_id":"","invoice_lines":[],"taxes":[]}
+            current_invoice={"cust_id":null,"invoice_lines":[],"taxes":[],invoice_date:null}
             render_current_invoice()
+            updateInvoice()
         }
         var render_current_invoice=function(){
-            
+              $("#invoice_id").val(current_invoice['invoice_id'])
+              $("#cust_id2").val(current_invoice['cust_id'])
+              if(!(current_invoice.invoice_date)){
+                $("#invoice_date").val("")
+              }
+              else{
+                $("#invoice_date").val(moment(current_invoice['invoice_date'].$date).format("YYYY-MM-DD HH:mm"))
+              }
             // if(current_invoice.invoicelines.length>0){
-                if(table!=null){ 
+                if(table!=null){
                     table.destroy()
                      $("#invoicelines").empty()
                         }
@@ -514,15 +525,15 @@
                         },
                         columns: [
                                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
-                              {width:"2%", defaultContent:""},    
+                              {width:"2%", defaultContent:""},
                             {title:"Date", width:"10%",data: 'date',defaultContent:"None"},
                                 {title:"Particulars",width:"43%", data: 'particulars',defaultContent:"None",render: function(data){if(data){return data}}},
                                  {title:"Product",width:"10%", data: 'product',defaultContent:"None",render: function(data){if(data){return data}}},
 
-                                {title:"Rate",width:"10%", data: 'rate',defaultContent:"None",render: function(data){if(data){return data}}},
+                                {title:"Rate",width:"10%", data: 'rate',defaultContent:"None",render: function(data){if(data){return "₹"+data}}},
                                 {title:"Qty",width:"10%", data: 'qty', defaultContent:"None", render: function(data){if(data){return data}}},
-                                {title:"Amount",width:"15%", data: 'amount', defaultContent:"None", render: function(data){if(data){return data}}},
-                               
+                                {title:"Amount",width:"15%", data: 'amount', defaultContent:"None", render: function(data){if(data){return "₹"+data}}},
+
                             ]
 
 
@@ -540,20 +551,28 @@
             }
             else{
                 current_invoice.invoice_date=$("#invoice_date").val()
-          
+
             console.log(current_invoice)
             t=confirm("Really Save Invoice")
-            if(t===true){           
-                
+            if(t===true){
+                if(current_invoice.invoice_id){
+                  var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+                  var url = "http://"+serverip+":5000/invoice/by_invoice_id/"+current_invoice.invoice_id
+                  var params = JSON.stringify(current_invoice);
+                  http.open("PUT", url, true);
+                }
+                else{
                 var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
                 var url = "http://"+serverip+":5000/invoice"
                 var params = JSON.stringify(current_invoice);
                 http.open("POST", url, true);
+                }
                 http.setRequestHeader("Content-type", "application/json");
                 http.onreadystatechange = function() {//Call a function when the state changes.
                 if(http.readyState == 4 && http.status == 200) {
                     if (JSON.parse(http.responseText).status==="success"){
                         alert("Successfully saved invoice!")
+                        window.location.reload(false);
                     current_invoice=JSON.parse(http.responseText).resp[0]
                     console.log(current_invoice) //$("#assignmentdetail").text(http.responseText)
                     render_current_invoice()
@@ -568,7 +587,7 @@
 
            }
                   }
-            
+
         }
         var clearTax=function(){
             current_invoice.taxes=[]
@@ -581,7 +600,7 @@
             $("#taxname").val(null)
             $("#taxrate").val(null)
             if (isNaN(taxdict.rate)){
-            
+
                 alert("Bad value!")
             }
             else{
@@ -589,12 +608,12 @@
             render_current_invoice()
             }
         }
-        
+
         var getinvoicetotal=function(invoice){
             totals={}
             total=0.0
             grand_total=0.0
-            if(invoice.hasOwnProperty("invoicelines")){    
+            if(invoice.hasOwnProperty("invoicelines")){
                 for (i=0;i<invoice.invoicelines.length;i++){
                     total=total+invoice.invoicelines[i].amount
                 }
@@ -610,17 +629,17 @@
             return totals
         }
         var updateinvoicetotal=function(){
-           
+
             totals=getinvoicetotal(current_invoice)
-            
+
             $("#invoicetotal").empty()
-            $("#invoicetotal").append("<b>Total: </b>"+ totals.total)
+            $("#invoicetotal").append("<b>Total: ₹</b>"+ totals.total)
              for (i=0;i<current_invoice.taxes.length;i++){
                  tax=current_invoice.taxes[i]
-                $("#invoicetotal").append("<br><b>"+tax.name+"("+tax.rate*100+"%): </b>"+totals.total*tax.rate)
+                $("#invoicetotal").append("<br><b>"+tax.name+"("+tax.rate*100+"%): ₹</b>"+totals.total*tax.rate)
              }
-            $("#invoicetotal").append("<br><b>Grand Total: </b>"+ totals.grand_total)
-            
+            $("#invoicetotal").append("<br><b>Grand Total: ₹</b>"+ totals.grand_total)
+
         }
         var addInvoiceLine=function(line){
             if(current_invoice.invoicelines.includes(line)===false){
@@ -645,7 +664,7 @@
                 }
                 console.log(assignments)
                 updateInvoice()
-            } 
+            }
         var removeassignment=function(assid){
                 if(assignments.includes(assid)===true){
                    var index = assignments.indexOf(assid);
@@ -655,7 +674,7 @@
                 }
                 console.log(assignments)
                 updateInvoice()
-            }  
+            }
         var addAll=function(){
 
                 for(i=0;i<paginationApp.posts.length;i++){
@@ -663,6 +682,15 @@
                 }
 
             }
+        var editInvoice = function(invoice_id){
+          console.log("http://"+serverip+":5000/invoice/by_invoice_id/"+invoice_id)
+          $.getJSON("http://"+serverip+":5000/invoice/by_invoice_id/"+invoice_id,function(data){
+              console.log(data)
+              current_invoice=data.resp[0]
+              render_current_invoice()
+
+          })
+        }
         var searchAssignments=function(){
                 search_query={}
                 search_query.date_frm=$("#date_frm").val()
@@ -688,20 +716,20 @@
                 addassignment(assid)
             }else{
                 removeassignment(assid)
-                
+
             }
         }
         var get_cust_list=function(){
 
                 $.getJSON('http://'+serverip+':5000/customer',function(data){
                     //console.log(data.resp)
-                    
+
                     for (i=0;i<data.resp.length;i++){
                         $("#cust_id").append('<option>' + data.resp[i].cust_id + '</option>');
                     }
                     $("#cust_id").append('<option>retail</option>');
 
-                    $("#cust_id").on("change", function(event) { 
+                    $("#cust_id").on("change", function(event) {
                         //console.log(this.value)
                         $("#cust_data").remove()
                         $("#cust_details").append("<div id='cust_data'>"+this.value+"</div>")
@@ -711,7 +739,7 @@
                     }
                     $("#cust_id2").append('<option>retail</option>');
 
-                    $("#cust_id2").on("change", function(event) { 
+                    $("#cust_id2").on("change", function(event) {
                         //console.log(this.value)
                         $("#cust_data2").remove()
                         $("#cust_details2").append("<div id='cust_data2'>"+this.value+"</div>")
@@ -719,7 +747,7 @@
                 })
 
         }
-        get_cust_list(); 
+        get_cust_list();
         var fillInvoices = function(){
         console.log("Filling bookings data");
         /*
@@ -730,31 +758,42 @@
         */
         var table2=$('#invoicelist').DataTable({
             select: true,
+            columnDefs: [ {
+                           orderable: false,
+                           className: 'select-checkbox',
+                           targets:   0
+                       } ],
+            select: {
+                           style:    'os',
+                           selector: 'td:first-child'
+                       },
             ajax: {
                 url: 'http://'+serverip+':5000/invoice',
                 dataSrc: 'resp'
             },
             columns: [
+              {width:"5%", defaultContent:""},
+
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
                 { width:"5%",data: null,render: function(data){
                     invoice_id='"'+data.invoice_id+'"'
                     return "<button onclick='deleteInvoice("+invoice_id+")'>Delete</button>"
-                   
+
                 }},
                 {width:"20%", data: 'invoice_id', defaultContent:"None", render: function(data){
                     if(data){
                         invoice_id='"'+data+'"'
-                        var invoiceid="<a class='nav-link' onclick='editBooking("+invoice_id+")'>"+data+"</a>"
-                    
+                        var invoiceid="<a class='nav-link' onclick='editInvoice("+invoice_id+")'>"+data+"</a>"
+
                         return invoiceid
-                        
-                    
+
+
                     }
                 }},
-                
+
                 { width:"25%",data: 'invoice_date',defaultContent:"None",render: function(data){
-                    
-                    //console.log(data)    
+
+                    //console.log(data)
                     return moment(data.$date).format("YYYY-MMM-DD HH:mm:ss")
                     }},
                 {width:"25%", data: 'cust_id',defaultContent:"None",render: function(data){if(data){
@@ -762,7 +801,7 @@
                     }}},
                 {width:"25%", data: null, defaultContent:"None", render: function(data){if(data){
                     totals=getinvoicetotal(data)
-                    
+
                     return totals.grand_total
                 }}}
             ],
@@ -772,14 +811,44 @@
         setInterval( function () {
                 table2.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
-       
-        
+        $("#deleteselectedinvoices").on("click", function(){
+          var delvids=[]
+          selectedinvoices=$("#invoicelist").DataTable().rows({selected: true }).data()
+          for (i=0;i<selectedinvoices.length;i++){
+              delvids.push(selectedinvoices[i].invoice_id)
+          }
+          console.log("Deleting invoices")
+          console.log(delvids)
+          params=JSON.stringify(delvids)
+          var url = "http://"+serverip+":5000/invoice/bulkdelete";
+          var http = new XMLHttpRequest();
+          http.open("POST", url, true);
+          http.setRequestHeader("Content-type", "application/json");
+          http.onreadystatechange = function() {//Call a function when the state changes.
+              if(http.readyState == 4 && http.status == 200) {
+                  response=JSON.parse(http.responseText)
+                  console.log(response)
+                  if (response.status==="success"){
+                      alert("Successfully deleted invoices!")
+                      window.location.reload(false);
+
+                  }
+                  else{
+                      alert("Something went wrong!")
+                  }
+
+              }
+
+          }
+          http.send(params);
+        })
+
     }
-        
+
         fillInvoices()
     </script>
     <script src="dist/js/pagination.js"></script>
-    
+
     <script>
         $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
         $('#datetimepicker2').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
