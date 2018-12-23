@@ -649,24 +649,7 @@ class DutySlipResource(Resource):
 		if 'created_time' in respdict.keys():
 			#respdict['created_time']=datetime.datetime.fromtimestamp(respdict['created_time']/1000)
 			respdict.pop('created_time')
-		'''
-		if 'open_time' in respdict.keys():
-			#respdict['open_time']=datetime.datetime.fromtimestamp(respdict['open_time']/1000)
-			app.logger.info("Type for open_time {}".format(type(respdict['open_time'])))
-			if type(respdict['open_time'])==dict:
-				respdict['open_time']=datetime.datetime.fromtimestamp(respdict['open_time']['$date']/1000)
-			if type(respdict['open_time'])==unicode:
-				respdict['open_time']=xpal.utils.get_utc_ts(datetime.datetime.strptime(respdict['open_time'],"%Y-%m-%d %H:%M:%S"))
-			app.logger.info("Timestamp - {}".format(respdict['open_time']))
-		if 'close_time' in respdict.keys():
-			#respdict['close_time']=datetime.datetime.fromtimestamp(respdict['close_time']/1000)
-			app.logger.info("Type for close_time {}".format(type(respdict['close_time'])))
-			if type(respdict['close_time'])==dict:
-				respdict['close_time']=datetime.datetime.fromtimestamp(respdict['close_time']['$date']/1000)
-			if type(respdict['close_time'])==unicode:
-				respdict['close_time']=xpal.utils.get_utc_ts(datetime.datetime.strptime(respdict['close_time'],"%Y-%m-%d %H:%M:%S"))
-			app.logger.info("Timestamp - {}".format(respdict['close_time']))
-		'''
+
 		#TODO: dutyslip=xpal.update_dutyslip(docid,respdict) #82
 		if xpal.validate_dutyslip_dict(respdict,False)['status']==True:
 			try:
