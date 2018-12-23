@@ -192,7 +192,7 @@ var submit_output=function(){
             console.log(response)
             if (response.status==="success"){
                 alert("Successfully imported customers!")
-
+                window.location.reload(false);
 
             }
             else{
@@ -433,7 +433,7 @@ var do_file = (function() {
                 console.log(response)
                 if (response.status==="success"){
                     alert("Successfully deleted customers!")
-
+                    window.location.reload(false);
 
                 }
                 else{

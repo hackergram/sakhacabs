@@ -193,7 +193,7 @@ var submit_output=function(){
             if (response.status==="success"){
                 alert("Successfully imported drivers!")
 
-
+                window.location.reload(false);
             }
             else{
                 alert("Something went wrong!")
@@ -433,7 +433,7 @@ var do_file = (function() {
                 console.log(response)
                 if (response.status==="success"){
                     alert("Successfully deleted drivers!")
-
+                    window.location.reload(false);
 
                 }
                 else{
