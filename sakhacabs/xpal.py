@@ -969,7 +969,7 @@ def import_customers(customerlist):
 	try:
 		for customer in customerlist:
 			try:
-				if validate_customer_dict(customer)==True:
+				if validate_customer_dict(customer)['status']==True:
 					d=create_customer(customer)
 					if type(d)==list:
 						d=d[0]
@@ -979,7 +979,7 @@ def import_customers(customerlist):
 					else:
 						customer['status']=d
 				else:
-					customer['status']=validate_customer_dict(customer)
+					customer['status']=validate_customer_dict(customer)['message']
 			except Exception as e:
 				customer['cust_id']="{} {}".format(type(e),str(e))
 		return customerlist
@@ -990,7 +990,7 @@ def import_products(productlist):
 	try:
 		for product in productlist:
 			try:
-				if validate_product_dict(product)==True:
+				if validate_product_dict(product)['status']==True:
 					d=create_product(product)
 					if type(d)==list:
 						d=d[0]
@@ -998,9 +998,9 @@ def import_products(productlist):
 						d.reload()
 						product['status']=d.product_id
 					else:
-						product['status']=d
+						product['status'] = d
 				else:
-					product['status']=validate_product_dict(product)
+					product['status'] = validate_product_dict(product)['message']
 			except Exception as e:
 				product['status']="{} {}".format(type(e),str(e))
 		return productlist

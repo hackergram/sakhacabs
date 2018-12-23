@@ -771,6 +771,8 @@ class CustomerResource(Resource):
 				else:
 					for cust_id in respdict:
 						xpal.delete_customer(cust_id)
+					resp="Deleted customers"
+					status="success"
 			except:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
@@ -819,6 +821,8 @@ api.add_resource(CustomerResource,"/customer/by_tgid/<int:tgid>",endpoint="cust_
 api.add_resource(CustomerResource,"/customer/by_mobile/<string:mobile_num>",endpoint="cust_mobile")
 api.add_resource(CustomerResource,"/customer/by_id/<string:docid>",endpoint="customer_docid")
 api.add_resource(CustomerResource,"/customer/by_cust_id/<string:cust_id>",endpoint="cust_id")
+api.add_resource(CustomerResource,"/customer/<string:command>",endpoint="customer_command")
+
 
 class ProductResource(Resource):
     def get(self,product_id=None,docid=None,command=None):
@@ -887,6 +891,8 @@ class ProductResource(Resource):
 				else:
 					for product_id in respdict:
 						xpal.delete_product(product_id)
+					resp = "Deleted products"
+					status = "success"
 			except:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
