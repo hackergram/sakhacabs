@@ -433,6 +433,8 @@ class BookingResource(Resource):
 				else:
 					for booking_id in respdict:
 						xpal.delete_booking(booking_id)
+					resp="Deleted Bookings {}".format(respdict)
+					status="success"
 			except:
 				resp="{} {}".format(type(e),str(e))
 				status="error"

@@ -134,6 +134,8 @@ a { text-decoration: none }
                             <div class="card-header card-header-primary">
                               <h4 class="card-title">Bookings</h4>
                               <p class="card-category">Current Bookings</p>
+                              <button id="deleteselectedbookings">Delete Selected</button>
+
                             </div>
                             <div class="card-body table-responsive">
                                <table class="table table-striped" id="bookinglist">
@@ -516,6 +518,37 @@ var do_file = (function() {
 
         });
       }
+      $("#deleteselectedbookings").on("click", function(){
+        var delvids=[]
+        selectedbookings=$("#bookinglist").DataTable().rows({selected: true }).data()
+        for (i=0;i<selectedbookings.length;i++){
+            delvids.push(selectedbookings[i].booking_id)
+        }
+        console.log("Deleting bookings")
+        console.log(delvids)
+        params=JSON.stringify(delvids)
+        var url = "http://"+serverip+":5000/booking/bulkdelete";
+        var http = new XMLHttpRequest();
+        http.open("POST", url, true);
+        http.setRequestHeader("Content-type", "application/json");
+        http.onreadystatechange = function() {//Call a function when the state changes.
+            if(http.readyState == 4 && http.status == 200) {
+                response=JSON.parse(http.responseText)
+                console.log(response)
+                if (response.status==="success"){
+                    alert("Successfully deleted bookings!")
+
+
+                }
+                else{
+                    alert("Something went wrong!")
+                }
+
+            }
+
+        }
+        http.send(params);
+      })
     }
     updateassignmentbookinglist()
 </script>
