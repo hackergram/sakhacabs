@@ -26,7 +26,7 @@ me = MongoEngine(app)
 app.logger=xpal.sakhacabsxpal.logger
 
 api = Api(app)
-parser = reqparse.RequestParser()  
+parser = reqparse.RequestParser()
 
 
 class DriverResource(Resource):
@@ -40,10 +40,10 @@ class DriverResource(Resource):
 				except Exception as e:
 					app.logger.error("{} {}".format(type(e),str(e)))
 					resp="{} {}".format(type(e),str(e))
-					status="error"	
+					status="error"
 			else:
 				resp="Unrecognized command"
-				status="error"	
+				status="error"
 		elif docid!=None:
 			resp=[xpal.documents.documents.Driver.objects.with_id(docid)]
 		elif tgid!=None:
@@ -58,7 +58,7 @@ class DriverResource(Resource):
 			status="success"
 		else:
 			status="error"
-		return jsonify({"resp":resp,"status":status}) 
+		return jsonify({"resp":resp,"status":status})
     def post(self, command=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -76,11 +76,36 @@ class DriverResource(Resource):
 			except Exception as e:
 				app.logger.error("{} {}".format(type(e),str(e)))
 				resp="{} {}".format(type(e),str(e))
-				status="error"			
+				status="error"
+		elif command=="import":
+			try:
+				#replace with bookinglist=xpal.importbookings(respdict) #91 #83
+				resp=xpal.import_drivers(respdict)
+				if type(resp)!=list:
+					status="error"
+				else:
+					status="success"
+				for driver in resp:
+					if "error" in driver['driver_id'].lower():
+						status="error"
+			except Exception as e:
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		elif command=="bulkdelete":
+			try:
+				if type(respdict)!=list:
+					status="error"
+					resp="Bulk Delete Expects a list of driver ids"
+				else:
+					for driver_id in respdict:
+						xpal.delete_driver(driver_id)
+			except:
+				resp="{} {}".format(type(e),str(e))
+				status="error"
 		else:
 			resp="Unrecognized command"
 			status="error"
-		return jsonify({"resp":resp,"status":status}) 
+		return jsonify({"resp":resp,"status":status})
     def put(self,driver_id):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -98,7 +123,7 @@ class DriverResource(Resource):
 			app.logger.error("{} {}".format(type(e),str(e)))
 			resp="{} {}".format(type(e),str(e))
 			status="error"
-		return jsonify({"resp":resp,"status":status}) 		
+		return jsonify({"resp":resp,"status":status})
     def delete(self,driver_id=None):
 		if driver_id==None:
 			resp="No driver ID"
@@ -134,11 +159,11 @@ class VehicleResource(Resource):
 				except Exception as e:
 					app.logger.error("{} {}".format(type(e),str(e)))
 					resp="{} {}".format(type(e),str(e))
-					status="error"	
+					status="error"
 			else:
 				resp="Unrecognized command"
-				status="error"	
-		
+				status="error"
+
         elif docid!=None:
             resp=[xpal.documents.Vehicle.objects.with_id(docid)]
         elif vehicle_id!=None:
@@ -149,7 +174,7 @@ class VehicleResource(Resource):
 			status="success"
         else:
 			status="error"
-        return jsonify({"resp":resp,"status":status}) 
+        return jsonify({"resp":resp,"status":status})
     def post(self,command=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -167,11 +192,38 @@ class VehicleResource(Resource):
 			except Exception as e:
 				app.logger.error("{} {}".format(type(e),str(e)))
 				resp="{} {}".format(type(e),str(e))
-				status="error"			
+				status="error"
+		elif command=="import":
+			try:
+				#replace with bookinglist=xpal.importbookings(respdict) #91 #83
+				resp=xpal.import_vehicles(respdict)
+				if type(resp)!=list:
+					status="error"
+				else:
+					status="success"
+				for vehicle in resp:
+					if "error" in str(vehicle['status']).lower():
+						status="error"
+			except Exception as e:
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		elif command=="bulkdelete":
+			try:
+				if type(respdict)!=list:
+					status="error"
+					resp="Bulk Delete Expects a list of booking ids"
+				else:
+					for vehicle_id in respdict:
+						xpal.delete_vehicle(vehicle_id)
+					resp="Deleted vehicles {}".format(respdict)
+					status="success"
+			except:
+				resp="{} {}".format(type(e),str(e))
+				status="error"
 		else:
 			resp="Unrecognized command"
 			status="error"
-		return jsonify({"resp":resp,"status":status}) 
+		return jsonify({"resp":resp,"status":status})
     def put(self,vehicle_id=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -189,7 +241,7 @@ class VehicleResource(Resource):
 			app.logger.error("{} {}".format(type(e),str(e)))
 			resp="{} {}".format(type(e),str(e))
 			status="error"
-		return jsonify({"resp":resp,"status":status})	
+		return jsonify({"resp":resp,"status":status})
     def delete(self,vehicle_id=None):
 		if vehicle_id==None:
 			resp="No vehicle ID"
@@ -223,10 +275,10 @@ class LocationUpdateResource(Resource):
 				except Exception as e:
 					app.logger.error("{} {}".format(type(e),str(e)))
 					resp="{} {}".format(type(e),str(e))
-					status="error"	
+					status="error"
 			else:
 				resp="Unrecognized command"
-				status="error"	
+				status="error"
 		elif docid:
 			resp=[xpal.documents.LocationUpdate.objects.with_id(docid)]
 		else:
@@ -247,7 +299,7 @@ class LocationUpdateResource(Resource):
 					vehicle=xpal.documents.Vehicle.objects(vehicle_id=respdict["vehicle_id"])[0]
 				else:
 					vehicle=None
-				locupdate=new_locationupdate(driver,timestamp,vehicle=vehicle)
+				locupdate=xpal.new_locationupdate(driver,timestamp,vehicle=vehicle)
 				#locupdate=xpal.documents.LocationUpdate.from_json(json.dumps(request.get_json()))
 				app.logger.info("{}".format(locupdate.to_json()))
 				locupdate.save()
@@ -259,7 +311,7 @@ class LocationUpdateResource(Resource):
         except Exception as e:
 			app.logger.error("{} {}".format(type(e),str(e)))
 			resp="{} {}".format(type(e),str(e))
-			status="error"	
+			status="error"
         return jsonify({"resp":resp,"status":status})
     def put(self,docid=None):
         app.logger.info("{} {}".format(docid,request.get_json()))
@@ -276,11 +328,11 @@ class LocationUpdateResource(Resource):
                     return jsonify({"resp": [json.loads(locupdate.to_json())]})
                 except Exception as e:
                     app.logger.info("{}".format(str(e)))
-                    return jsonify({"resp":[]})   
+                    return jsonify({"resp":[]})
             else:
-                return jsonify({"resp":[]})   
+                return jsonify({"resp":[]})
         else:
-            return jsonify({"resp":[]})       
+            return jsonify({"resp":[]})
     def delete(self,docid):
 		if len(xpal.documents.LocationUpdate.objects.with_id(docid))>0:
 			xpal.documents.LocationUpdate.objects.with_id(docid).delete()
@@ -302,10 +354,10 @@ class BookingResource(Resource):
 				except Exception as e:
 					app.logger.error("{} {}".format(type(e),str(e)))
 					resp="{} {}".format(type(e),str(e))
-					status="error"	
+					status="error"
 			else:
 				resp="Unrecognized command"
-				status="error"	
+				status="error"
 		elif docid!=None:
 			app.logger.info("BookingResource: Booking Get By Doc ID {}".format(docid))
 			if xpal.documents.Booking.objects.with_id(docid):
@@ -327,7 +379,7 @@ class BookingResource(Resource):
 			resp=xpal.documents.Booking.objects.all()
 			status="success"
 		return jsonify({"resp":resp,"status":status})
-    def post(self,command=None):	
+    def post(self,command=None):
 		app.logger.info("BookingResource: {}".format(request.get_json()))
 		respdict=request.get_json()
 		app.logger.info("BookingResource: Received Command {}".format(command))
@@ -343,7 +395,7 @@ class BookingResource(Resource):
 				except Exception as e:
 					resp="{} {}".format(type(e),str(e))
 					status="error"
-				
+
 			else:
 				resp=xpal.validate_booking_dict(respdict)['message']
 				status="error"
@@ -358,7 +410,7 @@ class BookingResource(Resource):
 				except Exception as e:
 					app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
 					resp="{} {}".format(type(e),str(e))
-					status="error"	
+					status="error"
 		elif command=="import":
 			try:
 				#replace with bookinglist=xpal.importbookings(respdict) #91 #83
@@ -373,13 +425,24 @@ class BookingResource(Resource):
 			except Exception as e:
 				resp="{} {}".format(type(e),str(e))
 				status="error"
-		else:	
+		elif command=="bulkdelete":
+			try:
+				if type(respdict)!=list:
+					status="error"
+					resp="Bulk Delete Expects a list of booking ids"
+				else:
+					for booking_id in respdict:
+						xpal.delete_booking(booking_id)
+			except:
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		else:
 			resp="Unrecognized command or no provided"
 			status="success"
-		return jsonify({"resp":resp,"status":status})	
+		return jsonify({"resp":resp,"status":status})
     def put(self,booking_id=None):
 		#PUT to /booking/by_booking_id/<booking_id>
-        #Training Note: If more than one booking is linked in an assignment, the assignment reporting time will reflect that of the last updated booking. If something else is needed best to delete the assignment and create a new one. 
+        #Training Note: If more than one booking is linked in an assignment, the assignment reporting time will reflect that of the last updated booking. If something else is needed best to delete the assignment and create a new one.
         if booking_id==None:
 			resp="No booking id provided"
 			status="error"
@@ -399,7 +462,7 @@ class BookingResource(Resource):
 			else:
 				resp=xpal.validate_booking_dict(respdict,new=False)['message']
 				status="error"
-        return jsonify({"resp":resp,"status":status})  
+        return jsonify({"resp":resp,"status":status})
     def delete(self,booking_id=None):
 		if booking_id==None:
 			resp="No booking id provided"
@@ -485,7 +548,7 @@ class AssignmentResource(Resource):
 			except Exception as e:
 				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
 				resp="{} {}".format(type(e),str(e))
-				status="error"	
+				status="error"
         elif command=="search":
 			app.logger.info("AssignmentResource: Searching assignments")
 			try:
@@ -516,7 +579,7 @@ class AssignmentResource(Resource):
 			except Exception as e:
 				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
 				resp="{} {}".format(type(e),str(e))
-				status="error"        
+				status="error"
         return jsonify({"resp":resp,"status":status})
     def delete(self,docid=None):
 		if docid==None:
@@ -554,7 +617,7 @@ class DutySlipResource(Resource):
         else:
 			status="success"
         return jsonify({"resp": resp,"status":status})
-		
+
     def post(self,command=None):
         app.logger.info("{}".format(request.get_json()))
         respdict=request.get_json()
@@ -568,12 +631,12 @@ class DutySlipResource(Resource):
 			except Exception as e:
 				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
 				resp="{} {}".format(type(e),str(e))
-				status="error"	
+				status="error"
         else:
 			resp="Unrecognized command or no command provided"
 			status="error"
         return jsonify({"resp": resp,"status":status})
-    
+
     def put(self,docid):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -582,7 +645,7 @@ class DutySlipResource(Resource):
 		if 'created_time' in respdict.keys():
 			#respdict['created_time']=datetime.datetime.fromtimestamp(respdict['created_time']/1000)
 			respdict.pop('created_time')
-		'''	
+		'''
 		if 'open_time' in respdict.keys():
 			#respdict['open_time']=datetime.datetime.fromtimestamp(respdict['open_time']/1000)
 			app.logger.info("Type for open_time {}".format(type(respdict['open_time'])))
@@ -611,7 +674,7 @@ class DutySlipResource(Resource):
 			except Exception as e:
 				app.logger.error("{} {} \n {}".format(type(e),str(e),respdict))
 				resp="{} {}".format(type(e),str(e))
-				status="error"        
+				status="error"
 		else:
 			resp=xpal.validate_dutyslip_dict(respdict,False)['messages']
 			status="error"
@@ -652,11 +715,11 @@ class CustomerResource(Resource):
 				except Exception as e:
 					app.logger.error("{} {}".format(type(e),str(e)))
 					resp="{} {}".format(type(e),str(e))
-					status="error"	
+					status="error"
 			else:
 				resp="Unrecognized command"
-				status="error"	
-		
+				status="error"
+
         elif docid!=None:
             resp=[xpal.documents.Customer.objects.with_id(docid)]
         elif cust_id!=None:
@@ -667,7 +730,7 @@ class CustomerResource(Resource):
 			status="error"
         else:
 			status="success"
-        return jsonify({"resp":resp,"status":status}) 
+        return jsonify({"resp":resp,"status":status})
     def post(self,command=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -685,11 +748,36 @@ class CustomerResource(Resource):
 			except Exception as e:
 				app.logger.error("{} {}".format(type(e),str(e)))
 				resp="{} {}".format(type(e),str(e))
-				status="error"			
+				status="error"
+		elif command=="import":
+			try:
+				#replace with bookinglist=xpal.importbookings(respdict) #91 #83
+				resp=xpal.import_customers(respdict)
+				if type(resp)!=list:
+					status="error"
+				else:
+					status="success"
+				for customer in resp:
+					if "error" in customer['cust_id'].lower():
+						status="error"
+			except Exception as e:
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		elif command=="bulkdelete":
+			try:
+				if type(respdict)!=list:
+					status="error"
+					resp="Bulk Delete Expects a list of customer ids"
+				else:
+					for cust_id in respdict:
+						xpal.delete_customer(cust_id)
+			except:
+				resp="{} {}".format(type(e),str(e))
+				status="error"
 		else:
 			resp="Unrecognized command"
 			status="error"
-		return jsonify({"resp":resp,"status":status}) 
+		return jsonify({"resp":resp,"status":status})
     def put(self,cust_id=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -707,7 +795,7 @@ class CustomerResource(Resource):
 			app.logger.error("{} {}".format(type(e),str(e)))
 			resp="{} {}".format(type(e),str(e))
 			status="error"
-		return jsonify({"resp":resp,"status":status})	
+		return jsonify({"resp":resp,"status":status})
     def delete(self,cust_id=None):
 		if cust_id==None:
 			resp="No customer ID"
@@ -725,7 +813,7 @@ class CustomerResource(Resource):
 				resp="{} {}".format(type(e),str(e))
 				status="error"
 		return jsonify({"resp":resp,"status":status})
-		
+
 api.add_resource(CustomerResource,"/customer",endpoint="customer")
 api.add_resource(CustomerResource,"/customer/by_tgid/<int:tgid>",endpoint="cust_tgid")
 api.add_resource(CustomerResource,"/customer/by_mobile/<string:mobile_num>",endpoint="cust_mobile")
@@ -743,11 +831,11 @@ class ProductResource(Resource):
 				except Exception as e:
 					app.logger.error("{} {}".format(type(e),str(e)))
 					resp="{} {}".format(type(e),str(e))
-					status="error"	
+					status="error"
 			else:
 				resp="Unrecognized command"
-				status="error"	
-		
+				status="error"
+
         elif docid!=None:
             resp=[xpal.documents.Product.objects.with_id(docid)]
         elif product_id!=None:
@@ -776,11 +864,36 @@ class ProductResource(Resource):
 			except Exception as e:
 				app.logger.error("{} {}".format(type(e),str(e)))
 				resp="{} {}".format(type(e),str(e))
-				status="error"			
+				status="error"
+		elif command=="import":
+			try:
+				#replace with bookinglist=xpal.importbookings(respdict) #91 #83
+				resp=xpal.import_products(respdict)
+				if type(resp)!=list:
+					status="error"
+				else:
+					status="success"
+				for product in resp:
+					if "error" in product['product_id'].lower():
+						status="error"
+			except Exception as e:
+				resp="{} {}".format(type(e),str(e))
+				status="error"
+		elif command=="bulkdelete":
+			try:
+				if type(respdict)!=list:
+					status="error"
+					resp="Bulk Delete Expects a list of booking ids"
+				else:
+					for product_id in respdict:
+						xpal.delete_product(product_id)
+			except:
+				resp="{} {}".format(type(e),str(e))
+				status="error"
 		else:
 			resp="Unrecognized command"
 			status="error"
-		return jsonify({"resp":resp,"status":status}) 
+		return jsonify({"resp":resp,"status":status})
     def put(self,product_id=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -798,7 +911,7 @@ class ProductResource(Resource):
 			app.logger.error("{} {}".format(type(e),str(e)))
 			resp="{} {}".format(type(e),str(e))
 			status="error"
-		return jsonify({"resp":resp,"status":status})	
+		return jsonify({"resp":resp,"status":status})
     def delete(self,product_id=None):
 		if product_id==None:
 			resp="No product ID"
@@ -832,11 +945,11 @@ class InvoiceResource(Resource):
 				except Exception as e:
 					app.logger.error("{} {}".format(type(e),str(e)))
 					resp="{} {}".format(type(e),str(e))
-					status="error"	
+					status="error"
 			else:
 				resp="Unrecognized command"
-				status="error"	
-		
+				status="error"
+
         elif docid!=None:
             resp=[xpal.documents.Invoice.objects.with_id(docid)]
         elif invoice_id!=None:
@@ -847,7 +960,7 @@ class InvoiceResource(Resource):
 			status="success"
         else:
 			status="error"
-        return jsonify({"resp":resp,"status":status}) 
+        return jsonify({"resp":resp,"status":status})
     def post(self,command=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -865,7 +978,7 @@ class InvoiceResource(Resource):
 			except Exception as e:
 				app.logger.error("{} {}".format(type(e),str(e)))
 				resp="{} {}".format(type(e),str(e))
-				status="error"			
+				status="error"
 		elif command=="generateinvoice":
 			app.logger.info("Trying to generate invoice")
 			try:
@@ -878,17 +991,17 @@ class InvoiceResource(Resource):
 				else:
 					status="error"
 				#else:
-				
+
 				#	status="error"
 				#	resp="No assignments in list provided"
 			except Exception as e:
 				app.logger.error("{} {}".format(type(e),str(e)))
 				resp="{} {}".format(type(e),str(e))
-				status="error"		
+				status="error"
 		else:
 			resp="Unrecognized command"
 			status="error"
-		return jsonify({"resp":resp,"status":status}) 
+		return jsonify({"resp":resp,"status":status})
     def put(self,invoice_id=None):
 		app.logger.info("{}".format(request.get_json()))
 		respdict=request.get_json()
@@ -906,7 +1019,7 @@ class InvoiceResource(Resource):
 			app.logger.error("{} {}".format(type(e),str(e)))
 			resp="{} {}".format(type(e),str(e))
 			status="error"
-		return jsonify({"resp":resp,"status":status})	
+		return jsonify({"resp":resp,"status":status})
     def delete(self,invoice_id=None):
 		if invoice_id==None:
 			resp="No invoice ID"
@@ -931,5 +1044,3 @@ api.add_resource(InvoiceResource,"/invoice/<string:command>",endpoint="invoice_c
 
 if __name__ == '__main__':
    app.run(host="0.0.0.0")
-
-
