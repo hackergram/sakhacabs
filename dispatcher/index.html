@@ -35,10 +35,10 @@
                 -webkit-transform-origin: 0 0;
         }
     </style>
-  
+
      <!-- CSS Includes -->
     <link rel="stylesheet" type="text/css" src="assets/css/jquery-ui.css">
-   
+
     <!--  DataTables Includes  -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
@@ -53,7 +53,7 @@
 </head>
 
 <body class="">
-   
+
     <div class="wrapper ">
         <div class="sidebar" data-color="purple" data-background-color="white">
                 <!--
@@ -87,22 +87,52 @@
                             <p>Create Driver</p>
                         </a>
                     </li>
-                    <li class="nav-item" id="importbookingsnavitem">
-                        <a class="nav-link" href="./importbookings.html">
+                    <li class="nav-item" id="managedriversnavitem">
+                        <a class="nav-link" href="./managedrivers.html">
                             <i class="material-icons">content_paste</i>
-                            <p>Import Bookings</p>
+                            <p>Manage Drivers</p>
                         </a>
                     </li>
+
                     <li class="nav-item" id="createbookingsnavitem">
                         <a class="nav-link" href="../bookingweb">
                             <i class="material-icons">content_paste</i>
                             <p>Create Bookings</p>
                         </a>
                     </li>
-
+                    <li class="nav-item" id="managebookingsnavitem">
+                        <a class="nav-link" href="./managebookings.html">
+                            <i class="material-icons">content_paste</i>
+                            <p>Manage Bookings</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" id="managevehiclesnavitem">
+                        <a class="nav-link" href="./managevehicles.html">
+                            <i class="material-icons">content_paste</i>
+                            <p>Manage Vehicles</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" id="managecustomersnavitem">
+                        <a class="nav-link" href="./managecustomers.html">
+                            <i class="material-icons">content_paste</i>
+                            <p>Manage Customers</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" id="manageproductsnavitem">
+                        <a class="nav-link" href="./manageproducts.html">
+                            <i class="material-icons">content_paste</i>
+                            <p>Manage Products</p>
+                        </a>
+                    </li>
+                    <li class="nav-item" id="manageinvoicesnavitem">
+                        <a class="nav-link" href="./manageinvoices.html">
+                            <i class="material-icons">content_paste</i>
+                            <p>Manage Invoices</p>
+                        </a>
+                    </li>
                 </ul>
             </div>
-            
+
         </div>
         <!-- Modals -->
         <div class="modal fade" id="createassignmentform" tabindex="-1" role="dialog" aria-labelledby="Create Assignment">
@@ -187,7 +217,7 @@
                     </div>
                     </form>
                   </div>
-                  <div class="modal-footer">  
+                  <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="sakha.saveAssignment()">Save changes</button>
                   </div>
@@ -240,7 +270,7 @@
                     </div>
 
                   </div>
-                  <div class="modal-footer">  
+                  <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="savedriver">Save changes</button>
                   </div>
@@ -248,7 +278,7 @@
               </div>
 
 
-        
+
         </div>
         <div class="modal fade" id="editdutyslipform" tabindex="-1" role="dialog" aria-labelledby="Edit Duty Slip">
             <div class="modal-dialog" role="document">
@@ -260,7 +290,7 @@
 
                     <div class="card-header card-header-primary">
                       <h4 class="card-title">Edit Duty Slip</h4>
-                      <h5 class="card-category"><span id="created_time"><b>Created at: </b></span></h5>   
+                      <h5 class="card-category"><span id="created_time"><b>Created at: </b></span></h5>
                     </div>
                     <div class="card-body">
                         <form id="dutyslipform">
@@ -268,7 +298,7 @@
                               <div class="col-md-12">
                                 <div class="form-group bmd-form-group">
                                   <label class="bmd-label-floating">Status</label>
-                                
+
                                     <select class="form-control" id="status">
                                         <option value="verified">VERIFIED</option>
                                         <option value="closed">CLOSED</option>
@@ -312,7 +342,7 @@
                                 <div class="form-group bmd-form-group">
                                   <label class="bmd-label-floating">Open Time</label>
                                   <input type="text" class="form-control" id="open_time" require="true">
-                                    
+
                                  </div>
                               </div>
                             <div class="col-md-4">
@@ -392,7 +422,7 @@
                         </form>
                     </div>
                   </div>
-                  <div class="modal-footer">  
+                  <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="savedutyslip">Save changes</button>
                   </div>
@@ -400,7 +430,7 @@
               </div>
 
 
-        
+
         </div>
         <div class="modal fade" id="editbookingform" tabindex="-1" role="dialog" aria-labelledby="Edit Duty Slip">
             <div class="modal-dialog" role="document">
@@ -412,7 +442,7 @@
 
             <div class="card-header card-header-primary">
               <h4 class="card-title">Edit Booking ID: <span id="booking_id"></span> </h4>
-              <h5 class="card-category"><b>Created at: </b><span id="booking_created_timestamp"></span></h5>   
+              <h5 class="card-category"><b>Created at: </b><span id="booking_created_timestamp"></span></h5>
             </div>
             <div class="card-body">
                 <form id="bookingform">
@@ -432,7 +462,7 @@
                       </div>
                     </div>
                     <div class="row">
-                      
+
                      <div class="col-md-4">
                         <div class="form-group bmd-form-group">
                           <label class="bmd-label-floating">Customer ID</label>
@@ -455,7 +485,7 @@
                       </div>
                     </div>
                     <div class="row">
-                      
+
                     <div class="col-md-12">
                         <div class="form-group bmd-form-group">
                           <label class="bmd-label-floating">Pickup Location</label>
@@ -464,7 +494,7 @@
                       </div>
                     </div>
                     <div class="row">
-                      
+
                     <div class="col-md-12">
                         <div class="form-group bmd-form-group">
                           <label class="bmd-label-floating">Drop Location</label>
@@ -514,7 +544,7 @@
                 </form>
             </div>
           </div>
-          <div class="modal-footer">  
+          <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="button" class="btn btn-primary" id="savebooking">Save changes</button>
           </div>
@@ -582,7 +612,7 @@
                                       <main role="main" id="pagination-app">
 
                                         <div class="container" v-cloak>
-                                            
+
                                            <div class="row">
                                                <div class="col-sm-4 small-cols">
                                                     <p class="text-right">Sort By: </p >
@@ -616,7 +646,7 @@
                                                             <div class="row">
                                                                <div class="btn-group">
 
-                                                                <button type="button" class="btn btn-sm btn-outline-secondary" 
+                                                                <button type="button" class="btn btn-sm btn-outline-secondary"
                                                                         @click="sakha.deleteAssignment(post.assignment._id.$oid)">Delete</button>
 
                                                                 <button type="button" class="btn btn-sm btn-outline-secondary" @click="sakha.updateAssignmentStatus(post.assignment._id.$oid,'cancelled')">Cancel</button>
@@ -636,13 +666,13 @@
                                                                           <div v-bind:class="'card-header-'+booking.status">{{booking.booking_id}}</div>
                                                                           <div class="card-body">
                                                                               <b>Pickup Time:</b> <span>{{moment(booking.pickup_timestamp.$date).format('MMM DD YYYY, h:mm:ss a')}}</span>
-                                                                              <br><b> Passenger Detail:</b><span>{{booking.passenger_detail}}</span> 
+                                                                              <br><b> Passenger Detail:</b><span>{{booking.passenger_detail}}</span>
 
                                                                         </div>
                                                                         </div>
                                                                     </div>
                                                                     </div>
-                                                                </div>  
+                                                                </div>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-lg-12">
@@ -663,7 +693,7 @@
                                                                             <b>HRS: </b><span>{{moment(dutyslip.close_time.$date).diff(moment(dutyslip.open_time.$date),"hours",true).toFixed(2)}}</span>
                                                                               </div>
                                                                         </div>
-                                                                    </div>    
+                                                                    </div>
                                                                         </div>
 
                                                             </div>
@@ -683,7 +713,7 @@
 
                                         </div>
 
-                                     </main>      
+                                     </main>
 
                                 </div>
 
@@ -839,31 +869,31 @@
                         <script>
                             document.write(new Date().getFullYear())
                         </script>,
-                        <a href="https://www.sakhaconsultingwings.com" target="_blank">Sakha Consulting Wings</a> 
+                        <a href="https://www.sakhaconsultingwings.com" target="_blank">Sakha Consulting Wings</a>
 
                     </div>
               <!-- your footer here -->
                 </div>
             </footer>
-            
+
         </div>
     </div>
     <!--   Core JS Files   -->
     <!--
     <script src="assets/js/core/jquery.min.js" type="text/javascript"></script>
     -->
-    
-    
-    
+
+
+
     <!--That on which all depends-->
     <script src="assets/js/core/popper.min.js" type="text/javascript"></script>
     <script type="text/javascript" charset="utf8" src="assets/js/moment-with-locales.min.js"></script>
-   
+
     <!-- Jquery includes -->
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
     <script src="assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
     <script src="assets/js/jquery-ui.js"></script>
-    
+
     <!--Bootstrap Includes-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <!--  Notifications Plugin    -->
@@ -871,14 +901,14 @@
     <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
     <!--
     <script src="assets/js/core/bootstrap-material-design.js" type="text/javascript"></script>
-    
+
     <script src="assets/js/core/bootstrap-material-design.min.js" type="text/javascript"></script>
     -->
     <!-- That on which much depends -->
     <!--For assignments card pagination using pagination.js-->
     <script src="dist/js/vue.min.js"></script>
     <script src="dist/js/axios.min.js"></script>
-    
+
     <!--DataTables includes-->
     <script type="text/javascript" charset="utf8" src="assets/js/jquery.dataTables.js"></script>
     <script type="text/javascript" charset="utf8" src="assets/js/dataTables.select.min.js"></script>
@@ -887,16 +917,16 @@
     <!-- That which depends -->
     <script src="assets/js/material-dashboard.js" type="text/javascript"></script>
     <script type="text/javascript" src="https://rawgit.com/tempusdominus/bootstrap-4/master/build/js/tempusdominus-bootstrap-4.js"></script>
-   
-   
+
+
     <script src="assets/js/sakha.js"></script>
-   
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>-->
-    
-    
+
+
     <script>
         var sort_field="reporting_timestamp"
         var sort_order="ascending"
@@ -909,7 +939,7 @@
             console.log("Re-getting assignments")
             paginationApp.getPosts()
         }
-    </script>      
+    </script>
     <script type="text/javascript">
         var assignmentdict={}
         assignmentdict['assignment']={}
@@ -922,24 +952,24 @@
                 var assignmentid = eventsrc.data('assignmentid') // Extract info from data-* attributes
                     $("#dashboardnavitem").toggleClass("active")
                     $("#createassignmentnavitem").toggleClass("active")
-                
+
                     $(".modal-dialog").draggable({
                         handle: ".modal-header"
                     })
-                    sakha.fillAssignmentModal(assignmentid)    
+                    sakha.fillAssignmentModal(assignmentid)
             })
             $("#createdriverform").on('show.bs.modal', function (event){
                     var eventsrc = $(event.relatedTarget) // Button that triggered the modal
                     var driverid = eventsrc.data('driverid') // Extract info from data-* attributes
                     $("#dashboardnavitem").toggleClass("active")
                     $("#createdrivernavitem").toggleClass("active")
-                
+
                     $(".modal-dialog").draggable({
                         handle: ".modal-header"
                     })
-                    sakha.fillDriverModal(driverid)    
-                        
-            })   
+                    sakha.fillDriverModal(driverid)
+
+            })
             $('#createassignmentform').on('hide.bs.modal', function (event) {
                     window.location.reload(false);
             })
@@ -949,14 +979,14 @@
             })
             $("#editdutyslipform").on('show.bs.modal', function (event) {
                 $('#datetimepicker3').datetimepicker({format: 'YYYY-MM-DD HH:mm'});
-        
+
                 console.log("editing duty slip in modal")
                 var eventsrc = $(event.relatedTarget) // Button that triggered the modal
                 var dsid = eventsrc.data('dsid') // Extract info from data-* attributes
                 console.log(dsid)
-        
+
                 sakha.fillDutySlipModal(dsid)
-                
+
             })
             $("#editdutyslipform").on('hide.bs.modal', function (event) {
                 console.log("closing duty slip modal")

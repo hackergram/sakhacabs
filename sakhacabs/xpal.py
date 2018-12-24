@@ -6,7 +6,7 @@ Created on Sat Sep  8 21:52:07 2018
 @author: arjun
 """
 
-import sys,datetime,json,re
+import sys, datetime, json
 import mongoengine
 sys.path.append("/opt/xetrapal")
 import xetrapal
@@ -141,7 +141,7 @@ def validate_assignment_dict(assignmentdict,new=True):
 	validation={}
 	validation['status']=True
 	validation['message']="Valid assignment"
-	
+
 	if assignmentdict['dutyslips']==[]:
 		validation['status']=False
 		validation['message']="At least one driver must be assigned to create an assignment."
@@ -168,7 +168,7 @@ def validate_assignment_dict(assignmentdict,new=True):
 	else:
 		sakhacabsxpal.logger.error("assignmentdict: "+validation['message'])
 	return validation
-	
+
 def sync_remote():
     custlist=custsheet.get_as_df().to_dict(orient="records")
     driverlist=driversheet.get_as_df().to_dict(orient="records")
@@ -182,7 +182,7 @@ def sync_remote():
     driverdf=pandas.DataFrame(json.loads(documents.Driver.objects.to_json()))
     driverdf['_id']=driverdf['_id'].apply(lambda x: x['$oid'])
     driversheet.set_dataframe(driverdf,(1,1))
-    
+
     for customer in custlist:
         if len(documents.Customer.objects(cust_id=customer['cust_id']))==0:
             c=documents.Customer(cust_id=customer['cust_id'],mobile_num=customer['mobile_num'],cust_type=customer['cust_type'],blacklisted=customer['blacklisted'],email=customer['email'],cust_name=customer['cust_name'])
@@ -190,7 +190,7 @@ def sync_remote():
     customerdf=pandas.DataFrame(json.loads(documents.Customer.objects.to_json()))
     customerdf['_id']=customerdf['_id'].apply(lambda x: x['$oid'])
     custsheet.set_dataframe(customerdf,(1,1))
-    
+
     for car in carlist:
         if len(documents.Vehicle.objects(vehicle_id=car['vehicle_id']))==0:
             v=documents.Vehicle(vehicle_id=car['vehicle_id'],model=car['model'],make=car['make'],reg_num=car['reg_num'])
@@ -200,8 +200,8 @@ def sync_remote():
     if 'driver' in cardf.columns:
         cardf['driver']=cardf['driver'].apply(lambda x: x['$oid'])
     carsheet.set_dataframe(cardf,(1,1))
-    
-    
+
+
     for product in productlist:
         if len(documents.Product.objects(product_id=product['product_id']))==0:
             p=documents.Product(product_id=product['product_id'],name=product['name'],price=product['price'],desc=product['desc'])
@@ -209,8 +209,8 @@ def sync_remote():
     productdf=pandas.DataFrame(json.loads(documents.Product.objects.to_json()))
     productdf['_id']=productdf['_id'].apply(lambda x: x['$oid'])
     prodsheet.set_dataframe(productdf,(1,1))
-    
-    
+
+
     for booking in bookinglist:
         if len(documents.Product.objects(product_id=product['product_id']))==0:
             p=documents.Product(product_id=product['product_id'],name=product['name'],price=product['price'],desc=product['desc'])
@@ -224,9 +224,9 @@ LocationUpdate CRUD functionality
 Fix to check if vehicle is already  taken.
 '''
 
-def new_locationupdate(driver,timestamp,checkin=True,location=None,vehicle=None,handoff=None,logger=xetrapal.astra.baselogger,**kwargs): 
+def new_locationupdate(driver,timestamp,checkin=True,location=None,vehicle=None,handoff=None,logger=xetrapal.astra.baselogger,**kwargs):
 	"""
-	Creates a new location update, location updates once created are not deleted as they are equivalent to log entries. 
+	Creates a new location update, location updates once created are not deleted as they are equivalent to log entries.
 	Returns a LocationUpdate object
 	"""
 	vehicle_id=None
@@ -277,7 +277,7 @@ def validate_booking_dict(bookingdict,new=True):
 		required_keys=["cust_id","product_id","passenger_detail","passenger_mobile","pickup_timestamp","pickup_location","booking_channel"]
 	string_keys=["cust_id","product_id","passenger_detail","passenger_mobile","remarks"]
 	mobile_nums=["passenger_mobile"]
-	validation=utils.validate_dict(bookingdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)			
+	validation=utils.validate_dict(bookingdict,required_keys=required_keys,string_keys=string_keys,mobile_nums=mobile_nums)
 	if validation['status']==True:
 		sakhacabsxpal.logger.info("bookingdict: "+validation['message'])
 	else:
@@ -295,9 +295,9 @@ def new_booking(respdict):
 		respdict.pop("_id")
 	if "created_timestamp" in respdict.keys():
 		respdict.pop("created_timestamp")
-	
-	
-	
+
+
+
 	try:
 		b=documents.Booking(booking_id=utils.new_booking_id(),**bookingdict)
 		sakhacabsxpal.logger.info("Saving cust-meta as: {}".format(respdict))
@@ -331,7 +331,7 @@ def update_booking(booking_id,respdict):
 				if "pickup_location" in respdict.keys():
 					assignment.reporting_location=booking.pickup_location
 				assignment.save()
-					
+
 			return [booking]
 		except Exception as e:
 			return "{} {}".format(type(e),str(e))
@@ -346,7 +346,8 @@ def delete_booking(booking_id):
 			if assignment!=None:
 				if len(documents.Booking.objects(assignment=assignment))==0:
 					sakhacabsxpal.logger.info("No more bookings in assignment. Deleting!")
-					documents.Assignment.objects.with_id(assignment).delete()	
+					#documents.Assignment.objects.with_id(assignment).delete()
+					delete_assignment(assignment)
 				else:
 					sakhacabsxpal.logger.info("Updating assignment reporting time to first booking!")
 					assignmentobj=documents.Assignment.objects.with_id(assignment)
@@ -359,7 +360,7 @@ def delete_booking(booking_id):
 	else:
 		return "No booking by that id"
 
-			
+
 '''
 Assignment CRUD
 '''
@@ -384,7 +385,7 @@ def save_assignment(assignmentdict,assignment_id=None):
     assignment.reporting_location=assignment.bookings[0].pickup_location
     if assignment.bookings[0].drop_location:
 		assignment.drop_location=assignment.bookings[0].drop_location
-    assignment.cust_id=assignment.bookings[0].cust_id	
+    assignment.cust_id=assignment.bookings[0].cust_id
     assignment.save()
     existingdutyslips=documents.DutySlip.objects(assignment=assignment)
     sakhacabsxpal.logger.info("Existing duty slips {}".format(existingdutyslips.to_json()))
@@ -432,7 +433,7 @@ def search_assignments(cust_id=None,date_frm=None,date_to=None,status=None):
 		assignments=assignments.filter(reporting_timestamp__lt=date_to)
 	if status!=None:
 		assignments=assignments.filter(status=status)
-	
+
 	return assignments
 
 def delete_assignment(assignmentid):
@@ -442,7 +443,7 @@ def delete_assignment(assignmentid):
 		dutyslips.delete()
 		bookings=documents.Booking.objects(assignment=assignmentid)
 		sakhacabsxpal.logger.info("Removing Assignment reference from  Bookings {}".format(bookings.to_json()))
-		
+
 		for booking in bookings:
 			booking.assignment=None
 			booking.save()
@@ -474,14 +475,17 @@ def update_dutyslip(dsid,respdict):
 def delete_dutyslip(dsid):
 	if len(documents.DutySlip.objects.with_id(dsid))>0:
 		ds=documents.DutySlip.objects.with_id(dsid)
-		assignment=ds.assignment
+		assignment=ds.assignment.id
 		ds.delete()
+		sakhacabsxpal.logger.info("Checking if this is the last booking for assignment {}".format(assignment))
 		if len(documents.DutySlip.objects(assignment=assignment))==0:
-			documents.Assignment.objecs.with_id(assignment).delete()
+			sakhacabsxpal.logger.info("Deleting assignments")
+			#documents.Assignment.objecs.with_id(assignment).delete()
+			delete_assignment(assignment)
 		return []
 	else:
 		return "No Dutyslip by that ID"
-			
+
 '''
 Driver CRUD functionality
 '''
@@ -507,14 +511,14 @@ def create_driver(respdict):
 	if len(driver)>0:
 		return "Driver with that ID Exists"
 	if "_id" in respdict.keys():
-		respdict.pop('_id')			
+		respdict.pop('_id')
 	try:
 		driver=documents.Driver(**respdict)
 		driver.save()
 		return [driver]
 	except Exception as e:
 		return "{} {}".format(repr(e),str(e))
-	
+
 def update_driver(driver_id,respdict):
 	driver=documents.Driver.objects(driver_id=driver_id)
 	if len(driver)==0:
@@ -554,7 +558,7 @@ Vehicle CRUD functionality
 def get_vehicle_by_vid(vid):
     #t=db.view("vehicle/all_by_vnum",keys=[vnum]).all()
     t=documents.Vehicle.objects(vehicle_id=vid)
-    
+
     if len(t)>0:
         #return [Vehicle(x['value']) for x in t][0]
         return t[0]
@@ -567,14 +571,14 @@ def create_vehicle(respdict):
 	if len(vehicle)>0:
 		return "Vehicle with that ID Exists"
 	if "_id" in respdict.keys():
-		respdict.pop('_id')			
+		respdict.pop('_id')
 	try:
 		vehicle=documents.Vehicle(**respdict)
 		vehicle.save()
 		return [vehicle]
 	except Exception as e:
 		return "{} {}".format(repr(e),str(e))
-	
+
 def update_vehicle(vehicle_id,respdict):
 	vehicle=documents.Vehicle.objects(vehicle_id=vehicle_id)
 	if len(vehicle)==0:
@@ -619,14 +623,14 @@ def create_customer(respdict):
 	if len(customer)>0:
 		return "Customer with that ID Exists"
 	if "_id" in respdict.keys():
-		respdict.pop('_id')			
+		respdict.pop('_id')
 	try:
 		customer=documents.Customer(**respdict)
 		customer.save()
 		return [customer]
 	except Exception as e:
 		return "{} {}".format(repr(e),str(e))
-	
+
 def update_customer(cust_id,respdict):
 	customer=documents.Customer.objects(cust_id=cust_id)
 	if len(customer)==0:
@@ -671,14 +675,14 @@ def create_product(respdict):
 	if len(product)>0:
 		return "Product with that ID Exists"
 	if "_id" in respdict.keys():
-		respdict.pop('_id')			
+		respdict.pop('_id')
 	try:
 		product=documents.Product(**respdict)
 		product.save()
 		return [product]
 	except Exception as e:
 		return "{} {}".format(repr(e),str(e))
-	
+
 def update_product(product_id,respdict):
 	product=documents.Product.objects(product_id=product_id)
 	if len(product)==0:
@@ -724,10 +728,10 @@ def generate_invoice(to_settle):
 		for ass in to_settle:
 			covered_hrs=0;
 			covered_kms=0;
-		
+
 			for booking in ass.bookings:
 				invoiceline={}
-				invoiceline['date']=utils.get_local_ts(booking.pickup_timestamp).strftime("%Y-%m-%d")
+				invoiceline['date'] = utils.get_local_ts(booking.pickup_timestamp).strftime("%Y-%m-%d")
 				invoiceline['particulars']=booking.booking_id+" "+booking.passenger_detail
 				invoiceline['product']=booking.product_id
 				invoiceline['qty']=1
@@ -745,7 +749,7 @@ def generate_invoice(to_settle):
 				hrs=ds.close_time-ds.open_time
 				consumed_hrs+=int(hrs.total_seconds()/3600)
 				if ds.parking_charges!=None:
-					invoiceline={}                                               
+					invoiceline={}
 					invoiceline['date']=utils.get_local_ts(ass.reporting_timestamp).strftime("%Y-%m-%d")
 					invoiceline['particulars']="Parking Charges"
 					invoiceline['product']="PARKINGCHRGS"
@@ -755,7 +759,7 @@ def generate_invoice(to_settle):
 					if invoiceline['amount']!=0:
 						invoice_lines.append(invoiceline)
 				if ds.toll_charges!=None:
-					invoiceline={}                                               
+					invoiceline={}
 					invoiceline['date']=utils.get_local_ts(ass.reporting_timestamp).strftime("%Y-%m-%d")
 					invoiceline['particulars']="Toll Charges"
 					invoiceline['product']="TOLLCHRGS"
@@ -766,13 +770,13 @@ def generate_invoice(to_settle):
 						invoice_lines.append(invoiceline)
 			if consumed_kms>covered_kms:
 				extrakms=consumed_kms-covered_kms
-				invoiceline={}                   
+				invoiceline={}
 				invoiceline['date']=utils.get_local_ts(ass.reporting_timestamp).strftime("%Y-%m-%d")
 				invoiceline['particulars']="Extra Kms "+str(ds.dutyslip_id)
-				invoiceline['product']="EXTRAKMS"                               
-				invoiceline['rate']=20                                         
-				invoiceline['qty']=extrahrs                                     
-				invoiceline['amount']=invoiceline['qty']*invoiceline['rate']    
+				invoiceline['product']="EXTRAKMS"
+				invoiceline['rate']=20
+				invoiceline['qty']=extrakms
+				invoiceline['amount']=invoiceline['qty']*invoiceline['rate']
 				if invoiceline['amount']!=0:
 					invoice_lines.append(invoiceline)
 			if consumed_hrs>covered_hrs:
@@ -817,10 +821,10 @@ def get_invoice_total(invoice_id):
 			resp['grand_total']+=resp['tax']
 			return resp
 		except Exception as e:
-			return "{} {}".format(type(e),str(e))
+			return "{}''' {}".format(type(e),str(e))
 	else:
 		return "No such invoice"
-			
+
 def create_invoice(invoicedict):
 	try:
 		invoice=documents.Invoice(invoice_id=utils.new_invoice_id(),**invoicedict)
@@ -829,10 +833,20 @@ def create_invoice(invoicedict):
 		return[invoice]
 	except Exception as e:
 			return "{} {}".format(type(e),str(e))
-	
-	
+
+
 def update_invoice(invoice_id,invoicedict):
-	return "Not Implemented"
+	try:
+		if "_id" in invoicedict:
+			invoicedict.pop("_id")
+		invoice=documents.Invoice.objects(invoice_id=invoice_id)[0]
+		invoice.update(**invoicedict)
+		invoice.save()
+		invoice.total=get_invoice_total(invoice.invoice_id)
+		return[invoice]
+	except Exception as e:
+			return "{} {}".format(type(e),str(e))
+
 def delete_invoice(invoice_id):
 	if len(documents.Invoice.objects(invoice_id=invoice_id))==0:
 		return "No Invoice by that ID"
@@ -857,7 +871,7 @@ def export_drivers():
 	driverdf=pandas.DataFrame(drivers)
 	driverdf.to_csv("./dispatcher/reports/drivers.csv")
 	return "reports/drivers.csv"
-	
+
 def export_locupdates():
 	locupdates=documents.LocationUpdate.objects.to_json()
 	locupdates=json.loads(locupdates)
@@ -867,7 +881,7 @@ def export_locupdates():
 	locupdatedf.timestamp=locupdatedf.timestamp.apply(lambda x: datetime.datetime.fromtimestamp((x['$date']+1)/1000).strftime("%Y-%m-%d %H:%M:%S"))
 	locupdatedf.to_csv("./dispatcher/reports/locupdates.csv")
 	return "reports/locupdates.csv"
-	
+
 def export_vehicles():
 	vehicles=documents.Vehicle.objects.to_json()
 	vehicles=json.loads(vehicles)
@@ -878,8 +892,8 @@ def export_vehicles():
 	return "reports/vehicles.csv"
 
 def export_bookings():
-	bookings=documents.Booking.objects.to_json()
-	bookings=json.loads(bookings)
+	bookings = documents.Booking.objects.to_json()
+	bookings = json.loads(bookings)
 	for booking in bookings:
 		del booking['_id']
 	bookingdf=pandas.DataFrame(bookings)
@@ -889,10 +903,9 @@ def export_bookings():
 	return "reports/bookings.csv"
 
 
-
 '''
 Bulk Imports of everything
-'''
+
 #def import_gadv():
 def import_gadv(bookinglist):
 	for booking in bookinglist:
@@ -915,30 +928,116 @@ def import_gadv(bookinglist):
 			b.pickup_timestamp=utils.get_utc_ts(datetime.datetime.strptime(b.cust_meta['Date']+" "+b.cust_meta['Flight Time'],"%Y-%m-%d %H:%M:%S"))
 			if b.cust_meta['Transfer Name']=="Airport to Hotel Transfer":
 				b.product_id="GADVARPTPKUP"
-			
+
 			b.save()
 			booking['booking_id']=b.booking_id
-			    
-	return bookinglist
 
+	return bookinglist
+'''
 def import_bookings(bookinglist):
 	try:
 		for booking in bookinglist:
-				try:
+			try:
+				if validate_booking_dict(booking):
 					b=new_booking(booking)
-					
+
 					if type(b)==list:
 						b=b[0]
 						b.pickup_timestamp=utils.get_utc_ts(b.pickup_timestamp)
 						b.save()
 						b.reload()
-						booking['booking_id']=b.booking_id
+						booking['status']=b.booking_id
 					else:
-						booking['booking_id']=b
-				except Exception as e:
-					booking['booking_id']="{} {}".format(type(e),str(e))
+						booking['status']=b
+				else:
+					booking['status']=validate_booking_dict(booking)
+			except Exception as e:
+				booking['status']="{} {}".format(type(e),str(e))
 		return bookinglist
 	except Exception as e:
 			return "{} {}".format(type(e),str(e))
-		
-			
+
+
+def import_drivers(driverlist):
+	try:
+		for driver in driverlist:
+			try:
+				if validate_driver_dict(driver)['status']==True:
+					d=create_driver(driver)
+					if type(d)==list:
+						d=d[0]
+						d.save()
+						d.reload()
+						driver['status']=d.driver_id
+					else:
+						driver['status']=d
+				else:
+					driver['status']=validate_driver_dict(driver)['message']
+			except Exception as e:
+				driver['status']="{} {}".format(type(e),str(e))
+		return driverlist
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
+
+def import_customers(customerlist):
+	try:
+		for customer in customerlist:
+			try:
+				if validate_customer_dict(customer)['status']==True:
+					d=create_customer(customer)
+					if type(d)==list:
+						d=d[0]
+						d.save()
+						d.reload()
+						customer['status']=d.cust_id
+					else:
+						customer['status']=d
+				else:
+					customer['status']=validate_customer_dict(customer)['message']
+			except Exception as e:
+				customer['cust_id']="{} {}".format(type(e),str(e))
+		return customerlist
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
+
+def import_products(productlist):
+	try:
+		for product in productlist:
+			try:
+				if validate_product_dict(product)['status']==True:
+					d=create_product(product)
+					if type(d)==list:
+						d=d[0]
+						d.save()
+						d.reload()
+						product['status']=d.product_id
+					else:
+						product['status'] = d
+				else:
+					product['status'] = validate_product_dict(product)['message']
+			except Exception as e:
+				product['status']="{} {}".format(type(e),str(e))
+		return productlist
+	except Exception as e:
+		return "{} {}".format(type(e),str(e))
+
+def import_vehicles(vehiclelist):
+	try:
+		for vehicle in vehiclelist:
+			try:
+				if validate_vehicle_dict(vehicle)['status']==True:
+					d=create_vehicle(vehicle)
+					if type(d)==list:
+						d=d[0]
+						d.save()
+						d.reload()
+						vehicle['status']=d.vehicle_id
+					else:
+						vehicle['status']=d
+				else:
+					vehicle['status']=validate_vehicle_dict(vehicle)['message']
+			except Exception as e:
+				vehicle['status']="{} {}".format(type(e), str(e))
+		return vehiclelist
+	except Exception as e:
+		return "{} {}".format(type(e), str(e))
