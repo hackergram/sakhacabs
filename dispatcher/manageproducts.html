@@ -148,7 +148,7 @@ a { text-decoration: none }
                                            <th>product ID</th>
                                            <th>Hours</th>
                                            <th>Kms</th>
-
+                                           <th>Price</th>
 
                                     </thead>
                                     <tbody></tbody>
@@ -438,7 +438,7 @@ var do_file = (function() {
                 {data: 'product_id', defaultContent:"None", render: function(data){if(data){return data}}},
                 {data: 'hrs', defaultContent:"None", render: function(data){if(data){return data}}},
                 {data: 'kms', defaultContent:"None", render: function(data){if(data){return data}}},
-
+                {data: 'price', defaultContent:"None", render: function(data){if(data){return "₹"+data}}},
             ],
             scrollY: 400
 
