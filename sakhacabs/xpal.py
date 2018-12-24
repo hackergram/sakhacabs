@@ -902,6 +902,43 @@ def export_bookings():
 	bookingdf.to_csv("./dispatcher/reports/bookings.csv", encoding="utf-8")
 	return "reports/bookings.csv"
 
+def export_invoice(invoice_id):
+	invoice=documents.Invoice.objects(invoice_id=invoice_id)
+	if invoice==[]:
+		return "No such invoice"
+	else:
+		invoice=invoice[0]
+	cur=sakhacabsgd.create(invoice.invoice_id)
+	template=sakhacabsgd.open("InvoiceTemplate")
+	t=template.worksheet_by_title("Invoice")
+	cur.add_worksheet("Invoice",src_worksheet=t)
+	invoicesheet=cur.worksheet_by_title("Invoice")
+	cur.del_worksheet(cur.worksheet_by_title("Sheet1"))
+
+	n=15
+	for line in invoice.invoicelines:
+	    print n,line
+	    invoicesheet.insert_rows(n-1,1)
+	    invoicesheet.update_row(n,["",line['date'],line['particulars'],line['product'],line['qty'],line['rate'],"=F"+str(n)+"*E"+str(n)])
+	    n+=1
+	totalcell="G"+str(n+2)
+	print totalcell
+	n=n+4
+	for line in invoice.taxes:
+		invoicesheet.insert_rows(n-1,1)
+		invoicesheet.update_row(n,["","","","","",line['name']+"("+str(line['rate']*100)+"%)","="+totalcell+"*"+str(line['rate'])])
+    	n+=1
+	custbil=invoicesheet.cell("B8")
+	cust=documents.Customer.objects(cust_id=invoice.cust_id)[0]
+	custbil.value=cust.cust_billing
+	datecel=invoicesheet.cell("B5")
+	datecel.value="Submitted on "+invoice.invoice_date.strftime("%Y-%m-%d")
+	idcel=invoicesheet.cell("F8")
+	idcel.value=invoice.invoice_id
+	duedatecel=invoicesheet.cell("F11")
+	duedatecel.value=invoice.invoice_date.strftime("%Y-%d-%m")
+	return cur.url
+
 
 '''
 Bulk Imports of everything

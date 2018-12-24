@@ -932,14 +932,17 @@ class InvoiceResource(Resource):
         if command!=None:
 			app.logger.info("InvoiceResource: Received Command {}".format(command))
 			if command=="export":
-				try:
-					resp=xpal.export_invoices()
-					status="success"
-				except Exception as e:
-					app.logger.error("{} {}".format(type(e),str(e)))
-					resp="{} {}".format(type(e),str(e))
+				if invoice_id==None:
+					resp="No Invoice ID provided"
 					status="error"
-
+				else:
+					try:
+						resp=xpal.export_invoice(invoice_id)
+						status="success"
+					except Exception as e:
+						app.logger.error("{} {}".format(type(e),str(e)))
+						resp="{} {}".format(type(e),str(e))
+						status="error"
 			else:
 				resp="Unrecognized command"
 				status="error"
@@ -1048,6 +1051,7 @@ api.add_resource(InvoiceResource,"/invoice",endpoint="invoice")
 api.add_resource(InvoiceResource,"/invoice/by_id/<string:docid>",endpoint="invoice_docid")
 api.add_resource(InvoiceResource,"/invoice/by_invoice_id/<string:invoice_id>",endpoint="invoiceid")
 api.add_resource(InvoiceResource,"/invoice/<string:command>",endpoint="invoice_command")
+api.add_resource(InvoiceResource,"/invoice/<string:command>/<string:invoice_id>",endpoint="invoice_command1")
 
 if __name__ == '__main__':
    app.run(host="0.0.0.0")
