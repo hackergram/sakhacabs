@@ -45,10 +45,10 @@ class Customer(PPrintMixin,DynamicDocument):
     cust_type=fields.StringField()
     mobile_num=fields.StringField()
     tgid=fields.IntField()
-   
-    
+
+
 class Vehicle(PPrintMixin,DynamicDocument):
-    vehicle_id=fields.StringField(unique=True,required=True) 
+    vehicle_id=fields.StringField(unique=True,required=True)
     driver_id=fields.StringField()
     def __repr__(self):
 		return "Vehicle (%r)" %(self.vehicle_id)
@@ -56,7 +56,7 @@ class Booking(PPrintMixin,DynamicDocument):
     booking_id=fields.StringField(required=True)
     passenger_detail=fields.StringField()
     passenger_mobile=fields.StringField()
-    created_timestamp=fields.DateTimeField(default=datetime.datetime.utcnow)    
+    created_timestamp=fields.DateTimeField(default=datetime.datetime.utcnow)
     pickup_timestamp=fields.DateTimeField(required=True)
     pickup_location=fields.StringField(required=True)
     drop_location=fields.StringField()
@@ -70,7 +70,7 @@ class Booking(PPrintMixin,DynamicDocument):
     cust_meta=fields.DictField(unique=True)
 class Product(PPrintMixin,DynamicDocument):
     product_id=fields.StringField(unique=True,required=True)
-    
+
 class LocationUpdate(PPrintMixin,Document):
     driver_id=fields.StringField(required=True)
     timestamp=fields.DateTimeField(required=True)
@@ -91,24 +91,24 @@ class LocationUpdate(PPrintMixin,Document):
 			retval=retval+"Vehicle: "+str(self.vehicle_id)+"\n"
 		if self.handoff:
 			retval=retval+"Handoff: "+self.handoff+"\n"
-			
+
 		return retval
-		
-    
+
+
 class Assignment(PPrintMixin,Document):
     cust_id=fields.StringField()
-    created_timestamp=fields.DateTimeField(default=datetime.datetime.utcnow)    
+    created_timestamp=fields.DateTimeField(default=datetime.datetime.utcnow)
     reporting_timestamp=fields.DateTimeField()
     reporting_location=fields.StringField()
     drop_location=fields.StringField()
     bookings=fields.SortedListField(fields.ReferenceField(Booking))
     status=fields.StringField(default="new")
-    meta = {'queryset_class':CustomQuerySet}    
+    meta = {'queryset_class':CustomQuerySet}
     def to_json(self):
         data=self.to_mongo()
         data['bookings']=[json.loads(booking.to_json()) for booking in self.bookings]
         return bson.json_util.dumps(data)
-    
+
 
 class DutySlip(PPrintMixin,Document):
     driver=fields.StringField(required=True)
@@ -147,3 +147,4 @@ class Invoice(PPrintMixin,DynamicDocument):
 	invoicelines=fields.ListField(fields.DictField())
 	taxes=fields.ListField(fields.DictField())
 	status=fields.StringField(default="new")
+	url=fields.StringField()

@@ -425,6 +425,9 @@
 
                                      <button class="btn btn-sm btn-outline-secondary" onclick="clearInvoice()">Clear</button>
                                     <button class="btn btn-sm btn-outline-secondary" onclick="saveInvoice()">Save Invoice</button>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="exportInvoice()">Export Invoice</button>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="markPaid()">Mark As Paid</button>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="markUnpaid()">Mark As Unpaid</button>
                                     </div>
                             </div>
                     </div>
@@ -446,8 +449,10 @@
                                          <th >Action</th>
                                         <th >Invoice ID</th>
                                         <th >Date</th>
-                                        <th >Custome ID</th>
+                                        <th >Customer ID</th>
                                         <th >Amount</th>
+                                          <th >Status</th>
+                                            <th >URL</th>
                                     </thead>
                                     <tbody></tbody>
                                 </table>
@@ -589,6 +594,26 @@
                   }
 
         }
+        var exportInvoice=function(){
+          console.log("exporing bookings")
+          invoice_id=current_invoice.invoice_id
+
+         $.getJSON('http://'+serverip+':5000/invoice/export/'+invoice_id,function(data){
+            current_invoice.url=data.resp
+            saveInvoice()
+             window.open(data.resp,"_blank")
+         })
+
+        }
+        var markPaid = function(){
+          current_invoice.status="paid"
+          saveInvoice()
+        }
+        var markUnpaid = function(){
+          current_invoice.status="unpaid"
+          saveInvoice()
+        }
+
         var clearTax=function(){
             current_invoice.taxes=[]
             render_current_invoice()
@@ -791,19 +816,29 @@
                     }
                 }},
 
-                { width:"25%",data: 'invoice_date',defaultContent:"None",render: function(data){
+                { width:"10%",data: 'invoice_date',defaultContent:"None",render: function(data){
 
                     //console.log(data)
                     return moment(data.$date).format("YYYY-MMM-DD HH:mm:ss")
                     }},
-                {width:"25%", data: 'cust_id',defaultContent:"None",render: function(data){if(data){
+                {width:"20%", data: 'cust_id',defaultContent:"None",render: function(data){if(data){
                     return data
                     }}},
-                {width:"25%", data: null, defaultContent:"None", render: function(data){if(data){
+                {width:"20%", data: null, defaultContent:"None", render: function(data){if(data){
                     totals=getinvoicetotal(data)
 
                     return totals.grand_total
+                }}},
+                {width:"5%", data: null, defaultContent:"None", render: function(data){if(data){
+                    return data.status.toUpperCase()
+                }}},
+                {width:"20%", data: null, defaultContent:"None", render: function(data){if(data){
+                    link="<a href='"+data.url+"' target='_blank'>See on GDrive</a>"
+                    if (data.url){
+                    return link
+                  }
                 }}}
+
             ],
             scrollY: 200,
             scrollX:true
