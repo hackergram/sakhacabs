@@ -39,7 +39,7 @@ sudo -H pip install flask_restful flask_cors
 
 ## copy the file sakhacabs-appdata to /opt:
 
-``` since the file sakhacabs-appdata contains some senstive data so it cant be shared on the repository, if you want to access the file you can mail me on gaursurya33@protonmail.com```
+``` since the file sakhacabs-appdata contains some senstive data so it cant be shared on the repository, if you want to access the file you can mail me on gaursurya33@protonmail.com and listener@hackergram.org and file an issue here to let us know you've asked!```
 
 
 ## edit the config files of the sakhacabs-appdata and make the changes:
@@ -56,7 +56,7 @@ sudo ln -s /opt/sakhacabs/bookingweb /var/www/html/bookingweb
 ## now, create the symbolic link of the file sakhadispatcher:
 
    ```
-   sudo ln -s /opt/sakhacabs/bookingweb /var/www/html/sakhadispatcher
+   sudo ln -s /opt/sakhacabs/sakhadispatcher /var/www/html/sakhadispatcher
    ```
       
 ## Now deploy the ip address:
