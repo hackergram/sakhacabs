@@ -45,6 +45,7 @@ class Customer(PPrintMixin,DynamicDocument):
     cust_type=fields.StringField()
     mobile_num=fields.StringField()
     tgid=fields.IntField()
+    cust_billing=fields.StringField(default="N/A")
 
 
 class Vehicle(PPrintMixin,DynamicDocument):
