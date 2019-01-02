@@ -66,7 +66,7 @@ class DriverResource(Resource):
         respdict = request.get_json()
         if command is None:
             try:
-                if xpal.validate_driver_dict(respdict)['status'] == True:
+                if xpal.validate_driver_dict(respdict)['status'] is True:
                     resp = xpal.create_driver(respdict)
                     if type(resp) != list:
                         status = "error"
@@ -115,7 +115,7 @@ class DriverResource(Resource):
         app.logger.info("{}".format(request.get_json()))
         respdict = request.get_json()
         try:
-            if xpal.validate_driver_dict(respdict, new=False)['status'] == True:
+            if xpal.validate_driver_dict(respdict, new=False)['status'] is True:
                 resp = xpal.update_driver(driver_id, respdict)
                 if type(resp) != list:
                     status = "error"
@@ -197,7 +197,7 @@ class VehicleResource(Resource):
         respdict = request.get_json()
         if command is None:
             try:
-                if xpal.validate_vehicle_dict(respdict)['status'] == True:
+                if xpal.validate_vehicle_dict(respdict)['status'] is True:
                     resp = xpal.create_vehicle(respdict)
                     if type(resp) != list:
                         status = "error"
@@ -246,7 +246,7 @@ class VehicleResource(Resource):
         app.logger.info("{}".format(request.get_json()))
         respdict = request.get_json()
         try:
-            if xpal.validate_vehicle_dict(respdict, new=False)['status'] == True:
+            if xpal.validate_vehicle_dict(respdict, new=False)['status'] is True:
                 resp = xpal.update_vehicle(vehicle_id, respdict)
                 if type(resp) != list:
                     status = "error"
@@ -321,7 +321,7 @@ class LocationUpdateResource(Resource):
         app.logger.info("{}".format(request.get_json()))
         respdict = request.get_json()
         try:
-            if xpal.validate_locupdate_dict(respdict)['status'] == True:
+            if xpal.validate_locupdate_dict(respdict)['status'] is True:
                 driver = xpal.documents.Driver.objects(
                     driver_id=respdict["driver_id"])[0]
                 timestamp = datetime.datetime.fromtimestamp(
@@ -433,7 +433,7 @@ class BookingResource(Resource):
         app.logger.info("BookingResource: Received Command {}".format(command))
         if command == "single":
             app.logger.info("BookingResource: Trying to save single booking")
-            if xpal.validate_booking_dict(respdict)['status'] == True:
+            if xpal.validate_booking_dict(respdict)['status'] is True:
                 try:
                     resp = xpal.new_booking(respdict)
                     if type(resp) != list:
@@ -503,7 +503,7 @@ class BookingResource(Resource):
             app.logger.info("Trying to update booking id {} with data {}".format(
                 booking_id, request.get_json()))
             respdict = request.get_json()
-            if xpal.validate_booking_dict(respdict, new=False)['status'] == True:
+            if xpal.validate_booking_dict(respdict, new=False)['status'] is True:
                 try:
                     resp = xpal.update_booking(booking_id, respdict)
                     if type(resp) != list:
@@ -553,7 +553,6 @@ class AssignmentResource(Resource):
             app.logger.info(
                 "AssignmentResource: Getting assignment with id {}".format(docid))
             queryset = [xpal.documents.Assignment.objects.with_id(docid)]
-            #app.logger.info("Getting assignment {}".format(queryset))
         else:
             app.logger.info("AssignmentResource: Getting all assignments")
             queryset = xpal.documents.Assignment.objects.order_by(
@@ -587,7 +586,7 @@ class AssignmentResource(Resource):
                 bookings = [xpal.documents.Booking.objects.with_id(
                     x['_id']['$oid']) for x in respdict['assignment']['bookings']]
                 respdict['assignment']['cust_id'] = bookings[0].cust_id
-                if xpal.validate_assignment_dict(respdict)['status'] == True:
+                if xpal.validate_assignment_dict(respdict)['status'] is True:
                     resp = xpal.save_assignment(respdict)
                     status = "success"
                     # return jsonify({"resp": [json.loads(assignment.to_json())],"status":"success"})
@@ -737,7 +736,7 @@ class DutySlipResource(Resource):
             respdict.pop('created_time')
 
         # TODO: dutyslip=xpal.update_dutyslip(docid,respdict) #82
-        if xpal.validate_dutyslip_dict(respdict, False)['status'] == True:
+        if xpal.validate_dutyslip_dict(respdict, False)['status'] is True:
             try:
                 resp = xpal.update_dutyslip(docid, respdict)
                 if type(resp) == list:
@@ -820,7 +819,7 @@ class CustomerResource(Resource):
         respdict = request.get_json()
         if command is None:
             try:
-                if xpal.validate_customer_dict(respdict)['status'] == True:
+                if xpal.validate_customer_dict(respdict)['status'] is True:
                     resp = xpal.create_customer(respdict)
                     if type(resp) != list:
                         status = "error"
@@ -869,7 +868,7 @@ class CustomerResource(Resource):
         app.logger.info("{}".format(request.get_json()))
         respdict = request.get_json()
         try:
-            if xpal.validate_customer_dict(respdict, new=False)['status'] == True:
+            if xpal.validate_customer_dict(respdict, new=False)['status'] is True:
                 resp = xpal.update_customer(cust_id, respdict)
                 if type(resp) != list:
                     status = "error"
@@ -952,7 +951,7 @@ class ProductResource(Resource):
         respdict = request.get_json()
         if command is None:
             try:
-                if xpal.validate_product_dict(respdict)['status'] == True:
+                if xpal.validate_product_dict(respdict)['status'] is True:
                     resp = xpal.create_product(respdict)
                     if type(resp) != list:
                         status = "error"
@@ -1001,7 +1000,7 @@ class ProductResource(Resource):
         app.logger.info("{}".format(request.get_json()))
         respdict = request.get_json()
         try:
-            if xpal.validate_product_dict(respdict, new=False)['status'] == True:
+            if xpal.validate_product_dict(respdict, new=False)['status'] is True:
                 resp = xpal.update_product(product_id, respdict)
                 if type(resp) != list:
                     status = "error"
@@ -1084,7 +1083,7 @@ class InvoiceResource(Resource):
         respdict = request.get_json()
         if command is None:
             try:
-                if xpal.validate_invoice_dict(respdict)['status'] == True:
+                if xpal.validate_invoice_dict(respdict)['status'] is True:
                     resp = xpal.create_invoice(respdict)
                     if type(resp) != list:
                         status = "error"
@@ -1109,10 +1108,6 @@ class InvoiceResource(Resource):
                     status = "success"
                 else:
                     status = "error"
-                # else:
-
-                #	status="error"
-                #	resp="No assignments in list provided"
             except Exception as e:
                 app.logger.error("{} {}".format(type(e), str(e)))
                 resp = "{} {}".format(type(e), str(e))
@@ -1139,7 +1134,7 @@ class InvoiceResource(Resource):
         app.logger.info("{}".format(request.get_json()))
         respdict = request.get_json()
         try:
-            if xpal.validate_invoice_dict(respdict, new=False)['status'] == True:
+            if xpal.validate_invoice_dict(respdict, new=False)['status'] is True:
                 resp = xpal.update_invoice(invoice_id, respdict)
                 if type(resp) != list:
                     status = "error"

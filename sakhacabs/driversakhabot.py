@@ -23,8 +23,6 @@ import sys
 import datetime
 sys.path.append("/opt/xetrapal")
 
-#from sakhacabs import utils
-#from sakhacabsfunctionsmongo import *
 
 check_in_text = u'\U0001f44d Check In'
 check_out_text = u'\U0001f44b Check Out'
@@ -84,7 +82,7 @@ def main_menu(bot, update):
             # return ConversationHandler.END
             return GETMOBILE
         logger.info("Main Menu presented to driver {}".format(
-            user_data['driver'].first_name))
+            user_data['driver'].driver_id))
         markup = ReplyKeyboardMarkup(
             driver_base_keyboard, one_time_keyboard=True)
         update.message.reply_text(
@@ -218,7 +216,7 @@ def set_mobile(bot, update, user_data):
         driver.save()
         user_data['driver'] = driver
         logger.info("Main Menu presented to driver {}".format(
-            user_data['driver'].first_name))
+            user_data['driver'].driver_id))
         markup = ReplyKeyboardMarkup(
             driver_base_keyboard, one_time_keyboard=True)
         update.message.reply_text(
@@ -525,9 +523,8 @@ def start_duty(bot, update, user_data):
 
 def stop_duty(bot, update, user_data):
     try:
-        sakhacabsxpal.logger.info("Stopping Duty {}".format(
-            user_data['current_duty_slip'].to_json()))
-        #markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard)
+        sakhacabsxpal.logger.info("Stopping Duty {}".format(user_data['current_duty_slip'].to_json()))
+        # markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard)
         # update.message.reply_text("Trip in progress",
         #    reply_markup=markup)
         # user_data['field']="dutyslipnum"

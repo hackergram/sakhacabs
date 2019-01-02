@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 #
-from sakhacabs import documents, utils
-import pandas
-import xetrapal
 """
 Created on Sat Sep  8 21:52:07 2018
 
@@ -14,6 +11,11 @@ import datetime
 import json
 import mongoengine
 sys.path.append("/opt/xetrapal")
+
+from sakhacabs import documents, utils
+import pandas
+import xetrapal
+
 
 sakhacabsxpal = xetrapal.Xetrapal(
     configfile="/opt/sakhacabs-appdata/sakhacabsxpal.conf")
