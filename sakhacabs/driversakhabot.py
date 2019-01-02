@@ -98,7 +98,6 @@ def open_duty_slip(bot, update, user_data):
     try:
         logger.info("Opening Duty Slip {},{}".format(
             update.message.text.split(" ")[1], user_data))
-        #markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
         markup = ReplyKeyboardMarkup(
             dutyslip_start_keyboard, one_time_keyboard=True)
         dutyslip = documents.DutySlip.objects.with_id(

@@ -447,15 +447,14 @@ class BookingResource(Resource):
             else:
                 resp = xpal.validate_booking_dict(respdict)['message']
                 status = "error"
-        elif command == "updatestatus":
+        elif command == "updatestatus":   # TODO - Link to  update_booking_status
             try:
-                    # TODO xpal.update_dutyslip_status(dsid), move to put and take dsid from by_id - needs fix in UI as well #82
-                booking = xpal.documents.Booking.objects.with_id(
-                    respdict['booking_id'])
-                booking.status = respdict['status']
-                booking.save()
-                resp = "Status updated."
-                status = "success"
+                if xpal.update_booking_status(respdict['booking_id'], respdict['status']):
+                    resp = "Status updated."
+                    status = "success"
+                else:
+                    resp = "Status updated failed"
+                    status = "error"
             except Exception as e:
                 app.logger.error("{} {} \n {}".format(
                     type(e), str(e), respdict))
@@ -463,7 +462,6 @@ class BookingResource(Resource):
                 status = "error"
         elif command == "import":
             try:
-                # replace with bookinglist=xpal.importbookings(respdict) #91 #83
                 resp = xpal.import_bookings(respdict)
                 if type(resp) != list:
                     status = "error"
@@ -598,7 +596,7 @@ class AssignmentResource(Resource):
                     type(e), str(e), respdict))
                 resp = "{} {}".format(type(e), str(e))
                 status = "error"
-        elif command == "updatestatus":
+        elif command == "updatestatus":  # TODO - Link to  update_assignment_status
             app.logger.info(
                 "AssignmentResource: Trying to update assignment status")
             try:
