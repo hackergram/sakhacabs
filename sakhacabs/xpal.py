@@ -312,13 +312,16 @@ def validate_booking_dict(bookingdict, new=True):
     validation['message'] = "Valid booking"
     required_keys = []
     if new is True:
-        required_keys = ["cust_id", "product_id", "passenger_detail",
-                         "passenger_mobile", "pickup_timestamp", "pickup_location", "booking_channel"]
+        required_keys = ["cust_id", "product_id", "passenger_detail", "pickup_timestamp", "pickup_location", "booking_channel"]
     string_keys = ["cust_id", "product_id",
                    "passenger_detail", "passenger_mobile", "remarks"]
     mobile_nums = ["passenger_mobile"]
     validation = utils.validate_dict(
         bookingdict, required_keys=required_keys, string_keys=string_keys, mobile_nums=mobile_nums)
+    if bookingdict['cust_id']=="retail":
+        if not bookingdict['passenger_mobile'] or bookingdict['passenger_mobile'] is None:
+            validation['message'] = "Passenger Mobile Must be provided for retail bookings"
+            validation['status'] = False
     if validation['status'] is True:
         sakhacabsxpal.logger.info("bookingdict: " + validation['message'])
     else:
@@ -338,7 +341,9 @@ def new_booking(respdict):
         respdict.pop("_id")
     if "created_timestamp" in respdict.keys():
         respdict.pop("created_timestamp")
-
+    if "passenger_mobile" not in bookingdict.keys() or bookingdict['passenger_mobile'] is None:
+        mobile_num = documents.Customer.objects(cust_id=bookingdict['cust_id'])[0].mobile_num
+        bookingdict['passenger_mobile'] = mobile_num
     try:
         b = documents.Booking(booking_id=utils.new_booking_id(), **bookingdict)
         sakhacabsxpal.logger.info("Saving cust-meta as: {}".format(respdict))
