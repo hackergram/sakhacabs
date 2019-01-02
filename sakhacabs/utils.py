@@ -23,7 +23,7 @@ def validate_dict(dictionary, required_keys=[], string_keys=[], mobile_nums=[], 
         if key not in dictionary.keys():
             validation['message'] = "{} - missing required field".format(key)
             validation['status'] = False
-        elif dictionary[key] == None:
+        elif dictionary[key] is None:
             validation['message'] = "{} - can't be None ".format(key)
             validation['status'] = False
     for key in string_keys:

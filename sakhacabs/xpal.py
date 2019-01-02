@@ -94,10 +94,11 @@ def validate_customer_dict(customerdict, new=True):
     validation['message'] = "Valid customer"
     required_keys = []
     if new is True:
-        required_keys = ["cust_id"]
+        required_keys = ["cust_id", "mobile_num"]
     string_keys = ["cust_id"]
+    mobile_nums = ["mobile_num"]
     validation = utils.validate_dict(
-        customerdict, required_keys=required_keys, string_keys=string_keys)
+        customerdict, required_keys=required_keys, string_keys=string_keys, mobile_nums=mobile_nums)
     if validation['status'] is True:
         sakhacabsxpal.logger.info("customerdict: " + validation['message'])
     else:
