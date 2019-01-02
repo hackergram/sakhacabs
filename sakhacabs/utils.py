@@ -13,7 +13,7 @@ charstring = "ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"
 UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
 nospec = re.compile(r"[^A-Za-z0-9\n @.'-]+")
 notnum = re.compile(r"[^0-9]+")
-
+validstatuses = ['new', 'assigned', 'open', 'closed', 'cancelled', 'verified']
 
 def validate_dict(dictionary, required_keys=[], string_keys=[], mobile_nums=[], emails=[]):
     validation = {}

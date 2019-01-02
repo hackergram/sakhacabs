@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 #
+import xetrapal
+import pandas
+from sakhacabs import documents, utils
 """
 Created on Sat Sep  8 21:52:07 2018
 
@@ -11,10 +14,6 @@ import datetime
 import json
 import mongoengine
 sys.path.append("/opt/xetrapal")
-
-from sakhacabs import documents, utils
-import pandas
-import xetrapal
 
 
 sakhacabsxpal = xetrapal.Xetrapal(
@@ -312,13 +311,14 @@ def validate_booking_dict(bookingdict, new=True):
     validation['message'] = "Valid booking"
     required_keys = []
     if new is True:
-        required_keys = ["cust_id", "product_id", "passenger_detail", "pickup_timestamp", "pickup_location", "booking_channel"]
+        required_keys = ["cust_id", "product_id", "passenger_detail",
+                         "pickup_timestamp", "pickup_location", "booking_channel"]
     string_keys = ["cust_id", "product_id",
                    "passenger_detail", "passenger_mobile", "remarks"]
     mobile_nums = ["passenger_mobile"]
     validation = utils.validate_dict(
         bookingdict, required_keys=required_keys, string_keys=string_keys, mobile_nums=mobile_nums)
-    if bookingdict['cust_id']=="retail":
+    if bookingdict['cust_id'] == "retail":
         if not bookingdict['passenger_mobile'] or bookingdict['passenger_mobile'] is None:
             validation['message'] = "Passenger Mobile Must be provided for retail bookings"
             validation['status'] = False
@@ -342,7 +342,8 @@ def new_booking(respdict):
     if "created_timestamp" in respdict.keys():
         respdict.pop("created_timestamp")
     if "passenger_mobile" not in bookingdict.keys() or bookingdict['passenger_mobile'] is None:
-        mobile_num = documents.Customer.objects(cust_id=bookingdict['cust_id'])[0].mobile_num
+        mobile_num = documents.Customer.objects(
+            cust_id=bookingdict['cust_id'])[0].mobile_num
         bookingdict['passenger_mobile'] = mobile_num
     try:
         b = documents.Booking(booking_id=utils.new_booking_id(), **bookingdict)
@@ -356,6 +357,43 @@ def new_booking(respdict):
         return "{} {}".format(type(e), str(e))
 
 
+def update_booking_status(booking_id, status):
+    if status not in utils.validstatuses:
+        sakhacabsxpal.logger.error("Invalid status")
+        return False
+    booking = documents.Booking.objects(booking_id=booking_id)
+    if len(booking) == 0:
+        return "No booking by that id"
+    else:
+        booking=booking[0]
+    try:
+        if status in ['cancelled', 'new']:
+            sakhacabsxpal.logger.info(
+                "Updating booking status from {} to {}".format(booking.status, status))
+            if booking.assignment:
+                sakhacabsxpal.logger.info(
+                    "Booking is assigned, checking assignment status")
+                assignment = documents.Assignment.with_id(booking.assignment)
+                sakhacabsxpal.logger.info("Removing booking {} from assignment {}".format(
+                    booking.booking_id, booking.assiggnment))
+                assignment.bookings.delete(booking)
+                assignment.save()
+                assignment.reload()
+                if assignment.bookings == []:
+                    update_assignment_status(assignment.id, "cancelled")
+                else:
+                    sakhacabsxpal.logger.info("Updating assignment reporting time to first booking!")
+                    assignment.reporting_location = assignment.bookings[0].pickup_location
+                    assignment.reporting_timestamp = assignment.bookings[0].pickup_timestamp
+                    assignment.save()
+                booking.assignment = None
+        booking.status = status
+        booking.save()
+        return True
+    except Exception as e:
+        sakhacabsxpal.logger.error("Error occurred updating booking status {}".format(str(e)))
+        return False
+
 def update_booking(booking_id, respdict):
     booking = documents.Booking.objects(booking_id=booking_id)
     if len(booking) == 0:
@@ -368,6 +406,10 @@ def update_booking(booking_id, respdict):
             respdict.pop("_id")
         if "created_timestamp" in respdict.keys():
             respdict.pop("created_timestamp")
+        if "status" in respdict.keys():
+            if respdict['status'] != booking.status:
+                if not update_booking_status(booking.booking_id, respdict['status']):
+                    return "Updating booking status failed"
         try:
             booking.update(**respdict)
             booking.reload()
@@ -388,23 +430,9 @@ def update_booking(booking_id, respdict):
 def delete_booking(booking_id):
     if len(documents.Booking.objects(booking_id=booking_id)) > 0:
         try:
+            update_booking_status(booking_id, "cancelled")
             booking = documents.Booking.objects(booking_id=booking_id)[0]
-            assignment = booking.assignment
             booking.delete()
-            if assignment is not None:
-                if len(documents.Booking.objects(assignment=assignment)) == 0:
-                    sakhacabsxpal.logger.info(
-                        "No more bookings in assignment. Deleting!")
-                    # documents.Assignment.objects.with_id(assignment).delete()
-                    delete_assignment(assignment)
-                else:
-                    sakhacabsxpal.logger.info(
-                        "Updating assignment reporting time to first booking!")
-                    assignmentobj = documents.Assignment.objects.with_id(
-                        assignment)
-                    assignmentobj.reporting_location = assignmentobj.bookings[0].pickup_location
-                    assignmentobj.reporting_timestamp = assignmentobj.bookings[0].pickup_timestamp
-                    assignmentobj.save()
             return []
         except Exception as e:
             return "{} {}".format(type(e), str(e))
@@ -483,6 +511,7 @@ def save_assignment(assignmentdict, assignment_id=None):
         d.save()
     for booking in assignment.bookings:
         booking.assignment = str(assignment.id)
+        update_booking_status(booking.booking_id, "assigned")
         booking.save()
     sakhacabsxpal.logger.info(
         "Saved assignment {}".format(assignment.to_json()))
@@ -503,20 +532,47 @@ def search_assignments(cust_id=None, date_frm=None, date_to=None, status=None):
     return assignments
 
 
+def update_assignment_status(assignmentid, status):
+    if status not in utils.validstatuses or status in ["new", "assigned"]:
+        sakhacabsxpal.logger.error("Invalid status")
+        return False
+    assignment = documents.Assignment.objects.with_id(assignmentid)
+    if assignment:
+        dutyslips = documents.DutySlip.objects(assignment=assignment)
+        try:
+            if status == "cancelled":
+                sakhacabsxpal.logger.info("Removing Assignment reference from  Bookings {}".format(assignment.bookings))
+                for booking in assignment.bookings:
+                    update_booking_status(booking.booking_id, "new")
+                for ds in dutyslips:
+                    if ds.status != "cancelled":
+                        update_dutyslip_status(ds.id, "cancelled")
+            if status in ["open", "closed"]:
+                for booking in assignment.bookings:
+                    update_booking_status(booking.booking_id, status)
+
+            if status == "verified":
+                for booking in assignment.bookings:
+                    update_booking_status(booking.booking_id, status)
+                for ds in dutyslips:
+                    if ds.status != "cancelled":
+                        update_dutyslip_status(ds.id, status)
+            assignment.status = status
+            assignment.save()
+            sakhacabsxpal.logger.info("Successfully updated assignment status")
+            return True
+        except Exception as e:
+                sakhacabsxpal.logger.error({}.format(str(e)))
+                return False
+
+    else:
+        sakhacabsxpal.logger.error("Assignment with that ID does not exist")
+        return False
+
+
 def delete_assignment(assignmentid):
     if len(documents.Assignment.objects.with_id(assignmentid)) > 0:
-        dutyslips = documents.DutySlip.objects(
-            assignment=documents.Assignment.objects.with_id(assignmentid))
-        sakhacabsxpal.logger.info(
-            "Deleting DutySlips {}".format(dutyslips.to_json()))
-        dutyslips.delete()
-        bookings = documents.Booking.objects(assignment=assignmentid)
-        sakhacabsxpal.logger.info(
-            "Removing Assignment reference from  Bookings {}".format(bookings.to_json()))
-
-        for booking in bookings:
-            booking.assignment = None
-            booking.save()
+        update_assignment_status(assignmentid, "cancelled")
         documents.Assignment.objects.with_id(assignmentid).delete()
         return []
     else:
@@ -534,11 +590,38 @@ def get_duties_for_driver(driver_id):
         return d
 
 
+def update_dutyslip_status(dsid, status):
+    dutyslip = documents.DutySlip.objects.with_id(dsid)
+    if dutyslip is None:
+        sakhacabsxpal.logger.error("No dutyslip with that id found")
+        return False
+    if status not in utils.validstatuses or status in ['assigned']:
+        sakhacabsxpal.logger.error("Invalid status")
+        return False
+    try:
+
+        dutyslip.status = status
+        dutyslip.save()
+
+        if status == "cancelled":
+            otherds = documents.DutySlip.objects(assignment=dutyslip.assignment, status__ne="cancelled")
+            if len(otherds) == 0:
+                update_assignment_status(dutyslip.assignment.id, "cancelled")
+        return True
+    except Exception as e:
+        sakhacabsxpal.logger.error("{}".format(str(e)))
+        return False
+
+
+
 def update_dutyslip(dsid, respdict):
     dutyslip = documents.DutySlip.objects.with_id(dsid)
     if dutyslip is None:
         return "No dutyslip with that id found"
     try:
+        if "status" in respdict.keys():
+            if respdict['status'] != dutyslip.status:
+                update_dutyslip_status(dutyslip.id, respdict['status'])
         dutyslip.update(**respdict)
         dutyslip.save()
         dutyslip.reload()
@@ -549,16 +632,9 @@ def update_dutyslip(dsid, respdict):
 
 def delete_dutyslip(dsid):
     if len(documents.DutySlip.objects.with_id(dsid)) > 0:
+        update_dutyslip_status(dsid, "cancelled")
         ds = documents.DutySlip.objects.with_id(dsid)
-        assignment = ds.assignment.id
         ds.delete()
-        sakhacabsxpal.logger.info(
-            "Checking if this is the last booking for assignment {}".format(assignment))
-        if len(documents.DutySlip.objects(assignment=assignment)) == 0:
-            sakhacabsxpal.logger.info("Deleting assignments")
-            # documents.Assignment.objecs.with_id(assignment).delete()
-            delete_assignment(assignment)
-        return []
     else:
         return "No Dutyslip by that ID"
 
