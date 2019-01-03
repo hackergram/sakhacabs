@@ -618,7 +618,8 @@ def update_dutyslip_status(dsid, status):
 
         dutyslip.status = status
         dutyslip.save()
-
+        if status == "open":
+            update_assignment_status(dutyslip.assignment.id, "open")
         if status == "cancelled":
             otherds = documents.DutySlip.objects(assignment=dutyslip.assignment, status__ne="cancelled")
             if len(otherds) == 0:

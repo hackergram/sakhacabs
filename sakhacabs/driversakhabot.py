@@ -145,7 +145,6 @@ def get_duty_slips(bot, update, user_data):
         updatekeys = []
         for duty in user_data['duties']:
             logger.info("{}".format(duty.to_json()))
-            #keytext=["Status: "+duty.status.upper()+" ID: "+unicode("..."+str(duty.id)[:10])+" "+unicode(duty.assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S"))]
             keytext = ["ID: " + unicode(duty.id) + " " + unicode(utils.get_local_ts(
                 duty.assignment.reporting_timestamp).strftime("%Y-%m-%d %H:%M:%S"))]
             updatekeys.append(keytext)
@@ -305,10 +304,11 @@ def received_dutyslip_information(bot, update, user_data):
             user_data['current_duty_slip'].open_kms = float(text)
             user_data['current_duty_slip'].open_time = utils.get_utc_ts(
                 update.message.date)
-            user_data['current_duty_slip'].status = "open"
-            user_data['current_duty_slip'].save()
-            user_data['current_duty_slip'].assignment.status = "open"
-            user_data['current_duty_slip'].assignment.save()
+            # user_data['current_duty_slip'].status = "open"
+            # user_data['current_duty_slip'].save()
+            # user_data['current_duty_slip'].assignment.status = "open"
+            # user_data['current_duty_slip'].assignment.save()
+            update_dutyslip_status(user_data['current_duty_slip'].id, "open")
             for booking in user_data['current_duty_slip'].assignment.bookings:
                 booking.status = "open"
                 booking.save()
@@ -543,8 +543,9 @@ def submit_duty(bot, update, user_data):
     try:
         sakhacabsxpal.logger.info(
             "Submitting Duty {}".format(user_data['current_duty_slip']))
-        user_data['current_duty_slip'].status = "closed"
-        user_data['current_duty_slip'].save()
+        # user_data['current_duty_slip'].status = "closed"
+        # user_data['current_duty_slip'].save()
+        update_dutyslip_status(user_datauser_data['current_duty_slip']['current_duty_slip'].id, "closed")
         update.message.reply_text("Trip Saved", reply_markup=markup)
     except Exception as e:
         logger.error(str(e))
