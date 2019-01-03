@@ -144,6 +144,7 @@ class DutySlip(PPrintMixin, Document):
     status = fields.StringField(default="new")
     payment_mode = fields.StringField(default=None)
     remarks = fields.StringField(default=None)
+    notification_prefs = fields.DictField(default=utils.defaultnotificationprefs)
 
     def __repr__(self):
         if self.open_time:

@@ -19,6 +19,7 @@ from sakhacabs import documents, utils
 sakhacabsxpal = xetrapal.Xetrapal(
     configfile="/opt/sakhacabs-appdata/sakhacabsxpal.conf")
 sakhacabsgd = sakhacabsxpal.get_googledriver()
+sms = sakhacabsxpal.get_sms_astra()
 try:
     datasheet = sakhacabsgd.open_by_key(
         sakhacabsxpal.config.get("SakhaCabs", "datasheetkey"))
@@ -368,8 +369,6 @@ def update_booking_status(booking_id, status):
         booking=booking[0]
     try:
         if status in ['cancelled', 'new']:
-            sakhacabsxpal.logger.info(
-                "Updating booking status from {} to {}".format(booking.status, status))
             if booking.assignment:
                 sakhacabsxpal.logger.info(
                     "Booking is assigned, checking assignment status")
@@ -389,6 +388,19 @@ def update_booking_status(booking_id, status):
                 booking.assignment = None
         booking.status = status
         booking.save()
+        if booking.notification_prefs[status] != []:
+            recipients = []
+            notification = "Sakha Cabs Booking {} is now {}".format(booking.booking_id,booking.status)
+            for num in booking.notification_prefs[status]:
+                recipients.append({"type": "mobile", "value": num})
+            if status == "assigned":
+                assignment = documents.Assognment.objects.with_id(booking.assignment)
+                notification = notification + "\n Pickup Time: " + assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M") + "\n Pickup Location: "+ assignment.reporting_location + "\n Drivers Assigned \n"
+                dutyslips = documents.DutySlip.objects(assignment=assignment)
+                for dutyslip in dutyslips:
+                    driver = documents.Driver.objects(driver_id=dutyslip.driver_id)[0]
+                    notification = notification + "\n {} {} {}".format(driver.driver_id, driver.mobile_num, dutyslip.vehicle_id)
+                sms.send_sms({"message": notification, "recipients": recipients})
         return True
     except Exception as e:
         sakhacabsxpal.logger.error("Error occurred updating booking status {}".format(str(e)))
