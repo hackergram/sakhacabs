@@ -694,6 +694,7 @@ var sakha={
                 $("#parking_charges").val(data.resp[0].parking_charges)
                 $("#toll_charges").val(data.resp[0].toll_charges)
                 $("#amount").val(data.resp[0].amount)
+                $("#ds_remarks").val(data.resp[0].remarks)
             })
 
        document.getElementById("savedutyslip").setAttribute("onclick","sakha.saveDutySlip('"+dsid+"')")
@@ -728,6 +729,7 @@ var sakha={
 
                 $("#booking_pickup_location").val(data.resp[0].pickup_location)
                 $("#booking_drop_location").val(data.resp[0].drop_location)
+
 
             })
 
@@ -870,7 +872,7 @@ var sakha={
         booking_dict.product_id=$("#booking_product_id").val()
         booking_dict.status=$("#booking_status").val()
         booking_dict.booking_channel=$("#booking_channel").val()
-        booking_dict.remarks=$("#booking_remarks").val()
+        booking_dict.remarks=$("#booking_remarks").prop("value")
         booking_dict.drop_location=$("#booking_drop_location").val()
         booking_dict.passenger_mobile=$("#booking_passenger_mobile").val()
         booking_dict.passenger_detail=$("#booking_passenger_detail").val()
@@ -926,7 +928,7 @@ var sakha={
         dutyslipdict.parking_charges=$("#parking_charges").val()
         dutyslipdict.toll_charges=$("#toll_charges").val()
         dutyslipdict.amount=$("#amount").val()
-        dutyslipdict.remarks=$("#ds_remarks").val()
+        dutyslipdict.remarks=$("#ds_remarks").prop("value")
         params=JSON.stringify(dutyslipdict)
         console.log(params)
         var url = "http://"+serverip+":5000/dutyslip/by_id/"+dsid;
