@@ -307,6 +307,7 @@ def received_dutyslip_information(bot, update, user_data):
             # user_data['current_duty_slip'].assignment.status = "open"
             # user_data['current_duty_slip'].assignment.save()
             update_dutyslip_status(user_data['current_duty_slip'].id, "open")
+            user_data['current_duty_slip'].save()
             for booking in user_data['current_duty_slip'].assignment.bookings:
                 booking.status = "open"
                 booking.save()
@@ -543,6 +544,7 @@ def submit_duty(bot, update, user_data):
         # user_data['current_duty_slip'].status = "closed"
         # user_data['current_duty_slip'].save()
         update_dutyslip_status(user_data['current_duty_slip'].id, "closed")
+        user_data['current_duty_slip'].save()
         update.message.reply_text("Trip Saved", reply_markup=markup)
     except Exception as e:
         logger.error(str(e))
