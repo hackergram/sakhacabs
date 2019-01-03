@@ -78,7 +78,7 @@ class Booking(PPrintMixin, DynamicDocument):
     remarks = fields.StringField()
     assignment = fields.StringField(default=None)
     cust_meta = fields.DictField(unique=True)
-
+    notification_prefs = fields.DictField(default=utils.defaultnotificationprefs)
 
 class Product(PPrintMixin, DynamicDocument):
     product_id = fields.StringField(unique=True, required=True)
@@ -144,6 +144,7 @@ class DutySlip(PPrintMixin, Document):
     status = fields.StringField(default="new")
     payment_mode = fields.StringField(default=None)
     remarks = fields.StringField(default=None)
+    notification_prefs = fields.DictField(default=utils.defaultnotificationprefs)
 
     def __repr__(self):
         if self.open_time:
