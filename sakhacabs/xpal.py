@@ -367,7 +367,7 @@ def update_booking_status(booking_id, status):
     if len(booking) == 0:
         return "No booking by that id"
     else:
-        booking=booking[0]
+        booking = booking[0]
     try:
         if status in ['cancelled', 'new']:
             if booking.assignment is not None:
@@ -396,7 +396,7 @@ def update_booking_status(booking_id, status):
                 recipients.append({"type": "mobile", "value": num})
             if status == "assigned":
                 assignment = documents.Assignment.objects.with_id(booking.assignment)
-                notification = notification + "\n Pickup Time: " + assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M") + "\n Pickup Location: "+ assignment.reporting_location + "\n Drivers Assigned \n"
+                notification = notification + "\n Pickup Time: " + assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M") + "\n Pickup Location: " + assignment.reporting_location + "\n Drivers Assigned \n"
                 dutyslips = documents.DutySlip.objects(assignment=assignment)
                 for dutyslip in dutyslips:
                     driver = documents.Driver.objects(driver_id=dutyslip.driver)[0]
@@ -406,6 +406,7 @@ def update_booking_status(booking_id, status):
     except Exception as e:
         sakhacabsxpal.logger.error("Error occurred updating booking status {}".format(str(e)))
         return False
+
 
 def update_booking(booking_id, respdict):
     booking = documents.Booking.objects(booking_id=booking_id)
@@ -587,7 +588,7 @@ def update_assignment_status(assignmentid, status):
 def delete_assignment(assignmentid):
     if len(documents.Assignment.objects.with_id(assignmentid)) > 0:
         update_assignment_status(assignmentid, "cancelled")
-        assignment=documents.Assignment.objects.with_id(assignmentid)
+        assignment = documents.Assignment.objects.with_id(assignmentid)
         documents.DutySlip.objects(assignment=assignment).delete()
         assignment.delete()
         return []
@@ -628,7 +629,6 @@ def update_dutyslip_status(dsid, status):
     except Exception as e:
         sakhacabsxpal.logger.error("{}".format(str(e)))
         return False
-
 
 
 def update_dutyslip(dsid, respdict):

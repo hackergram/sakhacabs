@@ -80,6 +80,7 @@ class Booking(PPrintMixin, DynamicDocument):
     cust_meta = fields.DictField(unique=True)
     notification_prefs = fields.DictField(default=utils.defaultnotificationprefs)
 
+
 class Product(PPrintMixin, DynamicDocument):
     product_id = fields.StringField(unique=True, required=True)
 

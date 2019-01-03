@@ -50,7 +50,6 @@ def validate_dict(dictionary, required_keys=[], string_keys=[], mobile_nums=[], 
     return validation
 
 
-
 def ran_gen(size, chars=charstring):
     return ''.join(random.choice(chars) for x in range(size))
 
