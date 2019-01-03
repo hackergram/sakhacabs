@@ -96,6 +96,10 @@ a { text-decoration: none }
             Cust Billing Template: <input type="text" size="30" id="cust_billing_map"><br>
               </div>
                 </div>
+                <div class="row"><div class="col-md-12">
+                Cust Mobile Template: <input type="text" size="30" id="mobile_num_map"><br>
+                  </div>
+                    </div>
         <div class="row">
 
     <button id="process" onclick="process_output()">Process!</button>
@@ -138,6 +142,7 @@ a { text-decoration: none }
                                         <th>Selected</th>
                                            <th>customer ID</th>
                                            <th>Customer Billing Display</th>
+                                              <th>Customer mobile_num</th>
 
 
                                     </thead>
@@ -228,6 +233,7 @@ var parse_rows=function(rows){
 var process_output=function(){
   var cust_id_map=$("#cust_id_map").val()
   var cust_billing_map=$("#cust_billing_map").val()
+    var mobile_num_map=$("#mobile_num_map").val()
 
   var rows=[]
   dic=JSON.parse(global_output)
@@ -240,7 +246,7 @@ var process_output=function(){
           for (i=0;i<customerlist.length;i++){
               customerlist[i]['cust_id']=Mustache.render(cust_id_map,customerlist[i])
               customerlist[i]['cust_billing']=Mustache.render(cust_billing_map,customerlist[i])
-
+              customerlist[i]['mobile_num']=Mustache.render(mobile_num_map,customerlist[i])
               console.log(customerlist[i])
             }
         }
@@ -408,6 +414,7 @@ var do_file = (function() {
 
                 {data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
                 {data: 'cust_billing', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: 'mobile_num', defaultContent:"None", render: function(data){if(data){return data}}},
 
             ],
             scrollY: 400

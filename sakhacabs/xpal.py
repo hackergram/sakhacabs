@@ -319,10 +319,11 @@ def validate_booking_dict(bookingdict, new=True):
     mobile_nums = ["passenger_mobile"]
     validation = utils.validate_dict(
         bookingdict, required_keys=required_keys, string_keys=string_keys, mobile_nums=mobile_nums)
-    if bookingdict['cust_id'] == "retail":
-        if not bookingdict['passenger_mobile'] or bookingdict['passenger_mobile'] is None:
-            validation['message'] = "Passenger Mobile Must be provided for retail bookings"
-            validation['status'] = False
+    if "cust_id" in bookingdict.keys():
+        if bookingdict['cust_id'] == "retail":
+            if not bookingdict['passenger_mobile'] or bookingdict['passenger_mobile'] is None:
+                validation['message'] = "Passenger Mobile Must be provided for retail bookings"
+                validation['status'] = False
     if validation['status'] is True:
         sakhacabsxpal.logger.info("bookingdict: " + validation['message'])
     else:
@@ -369,13 +370,13 @@ def update_booking_status(booking_id, status):
         booking=booking[0]
     try:
         if status in ['cancelled', 'new']:
-            if booking.assignment:
+            if booking.assignment is not None:
                 sakhacabsxpal.logger.info(
                     "Booking is assigned, checking assignment status")
-                assignment = documents.Assignment.with_id(booking.assignment)
+                assignment = documents.Assignment.objects.with_id(booking.assignment)
                 sakhacabsxpal.logger.info("Removing booking {} from assignment {}".format(
-                    booking.booking_id, booking.assiggnment))
-                assignment.bookings.delete(booking)
+                    booking.booking_id, booking.assignment))
+                assignment.bookings.remove(booking)
                 assignment.save()
                 assignment.reload()
                 if assignment.bookings == []:
@@ -390,17 +391,17 @@ def update_booking_status(booking_id, status):
         booking.save()
         if booking.notification_prefs[status] != []:
             recipients = []
-            notification = "Sakha Cabs Booking {} is now {}".format(booking.booking_id,booking.status)
+            notification = "Sakha Cabs Booking {} is now {}".format(booking.booking_id, booking.status)
             for num in booking.notification_prefs[status]:
                 recipients.append({"type": "mobile", "value": num})
             if status == "assigned":
-                assignment = documents.Assognment.objects.with_id(booking.assignment)
+                assignment = documents.Assignment.objects.with_id(booking.assignment)
                 notification = notification + "\n Pickup Time: " + assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M") + "\n Pickup Location: "+ assignment.reporting_location + "\n Drivers Assigned \n"
                 dutyslips = documents.DutySlip.objects(assignment=assignment)
                 for dutyslip in dutyslips:
-                    driver = documents.Driver.objects(driver_id=dutyslip.driver_id)[0]
-                    notification = notification + "\n {} {} {}".format(driver.driver_id, driver.mobile_num, dutyslip.vehicle_id)
-                sms.send_sms({"message": notification, "recipients": recipients})
+                    driver = documents.Driver.objects(driver_id=dutyslip.driver)[0]
+                    notification = notification + "\n {} {} {}".format(driver.driver_id, driver.mobile_num, dutyslip.vehicle)
+            sms.send_sms({"message": notification, "recipients": recipients})
         return True
     except Exception as e:
         sakhacabsxpal.logger.error("Error occurred updating booking status {}".format(str(e)))
@@ -523,6 +524,7 @@ def save_assignment(assignmentdict, assignment_id=None):
         d.save()
     for booking in assignment.bookings:
         booking.assignment = str(assignment.id)
+        booking.save()
         update_booking_status(booking.booking_id, "assigned")
         booking.save()
     sakhacabsxpal.logger.info(
@@ -585,7 +587,9 @@ def update_assignment_status(assignmentid, status):
 def delete_assignment(assignmentid):
     if len(documents.Assignment.objects.with_id(assignmentid)) > 0:
         update_assignment_status(assignmentid, "cancelled")
-        documents.Assignment.objects.with_id(assignmentid).delete()
+        assignment=documents.Assignment.objects.with_id(assignmentid)
+        documents.DutySlip.objects(assignment=assignment).delete()
+        assignment.delete()
         return []
     else:
         return "Assignment with that ID does not exist"

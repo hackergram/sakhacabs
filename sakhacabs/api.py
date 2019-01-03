@@ -597,6 +597,19 @@ class AssignmentResource(Resource):
                 resp = "{} {}".format(type(e), str(e))
                 status = "error"
         elif command == "updatestatus":  # TODO - Link to  update_assignment_status
+            try:
+                if xpal.update_assignment_status(respdict['assignment_id'], respdict['status']):
+                    resp = "Status updated."
+                    status = "success"
+                else:
+                    resp = "Status updated failed"
+                    status = "error"
+            except Exception as e:
+                app.logger.error("{} {} \n {}".format(
+                    type(e), str(e), respdict))
+                resp = "{} {}".format(type(e), str(e))
+                status = "error"
+            '''
             app.logger.info(
                 "AssignmentResource: Trying to update assignment status")
             try:
@@ -620,6 +633,7 @@ class AssignmentResource(Resource):
                     type(e), str(e), respdict))
                 resp = "{} {}".format(type(e), str(e))
                 status = "error"
+            '''
         elif command == "search":
             app.logger.info("AssignmentResource: Searching assignments")
             try:
@@ -708,6 +722,19 @@ class DutySlipResource(Resource):
         respdict = request.get_json()
         if command == "updatestatus":
             try:
+                if xpal.update_dutyslip_status(respdict['dsid'], respdict['status']):
+                    resp = "Status updated."
+                    status = "success"
+                else:
+                    resp = "Status updated failed"
+                    status = "error"
+            except Exception as e:
+                app.logger.error("{} {} \n {}".format(
+                    type(e), str(e), respdict))
+                resp = "{} {}".format(type(e), str(e))
+                status = "error"
+            '''
+            try:
                 dutyslip = xpal.documents.DutySlip.objects.with_id(
                     respdict['dsid'])
                 dutyslip.status = respdict['status']
@@ -719,6 +746,7 @@ class DutySlipResource(Resource):
                     type(e), str(e), respdict))
                 resp = "{} {}".format(type(e), str(e))
                 status = "error"
+            '''
         else:
             resp = "Unrecognized command or no command provided"
             status = "error"
@@ -839,7 +867,7 @@ class CustomerResource(Resource):
                 else:
                     status = "success"
                 for customer in resp:
-                    if "error" in customer['cust_id'].lower():
+                    if "error" in customer['status'].lower():
                         status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))

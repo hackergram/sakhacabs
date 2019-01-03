@@ -7,7 +7,7 @@ col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, 
     padding-left: 1px;
     margin-top: 1px;
     margin-bottom: 1px;
-    
+
 
 }
 .container{
@@ -33,6 +33,14 @@ col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, 
   background: linear-gradient(60deg, #0000FF, #7D7DF1);
 }
 
+.card .card-header-assigned .card-icon,
+.card .card-header-assigned .card-text,
+.card .card-header-assigned:not(.card-header-icon):not(.card-header-text),
+.card.bg-assigned,
+.card.card-rotate.bg-assigned .front,
+.card.card-rotate.bg-assigned .back {
+  background: linear-gradient(60deg, #1E6FA6, #5473CE);
+}
 
 
 .card .card-header-open .card-icon,
@@ -93,6 +101,13 @@ background: linear-gradient(60deg, #0C420C, #0C710C);
 .card .card-header-closed .card-text {
   box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4);
 }
+
+.card .card-header-assigned .card-icon,
+.card .card-header-assigned:not(.card-header-icon):not(.card-header-text),
+.card .card-header-assigned .card-text {
+  box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4);
+}
+
 
 .card .card-header-cancelled .card-icon,
 .card .card-header-cancelled:not(.card-header-icon):not(.card-header-text),
