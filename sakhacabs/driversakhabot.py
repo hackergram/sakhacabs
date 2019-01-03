@@ -542,7 +542,7 @@ def submit_duty(bot, update, user_data):
             "Submitting Duty {}".format(user_data['current_duty_slip']))
         # user_data['current_duty_slip'].status = "closed"
         # user_data['current_duty_slip'].save()
-        update_dutyslip_status(user_datauser_data['current_duty_slip']['current_duty_slip'].id, "closed")
+        update_dutyslip_status(user_data['current_duty_slip']['current_duty_slip'].id, "closed")
         update.message.reply_text("Trip Saved", reply_markup=markup)
     except Exception as e:
         logger.error(str(e))
