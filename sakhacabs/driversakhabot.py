@@ -20,7 +20,7 @@ bot.
 """
 
 import sys
-import datetime
+# import datetime
 sys.path.append("/opt/xetrapal")
 
 
@@ -47,7 +47,7 @@ dutyslip_start_keyboard = [[start_duty_text], [cancel_text]]
 dutyslip_stop_keyboard = [[stop_duty_text], [cancel_text]]
 dutyslip_submit_keyboard = [[submit_text], [cancel_text]]
 payment_mode_keyboard = [[cash_text], [credit_text]]
-#yes_no_keyboard = [[telegram.InlineKeyboardButton("Yes", callback_data='Yes'),telegram.InlineKeyboardButton("No", callback_data='No')]]
+# yes_no_keyboard = [[telegram.InlineKeyboardButton("Yes", callback_data='Yes'),telegram.InlineKeyboardButton("No", callback_data='No')]]
 
 driverbotconfig = xetrapal.karma.load_config(
     configfile="/opt/sakhacabs-appdata/driversakhabot.conf")
@@ -145,7 +145,6 @@ def get_duty_slips(bot, update, user_data):
         updatekeys = []
         for duty in user_data['duties']:
             logger.info("{}".format(duty.to_json()))
-            #keytext=["Status: "+duty.status.upper()+" ID: "+unicode("..."+str(duty.id)[:10])+" "+unicode(duty.assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M:%S"))]
             keytext = ["ID: " + unicode(duty.id) + " " + unicode(utils.get_local_ts(
                 duty.assignment.reporting_timestamp).strftime("%Y-%m-%d %H:%M:%S"))]
             updatekeys.append(keytext)
@@ -182,7 +181,7 @@ def location_update_menu(bot, update, user_data):
     logger.info(u"{}".format(user_data))
     markup = ReplyKeyboardMarkup(
         location_update_keyboard, one_time_keyboard=True)
-    if user_data['checkin'] == True:
+    if user_data['checkin'] is True:
         update.message.reply_text(check_in_text, reply_markup=markup)
     else:
         update.message.reply_text(check_out_text, reply_markup=markup)
@@ -231,7 +230,6 @@ def set_mobile(bot, update, user_data):
 def cancel(bot, update, user_data):
     logger.info(u"Cancelling Update {}".format(user_data))
     markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
-    #del user_data['choice']
     update.message.reply_text(u'Cancelled!', reply_markup=markup)
     for key in user_data.keys():
         del user_data[key]
@@ -242,7 +240,6 @@ def submit_location_update(bot, update, user_data):
     logger.info(u"{}".format(user_data))
     logger.info(user_data['driver'])
     markup = ReplyKeyboardMarkup(driver_base_keyboard, one_time_keyboard=True)
-    #del user_data['choice']
     try:
         location = user_data['location']
         handoff = user_data['handoff']
@@ -305,10 +302,11 @@ def received_dutyslip_information(bot, update, user_data):
             user_data['current_duty_slip'].open_kms = float(text)
             user_data['current_duty_slip'].open_time = utils.get_utc_ts(
                 update.message.date)
-            user_data['current_duty_slip'].status = "open"
-            user_data['current_duty_slip'].save()
-            user_data['current_duty_slip'].assignment.status = "open"
-            user_data['current_duty_slip'].assignment.save()
+            # user_data['current_duty_slip'].status = "open"
+            # user_data['current_duty_slip'].save()
+            # user_data['current_duty_slip'].assignment.status = "open"
+            # user_data['current_duty_slip'].assignment.save()
+            update_dutyslip_status(user_data['current_duty_slip'].id, "open")
             for booking in user_data['current_duty_slip'].assignment.bookings:
                 booking.status = "open"
                 booking.save()
@@ -452,7 +450,6 @@ def received_location_information(bot, update, user_data):
             logger.info("Received message {} and user data - {}".format(text,
                                                                         user_data['choice'] == add_vehicle_text))
         category = user_data['choice']
-        #logger.info("Category {}".format(category))
         if category == add_handoff_text:
             if update.message.contact:
                 contact = update.message.contact
@@ -543,8 +540,9 @@ def submit_duty(bot, update, user_data):
     try:
         sakhacabsxpal.logger.info(
             "Submitting Duty {}".format(user_data['current_duty_slip']))
-        user_data['current_duty_slip'].status = "closed"
-        user_data['current_duty_slip'].save()
+        # user_data['current_duty_slip'].status = "closed"
+        # user_data['current_duty_slip'].save()
+        update_dutyslip_status(user_datauser_data['current_duty_slip']['current_duty_slip'].id, "closed")
         update.message.reply_text("Trip Saved", reply_markup=markup)
     except Exception as e:
         logger.error(str(e))

@@ -336,7 +336,7 @@ def new_booking(respdict):
     sakhacabsxpal.logger.info(
         "Creating new booking from dictionary\n{}".format(respdict))
     for key in respdict.keys():
-        if key in ["cust_id", "product_id", "passenger_detail", "passenger_mobile", "pickup_timestamp", "pickup_location", "drop_location", "booking_channel", "num_passengers"]:
+        if key in ["cust_id", "product_id", "passenger_detail", "passenger_mobile", "pickup_timestamp", "pickup_location", "drop_location", "booking_channel", "num_passengers","notification_prefs"]:
             bookingdict[key] = respdict[key]
             respdict.pop(key)
     if "_id" in respdict.keys():
@@ -353,7 +353,14 @@ def new_booking(respdict):
         b.cust_meta = respdict
         b.save()
         b.reload()
-        sakhacabsxpal.logger.info("{}".format(b))
+        notification = "Sakha Cabs Booking {} created \n {}".format(b.booking_id, repr(b))
+
+        if b.notification_prefs["new"] != []:
+            recipients = []
+            for num in b.notification_prefs["new"]:
+                recipients.append({"type": "mobile", "value": num})
+            sms.send_sms({"message": notification, "recipients": recipients})
+        sakhacabsxpal.logger.info("{}".format(notification))
         return [b]
     except Exception as e:
         return "{} {}".format(type(e), str(e))
@@ -367,7 +374,7 @@ def update_booking_status(booking_id, status):
     if len(booking) == 0:
         return "No booking by that id"
     else:
-        booking=booking[0]
+        booking = booking[0]
     try:
         if status in ['cancelled', 'new']:
             if booking.assignment is not None:
@@ -391,12 +398,12 @@ def update_booking_status(booking_id, status):
         booking.save()
         if booking.notification_prefs[status] != []:
             recipients = []
-            notification = "Sakha Cabs Booking {} is now {}".format(booking.booking_id, booking.status)
+            notification = "Sakha Cabs Booking {} status change to {}".format(booking.booking_id, booking.status)
             for num in booking.notification_prefs[status]:
                 recipients.append({"type": "mobile", "value": num})
             if status == "assigned":
                 assignment = documents.Assignment.objects.with_id(booking.assignment)
-                notification = notification + "\n Pickup Time: " + assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M") + "\n Pickup Location: "+ assignment.reporting_location + "\n Drivers Assigned \n"
+                notification = notification + "\n Pickup Time: " + assignment.reporting_timestamp.strftime("%Y-%m-%d %H:%M") + "\n Pickup Location: " + assignment.reporting_location + "\n Drivers Assigned \n"
                 dutyslips = documents.DutySlip.objects(assignment=assignment)
                 for dutyslip in dutyslips:
                     driver = documents.Driver.objects(driver_id=dutyslip.driver)[0]
@@ -406,6 +413,7 @@ def update_booking_status(booking_id, status):
     except Exception as e:
         sakhacabsxpal.logger.error("Error occurred updating booking status {}".format(str(e)))
         return False
+
 
 def update_booking(booking_id, respdict):
     booking = documents.Booking.objects(booking_id=booking_id)
@@ -420,8 +428,11 @@ def update_booking(booking_id, respdict):
         if "created_timestamp" in respdict.keys():
             respdict.pop("created_timestamp")
         if "status" in respdict.keys():
+            sakhacabsxpal.logger.info("Updated status should be {}".format(respdict['status']))
             if respdict['status'] != booking.status:
+                sakhacabsxpal.logger.info("original status is {}".format(booking.status))
                 if not update_booking_status(booking.booking_id, respdict['status']):
+                    sakhacabsxpal.loggger.error("Updating booking status failed")
                     return "Updating booking status failed"
         try:
             booking.update(**respdict)
@@ -587,7 +598,7 @@ def update_assignment_status(assignmentid, status):
 def delete_assignment(assignmentid):
     if len(documents.Assignment.objects.with_id(assignmentid)) > 0:
         update_assignment_status(assignmentid, "cancelled")
-        assignment=documents.Assignment.objects.with_id(assignmentid)
+        assignment = documents.Assignment.objects.with_id(assignmentid)
         documents.DutySlip.objects(assignment=assignment).delete()
         assignment.delete()
         return []
@@ -618,7 +629,8 @@ def update_dutyslip_status(dsid, status):
 
         dutyslip.status = status
         dutyslip.save()
-
+        if status == "open":
+            update_assignment_status(dutyslip.assignment.id, "open")
         if status == "cancelled":
             otherds = documents.DutySlip.objects(assignment=dutyslip.assignment, status__ne="cancelled")
             if len(otherds) == 0:
@@ -627,7 +639,6 @@ def update_dutyslip_status(dsid, status):
     except Exception as e:
         sakhacabsxpal.logger.error("{}".format(str(e)))
         return False
-
 
 
 def update_dutyslip(dsid, respdict):
