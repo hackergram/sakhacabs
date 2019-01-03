@@ -436,6 +436,7 @@ def update_booking(booking_id, respdict):
                     return "Updating booking status failed"
         try:
             booking.update(**respdict)
+            booking.save()
             booking.reload()
             if booking.assignment is not None:
                 assignment = documents.Assignment.objects.with_id(
