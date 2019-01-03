@@ -336,7 +336,7 @@ def new_booking(respdict):
     sakhacabsxpal.logger.info(
         "Creating new booking from dictionary\n{}".format(respdict))
     for key in respdict.keys():
-        if key in ["cust_id", "product_id", "passenger_detail", "passenger_mobile", "pickup_timestamp", "pickup_location", "drop_location", "booking_channel", "num_passengers"]:
+        if key in ["cust_id", "product_id", "passenger_detail", "passenger_mobile", "pickup_timestamp", "pickup_location", "drop_location", "booking_channel", "num_passengers","notification_prefs"]:
             bookingdict[key] = respdict[key]
             respdict.pop(key)
     if "_id" in respdict.keys():
@@ -353,7 +353,14 @@ def new_booking(respdict):
         b.cust_meta = respdict
         b.save()
         b.reload()
-        sakhacabsxpal.logger.info("{}".format(b))
+        notification = "Sakha Cabs Booking {} created \n {}".format(b.booking_id, repr(b))
+
+        if b.notification_prefs["new"] != []:
+            recipients = []
+            for num in b.notification_prefs["new"]:
+                recipients.append({"type": "mobile", "value": num})
+            sms.send_sms({"message": notification, "recipients": recipients})
+        sakhacabsxpal.logger.info("{}".format(notification))
         return [b]
     except Exception as e:
         return "{} {}".format(type(e), str(e))
@@ -391,7 +398,7 @@ def update_booking_status(booking_id, status):
         booking.save()
         if booking.notification_prefs[status] != []:
             recipients = []
-            notification = "Sakha Cabs Booking {} is now {}".format(booking.booking_id, booking.status)
+            notification = "Sakha Cabs Booking {} status change to {}".format(booking.booking_id, booking.status)
             for num in booking.notification_prefs[status]:
                 recipients.append({"type": "mobile", "value": num})
             if status == "assigned":
@@ -421,8 +428,11 @@ def update_booking(booking_id, respdict):
         if "created_timestamp" in respdict.keys():
             respdict.pop("created_timestamp")
         if "status" in respdict.keys():
+            sakhacabsxpal.logger.info("Updated status should be {}".format(respdict['status']))
             if respdict['status'] != booking.status:
+                sakhacabsxpal.logger.info("original status is {}".format(booking.status))
                 if not update_booking_status(booking.booking_id, respdict['status']):
+                    sakhacabsxpal.loggger.error("Updating booking status failed")
                     return "Updating booking status failed"
         try:
             booking.update(**respdict)

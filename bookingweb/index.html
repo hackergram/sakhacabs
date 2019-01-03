@@ -62,7 +62,9 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-6 small-cols" id="cust_details"></div>
+                            <div class="col-sm-6 small-cols" id="cust_details">
+                            <p>Customer Mobile  <input type="text" readonly id="cust_mobile"><p>
+                            </div>
                             <div class="col-sm-6 small-cols" id="prod_details"></div>
                         </div>'
                     </div>
@@ -79,9 +81,17 @@
                                 $("#cust_id").append('<option>retail</option>');
 
                                 $("#cust_id").on("change", function(event) {
-                                    console.log(this.value)
-                                    $("#cust_data").remove()
-                                    $("#cust_details").append("<div id='cust_data'>"+this.value+"</div>")
+                                    var custdata="No Customer Data"
+                                    var custmobile=""
+                                    for (i=0;i<data.resp.length;i++){
+                                      if (data.resp[i].cust_id===this.value){
+                                        custdata=data.resp[i].cust_billing
+                                        custmobile=data.resp[i].mobile_num
+                                      }
+                                    }
+                                    $("#cust_billing").remove()
+                                    $("#cust_mobile").val(custmobile)
+                                    $("#cust_details").append("<div id='cust_billing'>"+custdata+"</div>")
                                 } );
                             })
 
@@ -198,6 +208,38 @@
                             <label>Notification Configuration</label>
                         </div>
                     </div>
+                    <div class="row">
+                      <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                        <p> When Booking is Created notify - </p>
+                        <p><input type="checkbox" id="np_new_cust" checked>Customer</p>
+                        <p><input type="checkbox" id="np_new_pass" checked>Passenger</p>
+                        <p>Others<br><textarea id="np_new_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                      </div>
+                      <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                        <p> When Booking is Assigned notify - </p>
+                        <p><input type="checkbox" id="np_assigned_cust">Customer</p>
+                        <p><input type="checkbox" id="np_assigned_pass" checked>Passenger</p>
+                        <p>Others<br><textarea id="np_assigned_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                      </div>
+                      <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                        <p> When Booking is In Progress notify - </p>
+                        <p><input type="checkbox" id="np_open_cust">Customer</p>
+                        <p><input type="checkbox" id="np_open_pass" checked>Passenger</p>
+                        <p>Others<br><textarea id="np_open_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                        </div>
+                      <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                        <p> When Booking is Completed notify - </p>
+                        <p><input type="checkbox" id="np_closed_cust">Customer</p>
+                        <p><input type="checkbox" id="np_closed_pass" checked>Passenger</p>
+                        <p>Others<br><textarea id="np_closed_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                        </div>
+                      <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                        <p> When Booking is Cancelled notify - </p>
+                        <p><input type="checkbox" id="np_cancelled_cust" checked>Customer</p>
+                        <p><input type="checkbox" id="np_cancelled_pass" checked>Passenger</p>
+                        <p>Others<br><textarea id="np_cancelled_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                        </div>
+                    </div>
                   </div>
                 </div>
                 <div class="row">
@@ -213,6 +255,36 @@
     </style>
     <script>
       $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
+      function build_notification_prefs(pass_mob,cust_mob){
+        notificationprefs={'new': [], 'assigned': [], 'open': [], 'closed': [], 'cancelled': []}
+        Object.keys(notificationprefs).forEach(function(key){
+          if ($("#np_"+key+"_cust").prop("checked")){
+            notificationprefs[key].push(cust_mob)
+          }
+          if ($("#np_"+key+"_pass").prop("checked")){
+            notificationprefs[key].push(pass_mob)
+          }
+          console.log($("#np_"+key+"_others").prop("value"))
+          if ($("#np_"+key+"_others").prop("value")!=""){
+            addnos=$("#np_"+key+"_others").prop("value").split(",")
+            console.log(addnos)
+            addnos2=[]
+            addnos.forEach(function(num){
+              if(num!=""){
+                if (!num.startsWith("+")){
+                  addnos2.push("+"+num)
+                }
+                else{
+                  addnos2.push(num)
+                }
+              }
+            })
+            notificationprefs[key]=notificationprefs[key].concat(addnos2)
+          }
+
+        });
+        return notificationprefs
+      }
       function submit_booking(){
         console.log("Submitting booking");
         fieldset={}
@@ -236,12 +308,29 @@
         delete fieldset['email']
         if (fieldset['cust_id']==='0'){
             fieldset['cust_id']="retail"
+
         }
         if (fieldset['product_id']==='0'){
             fieldset['product_id']="SINGLTRP"
 
         }
+        fieldset['unique']=moment().format("YYYY-MM-DD HH:mm:ss")
         fieldset['booking_channel']="webform"
+        var pass_mob = fieldset['passenger_mobile']
+        var cust_mob = $("#cust_mobile").val()
+        if (cust_mob!=""){
+          if (!cust_mob.startsWith("+")){
+            cust_mob="+"+cust_mob
+          }
+        }
+        if (pass_mob!=""){
+          if (!pass_mob.startsWith("+")){
+            pass_mob="+"+pass_mob
+          }
+        }
+
+        fieldset['notification_prefs']= build_notification_prefs(pass_mob,cust_mob)
+
         console.log(fieldset)
         t=confirm("Really save bookings with params \n "+JSON.stringify(fieldset))
         if (t===true){
