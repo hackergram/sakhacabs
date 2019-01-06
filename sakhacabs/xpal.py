@@ -336,7 +336,7 @@ def new_booking(respdict):
     sakhacabsxpal.logger.info(
         "Creating new booking from dictionary\n{}".format(respdict))
     for key in respdict.keys():
-        if key in ["cust_id", "product_id", "passenger_detail", "passenger_mobile", "pickup_timestamp", "pickup_location", "drop_location", "booking_channel", "num_passengers", "notification_prefs", "remarks"]:  # CHANGELOG - AV - Remarks given at booking time should now be reflected
+        if key in ["cust_id", "product_id", "passenger_detail", "passenger_mobile", "pickup_timestamp", "pickup_location", "drop_location", "booking_channel", "num_passengers", "notification_prefs", "remarks"]:  # CHANGELOG #11 - AV - Remarks given at booking time should now be reflected in the booking
             bookingdict[key] = respdict[key]
             respdict.pop(key)
     if "_id" in respdict.keys():
