@@ -917,6 +917,7 @@ def generate_invoice(to_settle):
     sakhacabsxpal.logger.info(
         "Generating invoice for assignments {}".format(to_settle))
     invoice_lines = []
+
     try:
         for ass in to_settle:
             covered_hrs = 0
