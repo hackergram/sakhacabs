@@ -385,7 +385,13 @@
                       </div>
                     </div>
         </div>
-<div id="loader" class='loader'></div>
+    <div class="loader_container" id="loader">
+<center>
+      Processing
+<div  class='loader'></div>
+
+</center>
+<div>
     <script>
         var serverip="192.168.56.101"
         var assignments=[]
@@ -418,6 +424,7 @@
             http.send(params)
         }
         updateInvoice()
+        $("#loader").hide();
         var clearInvoice=function(){
             assignments=[]
             current_invoice={"cust_id":null,"invoice_lines":[],"taxes":[],invoice_date:null}
@@ -527,9 +534,9 @@
         var exportInvoice=function(){
           console.log("Exporting invoice to Google drive")
           invoice_id=current_invoice.invoice_id
-          $("#loader").set("visibility",true)
+          $("#loader").show()
          $.getJSON('http://'+serverip+':5000/invoice/export/'+invoice_id,function(data){
-           $("#loader").hide()
+          $("#loader").hide();
             current_invoice.url=data.resp
             saveInvoice()
              window.open(data.resp,"_blank")

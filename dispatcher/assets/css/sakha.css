@@ -96,7 +96,7 @@ background: linear-gradient(60deg, #0C420C, #0C710C);
   box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4);
 }
 
-.card .card-header-closed .card-icon,
+.card .card-header-closed .card-icon,  bottom: -10%;
 .card .card-header-closed:not(.card-header-icon):not(.card-header-text),
 .card .card-header-closed .card-text {
   box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4);
@@ -148,18 +148,36 @@ h5 .card-title{
   border-top: 16px solid blue;
   border-right: 16px solid green;
   border-bottom: 16px solid red;
-  width: 120px;
-  height: 120px;
+  width: 500px;
+  height: 500px;
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
-  z-index: 5;
-  position : absolute;
-  height : -50%;
-  bottom: -10%;
   margin: auto;
-  visibility: hidden;
+  z-index: 6;
+    position : absolute;
+    bottom: 0%
 }
 
+.loader_container {
+  z-index: 5;
+  position : absolute;
+  bottom: 10%;
+  left: 30%;
+  top: 50%;
+  align-items: center;
+  vertical-align: middle;
+  margin: auto;;
+  width: 25%;
+  font-size: 2em;
+  background: black;
+  height: 500px;
+  width: 500px;
+  vertical-align: middle;
+  text-align: center;
+  padding-top: 220px;
+  opacity: .75;
+  border-radius: 50%;
+}
 @-webkit-keyframes spin {
   0% { -webkit-transform: rotate(0deg); }
   100% { -webkit-transform: rotate(360deg); }
