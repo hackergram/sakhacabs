@@ -6,11 +6,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Manage drivers</title>
 <link rel="stylesheet" href="dist/css/mdi-icons.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" /> <!--kj-v1.10(feedback) added two style sheets -->
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
-     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
 
@@ -148,6 +150,61 @@ a { text-decoration: none }
                       </div>
                     </div>
 
+<!--kj-v1.01(feedback)-entering new code here-->
+<div class="modal fade" id="createdriverform" tabindex="-1" role="dialog" aria-labelledby="Create Driver">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+         </div>
+          <div class="modal-body">
+
+            <div class="card-header card-header-primary">
+              <h4 class="card-title">Edit Driver Profile</h4>
+             <div id="driverstatus" class="card-category"></div>
+            </div>
+            <div class="card-body">
+              <form id="driverform">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Driver ID</label>
+                      <input type="text" class="form-control" id="driverid" require="true">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Mobile Num</label>
+                      <input type="text" class="form-control" id="mobnum">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">First Name</label>
+                      <input type="text" class="form-control" id="firstname">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Last Name</label>
+                      <input type="text" class="form-control" id="lastname">
+                    </div>
+                  </div>
+                </div>
+            </form>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="savedriver">Save changes</button>
+          </div>
+        </div>
+      </div>
+<!-- New code ends here. -->
+
 
 
 <br />
@@ -175,7 +232,7 @@ var XW = {
 
 var global_wb;
 var global_output;
-var serverip="192.168.56.101"
+var serverip="192.168.56.103"
 var driverlist=[]
 var submit_output=function(){
     var OUT = document.getElementById('out');
@@ -252,6 +309,25 @@ var process_output=function(){
     //}
 
 }
+//kj-v1.1(feedback)adding lines from index.html
+$("#createdriverform").on('hide.bs.modal', function (event) {
+        document.getElementById("driverform").reset()
+        window.location.reload(false);
+})
+
+$("#createdriverform").on('show.bs.modal', function (event){
+        var eventsrc = $(event.relatedTarget) // Button that triggered the modal
+        var driverid = eventsrc.data('driverid') // Extract info from data-* attributes
+        $("#dashboardnavitem").toggleClass("active")
+        $("#createdrivernavitem").toggleClass("active")
+
+        /*$(".modal-dialog").draggable({
+            handle: ".modal-header"
+        })*/
+        sakha.fillDriverModal(driverid)
+
+})
+
 
 var addTextToTemplate=function(text){
     p=$("#templatefield").val()
@@ -406,7 +482,13 @@ var do_file = (function() {
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
                 {width:"5%", defaultContent:""},
 
-                {data: 'driver_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: null, defaultContent:"None", render: function (data){      //
+
+                    var driverid='<a class="nav-link" data-toggle="modal" data-target="#createdriverform" data-driverid="'+data.driver_id+'">\
+                        <i class="material-icons">content_paste</i> '+data.driver_id+'\
+                        </a>'
+                    return driverid
+                }},
                 {data: 'mobile_num', defaultContent:"None", render: function(data){if(data){return data}}},
 
             ],
