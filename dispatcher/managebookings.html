@@ -5,8 +5,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Manage Booking</title>
-<link rel="stylesheet" href="dist/css/mdi-icons.css">
-
+    <link rel="stylesheet" href="dist/css/mdi-icons.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
@@ -158,8 +159,128 @@ a { text-decoration: none }
                       </div>
                     </div>
 
+<!--kj-v1.1-putting the new code here -->
+<!--Model-->
+</div>
+<div class="modal fade" id="editbookingform" tabindex="-1" role="dialog" aria-labelledby="Edit Duty Slip">
+    <div class="modal-dialog" role="document">
+<div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+ </div>
+  <div class="modal-body">
 
+    <div class="card-header card-header-primary">
+      <h4 class="card-title">Edit Booking ID: <span id="booking_id"></span> </h4>
+      <h5 class="card-category"><b>Created at: </b><span id="booking_created_timestamp"></span></h5>
+    </div>
+    <div class="card-body">
+        <form id="bookingform">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Status</label>
 
+                    <select class="form-control" id="booking_status">
+                        <option value="verified">VERIFIED</option>
+                        <option value="cancelled">CANCELLED</option>
+                        <option value="closed">CLOSED</option>
+                        <option value="open">OPEN</option>
+                        <option value="new">NEW</option>
+                    </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+
+             <div class="col-md-4">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Customer ID</label>
+                  <input type="text" class="form-control" id="booking_cust_id" readonly require="true">
+                </div>
+              </div>
+            <div class="col-md-4">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Product ID</label>
+                  <input type="text" class="form-control" id="booking_product_id" readonly require="true">
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Pickup Time</label>
+                  <input type="text" class="form-control" id="booking_pickup_timestamp" require="true">
+
+                 </div>
+              </div>
+            </div>
+            <div class="row">
+
+            <div class="col-md-12">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Pickup Location</label>
+                    <textarea rows="2" class="form-control" id="booking_pickup_location" require="true"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+
+            <div class="col-md-12">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Drop Location</label>
+                    <textarea rows="2" class="form-control" id="booking_drop_location" require="true"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Passenger Detail</label>
+                        <textarea rows="4" class="form-control" id="booking_passenger_detail" require="true"></textarea>
+                    </div>
+                  </div>
+                <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Customer Meta Data</label>
+                        <textarea rows="4" class="form-control" id="booking_cust_meta" require="true"></textarea>
+                    </div>
+                  </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Passenger Mobile</label>
+                      <input type="text" class="form-control" id="booking_passenger_mobile" require="true">
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Booking Channel</label>
+                      <input type="text" class="form-control" readonly id="booking_channel">
+                    </div>
+                  </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Remarks</label>
+                    <textarea rows=5 class="form-control" id="booking_remarks"></textarea>
+                </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary" id="savebooking">Save changes</button>
+  </div>
+</div>
+</div>
+<!--new code ends here.-->
 <br />
 </div>
 <!-- uncomment the next line here and in xlsxworker.js for encoding support -->
@@ -512,7 +633,17 @@ var do_file = (function() {
 
                 {width:"25%", data: 'passenger_detail',defaultContent:"None",render: function(data){if(data){return data}}},
                 {width:"10%", data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
-                {width:"5%", data: 'booking_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {width:"5%", data: 'booking_id', defaultContent:"None", render:  function(data){
+                    if(data){
+
+                        var bookingid='<a class="nav-link" data-toggle="modal" data-target="#editbookingform" data-bookingid="'+data+'">\
+                        <i class="material-icons">content_paste</i> '+data+'\
+                        </a>'
+
+                        return bookingid
+
+
+                    }}},
                 {width:"5%", data: 'assignment', defaultContent:"None", render: function(data){if(data){
                     return "Assigned"
                 }}}
@@ -521,6 +652,30 @@ var do_file = (function() {
 
         });
       }
+    }          //kj-v1.1-added code from 567
+    $("#editbookingform").on('show.bs.modal', function (event) {
+        console.log("editing booking in modal")
+        var eventsrc = $(event.relatedTarget) // Button that triggered the modal
+        var bookingid = eventsrc.data('bookingid') // Extract info from data-* attributes
+        console.log(bookingid)
+        sakha.fillBookingModal(bookingid)
+    })
+    $("#editbookingform").on('hide.bs.modal', function (event) {
+        document.getElementById("bookingform").reset()
+        console.log("closing booking  modal")
+        window.location.reload(false);
+    })
+    $("#editdutyslipform").on('hide.bs.modal', function (event) {
+        console.log("closing duty slip modal")
+        document.getElementById("dutyslipform").reset()
+        window.location.reload(false);
+    })
+
+
+
+
+
+    //kj-v1.1(feedback)-new lines end here
       $("#deleteselectedbookings").on("click", function(){
         var delvids=[]
         selectedbookings=$("#bookinglist").DataTable().rows({selected: true }).data()
@@ -552,7 +707,7 @@ var do_file = (function() {
         }
         http.send(params);
       })
-    }
+
     updateassignmentbookinglist()
 </script>
 </body>
