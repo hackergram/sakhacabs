@@ -114,8 +114,8 @@ def validate_product_dict(productdict, new=True):
     if new is True:
         required_keys = ["product_id"]
     string_keys = ["product_id"]
-    validation = utils.validate_dict(
-        productdict, required_keys=required_keys, string_keys=string_keys)
+    numbers = ["included_hrs", "included_kms", "extra_hrs_rate", "extra_kms_rate"]  # CHANGELOG #11 - AV - For #261
+    validation = utils.validate_dict(productdict, required_keys=required_keys, string_keys=string_keys, numbers=numbers)
     if validation['status'] is True:
         sakhacabsxpal.logger.info("productdict: " + validation['message'])
     else:
@@ -336,7 +336,7 @@ def new_booking(respdict):
     sakhacabsxpal.logger.info(
         "Creating new booking from dictionary\n{}".format(respdict))
     for key in respdict.keys():
-        if key in ["cust_id", "product_id", "passenger_detail", "passenger_mobile", "pickup_timestamp", "pickup_location", "drop_location", "booking_channel", "num_passengers","notification_prefs"]:
+        if key in ["cust_id", "product_id", "passenger_detail", "passenger_mobile", "pickup_timestamp", "pickup_location", "drop_location", "booking_channel", "num_passengers", "notification_prefs", "remarks"]:  # CHANGELOG #11 - AV - Remarks given at booking time should now be reflected in the booking
             bookingdict[key] = respdict[key]
             respdict.pop(key)
     if "_id" in respdict.keys():
@@ -917,6 +917,7 @@ def generate_invoice(to_settle):
     sakhacabsxpal.logger.info(
         "Generating invoice for assignments {}".format(to_settle))
     invoice_lines = []
+
     try:
         for ass in to_settle:
             covered_hrs = 0
@@ -936,9 +937,9 @@ def generate_invoice(to_settle):
                     invoiceline['rate']
                 invoice_lines.append(invoiceline)
                 covered_hrs += documents.Product.objects(
-                    product_id=booking.product_id)[0].hrs
+                    product_id=booking.product_id)[0].included_hrs  # CHANGELOG #11 - AV - Should fix the invoicing calculation based on product details
                 covered_kms += documents.Product.objects(
-                    product_id=booking.product_id)[0].kms
+                    product_id=booking.product_id)[0].included_kms  # CHANGELOG #11 - AV - Should fix the invoicing calculation based on product details
             consumed_hrs = 0
             consumed_kms = 0
             for ds in documents.DutySlip.objects(assignment=ass):
@@ -971,6 +972,7 @@ def generate_invoice(to_settle):
                         invoiceline['rate']
                     if invoiceline['amount'] != 0:
                         invoice_lines.append(invoiceline)
+            sakhacabsxpal.logger.info("Consumed KMs {} Consumed Hrs {} Included Hrs {} Included Kms {}".format(consumed_kms, consumed_hrs, covered_kms, covered_hrs))
             if consumed_kms > covered_kms:
                 extrakms = consumed_kms - covered_kms
                 invoiceline = {}
@@ -978,7 +980,8 @@ def generate_invoice(to_settle):
                     ass.reporting_timestamp).strftime("%Y-%m-%d")
                 invoiceline['particulars'] = "Extra Kms " + str(ds.dutyslip_id)
                 invoiceline['product'] = "EXTRAKMS"
-                invoiceline['rate'] = 20
+                invoiceline['rate'] = max([documents.Product.objects(product_id=booking.product_id)[0].extra_kms_rate for booking in ass.bookings])  # CHANGELOG #11 - AV - Should fix the invoicing calculation based on product details
+                sakhacabsxpal.logger.info("Setting rate for extra kms as {}".format(invoiceline['rate']))
                 invoiceline['qty'] = extrakms
                 invoiceline['amount'] = invoiceline['qty'] * \
                     invoiceline['rate']
@@ -992,7 +995,7 @@ def generate_invoice(to_settle):
                 invoiceline['particulars'] = "Extra Hours " + \
                     str(ds.dutyslip_id)
                 invoiceline['product'] = "EXTRAHRS"
-                invoiceline['rate'] = 100
+                invoiceline['rate'] = max([documents.Product.objects(product_id=booking.product_id)[0].extra_hrs_rate for booking in ass.bookings])  # CHANGELOG #11 - AV - Should fix the invoicing calculation based on product details
                 invoiceline['qty'] = extrahrs
                 invoiceline['amount'] = invoiceline['qty'] * \
                     invoiceline['rate']

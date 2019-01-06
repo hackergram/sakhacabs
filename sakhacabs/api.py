@@ -1128,7 +1128,7 @@ class InvoiceResource(Resource):
                 # if respdict!=[]:
                 assignments = xpal.documents.Assignment.objects.filter(
                     id__in=respdict)
-                app.logger.info(assignments)
+                # app.logger.info(assignments)
                 resp = xpal.generate_invoice(assignments)
                 if type(resp) == dict:
                     status = "success"
