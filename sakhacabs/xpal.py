@@ -936,9 +936,9 @@ def generate_invoice(to_settle):
                     invoiceline['rate']
                 invoice_lines.append(invoiceline)
                 covered_hrs += documents.Product.objects(
-                    product_id=booking.product_id)[0].hrs
+                    product_id=booking.product_id)[0].included_hrs  # CHANGELOG #11 - AV - Should fix the invoicing calculation based on product details
                 covered_kms += documents.Product.objects(
-                    product_id=booking.product_id)[0].kms
+                    product_id=booking.product_id)[0].included_kms  # CHANGELOG #11 - AV - Should fix the invoicing calculation based on product details
             consumed_hrs = 0
             consumed_kms = 0
             for ds in documents.DutySlip.objects(assignment=ass):
@@ -978,7 +978,7 @@ def generate_invoice(to_settle):
                     ass.reporting_timestamp).strftime("%Y-%m-%d")
                 invoiceline['particulars'] = "Extra Kms " + str(ds.dutyslip_id)
                 invoiceline['product'] = "EXTRAKMS"
-                invoiceline['rate'] = 20
+                invoiceline['rate'] = max([booking.extra_kms_rate for booking in ass.bookings])  # CHANGELOG #11 - AV - Should fix the invoicing calculation based on product details
                 invoiceline['qty'] = extrakms
                 invoiceline['amount'] = invoiceline['qty'] * \
                     invoiceline['rate']
@@ -992,7 +992,7 @@ def generate_invoice(to_settle):
                 invoiceline['particulars'] = "Extra Hours " + \
                     str(ds.dutyslip_id)
                 invoiceline['product'] = "EXTRAHRS"
-                invoiceline['rate'] = 100
+                invoiceline['rate'] = max([booking.extra_hrs_rate for booking in ass.bookings])  # CHANGELOG #11 - AV - Should fix the invoicing calculation based on product details
                 invoiceline['qty'] = extrahrs
                 invoiceline['amount'] = invoiceline['qty'] * \
                     invoiceline['rate']
