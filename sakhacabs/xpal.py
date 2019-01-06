@@ -171,7 +171,7 @@ def validate_assignment_dict(assignmentdict, new=True):
         validation['status'] = False
         validation['message'] = "At least one booking must be assigned to create an assignment."
     bookings = [documents.Booking.objects.with_id(
-        x['_id']['$oid']) for x in assignmentdict['assignment']['bookings']]
+        x['_id']['$oid']) for x in assignment dict['assignment']['bookings']]
     for booking in bookings:
         if booking.assignment is not None:
             validation['status'] = False
@@ -336,7 +336,7 @@ def new_booking(respdict):
     sakhacabsxpal.logger.info(
         "Creating new booking from dictionary\n{}".format(respdict))
     for key in respdict.keys():
-        if key in ["cust_id", "product_id", "passenger_detail", "passenger_mobile", "pickup_timestamp", "pickup_location", "drop_location", "booking_channel", "num_passengers","notification_prefs"]:
+        if key in ["cust_id", "product_id", "passenger_detail", "passenger_mobile", "pickup_timestamp", "pickup_location", "drop_location", "booking_channel", "num_passengers", "notification_prefs", "remarks"]:
             bookingdict[key] = respdict[key]
             respdict.pop(key)
     if "_id" in respdict.keys():
