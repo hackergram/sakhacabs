@@ -156,9 +156,11 @@ a { text-decoration: none }
                                <table class="table table-striped" id="productlist">
                                     <thead>
                                         <th>Selected</th>
-                                           <th>product ID</th>
-                                           <th>Hours</th>
-                                           <th>Kms</th>
+                                           <th>Product ID</th>
+                                           <th>Included Hours</th>
+                                           <th>Included Kms</th>
+                                           <th>Extra Hours Rate</th>
+                                           <th>Extra Kms Rate</th>
                                            <th>Price</th>
 
                                     </thead>
@@ -265,29 +267,29 @@ var process_output=function(){
           for (i=0;i<productlist.length;i++){
               productlist[i]['product_id']=Mustache.render(product_id_map,productlist[i])
               hrs=Mustache.render(hrs_map,productlist[i])
-              productlist[i]['hrs']=parseFloat(hrs)
+              productlist[i]['included_hrs']=parseFloat(hrs)
               kms=Mustache.render(kms_map,productlist[i])
-              productlist[i]['kms']=parseFloat(kms)
-              price=Mustache.render(kms_map,productlist[i])
+              productlist[i]['included_kms']=parseFloat(kms)
+              price=Mustache.render(price_map,productlist[i])
               productlist[i]['price']=parseFloat(price)
               extra_hrs=Mustache.render(extra_hrs_map,productlist[i])
-              productlist[i]['extra_hrs']=parseFloat(hrs)
+              productlist[i]['extra_hrs_rate']=parseFloat(extra_hrs)
               extra_kms=Mustache.render(extra_kms_map,productlist[i])
-              productlist[i]['extra_kms']=parseFloat(kms)
+              productlist[i]['extra_kms_rate']=parseFloat(extra_kms)
 
-              if(isNaN(productlist[i]['hrs'])){
-                productlist[i]['hrs']=0.0
+              if(isNaN(productlist[i]['included_hrs'])){
+                productlist[i]['included_hrs']=0.0
               }
-              if(isNaN(productlist[i]['kms'])){
-                productlist[i]['kms']=0.0
+              if(isNaN(productlist[i]['included_kms'])){
+                productlist[i]['included_kms']=0.0
               }
-              if(isNaN(productlist[i]['extra_hrs'])){
-                productlist[i]['extra_hrs']=0.0
+              if(isNaN(productlist[i]['extra_hrs_rate'])){
+                productlist[i]['extra_hrs_rate']=0.0
               }
-              if(isNaN(productlist[i]['extra_kms'])){
-                productlist[i]['extra_kms']=0.0
+              if(isNaN(productlist[i]['extra_kms_rate'])){
+                productlist[i]['extra_kms_rate']=0.0
               }
-              
+
               if(isNaN(productlist[i]['price'])){
                 productlist[i]['price']=0.0
               }
@@ -458,8 +460,10 @@ var do_file = (function() {
                 {width:"5%", defaultContent:""},
 
                 {data: 'product_id', defaultContent:"None", render: function(data){if(data){return data}}},
-                {data: 'hrs', defaultContent:"None", render: function(data){if(data){return data}}},
-                {data: 'kms', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: 'included_hrs', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: 'included_kms', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: 'extra_hrs_rate', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: 'extra_kms_rate', defaultContent:"None", render: function(data){if(data){return data}}},
                 {data: 'price', defaultContent:"None", render: function(data){if(data){return "₹"+data}}},
             ],
             scrollY: 400

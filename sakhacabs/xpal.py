@@ -971,6 +971,7 @@ def generate_invoice(to_settle):
                         invoiceline['rate']
                     if invoiceline['amount'] != 0:
                         invoice_lines.append(invoiceline)
+            sakhacabsxpal.logger.info("Consumed KMs {} Consumed Hrs {} Included Hrs {} Included Kms {}".format(consumed_kms, consumed_hrs, covered_kms, covered_hrs))
             if consumed_kms > covered_kms:
                 extrakms = consumed_kms - covered_kms
                 invoiceline = {}
@@ -978,7 +979,8 @@ def generate_invoice(to_settle):
                     ass.reporting_timestamp).strftime("%Y-%m-%d")
                 invoiceline['particulars'] = "Extra Kms " + str(ds.dutyslip_id)
                 invoiceline['product'] = "EXTRAKMS"
-                invoiceline['rate'] = max([booking.extra_kms_rate for booking in ass.bookings])  # CHANGELOG #11 - AV - Should fix the invoicing calculation based on product details
+                invoiceline['rate'] = max([documents.Product.objects(product_id=booking.product_id)[0].extra_kms_rate for booking in ass.bookings])  # CHANGELOG #11 - AV - Should fix the invoicing calculation based on product details
+                sakhacabsxpal.logger.info("Setting rate for extra kms as {}".format(invoiceline['rate']))
                 invoiceline['qty'] = extrakms
                 invoiceline['amount'] = invoiceline['qty'] * \
                     invoiceline['rate']
@@ -992,7 +994,7 @@ def generate_invoice(to_settle):
                 invoiceline['particulars'] = "Extra Hours " + \
                     str(ds.dutyslip_id)
                 invoiceline['product'] = "EXTRAHRS"
-                invoiceline['rate'] = max([booking.extra_hrs_rate for booking in ass.bookings])  # CHANGELOG #11 - AV - Should fix the invoicing calculation based on product details
+                invoiceline['rate'] = max([documents.Product.objects(product_id=booking.product_id)[0].extra_hrs_rate for booking in ass.bookings])  # CHANGELOG #11 - AV - Should fix the invoicing calculation based on product details
                 invoiceline['qty'] = extrahrs
                 invoiceline['amount'] = invoiceline['qty'] * \
                     invoiceline['rate']
