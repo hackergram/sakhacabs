@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
      <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
-
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
     <link rel="stylesheet" type="text/css" src="assets/css/select.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" src="assets/css/responsive.dataTables.min.css">
@@ -740,7 +740,7 @@
                 {width:"20%", data: 'invoice_id', defaultContent:"None", render: function(data){
                     if(data){
                         invoice_id='"'+data+'"'
-                        var invoiceid="<a class='nav-link' onclick='editInvoice("+invoice_id+")'>"+data+"</a>"
+                        var invoiceid="<a class='nav-link' onclick='editInvoice("+invoice_id+")'>  <i class='material-icons'>content_paste</i>"+data+"</a>"
 
                         return invoiceid
 
