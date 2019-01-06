@@ -262,7 +262,7 @@ def new_locationupdate(driver, timestamp, checkin=True, location=None, vehicle=N
     Creates a new location update, location updates once created are not deleted as they are equivalent to log entries.
     Returns a LocationUpdate object
     """
-    vehicle_id = None
+    vehicle_id = Nonehttps://github.com/adam-p/markdown-here/issues
     if checkin is True:
         driver.checkedin = True
     if vehicle is not None:
@@ -336,7 +336,7 @@ def new_booking(respdict):
     sakhacabsxpal.logger.info(
         "Creating new booking from dictionary\n{}".format(respdict))
     for key in respdict.keys():
-        if key in ["cust_id", "product_id", "passenger_detail", "passenger_mobile", "pickup_timestamp", "pickup_location", "drop_location", "booking_channel", "num_passengers", "notification_prefs", "remarks"]:
+        if key in ["cust_id", "product_id", "passenger_detail", "passenger_mobile", "pickup_timestamp", "pickup_location", "drop_location", "booking_channel", "num_passengers", "notification_prefs", "remarks"]:  # CHANGELOG - AV - Remarks given at booking time should now be reflected
             bookingdict[key] = respdict[key]
             respdict.pop(key)
     if "_id" in respdict.keys():
