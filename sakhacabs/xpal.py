@@ -171,7 +171,7 @@ def validate_assignment_dict(assignmentdict, new=True):
         validation['status'] = False
         validation['message'] = "At least one booking must be assigned to create an assignment."
     bookings = [documents.Booking.objects.with_id(
-        x['_id']['$oid']) for x in assignment dict['assignment']['bookings']]
+        x['_id']['$oid']) for x in assignmentdict['assignment']['bookings']]
     for booking in bookings:
         if booking.assignment is not None:
             validation['status'] = False
@@ -262,7 +262,7 @@ def new_locationupdate(driver, timestamp, checkin=True, location=None, vehicle=N
     Creates a new location update, location updates once created are not deleted as they are equivalent to log entries.
     Returns a LocationUpdate object
     """
-    vehicle_id = Nonehttps://github.com/adam-p/markdown-here/issues
+    vehicle_id = None
     if checkin is True:
         driver.checkedin = True
     if vehicle is not None:

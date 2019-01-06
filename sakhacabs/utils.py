@@ -17,7 +17,7 @@ validstatuses = ['new', 'assigned', 'open', 'closed', 'cancelled', 'verified']
 defaultnotificationprefs = {'new': [], 'assigned': [], 'open': [], 'closed': [], 'cancelled': []}
 
 
-def validate_dict(dictionary, required_keys=[], string_keys=[], mobile_nums=[], emails=[]):
+def validate_dict(dictionary, required_keys=[], string_keys=[], mobile_nums=[], emails=[], numbers=[], dates=[]):
     validation = {}
     validation['status'] = True
     validation['message'] = "Valid dictionary"
@@ -36,17 +36,27 @@ def validate_dict(dictionary, required_keys=[], string_keys=[], mobile_nums=[], 
                 validation['status'] = False
     for key in mobile_nums:
         if key in dictionary.keys():
-			if dictionary[key] == "":
-				validation['message'] = "Empty mobile number"
-				validation['status'] = False
-			if len(dictionary[key]) > 12:
-				validation['message'] = "{} too long a mobile number".format(
-				    dictionary[key])
-				validation['status'] = False
-			if notnum.search(dictionary[key]):
-				validation['message'] = "{} non numeric in mobile number".format(
-				    dictionary[key])
-				validation['status'] = False
+            if dictionary[key] == "":
+                validation['message'] = "Empty mobile number"
+                validation['status'] = False
+            if len(dictionary[key]) > 12:
+                validation['message'] = "{} too long a mobile number".format(dictionary[key])
+                validation['status'] = False
+            if notnum.search(dictionary[key]):
+                validation['message'] = "{} non numeric in mobile number".format(dictionary[key])
+                validation['status'] = False
+    for key in numbers:  # CHANGELOG #11 - AV - For #273
+        try:
+            value = float(dictionary[key])
+        except Exception as e:
+            validation['message'] = str(e)
+            validation['status'] = False
+    for key in dates:  # CHANGELOG #11 - AV - For #273
+        try:
+            value = datetime.datetime.strptime(dictionary[key], "YYYY-MM-DD HH:MM:SS")
+        except Exception as e:
+            validation['message'] = str(e)
+            validation['status'] = False
     return validation
 
 
