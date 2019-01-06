@@ -114,8 +114,8 @@ def validate_product_dict(productdict, new=True):
     if new is True:
         required_keys = ["product_id"]
     string_keys = ["product_id"]
-    validation = utils.validate_dict(
-        productdict, required_keys=required_keys, string_keys=string_keys)
+    numbers = ["included_hrs", "included_kms", "extra_hrs_rate", "extra_kms_rate"]  # CHANGELOG #11 - AV - For #261
+    validation = utils.validate_dict(productdict, required_keys=required_keys, string_keys=string_keys, numbers=numbers)
     if validation['status'] is True:
         sakhacabsxpal.logger.info("productdict: " + validation['message'])
     else:

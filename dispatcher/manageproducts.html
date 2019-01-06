@@ -89,22 +89,33 @@ a { text-decoration: none }
 
         </div>
         <div class="row"><div class="col-md-12">
-        product ID Template: <input type="text" size="30" id="product_id_map"><br>
+        Product ID Template: <input type="text" size="30" id="product_id_map"><br>
           </div>
             </div>
           <div class="row"><div class="col-md-12">
-            Hours: <input type="text" size="30" id="hrs_map"><br>
+            Included Hours: <input type="text" size="30" id="hrs_map"><br>
               </div>
                 </div>
             <div class="row"><div class="col-md-12">
-                Kms: <input type="text" size="30" id="kms_map"><br>
+                Included Kms: <input type="text" size="30" id="kms_map"><br>
                   </div>
                     </div>
+
+                    <div class="row"><div class="col-md-12">
+                      Extra Hours: <input type="text" size="30" id="extra_hrs_map"><br>
+                        </div>
+                          </div>
+                      <div class="row"><div class="col-md-12">
+                          Extra Kms: <input type="text" size="30" id="extra_kms_map"><br>
+                            </div>
+                              </div>
+
+
             <div class="row"><div class="col-md-12">
                         Price: <input type="text" size="30" id="price_map"><br>
                           </div>
                             </div>
-        
+
         <div class="row">
 
     <button id="process" onclick="process_output()">Process!</button>
@@ -239,6 +250,8 @@ var process_output=function(){
   var product_id_map=$("#product_id_map").val()
   var hrs_map=$("#hrs_map").val()
   var kms_map=$("#kms_map").val()
+  var extra_hrs_map=$("#extra_hrs_map").val()
+  var extra_kms_map=$("#extra_kms_map").val()
   var price_map=$("#price_map").val()
 
   var rows=[]
@@ -252,13 +265,15 @@ var process_output=function(){
           for (i=0;i<productlist.length;i++){
               productlist[i]['product_id']=Mustache.render(product_id_map,productlist[i])
               hrs=Mustache.render(hrs_map,productlist[i])
-              console.log(hrs)
-
               productlist[i]['hrs']=parseFloat(hrs)
               kms=Mustache.render(kms_map,productlist[i])
               productlist[i]['kms']=parseFloat(kms)
               price=Mustache.render(kms_map,productlist[i])
               productlist[i]['price']=parseFloat(price)
+              extra_hrs=Mustache.render(extra_hrs_map,productlist[i])
+              productlist[i]['extra_hrs']=parseFloat(hrs)
+              extra_kms=Mustache.render(extra_kms_map,productlist[i])
+              productlist[i]['extra_kms']=parseFloat(kms)
 
               if(isNaN(productlist[i]['hrs'])){
                 productlist[i]['hrs']=0.0
@@ -266,6 +281,13 @@ var process_output=function(){
               if(isNaN(productlist[i]['kms'])){
                 productlist[i]['kms']=0.0
               }
+              if(isNaN(productlist[i]['extra_hrs'])){
+                productlist[i]['extra_hrs']=0.0
+              }
+              if(isNaN(productlist[i]['extra_kms'])){
+                productlist[i]['extra_kms']=0.0
+              }
+              
               if(isNaN(productlist[i]['price'])){
                 productlist[i]['price']=0.0
               }

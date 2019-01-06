@@ -47,13 +47,15 @@ def validate_dict(dictionary, required_keys=[], string_keys=[], mobile_nums=[], 
                 validation['status'] = False
     for key in numbers:  # CHANGELOG #11 - AV - For #273
         try:
-            value = float(dictionary[key])
+            if key in dictionary.keys():
+                value = float(dictionary[key])
         except Exception as e:
             validation['message'] = str(e)
             validation['status'] = False
     for key in dates:  # CHANGELOG #11 - AV - For #273
         try:
-            value = datetime.datetime.strptime(dictionary[key], "YYYY-MM-DD HH:MM:SS")
+            if key in dictionary.keys():
+                value = datetime.datetime.strptime(dictionary[key], "YYYY-MM-DD HH:MM:SS")
         except Exception as e:
             validation['message'] = str(e)
             validation['status'] = False
