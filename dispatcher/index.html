@@ -321,7 +321,7 @@
                              <div class="col-md-3">
                                 <div class="form-group bmd-form-group">
                                   <label class="bmd-label-floating">Driver ID</label>
-                                  <input type="text" class="form-control" id="driver" require="true">
+                                  <input type="text" readonly class="form-control" id="driver" require="true">
                                 </div>
                               </div>
                             <div class="col-md-3">
@@ -343,14 +343,14 @@
                               <div class="col-md-4">
                                 <div class="form-group bmd-form-group">
                                   <label class="bmd-label-floating">Open Time</label>
-                                  <input type="text" class="form-control" id="open_time" require="true">
+                                  <input type="text" class="form-control" id="open_time" require="true" onchange="updateDSTotals()">
 
                                  </div>
                               </div>
                             <div class="col-md-4">
                                 <div class="form-group bmd-form-group">
                                   <label class="bmd-label-floating">Close Time</label>
-                                  <input type="text" class="form-control" id="close_time" require="true">
+                                  <input type="text" class="form-control" id="close_time" require="true" onchange="updateDSTotals()">
                                 </div>
                               </div>
 
@@ -366,20 +366,20 @@
                               <div class="col-md-4">
                                 <div class="form-group bmd-form-group">
                                   <label class="bmd-label-floating">Open KMs</label>
-                                  <input type="text" class="form-control" id="open_kms" require="true">
+                                  <input type="text" class="form-control" id="open_kms" require="true" onchange="updateDSTotals()">
                                 </div>
                               </div>
                             <div class="col-md-4">
                                 <div class="form-group bmd-form-group">
                                   <label class="bmd-label-floating">Close KMs</label>
-                                  <input type="text" class="form-control" id="close_kms" require="true">
+                                  <input type="text" class="form-control" id="close_kms" require="true" onchange="updateDSTotals()">
                                 </div>
                               </div>
 
                               <div class="col-md-4">
                                 <div class="form-group bmd-form-group">
                                   <label class="bmd-label-floating">Total KMs</label>
-                                  <input type="text" class="form-control" readonly id="total_kms">
+                                  <input type="text" class="form-control" readonly id="total_kms" onselect="updateDSTotals()">
                                 </div>
                               </div>
                             </div>
@@ -431,7 +431,15 @@
                 </div>
               </div>
 
+<script>
+function updateDSTotals(){
+  console.log("Updating time")
 
+$("#total_time").val(moment($("#close_time").val()).diff(moment($("#open_time").val()),"hours",true).toFixed(2));
+$("#total_kms").val(parseFloat($("#close_kms").val())-parseFloat($("#open_kms").val()))
+}
+
+</script>
 
         </div>
         <div class="modal fade" id="editbookingform" tabindex="-1" role="dialog" aria-labelledby="Edit Duty Slip">

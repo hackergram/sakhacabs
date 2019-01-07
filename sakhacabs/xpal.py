@@ -150,8 +150,24 @@ def validate_dutyslip_dict(dutyslipdict, new=True):
     if new is True:
         required_keys = ["driver", "assignment"]
     string_keys = ["driver", "vehicle", "remarks"]
+    dates = ['open_time', 'close_time']
+    numbers = ['open_kms', 'close_kms', 'parking_charges', 'toll_charges', 'amount']
     validation = utils.validate_dict(
-        dutyslipdict, required_keys=required_keys, string_keys=string_keys)
+        dutyslipdict, required_keys=required_keys, string_keys=string_keys, dates=dates, numbers=numbers)
+    try:
+        if datetime.datetime(dutyslipdict['open_time'])>datetime.datetime(dutyslipdict['close_time']):
+            validation['status'] = False
+            validation['message'] = "Open time cant be after close time"
+    except Exception as e:
+        validation['status'] = False
+        validation['message'] = "Error occured in time validation"
+    try:
+        if float(dutyslipdict['open_kms'])>float(dutyslipdict['close_kms']):
+            validation['status'] = False
+            validation['message'] = "Open kms cant be more than close kms"
+    except Exception as e:
+        validation['status'] = False
+        validation['message'] = "Error occured in distance validation"
     if validation['status'] is True:
         sakhacabsxpal.logger.info("dutyslipdict: " + validation['message'])
     else:

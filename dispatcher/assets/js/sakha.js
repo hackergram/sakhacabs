@@ -913,7 +913,7 @@ var sakha={
         dutyslipdict.driver=$("#driver").val()
         dutyslipdict.vehicle=$("#vehicle").val()
         dutyslipdict.dutyslip_id=$("#dutyslip_id").val()
-        dutyslipdict.status=String.toLowerCase($("#status").val())
+        dutyslipdict.status=$("#status").val()
         //dutyslipdict.created_time=moment($("#created_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
         //moment(.$date).format('MMMM Do YYYY, h:mm:ss a'));
         //dutyslipdict.open_time=moment($("#open_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
