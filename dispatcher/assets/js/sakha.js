@@ -176,6 +176,11 @@ var sakha={
             scrollY: 200
 
         });
+
+
+
+
+
         setInterval( function () {
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
@@ -700,42 +705,71 @@ var sakha={
        document.getElementById("savedutyslip").setAttribute("onclick","sakha.saveDutySlip('"+dsid+"')")
 
     },
-    fillBookingModal: function(bookingid){
-       console.log("editing booking "+bookingid)
-       var url = 'http://'+serverip+':5000/booking/by_booking_id/'+bookingid
+
+    fillCustomerModal: function(cust_id){
+       console.log("editing customer "+cust_id)
+       var url = 'http://'+serverip+':5000/customer/by_cust_id/'+cust_id
        console.log("getting url "+url)
 
             $.getJSON(url,function(data){
                 console.log(data.resp[0])
-                $("#booking_pickup_timestamp").empty()
-                $("#booking_id").append(data.resp[0].booking_id )
-                $("#booking_cust_id").val(data.resp[0].cust_id)
+              //  $("#customer_pickup_timestamp").empty()
+                $("#cust_id").append(data.resp[0].customer_id )
+                $("#customerid").val(data.resp[0].cust_id)
 
-                $("#booking_product_id").val(data.resp[0].product_id)
-                $("#booking_status").val(data.resp[0].status).change()
+
+            //    $("#customer_product_id").val(data.resp[0].product_id)
+            //    $("#customer_status").val(data.resp[0].status).change()
                 //$("#created_time").val(moment(data.resp[0].created_time.$date).format('MMMM Do YYYY, h:mm:ss a'));
-                //$("#booking_pickup_timestamp").empty()
-                $("#booking_pickup_timestamp").val(moment(data.resp[0].pickup_timestamp.$date+1).format('YYYY-MM-DD HH:mm:ss'))
+                //$("#customer_pickup_timestamp").empty()
+            //    $("#customer_pickup_timestamp").val(moment(data.resp[0].pickup_timestamp.$date+1).format('YYYY-MM-DD HH:mm:ss'))
 
-                $("#booking_created_timestamp").empty()
+            //    $("#customer_created_timestamp").empty()
 
-                $("#booking_created_timestamp").append(moment(data.resp[0].created_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a'));
-               $("#booking_channel").val(data.resp[0].booking_channel);
+              //  $("#customer_created_timestamp").append(moment(data.resp[0].created_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a'));
+              // $("#customer_channel").val(data.resp[0].customer_channel);
                 //$("#total_time").text=moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2);
-                $("#booking_cust_meta").val(JSON.stringify(data.resp[0].cust_meta))
-                $("#booking_remarks").val(data.resp[0].remarks)
-                $("#booking_passenger_mobile").val(data.resp[0].passenger_mobile)
-                $("#booking_passenger_detail").val(data.resp[0].passenger_detail)
+              //  $("#customer_cust_meta").val(JSON.stringify(data.resp[0].cust_meta))
+            //    $("#customer_remarks").val(data.resp[0].remarks)
+                $("#customermobnum").val(data.resp[0].mobile_num)
+                $("#customerbillingdisplay").val(data.resp[0].cust_billing)
+            //    $("#customer_passenger_detail").val(data.resp[0].passenger_detail)
 
-                $("#booking_pickup_location").val(data.resp[0].pickup_location)
-                $("#booking_drop_location").val(data.resp[0].drop_location)
+              //  $("#customer_pickup_location").val(data.resp[0].pickup_location)
+            //    $("#customer_drop_location").val(data.resp[0].drop_location)
 
 
             })
 
-       document.getElementById("savebooking").setAttribute("onclick","sakha.saveBooking('"+bookingid+"')")
+       document.getElementById("savecustomer").setAttribute("onclick","sakha.saveCustomer('"+cust_id+"')")
 
-    },
+
+
+
+
+    },//kj-v101-
+    saveCustomer: function(cust_id){
+        console.log("Trying to save "+cust_id)
+        customerdict={}
+        customerdict.cust_id=$("#customerid").val()
+        customerdict.mobile_num=$("#customermobnum").val()
+        customerdict.cust_billing=$("#customerbillingdisplay").val()
+    //    customerdict.last_name=$("#lastname").val()
+        var params = JSON.stringify(customerdict);
+        var http = new XMLHttpRequest();
+        if(customerid==="newcustomer"){
+            //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+            var url = "http://"+serverip+":5000/customer";
+            http.open("POST", url, true);
+        }
+        else{
+            var url = "http://"+serverip+":5000/customer/by_cust_id/"+cust_id;
+            http.open("PUT", url, true);
+
+        }
+      },
+
+
     saveDriver: function(driverid){
         console.log("Trying to save "+driverid)
         driverdict={}

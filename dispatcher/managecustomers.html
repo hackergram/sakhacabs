@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Manage customers</title>
 <link rel="stylesheet" href="dist/css/mdi-icons.css">
-
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
@@ -153,6 +153,59 @@ a { text-decoration: none }
                         </div>
                       </div>
                     </div>
+<!--kj-v1.01- adding code for modal -->
+<div class="modal fade" id="editcustomersform" tabindex="-1" role="dialog" aria-labelledby="Edit Customers">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+         </div>
+          <div class="modal-body">
+
+            <div class="card-header card-header-primary">
+              <h4 class="card-title">Edit Customer Profile</h4>
+             <div id="customerstatus" class="card-category"></div>
+            </div>
+            <div class="card-body">
+              <form id="driverform">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Customer ID</label>
+                      <input type="text" class="form-control" id="customerid" require="true">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Mobile Num</label>
+                      <input type="text" class="form-control" id="customermobnum">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Customer Billing Display</label>
+                      <input type="text" class="form-control" id="customerbillingdisplay">
+                    </div>
+                  </div>
+                </div>
+            </form>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="savecustomer">Save changes</button>
+          </div>
+        </div>
+      </div>
+<!-- New code ends here. -->
+
+
+
+
+
 
 
 
@@ -181,7 +234,7 @@ var XW = {
 
 var global_wb;
 var global_output;
-var serverip="192.168.56.101"
+var serverip="192.168.56.103"
 var customerlist=[]
 var submit_output=function(){
     var OUT = document.getElementById('out');
@@ -339,6 +392,22 @@ var do_file = (function() {
 		worker.postMessage({d:data,b:rABS?'binary':'array'});
 	};
 
+  <!-- kj-v1.01- adding  lines -->
+        $("#editcustomersform").on('hide.bs.modal', function (event) {
+            console.log("closing customer modal")
+          //  document.getElementById("customerstatus").reset()
+            window.location.reload(false);
+        })
+        $("#editcustomersform").on('show.bs.modal', function (event) {
+            console.log("editing booking in modal")
+            var eventsrc = $(event.relatedTarget) // Button that triggered the modal
+            var cust_id = eventsrc.data('cust_id') // Extract info from data-* attributes
+            console.log(cust_id)
+            sakha.fillCustomerModal(cust_id)
+          })
+
+
+
 	return function do_file(files) {
 		rABS = true;//domrabs.checked;
 		use_worker = true;//domwork.checked;
@@ -416,7 +485,13 @@ var do_file = (function() {
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
                 {width:"5%", defaultContent:""},
 
-                {data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: null, defaultContent:"None", render: function (data){      //kj-var1.01-new content added
+
+                    var customerid='<a class="nav-link" data-toggle="modal" data-target="#editcustomersform" data-cust_id="'+data.cust_id+'">\
+                        <i class="material-icons">content_paste</i> '+data.cust_id+'\
+                        </a>'
+                    return customerid
+                }},
                 {data: 'cust_billing', defaultContent:"None", render: function(data){if(data){return data}}},
                 {data: 'mobile_num', defaultContent:"None", render: function(data){if(data){return data}}},
 
@@ -425,6 +500,12 @@ var do_file = (function() {
 
         });
       }
+
+
+
+
+
+
       $("#deleteselectedcustomers").on("click", function(){
         var delvids=[]
         selectedcustomers=$("#customerlist").DataTable().rows({selected: true }).data()
