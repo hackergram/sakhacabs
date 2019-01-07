@@ -845,7 +845,7 @@ var sakha={
       else{
           var url = "http://"+serverip+":5000/product/by_product_id/"+product_id;
           http.open("PUT", url, true);
-//
+
       }
       if (productdict.product_id.length>4){
           http.setRequestHeader("Content-type", "application/json");
@@ -1050,7 +1050,7 @@ var sakha={
     saveBooking: function(booking_id){
         console.log(booking_id)
         booking_dict={}
-        booking_dict.pickup_timestamp=$("#booking_pickup_timestamp").val();
+        booking_dict.pickup_timestamp=moment($("#booking_pickup_timestamp").val(),"YYYY-MM-DD HH:mm:ss").toDate();
         booking_dict.pickup_location=$("#booking_pickup_location").val();
         booking_dict.cust_meta=JSON.parse($("#booking_cust_meta").val())
         booking_dict.product_id=$("#booking_product_id").val()
@@ -1098,14 +1098,16 @@ var sakha={
         dutyslipdict.driver=$("#driver").val()
         dutyslipdict.vehicle=$("#vehicle").val()
         dutyslipdict.dutyslip_id=$("#dutyslip_id").val()
-        dutyslipdict.status=String.toLowerCase($("#status").val())
+        dutyslipdict.status=$("#status").val()
         //dutyslipdict.created_time=moment($("#created_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
         //moment(.$date).format('MMMM Do YYYY, h:mm:ss a'));
         //dutyslipdict.open_time=moment($("#open_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
-        dutyslipdict.open_time=$("#open_time").val()
+        //dutyslipdict.open_time=$("#open_time").val()
+        dutyslipdict.open_time=moment($("#open_time").val(),'YYYY-MM-DD HH:mm:ss').utc().format('YYYY-MM-DD HH:mm:ss')
         //moment(.$date).format('MMMM Do YYYY, h:mm:ss a'));
         //dutyslipdict.close_time=moment($("#close_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
-        dutyslipdict.close_time=$("#close_time").val()
+        //dutyslipdict.close_time=$("#close_time").val()
+        dutyslipdict.close_time=moment($("#close_time").val(),'YYYY-MM-DD HH:mm:ss').utc().format('YYYY-MM-DD HH:mm:ss')
         //moment(.$date).format('MMMM Do YYYY, h:mm:ss a'));
         dutyslipdict.open_kms=$("#open_kms").val()
         dutyslipdict.close_kms=$("#close_kms").val()
