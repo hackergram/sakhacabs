@@ -168,6 +168,13 @@ def validate_dutyslip_dict(dutyslipdict, new=True):
     except Exception as e:
         validation['status'] = False
         validation['message'] = "Error occured in distance validation"
+    try:
+        if len(documents.Vehicle.objects(vehicle_id=dutyslipdict['vehicle'])):
+            validation['status'] = False
+            validation['message'] = "Unknown vehicle id"
+    except Exception as e:
+        validation['status'] = False
+        validation['message'] = "Error occured in distance validation"
     if validation['status'] is True:
         sakhacabsxpal.logger.info("dutyslipdict: " + validation['message'])
     else:
