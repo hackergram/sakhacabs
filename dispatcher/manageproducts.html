@@ -294,8 +294,8 @@ var submit_output=function(){
             else{
                 alert("Something went wrong!")
             }
-            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'][0],2,2);
-	           else HTMLOUT.innerText = JSON.stringify(response['resp'][0],2,2);
+            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
+	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
         }
     }
     http.send(params);
@@ -361,8 +361,8 @@ var process_output=function(){
               console.log(productlist[i])
             }
         }
-        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(productlist[0],2,2);
-	   else HTMLOUT.innerText = JSON.stringify(productlist[0],2,2);
+        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(productlist,2,2);
+	   else HTMLOUT.innerText = JSON.stringify(productlist,2,2);
     //}
     //catch(err){
     //    alert("Something went wrong!")

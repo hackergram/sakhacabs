@@ -256,8 +256,8 @@ var submit_output=function(){
             else{
                 alert("Something went wrong!")
             }
-            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'][0],2,2);
-	           else HTMLOUT.innerText = JSON.stringify(response['resp'][0],2,2);
+            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
+	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
 
         }
 
@@ -302,8 +302,8 @@ var process_output=function(){
               console.log(driverlist[i])
             }
         }
-        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(driverlist[0],2,2);
-	   else HTMLOUT.innerText = JSON.stringify(driverlist[0],2,2);
+        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(driverlist,2,2);
+	   else HTMLOUT.innerText = JSON.stringify(driverlist,2,2);
     //}
     //catch(err){
     //    alert("Something went wrong!")
