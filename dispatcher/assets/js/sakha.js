@@ -767,6 +767,38 @@ var sakha={
             http.open("PUT", url, true);
 
         }
+        if (customerdict.cust_id.length>4){
+            http.setRequestHeader("Content-type", "application/json");
+            http.onreadystatechange = function() {//Call a function when the state changes.
+            if(http.readyState == 4 ) {
+                if(http.status == 200){
+                    response=JSON.parse(http.responseText)
+                    console.log(response)
+                    if(response.status==="success"){
+                       document.getElementById("customerlist").innerHTML="<span style='color:green'>Success!</span>"
+                        alert("Saved Customer Successfully!")
+                        console.log("success")
+                    }
+                    if (response.status==="error"){
+                        console.log("error")
+                        alert("Failed to Save   customer!")
+                         document.getElementById("customerlist").innerHTML="<span style='color:red'>"+response.resp+"</span>"
+                    }
+                    }
+                    else{
+                    alert("Network Error Saving Customer.")
+                    }
+                    }
+
+                    }
+                    http.send(params);
+                    }
+                    else{
+                    alert(" Customer ID must be at least 5 characters")
+                    }
+
+
+
       },
 
 
