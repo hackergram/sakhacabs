@@ -95,7 +95,9 @@ a { text-decoration: none }
         <div class="row"> <div class="col-md-12">Product ID: <select name="product" id="product"></select><br/></div>
        </div>
         <div class="row"><div class="col-md-12">
-        Pickup Timestamp Template: <input type="text" size="30" id="pickup_timestamp_map"><br>
+        Pickup Date Template: <input type="text" size="30" id="pickup_date_map"><br>
+        Pickup Time Template: <input type="text" size="30" id="pickup_time_map"><br>
+        <!--Pickup Timestamp Template: <input type="text" size="30" id="pickup_timestamp_map"><br>-->
         Passenger Detail Template: <input type="text" size="30" id="passenger_detail_map"><br>
         Pickup Location Template: <input type="text" size="30" id="pickup_location_map"><br>
         Drop Location Template: <input type="text"  size="30" id="drop_location_map"><br>
@@ -283,11 +285,19 @@ a { text-decoration: none }
 <!--new code ends here.-->
 <br />
 </div>
-<!-- uncomment the next line here and in xlsxworker.js for encoding support -->
+<!-- uncomment the next line here and in xlsxworker.js for encoding support
 <script src="assets/js/jsxlsx/dist/cpexcel.js"></script>
 <script src="assets/js/jsxlsx/shim.js"></script>
 <script src="assets/js/jsxlsx/jszip.js"></script>
 <script src="assets/js/jsxlsx/xlsx.js"></script>
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.1/cpexcel.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.1/shim.min.js"></script>
+<script src="assets/js/jsxlsx/jszip.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.1/xlsx.js"></script>
+
+
+
 <script>
 /*jshint browser:true */
 /* eslint-env browser */
@@ -382,7 +392,9 @@ var process_output=function(){
 
 
     //var pickup_timestamp_map="{{Date}} {{Flight Time}}"
-    var pickup_timestamp_map=$("#pickup_timestamp_map").val()
+    //var pickup_timestamp_map=$("#pickup_timestamp_map").val()
+    var pickup_time_map=$("#pickup_time_map").val()
+    var pickup_date_map=$("#pickup_date_map").val()
     //var pickup_location_map="Intl Airport, Flight # {{Pick-Up}}"
     var pickup_location_map=$("#pickup_location_map").val()
     //var passenger_details_map="{{Booking ID}}\n{{Trip Code}}\n{{Passengers}}"
@@ -405,11 +417,13 @@ var process_output=function(){
                 bookinglist[i]['passenger_detail']=Mustache.render(passenger_detail_map,bookinglist[i])
                 bookinglist[i]['pickup_location']=Mustache.render(pickup_location_map,bookinglist[i])
                 bookinglist[i]['product_id']=product_id
-                bookinglist[i]['pickup_timestamp']=Mustache.render(pickup_timestamp_map,bookinglist[i])
+                pickup_date=moment(Mustache.render(pickup_date_map,bookinglist[i])).format("YYYY-MM-DD")
+                pickup_time=moment(Mustache.render(pickup_time_map,bookinglist[i])).format("HH:mm:ss")
+                bookinglist[i]['pickup_timestamp']=   moment(pickup_date +" "+ pickup_time).toDate()
+
                 bookinglist[i]['booking_channel']=booking_channel
                 bookinglist[i]['cust_id']=cust_id
                 bookinglist[i]['drop_location']=Mustache.render(drop_location_map,bookinglist[i])
-
                 console.log(bookinglist[i])
             }
         }
@@ -441,7 +455,7 @@ var process_wb = (function() {
 	var to_json = function to_json(workbook) {
 		var result = {};
 		workbook.SheetNames.forEach(function(sheetName) {
-			var roa = X.utils.sheet_to_json(workbook.Sheets[sheetName], {header:1});
+			var roa = X.utils.sheet_to_json(workbook.Sheets[sheetName], {header:1, dateNF:"YYYY"});
 			if(roa.length) result[sheetName] = roa;
 		});
 		return JSON.stringify(result, 2, 2);
@@ -483,6 +497,18 @@ var process_wb = (function() {
 	};
 */
 	return function process_wb(wb) {
+    console.log(wb)
+    for (sheet in wb.Sheets){
+     //remove prerendered values, otherwise dateNF is ignored
+     for (cellref in sheet){
+         const c = sheet[cellref];
+         if(c.t==="d"){
+           console.log(c)
+             delete c.w;
+             delete c.z;
+         }
+    }
+  }
 		global_wb = wb;
 		var output = "";
 		switch(get_format()) {
@@ -493,11 +519,12 @@ var process_wb = (function() {
 		}
         global_output=output
         dic=JSON.parse(output)
+        //console.log(dic)
         colnames=[]
         for(sheet in dic){
-            console.log(dic[sheet][0])
+            //console.log(dic[sheet][0])
             colnames=colnames.concat(dic[sheet][0])
-            console.log(colnames)
+            //console.log(colnames)
         }
         colnameshtml=""
         for (i=0;i<colnames.length;i++){
@@ -548,7 +575,7 @@ var do_file = (function() {
 
 	return function do_file(files) {
 		rABS = true;//domrabs.checked;
-		use_worker = true;//domwork.checked;
+		use_worker = false;//domwork.checked;
 		var f = files[0];
 		var reader = new FileReader();
 		reader.onload = function(e) {
@@ -556,7 +583,7 @@ var do_file = (function() {
 			var data = e.target.result;
 			if(!rABS) data = new Uint8Array(data);
 			if(use_worker) xw(data, process_wb);
-			else process_wb(X.read(data, {type: rABS ? 'binary' : 'array'}));
+			else process_wb(X.read(data, {type: rABS ? 'binary' : 'array', cellDates:true, cellNF: false, cellText:false}));
 		};
 		if(rABS) reader.readAsBinaryString(f);
 		else reader.readAsArrayBuffer(f);
