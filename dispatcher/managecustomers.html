@@ -361,7 +361,7 @@ var process_wb = (function() {
             colnameshtml=colnameshtml+"<button onclick='addTextToTemplate("+colnametxt+")'>"+colnames[i]+"</button>"
         }
         //OUT.empty()
-        OUT.innerHTML=colnames
+        OUT.innerHTML=colnameshtml
 
 		/*if(OUT.innerText === undefined) OUT.textContent = colnameshtml;
 
@@ -393,7 +393,7 @@ var do_file = (function() {
 		worker.postMessage({d:data,b:rABS?'binary':'array'});
 	};
 
-  
+
         $("#editcustomersform").on('hide.bs.modal', function (event) {
             console.log("closing customer modal")
           //  document.getElementById("customerstatus").reset()
