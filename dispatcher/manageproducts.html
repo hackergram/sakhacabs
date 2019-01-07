@@ -251,6 +251,11 @@ a { text-decoration: none }
 
 <br />
 </div>
+<div class="loader_container" id="loader">
+    <center>Processing
+    <div class='loader'></div>
+    </center>
+<div>
 <!-- uncomment the next line here and in xlsxworker.js for encoding support -->
 <script src="assets/js/jsxlsx/dist/cpexcel.js"></script>
 <script src="assets/js/jsxlsx/shim.js"></script>
@@ -270,11 +275,13 @@ var XW = {
 	/* worker scripts */
 	worker: './assets/js/jsxlsx/xlsxworker.js'
 };
+$("#loader").hide()
 var global_wb;
 var global_output;
 var serverip="192.168.56.101"
 var productlist=[]
 var submit_output=function(){
+    $("#loader").show()
     var OUT = document.getElementById('out');
     console.log("Submitting products")
     console.log(productlist)
@@ -285,6 +292,7 @@ var submit_output=function(){
     http.setRequestHeader("Content-type", "application/json");
     http.onreadystatechange = function() {//Call a function when the state changes.
         if(http.readyState == 4 && http.status == 200) {
+          $("#loader").hide()
             response=JSON.parse(http.responseText)
             console.log(response)
             if (response.status==="success"){
@@ -305,7 +313,7 @@ var parse_rows=function(rows){
     console.log(cols);
     parsed_output=[];
     for (i=1;i<rows.length;i++){
-        rowjson={};
+
         for (j=0;j<cols.length;j++){
             rowjson[cols[j]]=rows[i][j];
         }
@@ -316,6 +324,7 @@ var parse_rows=function(rows){
  var OUT = document.getElementById('out');
     var HTMLOUT = document.getElementById('htmlout');
 var process_output=function(){
+  $("#loader").show()
   var product_id_map=$("#product_id_map").val()
   var hrs_map=$("#hrs_map").val()
   var kms_map=$("#kms_map").val()
@@ -367,6 +376,7 @@ var process_output=function(){
     //catch(err){
     //    alert("Something went wrong!")
     //}
+    $("#loader").hide()
 }
 var addTextToTemplate=function(text){
     p=$("#templatefield").val()

@@ -148,6 +148,11 @@ a { text-decoration: none }
 
 <br />
 </div>
+<div class="loader_container" id="loader">
+    <center>Processing
+    <div class='loader'></div>
+    </center>
+<div>
 <!-- uncomment the next line here and in xlsxworker.js for encoding support -->
 <script src="assets/js/jsxlsx/dist/cpexcel.js"></script>
 <script src="assets/js/jsxlsx/shim.js"></script>
@@ -168,12 +173,13 @@ var XW = {
 	worker: './assets/js/jsxlsx/xlsxworker.js'
 };
 
-
+$("#loader").hide()
 var global_wb;
 var global_output;
 var serverip="192.168.56.101"
 var vehiclelist=[]
 var submit_output=function(){
+  $("#loader").show()
     var OUT = document.getElementById('out');
     console.log("Submitting vehicles")
     console.log(vehiclelist)
@@ -184,6 +190,7 @@ var submit_output=function(){
     http.setRequestHeader("Content-type", "application/json");
     http.onreadystatechange = function() {//Call a function when the state changes.
         if(http.readyState == 4 && http.status == 200) {
+            $("#loader").hide()
             response=JSON.parse(http.responseText)
             console.log(response)
             if (response.status==="success"){
@@ -222,6 +229,7 @@ var parse_rows=function(rows){
 
 
 var process_output=function(){
+  $("#loader").show()
   var vehicle_id_map=$("#vehicle_id_map").val()
   var rows=[]
   dic=JSON.parse(global_output)
@@ -238,6 +246,7 @@ var process_output=function(){
         }
         if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(vehiclelist,2,2);
 	   else HTMLOUT.innerText = JSON.stringify(vehiclelist,2,2);
+     $("#loader").hide()
     //}
     //catch(err){
     //    alert("Something went wrong!")

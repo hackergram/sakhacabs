@@ -290,6 +290,11 @@ a { text-decoration: none }
 <script src="assets/js/jsxlsx/jszip.js"></script>
 <script src="assets/js/jsxlsx/xlsx.js"></script>
 -->
+<div class="loader_container" id="loader">
+    <center>Processing
+    <div class='loader'></div>
+    </center>
+<div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.1/cpexcel.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.1/shim.min.js"></script>
 <script src="assets/js/jsxlsx/jszip.js"></script>
@@ -334,12 +339,13 @@ var get_prod_list=function(){
 }
 var global_wb;
 var global_output;
-
+$("#loader").hide()
 var serverip="192.168.56.101"
 var bookinglist=[]
 get_cust_list();
     get_prod_list();
 var submit_output=function(){
+  $("#loader").show()
     var OUT = document.getElementById('out');
     console.log("Submitting bookings")
     console.log(bookinglist)
@@ -350,6 +356,7 @@ var submit_output=function(){
     http.setRequestHeader("Content-type", "application/json");
     http.onreadystatechange = function() {//Call a function when the state changes.
         if(http.readyState == 4 && http.status == 200) {
+          $("#loader").hide()
             response=JSON.parse(http.responseText)
             console.log(response)
             if (response.status==="success"){
@@ -389,7 +396,7 @@ var parse_rows=function(rows){
 
 var process_output=function(){
 
-
+$("#loader").show()
     //var pickup_timestamp_map="{{Date}} {{Flight Time}}"
     //var pickup_timestamp_map=$("#pickup_timestamp_map").val()
     var pickup_time_map=$("#pickup_time_map").val()
@@ -445,7 +452,7 @@ var process_output=function(){
     //catch(err){
     //    alert("Something went wrong!")
     //}
-
+$("#loader").hide()
 }
 
 var addTextToTemplate=function(text){

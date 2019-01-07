@@ -211,6 +211,11 @@ a { text-decoration: none }
 
 <br />
 </div>
+<div class="loader_container" id="loader">
+    <center>Processing
+    <div class='loader'></div>
+    </center>
+<div>
 <!-- uncomment the next line here and in xlsxworker.js for encoding support -->
 <script src="assets/js/jsxlsx/dist/cpexcel.js"></script>
 <script src="assets/js/jsxlsx/shim.js"></script>
@@ -231,12 +236,13 @@ var XW = {
 	worker: './assets/js/jsxlsx/xlsxworker.js'
 };
 
-
+$("#loader").hide()
 var global_wb;
 var global_output;
 var serverip="192.168.56.101"
 var customerlist=[]
 var submit_output=function(){
+  $("#loader").show()
     var OUT = document.getElementById('out');
     console.log("Submitting customers")
     console.log(customerlist)
@@ -247,6 +253,7 @@ var submit_output=function(){
     http.setRequestHeader("Content-type", "application/json");
     http.onreadystatechange = function() {//Call a function when the state changes.
         if(http.readyState == 4 && http.status == 200) {
+          $("#loader").hide()
             response=JSON.parse(http.responseText)
             console.log(response)
             if (response.status==="success"){
@@ -285,6 +292,7 @@ var parse_rows=function(rows){
 
 
 var process_output=function(){
+  $("#loader").show()
   var cust_id_map=$("#cust_id_map").val()
   var cust_billing_map=$("#cust_billing_map").val()
     var mobile_num_map=$("#mobile_num_map").val()
@@ -310,7 +318,7 @@ var process_output=function(){
     //catch(err){
     //    alert("Something went wrong!")
     //}
-
+$("#loader").hide()
 }
 
 var addTextToTemplate=function(text){

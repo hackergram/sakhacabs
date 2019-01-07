@@ -210,6 +210,11 @@ a { text-decoration: none }
 
 <br />
 </div>
+<div class="loader_container" id="loader">
+    <center>Processing
+    <div class='loader'></div>
+    </center>
+<div>
 <!-- uncomment the next line here and in xlsxworker.js for encoding support -->
 <script src="assets/js/jsxlsx/dist/cpexcel.js"></script>
 <script src="assets/js/jsxlsx/shim.js"></script>
@@ -229,7 +234,7 @@ var XW = {
 	/* worker scripts */
 	worker: './assets/js/jsxlsx/xlsxworker.js'
 };
-
+$("#loader").hide()
 
 var global_wb;
 var global_output;
@@ -284,6 +289,7 @@ var parse_rows=function(rows){
 
 
 var process_output=function(){
+  $("#loader").show()
   var driver_id_map=$("#driver_id_map").val()
   var driver_mobile_map=$("#driver_mobile_map").val()
 
@@ -308,7 +314,7 @@ var process_output=function(){
     //catch(err){
     //    alert("Something went wrong!")
     //}
-
+    $("#loader").hide()
 }
 //kj-v1.1(feedback)adding lines from index.html
 $("#createdriverform").on('hide.bs.modal', function (event) {
