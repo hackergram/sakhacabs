@@ -386,12 +386,10 @@
                     </div>
         </div>
     <div class="loader_container" id="loader">
-<center>
-      Processing
-<div  class='loader'></div>
-
-</center>
-<div>
+        <center>Processing
+        <div class='loader'></div>
+        </center>
+    <div>
     <script>
         var serverip="192.168.56.101"
         var assignments=[]
@@ -741,7 +739,7 @@
             columns: [
               {width:"5%", defaultContent:""},
 
-              
+
                 {width:"20%", data: 'invoice_id', defaultContent:"None", render: function(data){
                     if(data){
                         invoice_id='"'+data+'"'
@@ -810,8 +808,7 @@
                   }
 
               } else{
-                  $("#header").append("<div class='loader'></div>")
-              }
+
           }
           http.send(params);
 

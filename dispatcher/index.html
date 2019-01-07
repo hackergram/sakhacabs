@@ -888,6 +888,11 @@ $("#total_kms").val(parseFloat($("#close_kms").val())-parseFloat($("#open_kms").
 
         </div>
     </div>
+    <div class="loader_container" id="loader">
+        <center>Processing
+        <div class='loader'></div>
+        </center>
+    <div>
     <!--   Core JS Files   -->
     <!--
     <script src="assets/js/core/jquery.min.js" type="text/javascript"></script>
@@ -951,6 +956,7 @@ $("#total_kms").val(parseFloat($("#close_kms").val())-parseFloat($("#open_kms").
         }
     </script>
     <script type="text/javascript">
+    $("#loader").hide()
         var assignmentdict={}
         assignmentdict['assignment']={}
         assignmentdict.assignment['bookings']=[]

@@ -63,8 +63,10 @@ var sakha={
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
          $("#exportbookings").on("click",function(){
+           $("#loader").show()
              console.log("exporing bookings")
             $.getJSON('http://'+serverip+':5000/booking/export',function(data){
+                $("#loader").hide()
                 window.open(data.resp,"_blank")
             })
         })
@@ -97,7 +99,9 @@ var sakha={
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
           $("#exportlocupdates").on("click",function(){
+            $("#loader").show()
             $.getJSON('http://'+serverip+':5000/locupdate/export',function(data){
+                $("#loader").hide()
                 window.open(data.resp,"_blank")
             })
         })
@@ -148,7 +152,9 @@ var sakha={
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
         $("#exportdrivers").on("click",function(){
+          $("#loader").show()
             $.getJSON('http://'+serverip+':5000/driver/export',function(data){
+              $("#loader").hide()
                 console.log(data.resp)
                 window.open(data.resp,"_blank")
             })
@@ -185,8 +191,10 @@ var sakha={
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
           $("#exportvehicles").on("click",function(){
+            $("#loader").show()
             $.getJSON('http://'+serverip+':5000/vehicle/export',function(data){
                 console.log(data.resp)
+                $("#loader").hide()
                 window.open(data.resp,"_blank")
             })
         })
@@ -1090,7 +1098,7 @@ var sakha={
         }
         http.send(params);
 
-  
+
     },
     saveDutySlip: function(dsid){
         console.log("Saving duty slip with ID "+dsid)
