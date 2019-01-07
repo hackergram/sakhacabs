@@ -1079,7 +1079,7 @@ var sakha={
 
                     }
                     else{
-                        alert("Caught Error saving booking")
+                        alert("Caught Error saving booking - " + response.resp )
                     }
                 }
                 else{
@@ -1132,7 +1132,7 @@ var sakha={
 
                     }
                     else{
-                        alert("Caught Error saving dutyslip")
+                        alert("Caught Error saving dutyslip  - " + response.resp)
                     }
                 }
                 else{
