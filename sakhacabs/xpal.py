@@ -172,7 +172,7 @@ def validate_dutyslip_dict(dutyslipdict, new=True):
         validation['status'] = False
         validation['message'] = "ERROR IN DIST VALIDATION " + str(e)
     try:
-        if "vehicle" in dutyslipdict.keys():
+        if "vehicle" in dutyslipdict.keys() and dutyslipdict['vehicle'] != "":
             if len(documents.Vehicle.objects(vehicle_id=dutyslipdict['vehicle'])) == 0:
                 validation['status'] = False
                 validation['message'] = "Unknown vehicle id"
