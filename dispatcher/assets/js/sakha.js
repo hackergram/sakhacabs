@@ -1090,6 +1090,7 @@ var sakha={
         }
         http.send(params);
 
+  
     },
     saveDutySlip: function(dsid){
         console.log("Saving duty slip with ID "+dsid)
