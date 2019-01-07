@@ -55,7 +55,7 @@ def validate_dict(dictionary, required_keys=[], string_keys=[], mobile_nums=[], 
     for key in dates:  # CHANGELOG #11 - AV - For #273
         try:
             if key in dictionary.keys():
-                value = datetime.datetime.strptime(dictionary[key], "YYYY-MM-DD HH:MM:SS")
+                value = datetime.datetime.strptime(dictionary[key], "%Y-%m-%d %H:%M:%S")
         except Exception as e:
             validation['message'] = str(e)
             validation['status'] = False

@@ -918,11 +918,11 @@ var sakha={
         //moment(.$date).format('MMMM Do YYYY, h:mm:ss a'));
         //dutyslipdict.open_time=moment($("#open_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
         //dutyslipdict.open_time=$("#open_time").val()
-        dutyslipdict.open_time=moment($("#open_time").val(),'YYYY-MM-DD HH:mm:ss').toDate()
+        dutyslipdict.open_time=moment($("#open_time").val(),'YYYY-MM-DD HH:mm:ss').utc().format('YYYY-MM-DD HH:mm:ss')
         //moment(.$date).format('MMMM Do YYYY, h:mm:ss a'));
         //dutyslipdict.close_time=moment($("#close_time").val(),'MMMM Do YYYY, h:mm:ss a').valueOf()
         //dutyslipdict.close_time=$("#close_time").val()
-        dutyslipdict.close_time=moment($("#close_time").val(),'YYYY-MM-DD HH:mm:ss').toDate()
+        dutyslipdict.close_time=moment($("#close_time").val(),'YYYY-MM-DD HH:mm:ss').utc().format('YYYY-MM-DD HH:mm:ss')
         //moment(.$date).format('MMMM Do YYYY, h:mm:ss a'));
         dutyslipdict.open_kms=$("#open_kms").val()
         dutyslipdict.close_kms=$("#close_kms").val()

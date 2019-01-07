@@ -20,6 +20,7 @@ sakhacabsxpal = xetrapal.Xetrapal(
     configfile="/opt/sakhacabs-appdata/sakhacabsxpal.conf")
 sakhacabsgd = sakhacabsxpal.get_googledriver()
 sms = sakhacabsxpal.get_sms_astra()
+'''
 try:
     datasheet = sakhacabsgd.open_by_key(
         sakhacabsxpal.config.get("SakhaCabs", "datasheetkey"))
@@ -31,7 +32,7 @@ try:
 except Exception as e:
     sakhacabsxpal.logger.error(
         "Error connecting to Google Drive, check connectivity - {} {}".format(repr(e), str(e)))
-
+'''
 # Setting up mongoengine connections
 sakhacabsxpal.logger.info("Setting up MongoEngine")
 mongoengine.connect('sakhacabs', alias='default')
@@ -154,27 +155,30 @@ def validate_dutyslip_dict(dutyslipdict, new=True):
     numbers = ['open_kms', 'close_kms', 'parking_charges', 'toll_charges', 'amount']
     validation = utils.validate_dict(
         dutyslipdict, required_keys=required_keys, string_keys=string_keys, dates=dates, numbers=numbers)
+
     try:
-        if datetime.datetime(dutyslipdict['open_time'])>datetime.datetime(dutyslipdict['close_time']):
+        if datetime.datetime.strptime(dutyslipdict['open_time'], "%Y-%m-%d %H:%M:%S") > datetime.datetime.strptime(dutyslipdict['close_time'], "%Y-%m-%d %H:%M:%S"):
             validation['status'] = False
             validation['message'] = "Open time cant be after close time"
     except Exception as e:
         validation['status'] = False
-        validation['message'] = "Error occured in time validation"
+        validation['message'] = "ERROR IN TIME VALIDATION " + str(e)
+
     try:
-        if float(dutyslipdict['open_kms'])>float(dutyslipdict['close_kms']):
+        if float(dutyslipdict['open_kms']) > float(dutyslipdict['close_kms']):
             validation['status'] = False
             validation['message'] = "Open kms cant be more than close kms"
     except Exception as e:
         validation['status'] = False
-        validation['message'] = "Error occured in distance validation"
+        validation['message'] = "ERROR IN DIST VALIDATION " + str(e)
     try:
-        if len(documents.Vehicle.objects(vehicle_id=dutyslipdict['vehicle'])):
-            validation['status'] = False
-            validation['message'] = "Unknown vehicle id"
+        if "vehicle" in dutyslipdict.keys():
+            if len(documents.Vehicle.objects(vehicle_id=dutyslipdict['vehicle'])) == 0:
+                validation['status'] = False
+                validation['message'] = "Unknown vehicle id"
     except Exception as e:
         validation['status'] = False
-        validation['message'] = "Error occured in distance validation"
+        validation['message'] = "ERROR IN VEHICLE VALIDATION " + str(e)
     if validation['status'] is True:
         sakhacabsxpal.logger.info("dutyslipdict: " + validation['message'])
     else:
@@ -217,6 +221,7 @@ def validate_assignment_dict(assignmentdict, new=True):
     return validation
 
 
+'''
 def sync_remote():
     custlist = custsheet.get_as_df().to_dict(orient="records")
     driverlist = driversheet.get_as_df().to_dict(orient="records")
@@ -274,7 +279,7 @@ def sync_remote():
     prodsheet.set_dataframe(productdf, (1, 1))
 
 
-'''
+
 LocationUpdate CRUD functionality
 Fix to check if vehicle is already  taken.
 '''
