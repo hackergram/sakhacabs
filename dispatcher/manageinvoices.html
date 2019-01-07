@@ -370,7 +370,7 @@
                                <table class="table table-striped" id="invoicelist">
                                     <thead>
                                       <th>Select</th>
-                                         <th >Action</th>
+
                                         <th >Invoice ID</th>
                                         <th >Date</th>
                                         <th >Customer ID</th>
@@ -741,12 +741,7 @@
             columns: [
               {width:"5%", defaultContent:""},
 
-                //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
-                { width:"5%",data: null,render: function(data){
-                    invoice_id='"'+data.invoice_id+'"'
-                    return "<button onclick='deleteInvoice("+invoice_id+")'>Delete</button>"
-
-                }},
+              
                 {width:"20%", data: 'invoice_id', defaultContent:"None", render: function(data){
                     if(data){
                         invoice_id='"'+data+'"'
