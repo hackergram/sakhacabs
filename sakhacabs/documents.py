@@ -88,7 +88,7 @@ class Product(PPrintMixin, DynamicDocument):
     included_kms = fields.FloatField(required=True, default=0.0)  # CHANGELOG - Will invalidate existing product data
     extra_hrs_rate = fields.FloatField(required=True, default=0.0)  # CHANGELOG - Will invalidate existing product data
     extra_kms_rate = fields.FloatField(required=True, default=0.0)  # CHANGELOG - Will invalidate existing product data
-
+    price = fields.FloatField(required=True, default=0.0)
 
 class LocationUpdate(PPrintMixin, Document):
     driver_id = fields.StringField(required=True)

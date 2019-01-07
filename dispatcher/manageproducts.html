@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+product<!DOCTYPE html>
 <!-- xlsx.js (C) 2013-present  SheetJS http://sheetjs.com -->
 <!-- vim: set ts=2: -->
 <html>
@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Manage products</title>
 <link rel="stylesheet" href="dist/css/mdi-icons.css">
-
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
@@ -171,7 +171,83 @@ a { text-decoration: none }
                       </div>
                     </div>
 
+<!--kj-v1.01-adding new lines -->
+<div class="modal fade" id="editproductsform" tabindex="-1" role="dialog" aria-labelledby="Edit products">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+         </div>
+          <div class="modal-body">
 
+            <div class="card-header card-header-primary">
+              <h4 class="card-title">Edit product Profile</h4>
+             <div id="productstatus" class="card-category"></div>
+            </div>
+            <div class="card-body">
+              <form id="driverform">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">product ID</label>
+                      <input type="text" class="form-control" id="productid" require="true">
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <form id="driverform">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group bmd-form-group">
+                            <label class="bmd-label-floating">Included hrs</label>
+                            <input type="text" class="form-control" id="inclu_hrs" require="true">
+                          </div>
+                        </div>
+                        <div class="card-body">
+                          <form id="driverform">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="form-group bmd-form-group">
+                                  <label class="bmd-label-floating">Extra hrs</label>
+                                  <input type="text" class="form-control" id="ext_hrs" require="true">
+                                </div>
+                              </div>
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Included kms</label>
+                      <input type="text" class="form-control" id="incl_kms">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Extra kms</label>
+                      <input type="text" class="form-control" id="ext_kms">
+                    </div>
+                  </div>
+                </div>
+            </form>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Price</label>
+                  <input type="text" class="price" id="pri">
+                </div>
+              </div>
+            </div>
+        </form>
+        </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="saveproduct">Save changes</button>
+          </div>
+        </div>
+      </div>
+<!-- New code ends here. -->
 
 <br />
 </div>
@@ -305,6 +381,19 @@ var process_wb = (function() {
 			for(var i = 0; i < radios.length; ++i) if(radios[i].checked || radios.length === 1) return radios[i].value;
 		};
 	})();
+  <!-- kj-v1.01- adding  lines -->
+        $("#editproductsform").on('hide.bs.modal', function (event) {
+            console.log("closing product modal")
+          //  document.getElementById("productstatus").reset()
+            window.location.reload(false);
+        })
+        $("#editproductsform").on('show.bs.modal', function (event) {
+            console.log("editing booking in modal")
+            var eventsrc = $(event.relatedTarget) // Button that triggered the modal
+            var product_id = eventsrc.data('product_id') // Extract info from data-* attributes
+            console.log(product_id)
+            sakha.fillProductModal(product_id)
+          })
 	var to_json = function to_json(workbook) {
 		var result = {};
 		workbook.SheetNames.forEach(function(sheetName) {
@@ -425,12 +514,17 @@ var do_file = (function() {
                         } ],
              select: {
                             style:    'multi',
-                        
+
                         },
             columns: [
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
                 {width:"5%", defaultContent:""},
-                {data: 'product_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: null, defaultContent:"None", render: function (data){      //kj-var1.01-new content added
+
+                    var productid='<a class="nav-link" data-toggle="modal" data-target="#editproductsform" data-product_id="'+data.product_id+'">\
+                        <i class="material-icons">content_paste</i> '+data.product_id+'\
+                        </a>'
+                    return productid}},
                 {data: 'included_hrs', defaultContent:"None", render: function(data){if(data){return data}}},
                 {data: 'included_kms', defaultContent:"None", render: function(data){if(data){return data}}},
                 {data: 'extra_hrs_rate', defaultContent:"None", render: function(data){if(data){return data}}},
@@ -474,5 +568,3 @@ var do_file = (function() {
 </script>
 </body>
 </html>
-
-    

@@ -739,15 +739,15 @@ var sakha={
             //    $("#customer_drop_location").val(data.resp[0].drop_location)
 
 
-            })
+          })
 
-       document.getElementById("savecustomer").setAttribute("onclick","sakha.saveCustomer('"+cust_id+"')")
-
-
+     document.getElementById("savecustomer").setAttribute("onclick","sakha.saveCustomer('"+cust_id+"')")
 
 
 
-    },//kj-v101-
+
+
+  },//kj-v101-
     saveCustomer: function(cust_id){
         console.log("Trying to save "+cust_id)
         customerdict={}
@@ -800,6 +800,87 @@ var sakha={
 
 
       },
+
+
+
+      fillProductModal: function(product_id){
+         console.log("editing product "+product_id)
+         var url = 'http://'+serverip+':5000/product/by_product_id/'+product_id
+         console.log("getting url "+url)
+
+              $.getJSON(url,function(data){
+                  console.log(data.resp[0])
+                //  $("#product_pickup_timestamp").empty()
+                  $("#productid").append(data.resp[0].productomer_id )
+                  $("#productid").val(data.resp[0].product_id)
+                  $("#inclu_hrs").val(data.resp[0].included_hrs )
+                  $("#ext_hrs").val(data.resp[0].extra_hrs_rate )
+                  $("#incl_kms").val(data.resp[0].included_kms)
+                  $("#ext_kms").val(data.resp[0].extra_kms_rate)
+                  $("#pri").val(data.resp[0].price)
+
+                })
+
+              document.getElementById("saveproduct").setAttribute("onclick","sakha.saveproduct('"+product_id+"')")
+
+  },
+  saveproduct: function(product_id){
+      console.log("Trying to save "+product_id)
+      productdict={}
+      productdict.product_id=$("#productid").val()
+      productdict.included_hrs=$("#inclu_hrs").val()
+      productdict.extra_hrs_rate=$("#ext_hrs").val()
+      productdict.included_kms=$("#incl_kms").val()
+      productdict.extra_hrs_rate=$("#ext_hrs").val()
+      productdict.pri=$("#pri").val()
+
+
+      var params = JSON.stringify(productdict);
+      var http = new XMLHttpRequest();
+      if(productid==="newproduct"){
+          //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+          var url = "http://"+serverip+":5000/product";
+          http.open("POST", url, true);
+      }
+      else{
+          var url = "http://"+serverip+":5000/product/by_product_id/"+product_id;
+          http.open("PUT", url, true);
+
+      }
+      if (productdict.product_id.length>4){
+          http.setRequestHeader("Content-type", "application/json");
+          http.onreadystatechange = function() {//Call a function when the state changes.
+          if(http.readyState == 4 ) {
+              if(http.status == 200){
+                  response=JSON.parse(http.responseText)
+                  console.log(response)
+                  if(response.status==="success"){
+                     document.getElementById("productlist").innerHTML="<span style='color:green'>Success!</span>"
+                      alert("Saved product Successfully!")
+                      console.log("success")
+                  }
+                  if (response.status==="error"){
+                      console.log("error")
+                      alert("Failed to Save   product!")
+                       document.getElementById("productlist").innerHTML="<span style='color:red'>"+response.resp+"</span>"
+                  }
+                  }
+                  else{
+                  alert("Network Error Saving product.")
+                  }
+                  }
+
+                  }
+                  http.send(params);
+                  }
+                  else{
+                  alert(" product ID must be at least 5 characters")
+                  }
+
+
+
+    },
+
 
 
     saveDriver: function(driverid){
@@ -929,6 +1010,43 @@ var sakha={
             alert("Cancelled delete!")
         }
     },
+
+    fillBookingModal: function(bookingid){
+     console.log("editing booking "+bookingid)
+     var url = 'http://'+serverip+':5000/booking/by_booking_id/'+bookingid
+     console.log("getting url "+url)
+
+          $.getJSON(url,function(data){
+              console.log(data.resp[0])
+              $("#booking_pickup_timestamp").empty()
+              $("#booking_id").append(data.resp[0].booking_id )
+              $("#booking_product_id").val(data.resp[0].cust_id)
+
+              $("#booking_product_id").val(data.resp[0].product_id)
+              $("#booking_status").val(data.resp[0].status).change()
+              //$("#created_time").val(moment(data.resp[0].created_time.$date).format('MMMM Do YYYY, h:mm:ss a'));
+              //$("#booking_pickup_timestamp").empty()
+              $("#booking_pickup_timestamp").val(moment(data.resp[0].pickup_timestamp.$date+1).format('YYYY-MM-DD HH:mm:ss'))
+
+              $("#booking_created_timestamp").empty()
+
+              $("#booking_created_timestamp").append(moment(data.resp[0].created_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a'));
+             $("#booking_channel").val(data.resp[0].booking_channel);
+              //$("#total_time").text=moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2);
+              $("#booking_cust_meta").val(JSON.stringify(data.resp[0].cust_meta))
+              $("#booking_remarks").val(data.resp[0].remarks)
+              $("#booking_passenger_mobile").val(data.resp[0].passenger_mobile)
+              $("#booking_passenger_detail").val(data.resp[0].passenger_detail)
+
+              $("#booking_pickup_location").val(data.resp[0].pickup_location)
+              $("#booking_drop_location").val(data.resp[0].drop_location)
+
+
+          })
+
+     document.getElementById("savebooking").setAttribute("onclick","sakha.saveBooking('"+bookingid+"')")
+
+},
     saveBooking: function(booking_id){
         console.log(booking_id)
         booking_dict={}
