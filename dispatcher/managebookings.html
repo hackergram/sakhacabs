@@ -416,10 +416,22 @@ var process_output=function(){
                 bookinglist[i]['passenger_detail']=Mustache.render(passenger_detail_map,bookinglist[i])
                 bookinglist[i]['pickup_location']=Mustache.render(pickup_location_map,bookinglist[i])
                 bookinglist[i]['product_id']=product_id
-                pickup_date=moment(Mustache.render(pickup_date_map,bookinglist[i])).format("YYYY-MM-DD")
-                pickup_time=moment(Mustache.render(pickup_time_map,bookinglist[i])).format("HH:mm:ss")
-                bookinglist[i]['pickup_timestamp']=   moment(pickup_date +" "+ pickup_time).toDate()
-
+                pickup_date_string=Mustache.render(pickup_date_map,bookinglist[i])
+                pickup_date=moment(pickup_date_string).format("YYYY-MM-DD")
+                pickup_time_string=Mustache.render(pickup_time_map,bookinglist[i])
+                pickup_time=moment(pickup_time_string).format("HH:mm:ss")
+                if(pickup_time==="Invalid date"){
+                  pickup_time=pickup_time_string
+                }
+                pickup_timestamp_string=pickup_date+" "+pickup_time
+                console.log(pickup_timestamp_string)
+                pickup_timestamp=moment(pickup_timestamp_string).utc().format("YYYY-MM-DD HH:mm:ss")
+                if(pickup_timestamp===null){
+                  pickup_timestamp=pickup_timestamp_string
+                }
+                else{
+                bookinglist[i]['pickup_timestamp']=pickup_timestamp
+              }
                 bookinglist[i]['booking_channel']=booking_channel
                 bookinglist[i]['cust_id']=cust_id
                 bookinglist[i]['drop_location']=Mustache.render(drop_location_map,bookinglist[i])
