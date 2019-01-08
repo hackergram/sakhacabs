@@ -17,11 +17,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
      <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
-
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
     <link rel="stylesheet" type="text/css" src="assets/css/select.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" src="assets/css/responsive.dataTables.min.css">
-
+    <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
 
 
     <style>
@@ -59,13 +59,14 @@
     <script type="text/javascript" src="https://rawgit.com/tempusdominus/bootstrap-4/master/build/js/tempusdominus-bootstrap-4.js"></script>
     <script type="text/javascript" charset="utf8" src="assets/js/dataTables.select.min.js"></script>
 
+    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
 
     <script src="assets/js/sakha.js"></script>
 
         <div class="container">
             <div class="row">
                 <div class="page-header clearfix">
-                    <div class="col-sm-12 small-cols">
+                    <div class="col-sm-12 small-cols" id="header">
                     <h1 class="medium-bold-title">Generate Invoices</h1>
                      <a href="../sakhadispatcher" id="backlink">(Back)</a>
                     <span></span>
@@ -134,84 +135,7 @@
             <div class="row">
 
                 <div class="col-lg-6">
-                     <!--<main role="main" id="pagination-app">
-                    <div class="album py-2 bg-light">
-                        <div class="container" v-cloak>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h3>Assignments</h3>
-                              <button class="btn btn-sm btn-outline-secondary" onclick="addAll()">Add All</button>
-                                    </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6" v-for="post in displayedPosts">
-                                    <div class="card mb-4 box-shadow post-cards">
-                                    <div class="card-body">
-                                        <div class="container">
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <h5 class="capitalize">{{String.toUpperCase(post.assignment.cust_id)}}</h5>
-                                                    <p class="card-text">{{moment(post.assignment.reporting_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a')}}</p>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" @click="addassignment(post.assignment._id.$oid)">Add Invoice Lines</button>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary" @click="removeassignment(post.assignment._id.$oid)">Remove Invoice Lines</button>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <div class="row">
-                                                    <h5 class="capitalize">Bookings</h5>
-                                                    </div>
-                                                    <div class="row" v-for="booking in post.assignment.bookings">
-                                                        <div class="col-lg-12">
-                                                          <div class="card">
-                                                              <div class="card-header">{{booking.booking_id}}</div>
-                                                              <div class="card-body">
-                                                                  <b>Pickup Time:</b> <span>{{moment(booking.pickup_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a')}}</span>
-                                                                  <br><b> Passenger Detail:</b><span>{{booking.passenger_detail}}</span>
 
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-lg-12">
-                                                    <div class="row">
-                                                        <h5 class="capitalize">Duty Slips</h5>
-                                                    </div>
-                                                    <div class="row" v-for="dutyslip in post.dutyslips">
-                                                        <div class="col-lg-12">
-                                                            <div class="card">
-                                                                <div class="card-header">{{dutyslip.dutyslip_id}}</div>
-                                                                <div class="card-body">
-                                                                    <b>Driver: </b><span>{{dutyslip.driver}}</span>
-                                                                    <br><b>Vehicle: </b><span>{{dutyslip.vehicle}}</span>
-                                                                    <br><b>Open Time: </b><span>{{moment(dutyslip.open_time.$date).format('MMMM Do YYYY, h:mm:ss a')}}</span>
-                                                                    <br><b>KMS: </b><span>{{dutyslip.close_kms-dutyslip.open_kms}}</span>
-                                                                    <br><b>HRS: </b><span>{{moment(dutyslip.close_time.$date).diff(moment(dutyslip.open_time.$date),"hours",true).toFixed(2)}}</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                        </div>
-                                                </div>
-                                            </div>
-                                    </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                            <div class="clearfix btn-group col-md-2 offset-md-5">
-                            <button type="button" class="btn btn-sm btn-outline-secondary" v-if="page != 1" @click="page--"> << </button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" v-for="pageNumber in pages.slice(page-1, page+5)" @click="page = pageNumber"> {{pageNumber}} </button>
-                            <button type="button" @click="page++" v-if="page < pages.length" class="btn btn-sm btn-outline-secondary"> >> </button>
-                          </div>
-                        </div>
-                    </div>
-                   </main>-->
                 <main role="main" id="pagination-app">
 
                                         <div class="container" v-cloak>
@@ -223,7 +147,7 @@
                                                 <div class="col-sm-4 small-cols">
                                                     <select id="assign_sort" name="assign_sort" class="form-control" onchange="sortAssignments()">
                                                         <option value="created_timestamp">Created Time</option>
-                                                        <option value="reporting_timestamp" selected="selected">Reporting Time</option>
+                                        visibility: hidden;                  <option value="reporting_timestamp" selected="selected">Reporting Time</option>
                                                     </select>
                                                 </div>
                                                <div class="col-sm-4 small-cols">
@@ -446,7 +370,7 @@
                                <table class="table table-striped" id="invoicelist">
                                     <thead>
                                       <th>Select</th>
-                                         <th >Action</th>
+
                                         <th >Invoice ID</th>
                                         <th >Date</th>
                                         <th >Customer ID</th>
@@ -461,7 +385,11 @@
                       </div>
                     </div>
         </div>
-
+    <div class="loader_container" id="loader">
+        <center>Processing
+        <div class='loader'></div>
+        </center>
+    <div>
     <script>
         var serverip="192.168.56.101"
         var assignments=[]
@@ -494,6 +422,7 @@
             http.send(params)
         }
         updateInvoice()
+        $("#loader").hide();
         var clearInvoice=function(){
             assignments=[]
             current_invoice={"cust_id":null,"invoice_lines":[],"taxes":[],invoice_date:null}
@@ -522,10 +451,13 @@
                            columnDefs: [ {
                             orderable: false,
                             className: 'select-checkbox',
-                            targets:   0
+                            targets:   0,
+                            checkboxes: {
+                              'selectRow': true
+                              }
                         } ],
                           select: {
-                            style:    'os',
+                            style:    'multi',
                             selector: 'td:first-child'
                         },
                         columns: [
@@ -560,6 +492,7 @@
             console.log(current_invoice)
             t=confirm("Really Save Invoice")
             if(t===true){
+
                 if(current_invoice.invoice_id){
                   var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
                   var url = "http://"+serverip+":5000/invoice/by_invoice_id/"+current_invoice.invoice_id
@@ -575,6 +508,7 @@
                 http.setRequestHeader("Content-type", "application/json");
                 http.onreadystatechange = function() {//Call a function when the state changes.
                 if(http.readyState == 4 && http.status == 200) {
+
                     if (JSON.parse(http.responseText).status==="success"){
                         alert("Successfully saved invoice!")
                         window.location.reload(false);
@@ -590,15 +524,17 @@
             console.log(assignments)
             http.send(params)
 
+
            }
                   }
 
         }
         var exportInvoice=function(){
-          console.log("exporing bookings")
+          console.log("Exporting invoice to Google drive")
           invoice_id=current_invoice.invoice_id
-
+          $("#loader").show()
          $.getJSON('http://'+serverip+':5000/invoice/export/'+invoice_id,function(data){
+          $("#loader").hide();
             current_invoice.url=data.resp
             saveInvoice()
              window.open(data.resp,"_blank")
@@ -684,6 +620,7 @@
                 updateInvoice()
         }
         var addassignment=function(assid){
+
                 if(assignments.includes(assid)===false){
                     assignments.push(assid)
                 }
@@ -786,10 +723,13 @@
             columnDefs: [ {
                            orderable: false,
                            className: 'select-checkbox',
-                           targets:   0
+                           targets:   0,
+                           checkboxes: {
+                               'selectRow': true
+                               }
                        } ],
             select: {
-                           style:    'os',
+                           style:    'multi',
                            selector: 'td:first-child'
                        },
             ajax: {
@@ -799,16 +739,11 @@
             columns: [
               {width:"5%", defaultContent:""},
 
-                //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
-                { width:"5%",data: null,render: function(data){
-                    invoice_id='"'+data.invoice_id+'"'
-                    return "<button onclick='deleteInvoice("+invoice_id+")'>Delete</button>"
 
-                }},
                 {width:"20%", data: 'invoice_id', defaultContent:"None", render: function(data){
                     if(data){
                         invoice_id='"'+data+'"'
-                        var invoiceid="<a class='nav-link' onclick='editInvoice("+invoice_id+")'>"+data+"</a>"
+                        var invoiceid="<a class='nav-link' onclick='editInvoice("+invoice_id+")'>  <i class='material-icons'>content_paste</i>"+data+"</a>"
 
                         return invoiceid
 
@@ -872,10 +807,12 @@
                       alert("Something went wrong!")
                   }
 
-              }
+              } else{
 
           }
-          http.send(params);
+
+        }
+        http.send(params);
         })
 
     }

@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
 
     <link rel="stylesheet" type="text/css" src="assets/css/responsive.dataTables.min.css">
-
+    <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
     <style>
 #drop{
 	border:2px dashed #bbb;
@@ -50,6 +50,7 @@ a { text-decoration: none }
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" charset="utf8" src="assets/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
 
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
@@ -147,6 +148,11 @@ a { text-decoration: none }
 
 <br />
 </div>
+<div class="loader_container" id="loader">
+    <center>Processing
+    <div class='loader'></div>
+    </center>
+<div>
 <!-- uncomment the next line here and in xlsxworker.js for encoding support -->
 <script src="assets/js/jsxlsx/dist/cpexcel.js"></script>
 <script src="assets/js/jsxlsx/shim.js"></script>
@@ -167,12 +173,13 @@ var XW = {
 	worker: './assets/js/jsxlsx/xlsxworker.js'
 };
 
-
+$("#loader").hide()
 var global_wb;
 var global_output;
 var serverip="192.168.56.101"
 var vehiclelist=[]
 var submit_output=function(){
+  $("#loader").show()
     var OUT = document.getElementById('out');
     console.log("Submitting vehicles")
     console.log(vehiclelist)
@@ -183,6 +190,7 @@ var submit_output=function(){
     http.setRequestHeader("Content-type", "application/json");
     http.onreadystatechange = function() {//Call a function when the state changes.
         if(http.readyState == 4 && http.status == 200) {
+            $("#loader").hide()
             response=JSON.parse(http.responseText)
             console.log(response)
             if (response.status==="success"){
@@ -193,8 +201,8 @@ var submit_output=function(){
             else{
                 alert("Something went wrong!")
             }
-            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'][0],2,2);
-	           else HTMLOUT.innerText = JSON.stringify(response['resp'][0],2,2);
+            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
+	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
 
         }
 
@@ -221,6 +229,7 @@ var parse_rows=function(rows){
 
 
 var process_output=function(){
+  $("#loader").show()
   var vehicle_id_map=$("#vehicle_id_map").val()
   var rows=[]
   dic=JSON.parse(global_output)
@@ -235,8 +244,9 @@ var process_output=function(){
               console.log(vehiclelist[i])
             }
         }
-        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(vehiclelist[0],2,2);
-	   else HTMLOUT.innerText = JSON.stringify(vehiclelist[0],2,2);
+        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(vehiclelist,2,2);
+	   else HTMLOUT.innerText = JSON.stringify(vehiclelist,2,2);
+     $("#loader").hide()
     //}
     //catch(err){
     //    alert("Something went wrong!")
@@ -387,10 +397,13 @@ var do_file = (function() {
              columnDefs: [ {
                             orderable: false,
                             className: 'select-checkbox',
-                            targets:   0
+                            targets:   0,
+                            checkboxes: {
+                              'selectRow': true
+                              }
                         } ],
              select: {
-                            style:    'os',
+                            style:    'multi',
                             selector: 'td:first-child'
                         },
             columns: [

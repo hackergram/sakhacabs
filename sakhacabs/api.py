@@ -775,7 +775,7 @@ class DutySlipResource(Resource):
                 resp = "{} {}".format(type(e), str(e))
                 status = "error"
         else:
-            resp = xpal.validate_dutyslip_dict(respdict, False)['messages']
+            resp = xpal.validate_dutyslip_dict(respdict, False)['message']
             status = "error"
         return jsonify({"resp": resp, "status": status})
 
@@ -1128,7 +1128,7 @@ class InvoiceResource(Resource):
                 # if respdict!=[]:
                 assignments = xpal.documents.Assignment.objects.filter(
                     id__in=respdict)
-                app.logger.info(assignments)
+                # app.logger.info(assignments)
                 resp = xpal.generate_invoice(assignments)
                 if type(resp) == dict:
                     status = "success"

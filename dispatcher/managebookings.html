@@ -5,8 +5,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Manage Booking</title>
-<link rel="stylesheet" href="dist/css/mdi-icons.css">
-
+    <link rel="stylesheet" href="dist/css/mdi-icons.css">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
@@ -15,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
 
     <link rel="stylesheet" type="text/css" src="assets/css/responsive.dataTables.min.css">
+    <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
 
     <style>
 #drop{
@@ -50,8 +52,7 @@ a { text-decoration: none }
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" charset="utf8" src="assets/js/dataTables.select.min.js"></script>
-
-
+    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
     <script type="text/javascript" src="https://rawgit.com/tempusdominus/bootstrap-4/master/build/js/tempusdominus-bootstrap-4.js"></script>
     <script src="assets/js/sakha.js"></script>
@@ -94,10 +95,13 @@ a { text-decoration: none }
         <div class="row"> <div class="col-md-12">Product ID: <select name="product" id="product"></select><br/></div>
        </div>
         <div class="row"><div class="col-md-12">
-        Pickup Timestamp Template: <input type="text" size="30" id="pickup_timestamp_map"><br>
+        Pickup Date Template: <input type="text" size="30" id="pickup_date_map"><br>
+        Pickup Time Template: <input type="text" size="30" id="pickup_time_map"><br>
+        <!--Pickup Timestamp Template: <input type="text" size="30" id="pickup_timestamp_map"><br>-->
         Passenger Detail Template: <input type="text" size="30" id="passenger_detail_map"><br>
         Pickup Location Template: <input type="text" size="30" id="pickup_location_map"><br>
         Drop Location Template: <input type="text"  size="30" id="drop_location_map"><br>
+        Passenger Mobile Number Template: <input type="text"  size="30" id="passenger_mobile_map"><br>
             </div>
             </div>
         <div class="row">
@@ -119,8 +123,6 @@ a { text-decoration: none }
     <div class="col-md-4">
         <div class="row"><div class="col-md-12">Sample Output</div></div>
         <div class="row"><div class="col-md-12"><div id="htmlout"></div></div></div>
-
-
 
 
     </div>
@@ -158,15 +160,148 @@ a { text-decoration: none }
                       </div>
                     </div>
 
+<!--kj-v1.1-putting the new code here -->
+<!--Model-->
+</div>
+<div class="modal fade" id="editbookingform" tabindex="-1" role="dialog" aria-labelledby="Edit Duty Slip">
+    <div class="modal-dialog" role="document">
+<div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+ </div>
+  <div class="modal-body">
 
+    <div class="card-header card-header-primary">
+      <h4 class="card-title">Edit Booking ID: <span id="booking_id"></span> </h4>
+      <h5 class="card-category"><b>Created at: </b><span id="booking_created_timestamp"></span></h5>
+    </div>
+    <div class="card-body">
+        <form id="bookingform">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Status</label>
 
+                    <select class="form-control" id="booking_status">
+                        <option value="verified">VERIFIED</option>
+                        <option value="cancelled">CANCELLED</option>
+                        <option value="closed">CLOSED</option>
+                        <option value="open">OPEN</option>
+                        <option value="new">NEW</option>
+                    </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+
+             <div class="col-md-4">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Customer ID</label>
+                  <input type="text" class="form-control" id="booking_cust_id" readonly require="true">
+                </div>
+              </div>
+            <div class="col-md-4">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Product ID</label>
+                  <input type="text" class="form-control" id="booking_product_id" readonly require="true">
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Pickup Time</label>
+                  <input type="text" class="form-control" id="booking_pickup_timestamp" require="true">
+
+                 </div>
+              </div>
+            </div>
+            <div class="row">
+
+            <div class="col-md-12">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Pickup Location</label>
+                    <textarea rows="2" class="form-control" id="booking_pickup_location" require="true"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+
+            <div class="col-md-12">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Drop Location</label>
+                    <textarea rows="2" class="form-control" id="booking_drop_location" require="true"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Passenger Detail</label>
+                        <textarea rows="4" class="form-control" id="booking_passenger_detail" require="true"></textarea>
+                    </div>
+                  </div>
+                <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Customer Meta Data</label>
+                        <textarea rows="4" class="form-control" id="booking_cust_meta" require="true"></textarea>
+                    </div>
+                  </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Passenger Mobile</label>
+                      <input type="text" class="form-control" id="booking_passenger_mobile" require="true">
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Booking Channel</label>
+                      <input type="text" class="form-control" readonly id="booking_channel">
+                    </div>
+                  </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                <div class="form-group bmd-form-group">
+                  <label class="bmd-label-floating">Remarks</label>
+                    <textarea rows=5 class="form-control" id="booking_remarks"></textarea>
+                </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary" id="savebooking">Save changes</button>
+  </div>
+</div>
+</div>
+<!--new code ends here.-->
 <br />
 </div>
-<!-- uncomment the next line here and in xlsxworker.js for encoding support -->
+<!-- uncomment the next line here and in xlsxworker.js for encoding support
 <script src="assets/js/jsxlsx/dist/cpexcel.js"></script>
 <script src="assets/js/jsxlsx/shim.js"></script>
 <script src="assets/js/jsxlsx/jszip.js"></script>
 <script src="assets/js/jsxlsx/xlsx.js"></script>
+-->
+<div class="loader_container" id="loader">
+    <center>Processing
+    <div class='loader'></div>
+    </center>
+<div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.1/cpexcel.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.1/shim.min.js"></script>
+<script src="assets/js/jsxlsx/jszip.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.1/xlsx.js"></script>
+
+
+
 <script>
 /*jshint browser:true */
 /* eslint-env browser */
@@ -204,12 +339,13 @@ var get_prod_list=function(){
 }
 var global_wb;
 var global_output;
-
+$("#loader").hide()
 var serverip="192.168.56.101"
 var bookinglist=[]
 get_cust_list();
     get_prod_list();
 var submit_output=function(){
+  $("#loader").show()
     var OUT = document.getElementById('out');
     console.log("Submitting bookings")
     console.log(bookinglist)
@@ -220,6 +356,7 @@ var submit_output=function(){
     http.setRequestHeader("Content-type", "application/json");
     http.onreadystatechange = function() {//Call a function when the state changes.
         if(http.readyState == 4 && http.status == 200) {
+          $("#loader").hide()
             response=JSON.parse(http.responseText)
             console.log(response)
             if (response.status==="success"){
@@ -230,8 +367,8 @@ var submit_output=function(){
             else{
                 alert("Something went wrong!")
             }
-            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'][0],2,2);
-	           else HTMLOUT.innerText = JSON.stringify(response['resp'][0],2,2);
+            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
+	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
 
         }
 
@@ -259,15 +396,17 @@ var parse_rows=function(rows){
 
 var process_output=function(){
 
-
+$("#loader").show()
     //var pickup_timestamp_map="{{Date}} {{Flight Time}}"
-    var pickup_timestamp_map=$("#pickup_timestamp_map").val()
+    //var pickup_timestamp_map=$("#pickup_timestamp_map").val()
+    var pickup_time_map=$("#pickup_time_map").val()
+    var pickup_date_map=$("#pickup_date_map").val()
     //var pickup_location_map="Intl Airport, Flight # {{Pick-Up}}"
     var pickup_location_map=$("#pickup_location_map").val()
     //var passenger_details_map="{{Booking ID}}\n{{Trip Code}}\n{{Passengers}}"
     var passenger_detail_map=$("#passenger_detail_map").val()
     var drop_location_map=$("#drop_location_map").val()
-
+    var passenger_mobile_map=$("#passenger_mobile_map").val()
     var product_id=$("#product").val()
     var booking_channel="bulk"
     var cust_id=$("#customer").val()
@@ -284,21 +423,36 @@ var process_output=function(){
                 bookinglist[i]['passenger_detail']=Mustache.render(passenger_detail_map,bookinglist[i])
                 bookinglist[i]['pickup_location']=Mustache.render(pickup_location_map,bookinglist[i])
                 bookinglist[i]['product_id']=product_id
-                bookinglist[i]['pickup_timestamp']=Mustache.render(pickup_timestamp_map,bookinglist[i])
+                pickup_date_string=Mustache.render(pickup_date_map,bookinglist[i])
+                pickup_date=moment(pickup_date_string).format("YYYY-MM-DD")
+                pickup_time_string=Mustache.render(pickup_time_map,bookinglist[i])
+                pickup_time=moment(pickup_time_string).format("HH:mm:ss")
+                if(pickup_time==="Invalid date"){
+                  pickup_time=pickup_time_string
+                }
+                pickup_timestamp_string=pickup_date+" "+pickup_time
+                console.log(pickup_timestamp_string)
+                pickup_timestamp=moment(pickup_timestamp_string).utc().format("YYYY-MM-DD HH:mm:ss")
+                if(pickup_timestamp===null){
+                  pickup_timestamp=pickup_timestamp_string
+                }
+                else{
+                bookinglist[i]['pickup_timestamp']=pickup_timestamp
+              }
                 bookinglist[i]['booking_channel']=booking_channel
                 bookinglist[i]['cust_id']=cust_id
                 bookinglist[i]['drop_location']=Mustache.render(drop_location_map,bookinglist[i])
-
+                bookinglist[i]['passenger_mobile']=Mustache.render(passenger_mobile_map,bookinglist[i])
                 console.log(bookinglist[i])
             }
         }
-        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(bookinglist[0],2,2);
-	   else HTMLOUT.innerText = JSON.stringify(bookinglist[0],2,2);
+        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(bookinglist,2,2);
+	   else HTMLOUT.innerText = JSON.stringify(bookinglist,2,2);
     //}
     //catch(err){
     //    alert("Something went wrong!")
     //}
-
+$("#loader").hide()
 }
 
 var addTextToTemplate=function(text){
@@ -320,7 +474,7 @@ var process_wb = (function() {
 	var to_json = function to_json(workbook) {
 		var result = {};
 		workbook.SheetNames.forEach(function(sheetName) {
-			var roa = X.utils.sheet_to_json(workbook.Sheets[sheetName], {header:1});
+			var roa = X.utils.sheet_to_json(workbook.Sheets[sheetName], {header:1, dateNF:"YYYY"});
 			if(roa.length) result[sheetName] = roa;
 		});
 		return JSON.stringify(result, 2, 2);
@@ -362,6 +516,18 @@ var process_wb = (function() {
 	};
 */
 	return function process_wb(wb) {
+    console.log(wb)
+    for (sheet in wb.Sheets){
+     //remove prerendered values, otherwise dateNF is ignored
+     for (cellref in sheet){
+         const c = sheet[cellref];
+         if(c.t==="d"){
+           console.log(c)
+             delete c.w;
+             delete c.z;
+         }
+    }
+  }
 		global_wb = wb;
 		var output = "";
 		switch(get_format()) {
@@ -372,11 +538,12 @@ var process_wb = (function() {
 		}
         global_output=output
         dic=JSON.parse(output)
+        //console.log(dic)
         colnames=[]
         for(sheet in dic){
-            console.log(dic[sheet][0])
+            //console.log(dic[sheet][0])
             colnames=colnames.concat(dic[sheet][0])
-            console.log(colnames)
+            //console.log(colnames)
         }
         colnameshtml=""
         for (i=0;i<colnames.length;i++){
@@ -427,7 +594,7 @@ var do_file = (function() {
 
 	return function do_file(files) {
 		rABS = true;//domrabs.checked;
-		use_worker = true;//domwork.checked;
+		use_worker = false;//domwork.checked;
 		var f = files[0];
 		var reader = new FileReader();
 		reader.onload = function(e) {
@@ -435,7 +602,7 @@ var do_file = (function() {
 			var data = e.target.result;
 			if(!rABS) data = new Uint8Array(data);
 			if(use_worker) xw(data, process_wb);
-			else process_wb(X.read(data, {type: rABS ? 'binary' : 'array'}));
+			else process_wb(X.read(data, {type: rABS ? 'binary' : 'array', cellDates:true, cellNF: false, cellText:false}));
 		};
 		if(rABS) reader.readAsBinaryString(f);
 		else reader.readAsArrayBuffer(f);
@@ -487,10 +654,13 @@ var do_file = (function() {
              columnDefs: [ {
                             orderable: false,
                             className: 'select-checkbox',
-                            targets:   0
+                            targets:   0,
+                            checkboxes: {
+                              'selectRow': true
+                              }
                         } ],
              select: {
-                            style:    'os',
+                            style:    'multi',
                             selector: 'td:first-child'
                         },
             columns: [
@@ -509,7 +679,17 @@ var do_file = (function() {
 
                 {width:"25%", data: 'passenger_detail',defaultContent:"None",render: function(data){if(data){return data}}},
                 {width:"10%", data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
-                {width:"5%", data: 'booking_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {width:"5%", data: 'booking_id', defaultContent:"None", render:  function(data){
+                    if(data){
+
+                        var bookingid='<a class="nav-link" data-toggle="modal" data-target="#editbookingform" data-bookingid="'+data+'">\
+                        <i class="material-icons">content_paste</i> '+data+'\
+                        </a>'
+
+                        return bookingid
+
+
+                    }}},
                 {width:"5%", data: 'assignment', defaultContent:"None", render: function(data){if(data){
                     return "Assigned"
                 }}}
@@ -518,6 +698,30 @@ var do_file = (function() {
 
         });
       }
+    }          //kj-v1.1-added code from 567
+    $("#editbookingform").on('show.bs.modal', function (event) {
+        console.log("editing booking in modal")
+        var eventsrc = $(event.relatedTarget) // Button that triggered the modal
+        var bookingid = eventsrc.data('bookingid') // Extract info from data-* attributes
+        console.log(bookingid)
+        sakha.fillBookingModal(bookingid)
+    })
+    $("#editbookingform").on('hide.bs.modal', function (event) {
+        document.getElementById("bookingform").reset()
+        console.log("closing booking  modal")
+        window.location.reload(false);
+    })
+    $("#editdutyslipform").on('hide.bs.modal', function (event) {
+        console.log("closing duty slip modal")
+        document.getElementById("dutyslipform").reset()
+        window.location.reload(false);
+    })
+
+
+
+
+
+    //kj-v1.1(feedback)-new lines end here
       $("#deleteselectedbookings").on("click", function(){
         var delvids=[]
         selectedbookings=$("#bookinglist").DataTable().rows({selected: true }).data()
@@ -549,7 +753,7 @@ var do_file = (function() {
         }
         http.send(params);
       })
-    }
+
     updateassignmentbookinglist()
 </script>
 </body>

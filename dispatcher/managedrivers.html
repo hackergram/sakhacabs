@@ -6,17 +6,19 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Manage drivers</title>
 <link rel="stylesheet" href="dist/css/mdi-icons.css">
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" /> <!--kj-v1.10(feedback) added two style sheets -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
-     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
 
     <link rel="stylesheet" type="text/css" src="assets/css/responsive.dataTables.min.css">
-
-    <style>
+    <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
+  <style>
 #drop{
 	border:2px dashed #bbb;
 	-moz-border-radius:5px;
@@ -50,6 +52,7 @@ a { text-decoration: none }
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" charset="utf8" src="assets/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
 
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
@@ -148,10 +151,70 @@ a { text-decoration: none }
                       </div>
                     </div>
 
+<!--kj-v1.01(feedback)-entering new code here-->
+<div class="modal fade" id="createdriverform" tabindex="-1" role="dialog" aria-labelledby="Create Driver">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+         </div>
+          <div class="modal-body">
+
+            <div class="card-header card-header-primary">
+              <h4 class="card-title">Edit Driver Profile</h4>
+             <div id="driverstatus" class="card-category"></div>
+            </div>
+            <div class="card-body">
+              <form id="driverform">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Driver ID</label>
+                      <input type="text" class="form-control" id="driverid" require="true">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Mobile Num</label>
+                      <input type="text" class="form-control" id="mobnum">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">First Name</label>
+                      <input type="text" class="form-control" id="firstname">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Last Name</label>
+                      <input type="text" class="form-control" id="lastname">
+                    </div>
+                  </div>
+                </div>
+            </form>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="savedriver">Save changes</button>
+          </div>
+        </div>
+      </div>
+<!-- New code ends here. -->
+
 
 
 <br />
 </div>
+<div class="loader_container" id="loader">
+    <center>Processing
+    <div class='loader'></div>
+    </center>
+<div>
 <!-- uncomment the next line here and in xlsxworker.js for encoding support -->
 <script src="assets/js/jsxlsx/dist/cpexcel.js"></script>
 <script src="assets/js/jsxlsx/shim.js"></script>
@@ -171,7 +234,7 @@ var XW = {
 	/* worker scripts */
 	worker: './assets/js/jsxlsx/xlsxworker.js'
 };
-
+$("#loader").hide()
 
 var global_wb;
 var global_output;
@@ -198,8 +261,8 @@ var submit_output=function(){
             else{
                 alert("Something went wrong!")
             }
-            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'][0],2,2);
-	           else HTMLOUT.innerText = JSON.stringify(response['resp'][0],2,2);
+            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
+	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
 
         }
 
@@ -226,6 +289,7 @@ var parse_rows=function(rows){
 
 
 var process_output=function(){
+  $("#loader").show()
   var driver_id_map=$("#driver_id_map").val()
   var driver_mobile_map=$("#driver_mobile_map").val()
 
@@ -244,14 +308,33 @@ var process_output=function(){
               console.log(driverlist[i])
             }
         }
-        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(driverlist[0],2,2);
-	   else HTMLOUT.innerText = JSON.stringify(driverlist[0],2,2);
+        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(driverlist,2,2);
+	   else HTMLOUT.innerText = JSON.stringify(driverlist,2,2);
     //}
     //catch(err){
     //    alert("Something went wrong!")
     //}
-
+    $("#loader").hide()
 }
+//kj-v1.1(feedback)adding lines from index.html
+$("#createdriverform").on('hide.bs.modal', function (event) {
+        document.getElementById("driverform").reset()
+        window.location.reload(false);
+})
+
+$("#createdriverform").on('show.bs.modal', function (event){
+        var eventsrc = $(event.relatedTarget) // Button that triggered the modal
+        var driverid = eventsrc.data('driverid') // Extract info from data-* attributes
+        $("#dashboardnavitem").toggleClass("active")
+        $("#createdrivernavitem").toggleClass("active")
+
+        /*$(".modal-dialog").draggable({
+            handle: ".modal-header"
+        })*/
+        sakha.fillDriverModal(driverid)
+
+})
+
 
 var addTextToTemplate=function(text){
     p=$("#templatefield").val()
@@ -396,17 +479,26 @@ var do_file = (function() {
              columnDefs: [ {
                             orderable: false,
                             className: 'select-checkbox',
-                            targets:   0
+                            targets:   0,
+                            checkboxes: {
+                              'selectRow': true
+                              }
                         } ],
              select: {
-                            style:    'os',
+                            style:    'multi',
                             selector: 'td:first-child'
                         },
             columns: [
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
                 {width:"5%", defaultContent:""},
 
-                {data: 'driver_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: null, defaultContent:"None", render: function (data){      //
+
+                    var driverid='<a class="nav-link" data-toggle="modal" data-target="#createdriverform" data-driverid="'+data.driver_id+'">\
+                        <i class="material-icons">content_paste</i> '+data.driver_id+'\
+                        </a>'
+                    return driverid
+                }},
                 {data: 'mobile_num', defaultContent:"None", render: function(data){if(data){return data}}},
 
             ],

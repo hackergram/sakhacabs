@@ -83,7 +83,12 @@ class Booking(PPrintMixin, DynamicDocument):
 
 class Product(PPrintMixin, DynamicDocument):
     product_id = fields.StringField(unique=True, required=True)
-
+    product_desc = fields.StringField(required=True, default="No description provided")
+    included_hrs = fields.FloatField(required=True, default=0.0)  # CHANGELOG - Will invalidate existing product data
+    included_kms = fields.FloatField(required=True, default=0.0)  # CHANGELOG - Will invalidate existing product data
+    extra_hrs_rate = fields.FloatField(required=True, default=0.0)  # CHANGELOG - Will invalidate existing product data
+    extra_kms_rate = fields.FloatField(required=True, default=0.0)  # CHANGELOG - Will invalidate existing product data
+    price = fields.FloatField(required=True, default=0.0)
 
 class LocationUpdate(PPrintMixin, Document):
     driver_id = fields.StringField(required=True)
