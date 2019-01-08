@@ -313,7 +313,7 @@ var parse_rows=function(rows){
     console.log(cols);
     parsed_output=[];
     for (i=1;i<rows.length;i++){
-
+        rowjson={}
         for (j=0;j<cols.length;j++){
             rowjson[cols[j]]=rows[i][j];
         }
