@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Manage customers</title>
 <link rel="stylesheet" href="dist/css/mdi-icons.css">
-
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
 
     <link rel="stylesheet" type="text/css" src="assets/css/responsive.dataTables.min.css">
-
+    <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
     <style>
 #drop{
 	border:2px dashed #bbb;
@@ -50,6 +50,7 @@ a { text-decoration: none }
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" charset="utf8" src="assets/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
 
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
@@ -152,11 +153,69 @@ a { text-decoration: none }
                         </div>
                       </div>
                     </div>
+<!--kj-v1.01- adding code for modal -->
+<div class="modal fade" id="editcustomersform" tabindex="-1" role="dialog" aria-labelledby="Edit Customers">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+         </div>
+          <div class="modal-body">
+
+            <div class="card-header card-header-primary">
+              <h4 class="card-title">Edit Customer Profile</h4>
+             <div id="customerstatus" class="card-category"></div>
+            </div>
+            <div class="card-body">
+              <form id="driverform">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Customer ID</label>
+                      <input type="text" class="form-control" id="customerid" require="true">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Mobile Num</label>
+                      <input type="text" class="form-control" id="customermobnum">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group bmd-form-group">
+                      <label class="bmd-label-floating">Customer Billing Display</label>
+                      <input type="text" class="form-control" id="customerbillingdisplay">
+                    </div>
+                  </div>
+                </div>
+            </form>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="savecustomer">Save changes</button>
+          </div>
+        </div>
+      </div>
+<!-- New code ends here. -->
+
+
+
+
+
 
 
 
 <br />
 </div>
+<div class="loader_container" id="loader">
+    <center>Processing
+    <div class='loader'></div>
+    </center>
+<div>
 <!-- uncomment the next line here and in xlsxworker.js for encoding support -->
 <script src="assets/js/jsxlsx/dist/cpexcel.js"></script>
 <script src="assets/js/jsxlsx/shim.js"></script>
@@ -177,12 +236,13 @@ var XW = {
 	worker: './assets/js/jsxlsx/xlsxworker.js'
 };
 
-
+$("#loader").hide()
 var global_wb;
 var global_output;
 var serverip="192.168.56.101"
 var customerlist=[]
 var submit_output=function(){
+  $("#loader").show()
     var OUT = document.getElementById('out');
     console.log("Submitting customers")
     console.log(customerlist)
@@ -193,6 +253,7 @@ var submit_output=function(){
     http.setRequestHeader("Content-type", "application/json");
     http.onreadystatechange = function() {//Call a function when the state changes.
         if(http.readyState == 4 && http.status == 200) {
+          $("#loader").hide()
             response=JSON.parse(http.responseText)
             console.log(response)
             if (response.status==="success"){
@@ -203,8 +264,8 @@ var submit_output=function(){
             else{
                 alert("Something went wrong!")
             }
-            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'][0],2,2);
-	           else HTMLOUT.innerText = JSON.stringify(response['resp'][0],2,2);
+            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
+	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
 
         }
 
@@ -231,6 +292,7 @@ var parse_rows=function(rows){
 
 
 var process_output=function(){
+  $("#loader").show()
   var cust_id_map=$("#cust_id_map").val()
   var cust_billing_map=$("#cust_billing_map").val()
     var mobile_num_map=$("#mobile_num_map").val()
@@ -250,13 +312,13 @@ var process_output=function(){
               console.log(customerlist[i])
             }
         }
-        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(customerlist[0],2,2);
-	   else HTMLOUT.innerText = JSON.stringify(customerlist[0],2,2);
+        if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(customerlist,2,2);
+	   else HTMLOUT.innerText = JSON.stringify(customerlist,2,2);
     //}
     //catch(err){
     //    alert("Something went wrong!")
     //}
-
+$("#loader").hide()
 }
 
 var addTextToTemplate=function(text){
@@ -278,7 +340,7 @@ var process_wb = (function() {
 	var to_json = function to_json(workbook) {
 		var result = {};
 		workbook.SheetNames.forEach(function(sheetName) {
-			var roa = X.utils.sheet_to_json(workbook.Sheets[sheetName], {header:1});
+			var roa = X.utils.sheet_to_json(workbook.Sheets[sheetName], {header:1, dateNF:"YYYY-MM-DD"});
 			if(roa.length) result[sheetName] = roa;
 		});
 		return JSON.stringify(result, 2, 2);
@@ -308,6 +370,7 @@ var process_wb = (function() {
         }
         //OUT.empty()
         OUT.innerHTML=colnameshtml
+
 		/*if(OUT.innerText === undefined) OUT.textContent = colnameshtml;
 
 		else OUT.innerText = colnames;
@@ -338,6 +401,22 @@ var do_file = (function() {
 		worker.postMessage({d:data,b:rABS?'binary':'array'});
 	};
 
+
+        $("#editcustomersform").on('hide.bs.modal', function (event) {
+            console.log("closing customer modal")
+          //  document.getElementById("customerstatus").reset()
+            window.location.reload(false);
+        })
+        $("#editcustomersform").on('show.bs.modal', function (event) {
+            console.log("editing booking in modal")
+            var eventsrc = $(event.relatedTarget) // Button that triggered the modal
+            var cust_id = eventsrc.data('cust_id') // Extract info from data-* attributes
+            console.log(cust_id)
+            sakha.fillCustomerModal(cust_id)
+          })
+
+
+
 	return function do_file(files) {
 		rABS = true;//domrabs.checked;
 		use_worker = true;//domwork.checked;
@@ -348,7 +427,8 @@ var do_file = (function() {
 			var data = e.target.result;
 			if(!rABS) data = new Uint8Array(data);
 			if(use_worker) xw(data, process_wb);
-			else process_wb(X.read(data, {type: rABS ? 'binary' : 'array'}));
+			//else process_wb(X.read(data, {type: rABS ? 'binary' : 'array'}));
+      else process_wb(X.read(data, {type: rABS ? 'binary' : 'array', cellDates:true, cellNF: false, cellText:false}));
 		};
 		if(rABS) reader.readAsBinaryString(f);
 		else reader.readAsArrayBuffer(f);
@@ -402,17 +482,26 @@ var do_file = (function() {
              columnDefs: [ {
                             orderable: false,
                             className: 'select-checkbox',
-                            targets:   0
+                            targets:   0,
+                            checkboxes: {
+                              'selectRow': true
+                              }
                         } ],
              select: {
-                            style:    'os',
+                            style:    'multi',
                             selector: 'td:first-child'
                         },
             columns: [
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
                 {width:"5%", defaultContent:""},
 
-                {data: 'cust_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: null, defaultContent:"None", render: function (data){      //kj-var1.01-new content added
+
+                    var customerid='<a class="nav-link" data-toggle="modal" data-target="#editcustomersform" data-cust_id="'+data.cust_id+'">\
+                        <i class="material-icons">content_paste</i> '+data.cust_id+'\
+                        </a>'
+                    return customerid
+                }},
                 {data: 'cust_billing', defaultContent:"None", render: function(data){if(data){return data}}},
                 {data: 'mobile_num', defaultContent:"None", render: function(data){if(data){return data}}},
 
@@ -421,6 +510,12 @@ var do_file = (function() {
 
         });
       }
+
+
+
+
+
+
       $("#deleteselectedcustomers").on("click", function(){
         var delvids=[]
         selectedcustomers=$("#customerlist").DataTable().rows({selected: true }).data()
