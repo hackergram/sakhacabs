@@ -278,7 +278,7 @@ var XW = {
 $("#loader").hide()
 var global_wb;
 var global_output;
-var serverip="192.168.56.101"
+var serverip="192.168.56.103"
 var productlist=[]
 var submit_output=function(){
     $("#loader").show()
@@ -313,7 +313,7 @@ var parse_rows=function(rows){
     console.log(cols);
     parsed_output=[];
     for (i=1;i<rows.length;i++){
-
+        rowjson={}
         for (j=0;j<cols.length;j++){
             rowjson[cols[j]]=rows[i][j];
         }
