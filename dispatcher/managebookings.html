@@ -427,6 +427,9 @@ $("#loader").show()
                 pickup_date=moment(pickup_date_string).format("YYYY-MM-DD")
                 pickup_time_string=Mustache.render(pickup_time_map,bookinglist[i])
                 pickup_time=moment(pickup_time_string).format("HH:mm:ss")
+                if(pickup_date==="Invalid date"){
+                  pickup_date=pickup_date_string
+                }
                 if(pickup_time==="Invalid date"){
                   pickup_time=pickup_time_string
                 }
