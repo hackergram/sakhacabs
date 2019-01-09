@@ -420,6 +420,13 @@ $("#loader").show()
 
             bookinglist=parsed_output;
             for (i=0;i<bookinglist.length;i++){
+                Object.keys(bookinglist[0]).forEach(function(key){
+                  console.log(key) ;
+                  if (key.match(/[^a-zA-Z0-9 ]/)){
+                    bookinglist[0][key.replace(/[^a-zA-Z0-9 ]/g,"")]=bookinglist[0][key];
+                    delete bookinglist[0][key]
+                  }
+                })
                 bookinglist[i]['passenger_detail']=Mustache.render(passenger_detail_map,bookinglist[i])
                 bookinglist[i]['pickup_location']=Mustache.render(pickup_location_map,bookinglist[i])
                 bookinglist[i]['product_id']=product_id
