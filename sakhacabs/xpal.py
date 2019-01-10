@@ -379,8 +379,9 @@ def new_booking(respdict):
         b = documents.Booking(booking_id=utils.new_booking_id(), **bookingdict)
         for key in respdict.keys():
             key2=key.replace(".","").replace("$","")
-            respdict[key2]=respdict[key]
-            respdict.pop(key)
+            if key2 != key:
+                respdict[key2]=respdict[key]
+                respdict.pop(key)
         sakhacabsxpal.logger.info("Saving cust-meta as: {}".format(respdict))
         b.cust_meta = respdict
         b.save()
