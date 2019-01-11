@@ -340,7 +340,7 @@ var get_prod_list=function(){
 var global_wb;
 var global_output;
 $("#loader").hide()
-var serverip="192.168.56.101"
+var serverip="192.168.56.103"
 var bookinglist=[]
 get_cust_list();
     get_prod_list();
@@ -680,6 +680,15 @@ var do_file = (function() {
                             style:    'multi',
                             selector: 'td:first-child'
                         },
+             buttons: [{
+                  text: 'Select All On Page',
+                  action: function() {
+                    table.rows({
+                      page: 'current'
+                    }).select();
+                  }
+                }],
+
             columns: [
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
                 {width:"5%", defaultContent:""},
@@ -733,9 +742,6 @@ var do_file = (function() {
         document.getElementById("dutyslipform").reset()
         window.location.reload(false);
     })
-
-
-
 
 
     //kj-v1.1(feedback)-new lines end here

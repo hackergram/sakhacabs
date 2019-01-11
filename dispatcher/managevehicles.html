@@ -93,7 +93,18 @@ a { text-decoration: none }
         Vehicle ID Template: <input type="text" size="30" id="vehicle_id_map"><br>
           </div>
             </div>
+            <div class="row"><div class="col-md-12">
+            Vehicle Category Template: <input type="text" size="30" id="vehicle_cat_map"><br>
+              </div>
+                </div>
+                <div class="row"><div class="col-md-12">
+                Vehicle Name Template: <input type="text" size="30" id="vehicle_name_map"><br>
+                  </div>
+                    </div>
+
+
         <div class="row">
+
 
     <button id="process" onclick="process_output()">Process!</button>
     <button id="submit" onclick="submit_output()">Submit!</button>
@@ -134,7 +145,8 @@ a { text-decoration: none }
                                     <thead>
                                         <th>Selected</th>
                                            <th>Vehicle ID</th>
-
+                                           <th>Vehicle Category</th>
+                                          <th>Vehicle Name</th>
 
                                     </thead>
                                     <tbody></tbody>
@@ -176,7 +188,7 @@ var XW = {
 $("#loader").hide()
 var global_wb;
 var global_output;
-var serverip="192.168.56.101"
+var serverip="192.168.56.103"
 var vehiclelist=[]
 var submit_output=function(){
   $("#loader").show()
@@ -231,6 +243,8 @@ var parse_rows=function(rows){
 var process_output=function(){
   $("#loader").show()
   var vehicle_id_map=$("#vehicle_id_map").val()
+  var vehicle_cat_map=$("#vehicle_cat_map").val()
+  var vehicle_name_map=$("#vehicle_name_map").val()
   var rows=[]
   dic=JSON.parse(global_output)
  // try{
@@ -240,7 +254,11 @@ var process_output=function(){
           console.log(parsed_output)
             vehiclelist=parsed_output;
           for (i=0;i<vehiclelist.length;i++){
+
               vehiclelist[i]['vehicle_id']=Mustache.render(vehicle_id_map,vehiclelist[i])
+              vehiclelist[i]['vehicle_cat']=Mustache.render(vehicle_cat_map,vehiclelist[i])
+              vehiclelist[i]['vehicle_name']=Mustache.render(vehicle_name_map,vehiclelist[i])
+
               console.log(vehiclelist[i])
             }
         }
@@ -411,7 +429,8 @@ var do_file = (function() {
                 {width:"5%", defaultContent:""},
 
                 {data: 'vehicle_id', defaultContent:"None", render: function(data){if(data){return data}}},
-
+                {data: 'vehicle_cat', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: 'vehicle_cat', defaultContent:"None", render: function(data){if(data){return data}}},
             ],
             scrollY: 400
 
