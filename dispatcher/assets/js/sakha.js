@@ -841,7 +841,7 @@ var sakha={
              $.getJSON(url,function(data){
                  console.log(data.resp[0])
                //  $("#customer_pickup_timestamp").empty()
-                 $("#vehicle_id").append(data.resp[0].veh_id )
+                 $("#vehicle_id").append(data.resp[0].vehicle_id )
                  $("#vehid").val(data.resp[0].vehicle_id)
 
 

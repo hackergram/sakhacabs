@@ -494,13 +494,13 @@ var do_file = (function() {
 
                 {data:null, defaultContent:"None", render: function(data){      //
 
-                    var vehicleid='<a class="nav-link" data-toggle="modal" data-target="#createvehicleform" data-vehicleid="'+data.vehicle_id+'">\
+                    var vehicle_id='<a class="nav-link" data-toggle="modal" data-target="#createvehicleform" data-vehicle_id="'+data.vehicle_id+'">\
                         <i class="material-icons">content_paste</i> '+data.vehicle_id+'\
                         </a>'
-                    return vehicleid
+                    return vehicle_id
                 }},
                 {data: 'vehicle_cat', defaultContent:"None", render: function(data){if(data){return data}}},
-                {data: 'vehicle_cat', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: 'vehicle_name', defaultContent:"None", render: function(data){if(data){return data}}},
             ],
             scrollY: 400
 
