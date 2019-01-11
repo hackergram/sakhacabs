@@ -397,13 +397,27 @@ var parse_rows=function(rows){
 var process_output=function(){
 
 $("#loader").show()
+    console.log("removing special characters from global output", global_output)
+    Object.keys(global_output).forEach(function(sheet){
+      //console.log(sheet)
+      for (i=0;i<sheet[0][0].length;i++){
+          key=sheet[0][i]
+           ;
+          if (key.match(/[^a-zA-Z0-9 ]/)){
+            sheet[0][i]=key.replace(/[^a-zA-Z0-9 ]/g,"")
+            //delete global_output[0][key]
+          }
+        }
+    })
+
+
+    console.log("Global output after cleaning", global_output)
     //var pickup_timestamp_map="{{Date}} {{Flight Time}}"
     //var pickup_timestamp_map=$("#pickup_timestamp_map").val()
     var pickup_time_map=$("#pickup_time_map").val()
     var pickup_date_map=$("#pickup_date_map").val()
     //var pickup_location_map="Intl Airport, Flight # {{Pick-Up}}"
     var pickup_location_map=$("#pickup_location_map").val()
-    //var passenger_details_map="{{Booking ID}}\n{{Trip Code}}\n{{Passengers}}"
     var passenger_detail_map=$("#passenger_detail_map").val()
     var drop_location_map=$("#drop_location_map").val()
     var passenger_mobile_map=$("#passenger_mobile_map").val()
@@ -416,25 +430,28 @@ $("#loader").show()
         for (sheet in dic){
             rows=rows.concat(dic[sheet])
             parsed_output=parse_rows(rows)
-            console.log(parsed_output)
+            //console.log(parsed_output)
 
             bookinglist=parsed_output;
             for (i=0;i<bookinglist.length;i++){
                 bookinglist[i]['passenger_detail']=Mustache.render(passenger_detail_map,bookinglist[i])
                 bookinglist[i]['pickup_location']=Mustache.render(pickup_location_map,bookinglist[i])
                 bookinglist[i]['product_id']=product_id
-                pickup_date_string=Mustache.render(pickup_date_map,bookinglist[i])
+                pickup_date_string=Mustache.render(pickup_date_map,bookinglist[i]).trim()
                 pickup_date=moment(pickup_date_string).format("YYYY-MM-DD")
-                pickup_time_string=Mustache.render(pickup_time_map,bookinglist[i])
+                pickup_time_string=Mustache.render(pickup_time_map,bookinglist[i]).trim()
                 pickup_time=moment(pickup_time_string).format("HH:mm:ss")
+                if(pickup_date==="Invalid date"){
+                  pickup_date=pickup_date_string
+                }
                 if(pickup_time==="Invalid date"){
-                  pickup_time=pickup_time_string
+                  pickup_time=pickup_time_string.trim()
                 }
                 pickup_timestamp_string=pickup_date+" "+pickup_time
-                console.log(pickup_timestamp_string)
-                pickup_timestamp=moment(pickup_timestamp_string).utc().format("YYYY-MM-DD HH:mm:ss")
+                //console.log(pickup_timestamp_string.trim())
+                pickup_timestamp=moment(pickup_timestamp_string.trim()).utc().format("YYYY-MM-DD HH:mm:ss")
                 if(pickup_timestamp===null){
-                  pickup_timestamp=pickup_timestamp_string
+                  pickup_timestamp=pickup_timestamp_string.trim()
                 }
                 else{
                 bookinglist[i]['pickup_timestamp']=pickup_timestamp
@@ -443,7 +460,7 @@ $("#loader").show()
                 bookinglist[i]['cust_id']=cust_id
                 bookinglist[i]['drop_location']=Mustache.render(drop_location_map,bookinglist[i])
                 bookinglist[i]['passenger_mobile']=Mustache.render(passenger_mobile_map,bookinglist[i])
-                console.log(bookinglist[i])
+                //console.log(bookinglist[i])
             }
         }
         if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(bookinglist,2,2);
