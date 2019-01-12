@@ -221,68 +221,7 @@ def validate_assignment_dict(assignmentdict, new=True):
     return validation
 
 
-'''
-def sync_remote():
-    custlist = custsheet.get_as_df().to_dict(orient="records")
-    driverlist = driversheet.get_as_df().to_dict(orient="records")
-    carlist = carsheet.get_as_df().to_dict(orient="records")
-    bookinglist = bookingsheet.get_as_df().to_dict(orient="records")
-    productlist = prodsheet.get_as_df().to_dict(orient="records")
-    for driver in driverlist:
-        if len(documents.Driver.objects(driver_id=driver['driver_id'])) == 0:
-            d = documents.Driver(driver_id=driver['driver_id'], mobile_num=str(
-                driver['mobile_num']), first_name=driver['first_name'], last_name=driver['last_name'])
-            d.save()
-    driverdf = pandas.DataFrame(json.loads(documents.Driver.objects.to_json()))
-    driverdf['_id'] = driverdf['_id'].apply(lambda x: x['$oid'])
-    driversheet.set_dataframe(driverdf, (1, 1))
 
-    for customer in custlist:
-        if len(documents.Customer.objects(cust_id=customer['cust_id'])) == 0:
-            c = documents.Customer(cust_id=customer['cust_id'], mobile_num=customer['mobile_num'], cust_type=customer['cust_type'],
-                                   blacklisted=customer['blacklisted'], email=customer['email'], cust_name=customer['cust_name'])
-            c.save()
-    customerdf = pandas.DataFrame(json.loads(
-        documents.Customer.objects.to_json()))
-    customerdf['_id'] = customerdf['_id'].apply(lambda x: x['$oid'])
-    custsheet.set_dataframe(customerdf, (1, 1))
-
-    for car in carlist:
-        if len(documents.Vehicle.objects(vehicle_id=car['vehicle_id'])) == 0:
-            v = documents.Vehicle(
-                vehicle_id=car['vehicle_id'], model=car['model'], make=car['make'], reg_num=car['reg_num'])
-            v.save()
-    cardf = pandas.DataFrame(json.loads(documents.Vehicle.objects.to_json()))
-    cardf['_id'] = cardf['_id'].apply(lambda x: x['$oid'])
-    if 'driver' in cardf.columns:
-        cardf['driver'] = cardf['driver'].apply(lambda x: x['$oid'])
-    carsheet.set_dataframe(cardf, (1, 1))
-
-    for product in productlist:
-        if len(documents.Product.objects(product_id=product['product_id'])) == 0:
-            p = documents.Product(
-                product_id=product['product_id'], name=product['name'], price=product['price'], desc=product['desc'])
-            p.save()
-    productdf = pandas.DataFrame(json.loads(
-        documents.Product.objects.to_json()))
-    productdf['_id'] = productdf['_id'].apply(lambda x: x['$oid'])
-    prodsheet.set_dataframe(productdf, (1, 1))
-
-    for booking in bookinglist:
-        if len(documents.Product.objects(product_id=product['product_id'])) == 0:
-            p = documents.Product(
-                product_id=product['product_id'], name=product['name'], price=product['price'], desc=product['desc'])
-            p.save()
-    productdf = pandas.DataFrame(json.loads(
-        documents.Product.objects.to_json()))
-    productdf['_id'] = productdf['_id'].apply(lambda x: x['$oid'])
-    prodsheet.set_dataframe(productdf, (1, 1))
-
-
-
-LocationUpdate CRUD functionality
-Fix to check if vehicle is already  taken.
-'''
 
 
 def new_locationupdate(driver, timestamp, checkin=True, location=None, vehicle=None, handoff=None, logger=xetrapal.astra.baselogger, **kwargs):
@@ -323,12 +262,6 @@ def new_locationupdate(driver, timestamp, checkin=True, location=None, vehicle=N
     return locationupdate
 
 
-'''
-Bookings, Assignments and DutySlips
-Assignments are collections of one or more bookings grouped together for assignment of vehicles/drivers
-DutySlips record assignment execution. DutySlips are issued by the dispatcher and can be created and deleted but not updated.
-A DutySlip can not be deleted once the open time has been set by the driver, i.e. after execution on an assignment has begun.
-'''
 '''
 Bookings CRUD
 '''
@@ -378,9 +311,9 @@ def new_booking(respdict):
     try:
         b = documents.Booking(booking_id=utils.new_booking_id(), **bookingdict)
         for key in respdict.keys():
-            key2=key.replace(".","").replace("$","")
+            key2 = key.replace(".", "").replace("$", "")
             if key2 != key:
-                respdict[key2]=respdict[key]
+                respdict[key2] = respdict[key]
                 respdict.pop(key)
         sakhacabsxpal.logger.info("Saving cust-meta as: {}".format(respdict))
         b.cust_meta = respdict
@@ -502,14 +435,11 @@ def delete_booking(booking_id):
 Assignment CRUD
 '''
 
-
 def save_assignment(assignmentdict, assignment_id=None):
-    '''
-    Creates a new assignment/Updates an existing assignment with the provided bookings and duty slips
+    '''Creates a new assignment/Updates an existing assignment with the provided bookings and duty slips
     Input: A dictionary of the format {"assignment": Assignment object,dutyslips: List of driver/vehicle pairs}
     Returns: An assignment object
     '''
-    # bookings=[documents.Booking.from_json(json.dumps(x)) for x in assignmentdict['assignment']['bookings']]
     bookings = [documents.Booking.objects.with_id(
         x['_id']['$oid']) for x in assignmentdict['assignment']['bookings']]
     if assignment_id is None:
@@ -780,11 +710,8 @@ Vehicle CRUD functionality
 
 
 def get_vehicle_by_vid(vid):
-    # t=db.view("vehicle/all_by_vnum",keys=[vnum]).all()
     t = documents.Vehicle.objects(vehicle_id=vid)
-
     if len(t) > 0:
-        # return [Vehicle(x['value']) for x in t][0]
         return t[0]
     else:
         return None
@@ -1101,6 +1028,47 @@ def delete_invoice(invoice_id):
             return "{} {}".format(type(e), str(e))
 
 
+def export_invoice(invoice_id):
+    invoice = documents.Invoice.objects(invoice_id=invoice_id)
+    if invoice == []:
+        return "No such invoice"
+    else:
+        invoice = invoice[0]
+    cur = sakhacabsgd.create(invoice.invoice_id)
+    template = sakhacabsgd.open("InvoiceTemplate")
+    t = template.worksheet_by_title("Invoice")
+    cur.add_worksheet("Invoice", src_worksheet=t)
+    invoicesheet = cur.worksheet_by_title("Invoice")
+    cur.del_worksheet(cur.worksheet_by_title("Sheet1"))
+
+    n = 15
+    for line in invoice.invoicelines:
+        print n, line
+        invoicesheet.insert_rows(n - 1, 1)
+        invoicesheet.update_row(n, ["", line['date'], line['particulars'],
+                                    line['product'], line['qty'], line['rate'], "=F" + str(n) + "*E" + str(n)])
+        n += 1
+    totalcell = "G" + str(n + 2)
+    print totalcell
+    n = n + 4
+    for line in invoice.taxes:
+        invoicesheet.insert_rows(n - 1, 1)
+        invoicesheet.update_row(n, ["", "", "", "", "", line['name'] + "(" + str(
+            line['rate'] * 100) + "%)", "=" + totalcell + "*" + str(line['rate'])])
+    n += 1
+    custbil = invoicesheet.cell("B8")
+    cust = documents.Customer.objects(cust_id=invoice.cust_id)[0]
+    custbil.value = cust.cust_billing
+    datecel = invoicesheet.cell("B5")
+    datecel.value = "Submitted on " + invoice.invoice_date.strftime("%Y-%m-%d")
+    idcel = invoicesheet.cell("F8")
+    idcel.value = invoice.invoice_id
+    duedatecel = invoicesheet.cell("F11")
+    duedatecel.value = invoice.invoice_date.strftime("%Y-%d-%m")
+    return cur.url
+
+
+
 '''
 Exporting everything
 '''
@@ -1150,46 +1118,6 @@ def export_bookings():
         lambda x: datetime.datetime.fromtimestamp((x['$date'] + 1) / 1000).strftime("%Y-%m-%d %H:%M:%S"))
     bookingdf.to_csv("./dispatcher/reports/bookings.csv", encoding="utf-8")
     return "reports/bookings.csv"
-
-
-def export_invoice(invoice_id):
-    invoice = documents.Invoice.objects(invoice_id=invoice_id)
-    if invoice == []:
-        return "No such invoice"
-    else:
-        invoice = invoice[0]
-    cur = sakhacabsgd.create(invoice.invoice_id)
-    template = sakhacabsgd.open("InvoiceTemplate")
-    t = template.worksheet_by_title("Invoice")
-    cur.add_worksheet("Invoice", src_worksheet=t)
-    invoicesheet = cur.worksheet_by_title("Invoice")
-    cur.del_worksheet(cur.worksheet_by_title("Sheet1"))
-
-    n = 15
-    for line in invoice.invoicelines:
-        print n, line
-        invoicesheet.insert_rows(n - 1, 1)
-        invoicesheet.update_row(n, ["", line['date'], line['particulars'],
-                                    line['product'], line['qty'], line['rate'], "=F" + str(n) + "*E" + str(n)])
-        n += 1
-    totalcell = "G" + str(n + 2)
-    print totalcell
-    n = n + 4
-    for line in invoice.taxes:
-        invoicesheet.insert_rows(n - 1, 1)
-        invoicesheet.update_row(n, ["", "", "", "", "", line['name'] + "(" + str(
-            line['rate'] * 100) + "%)", "=" + totalcell + "*" + str(line['rate'])])
-    n += 1
-    custbil = invoicesheet.cell("B8")
-    cust = documents.Customer.objects(cust_id=invoice.cust_id)[0]
-    custbil.value = cust.cust_billing
-    datecel = invoicesheet.cell("B5")
-    datecel.value = "Submitted on " + invoice.invoice_date.strftime("%Y-%m-%d")
-    idcel = invoicesheet.cell("F8")
-    idcel.value = invoice.invoice_id
-    duedatecel = invoicesheet.cell("F11")
-    duedatecel.value = invoice.invoice_date.strftime("%Y-%d-%m")
-    return cur.url
 
 
 '''
