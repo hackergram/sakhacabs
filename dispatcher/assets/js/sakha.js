@@ -673,6 +673,9 @@ var sakha={
        document.getElementById("savedriver").setAttribute("onclick","sakha.saveDriver('"+driverid+"')")
 
     },
+
+
+
     fillDutySlipModal: function(dsid){
        console.log("editing dutyslip "+dsid)
        var url = 'http://'+serverip+':5000/dutyslip/by_id/'+dsid
@@ -713,6 +716,84 @@ var sakha={
        document.getElementById("savedutyslip").setAttribute("onclick","sakha.saveDutySlip('"+dsid+"')")
 
     },
+/*    fillVehiclesModal: function(vehicle_id){
+        if(vehicle_id==="newvehicle"){
+            console.log("creating new vehicle")
+            $("#vehid").val("")
+            $("#vehcat").val("")
+            $("#vehname").val("")
+}
+
+        else{
+            console.log("editing vehicle "+vehicle_id)
+            $.getJSON('http://'+serverip+':5000/vehicle/by_vehicle_id/'+vehicle_id,function(data){
+                console.log(data.resp[0])
+                $("#vehid").val(data.resp[0].vehicle_id)
+                $("#vehcat").val(data.resp[0].vehicle_cat)
+                $("#vehnum").val(data.resp[0].vehicle_name)
+
+            })
+        }
+
+       document.getElementById("savevehicle").setAttribute("onclick","sakha.savevehicle('"+vehicle_id+"')")
+
+    },*/
+    savevehicle: function(vehicle_id){
+        console.log("Trying to save "+vehicle_id)
+        vehicledict={}
+        vehicledict.vehicle_id=$("#vehid").val()
+        vehicledict.vehicle_cat=$("#vehcat").val()
+        vehicledict.vehicle_name=$("#vehnum").val()
+    //    vehicledict.last_name=$("#lastname").val()
+        var params = JSON.stringify(vehicledict);
+        var http = new XMLHttpRequest();
+        if(vehicle_id==="newvehicle"){
+            //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+            var url = "http://"+serverip+":5000/vehicle";
+            http.open("POST", url, true);
+        }
+        else{
+            var url = "http://"+serverip+":5000/vehicle/by_vehicle_id/"+vehicle_id;
+            http.open("PUT", url, true);
+
+        }
+        if (vehicledict.vehicle_id.length>4){
+            http.setRequestHeader("Content-type", "application/json");
+            http.onreadystatechange = function() {//Call a function when the state changes.
+            if(http.readyState == 4 ) {
+                if(http.status == 200){
+                    response=JSON.parse(http.responseText)
+                    console.log(response)
+                    if(response.status==="success"){
+                       document.getElementById("vehiclelist").innerHTML="<span style='color:green'>Success!</span>"
+                        alert("Saved vehicle Successfully!")
+                        console.log("success")
+                    }
+                    if (response.status==="error"){
+                        console.log("error")
+                        alert("Failed to Save   vehicle!")
+                         document.getElementById("vehiclelist").innerHTML="<span style='color:red'>"+response.resp+"</span>"
+                    }
+                    }
+                    else{
+                    alert("Network Error Saving vehicle.")
+                    }
+                    }
+
+                    }
+                    http.send(params);
+                    }
+                    else{
+                    alert(" vehicle ID must be at least 5 characters")
+                    }
+
+
+
+      },
+
+
+
+
 
     fillCustomerModal: function(cust_id){
        console.log("editing customer "+cust_id)
@@ -750,6 +831,44 @@ var sakha={
           })
 
      document.getElementById("savecustomer").setAttribute("onclick","sakha.saveCustomer('"+cust_id+"')")
+},
+
+     fillVehiclesModal: function(vehicle_id){
+        console.log("editing customer "+vehicle_id)
+        var url = 'http://'+serverip+':5000/vehicle/by_vehicle_id/'+vehicle_id
+        console.log("getting url "+url)
+
+             $.getJSON(url,function(data){
+                 console.log(data.resp[0])
+               //  $("#customer_pickup_timestamp").empty()
+                 $("#vehicle_id").append(data.resp[0].vehicle_id )
+                 $("#vehid").val(data.resp[0].vehicle_id)
+
+
+             //    $("#customer_product_id").val(data.resp[0].product_id)
+             //    $("#customer_status").val(data.resp[0].status).change()
+                 //$("#created_time").val(moment(data.resp[0].created_time.$date).format('MMMM Do YYYY, h:mm:ss a'));
+                 //$("#customer_pickup_timestamp").empty()
+             //    $("#customer_pickup_timestamp").val(moment(data.resp[0].pickup_timestamp.$date+1).format('YYYY-MM-DD HH:mm:ss'))
+
+             //    $("#customer_created_timestamp").empty()
+
+               //  $("#customer_created_timestamp").append(moment(data.resp[0].created_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a'));
+               // $("#customer_channel").val(data.resp[0].customer_channel);
+                 //$("#total_time").text=moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2);
+               //  $("#customer_cust_meta").val(JSON.stringify(data.resp[0].cust_meta))
+             //    $("#customer_remarks").val(data.resp[0].remarks)
+                 $("#vehcat").val(data.resp[0].vehicle_cat)
+                 $("#vehnum").val(data.resp[0].vehicle_name)
+             //    $("#customer_passenger_detail").val(data.resp[0].passenger_detail)
+
+               //  $("#customer_pickup_location").val(data.resp[0].pickup_location)
+             //    $("#customer_drop_location").val(data.resp[0].drop_location)
+
+
+           })
+
+      document.getElementById("savevehicle").setAttribute("onclick","sakha.savevehicle('"+vehicle_id+"')")
 
 
 

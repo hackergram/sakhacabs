@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <!-- xlsx.js (C) 2013-present  SheetJS http://sheetjs.com -->
 <!-- vim: set ts=2: -->
+<!--kj-v1.01- http://live.datatables.net/wixutixi/20/edit for 314-->
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Manage Vehicles</title>
 <link rel="stylesheet" href="dist/css/mdi-icons.css">
-
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
@@ -93,7 +94,18 @@ a { text-decoration: none }
         Vehicle ID Template: <input type="text" size="30" id="vehicle_id_map"><br>
           </div>
             </div>
+            <div class="row"><div class="col-md-12">
+            Vehicle Category Template: <input type="text" size="30" id="vehicle_cat_map"><br>
+              </div>
+                </div>
+                <div class="row"><div class="col-md-12">
+                Vehicle Name Template: <input type="text" size="30" id="vehicle_name_map"><br>
+                  </div>
+                    </div>
+
+
         <div class="row">
+
 
     <button id="process" onclick="process_output()">Process!</button>
     <button id="submit" onclick="submit_output()">Submit!</button>
@@ -134,7 +146,8 @@ a { text-decoration: none }
                                     <thead>
                                         <th>Selected</th>
                                            <th>Vehicle ID</th>
-
+                                           <th>Vehicle Category</th>
+                                          <th>Vehicle Name</th>
 
                                     </thead>
                                     <tbody></tbody>
@@ -144,7 +157,54 @@ a { text-decoration: none }
                       </div>
                     </div>
 
+                    !--kj-v1.01(feedback)-entering new code here-->
+                    <div class="modal fade" id="createvehicleform" tabindex="-1" role="dialog" aria-labelledby="Create vehicle">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                             </div>
+                              <div class="modal-body">
 
+                                <div class="card-header card-header-primary">
+                                  <h4 class="card-title">Edit Vehicle Profile</h4>
+                                 <div id="vehstatus" class="card-category"></div>
+                                </div>
+                                <div class="card-body">
+                                  <form id="vehform">
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        <div class="form-group bmd-form-group">
+                                          <label class="bmd-label-floating">Vehicle ID</label>
+                                          <input type="text" class="form-control" id="vehid" require="true">
+                                        </div>
+                                      </div>
+                                      <div class="col-md-6">
+                                        <div class="form-group bmd-form-group">
+                                          <label class="bmd-label-floating">Vehicle Category</label>
+                                          <input type="text" class="form-control" id="vehcat">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        <div class="form-group bmd-form-group">
+                                          <label class="bmd-label-floating">Vehicle Name</label>
+                                          <input type="text" class="form-control" id="vehname">
+                                        </div>
+                                      </div>
+
+                                    </div>
+                                </form>
+                                </div>
+
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="savevehicle">Save changes</button>
+                              </div>
+                            </div>
+                          </div>
 
 <br />
 </div>
@@ -224,6 +284,21 @@ var parse_rows=function(rows){
     return parsed_output;
 }
 
+//kj-v1.1(feedback)adding lines from index.html
+$("#createvehicleform").on('hide.bs.modal', function (event) {
+        document.getElementById("vehform").reset()
+        window.location.reload(false);
+})
+
+$("#editvhicleform").on('show.bs.modal', function (event) {
+    console.log("editing booking in modal")
+    var eventsrc = $(event.relatedTarget) // Button that triggered the modal
+    var vehicle_id = eventsrc.data('vehicle_id') // Extract info from data-* attributes
+    console.log(vehicle_id)
+    sakha.fillVehiclesModal(vehicle_id)
+  })
+
+
  var OUT = document.getElementById('out');
     var HTMLOUT = document.getElementById('htmlout');
 
@@ -231,6 +306,8 @@ var parse_rows=function(rows){
 var process_output=function(){
   $("#loader").show()
   var vehicle_id_map=$("#vehicle_id_map").val()
+  var vehicle_cat_map=$("#vehicle_cat_map").val()
+  var vehicle_name_map=$("#vehicle_name_map").val()
   var rows=[]
   dic=JSON.parse(global_output)
  // try{
@@ -240,7 +317,11 @@ var process_output=function(){
           console.log(parsed_output)
             vehiclelist=parsed_output;
           for (i=0;i<vehiclelist.length;i++){
+
               vehiclelist[i]['vehicle_id']=Mustache.render(vehicle_id_map,vehiclelist[i])
+              vehiclelist[i]['vehicle_cat']=Mustache.render(vehicle_cat_map,vehiclelist[i])
+              vehiclelist[i]['vehicle_name']=Mustache.render(vehicle_name_map,vehiclelist[i])
+
               console.log(vehiclelist[i])
             }
         }
@@ -350,6 +431,7 @@ var do_file = (function() {
 	};
 })();
 
+
 (function() {
 	var drop = document.getElementById('drop');
 	if(!drop.addEventListener) return;
@@ -410,8 +492,15 @@ var do_file = (function() {
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
                 {width:"5%", defaultContent:""},
 
-                {data: 'vehicle_id', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data:null, defaultContent:"None", render: function(data){      //
 
+                    var vehicle_id='<a class="nav-link" data-toggle="modal" data-target="#createvehicleform" data-vehicle_id="'+data.vehicle_id+'">\
+                        <i class="material-icons">content_paste</i> '+data.vehicle_id+'\
+                        </a>'
+                    return vehicle_id
+                }},
+                {data: 'vehicle_cat', defaultContent:"None", render: function(data){if(data){return data}}},
+                {data: 'vehicle_name', defaultContent:"None", render: function(data){if(data){return data}}},
             ],
             scrollY: 400
 

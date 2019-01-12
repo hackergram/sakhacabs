@@ -5,20 +5,19 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Manage Booking</title>
-    <link rel="stylesheet" href="dist/css/mdi-icons.css">
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
-     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+<link rel="stylesheet" href="dist/css/mdi-icons.css">
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css" />
+ <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
+<link rel="stylesheet" type="text/css" src="assets/css/responsive.dataTables.min.css">
+<link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.7/css/select.dataTables.min.css">
+<style>
 
-    <link rel="stylesheet" type="text/css" src="assets/css/responsive.dataTables.min.css">
-    <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
-
-    <style>
 #drop{
 	border:2px dashed #bbb;
 	-moz-border-radius:5px;
@@ -34,12 +33,8 @@
 a { text-decoration: none }
 
 </style>
-
-      <link href="dist/css/pagination-style.css" rel="stylesheet">
-
-    <link rel="stylesheet" type="text/css" href="assets/css/sakha.css">
-
-<script src="assets/js/core/jquery.min.js" type="text/javascript"></script>
+<link href="dist/css/pagination-style.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="assets/css/sakha.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
 
 </head>
@@ -52,7 +47,7 @@ a { text-decoration: none }
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" charset="utf8" src="assets/js/dataTables.select.min.js"></script>
-    <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+    <script type="text/javascript" src="http://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
     <script type="text/javascript" src="https://rawgit.com/tempusdominus/bootstrap-4/master/build/js/tempusdominus-bootstrap-4.js"></script>
     <script src="assets/js/sakha.js"></script>
@@ -84,7 +79,7 @@ a { text-decoration: none }
             <div class="col-md-12">
             Output Format:
             <select name="format" onchange="setfmt()">
-                <option val ue="json"> JSON</option>
+                <option value="json"> JSON</option>
             </select><br />
 
             </div>
@@ -105,6 +100,8 @@ a { text-decoration: none }
             </div>
             </div>
         <div class="row">
+
+
 
     <button id="process" onclick="process_output()">Process!</button>
     <button id="submit" onclick="submit_output()">Submit!</button>
@@ -137,6 +134,7 @@ a { text-decoration: none }
                               <h4 class="card-title">Bookings</h4>
                               <p class="card-category">Current Bookings</p>
                               <button id="deleteselectedbookings">Delete Selected</button>
+
 
                             </div>
                             <div class="card-body table-responsive">
@@ -376,6 +374,24 @@ var submit_output=function(){
     http.send(params);
 }
 
+
+var clean_blanks=function(global_output){
+  console.log("cleaning blanks")
+  rows=JSON.parse(global_output)
+  Object.keys(rows).forEach(function(key){
+    console.log(rows[key]);
+    for(i=0;i<rows[key].length;i++){
+      console.log(rows[key][i]);
+      if(rows[key][i].length===0){
+        console.log("Deleting");
+        rows[key].splice(i,1)
+      }
+    }
+  })
+  global_output=JSON.stringify(rows)
+  return global_output
+}
+
 var parse_rows=function(rows){
     cols=rows[0];
     console.log(cols);
@@ -396,27 +412,11 @@ var parse_rows=function(rows){
 
 var process_output=function(){
 
-$("#loader").show()
+    $("#loader").show()
     console.log("removing special characters from global output", global_output)
-    Object.keys(global_output).forEach(function(sheet){
-      //console.log(sheet)
-      for (i=0;i<sheet[0][0].length;i++){
-          key=sheet[0][i]
-           ;
-          if (key.match(/[^a-zA-Z0-9 ]/)){
-            sheet[0][i]=key.replace(/[^a-zA-Z0-9 ]/g,"")
-            //delete global_output[0][key]
-          }
-        }
-    })
-
-
-    console.log("Global output after cleaning", global_output)
-    //var pickup_timestamp_map="{{Date}} {{Flight Time}}"
-    //var pickup_timestamp_map=$("#pickup_timestamp_map").val()
+    global_output=clean_blanks(global_output);
     var pickup_time_map=$("#pickup_time_map").val()
     var pickup_date_map=$("#pickup_date_map").val()
-    //var pickup_location_map="Intl Airport, Flight # {{Pick-Up}}"
     var pickup_location_map=$("#pickup_location_map").val()
     var passenger_detail_map=$("#passenger_detail_map").val()
     var drop_location_map=$("#drop_location_map").val()
@@ -424,52 +424,45 @@ $("#loader").show()
     var product_id=$("#product").val()
     var booking_channel="bulk"
     var cust_id=$("#customer").val()
+
     var rows=[]
     dic=JSON.parse(global_output)
-   // try{
-        for (sheet in dic){
-            rows=rows.concat(dic[sheet])
-            parsed_output=parse_rows(rows)
-            //console.log(parsed_output)
-
-            bookinglist=parsed_output;
-            for (i=0;i<bookinglist.length;i++){
-                bookinglist[i]['passenger_detail']=Mustache.render(passenger_detail_map,bookinglist[i])
-                bookinglist[i]['pickup_location']=Mustache.render(pickup_location_map,bookinglist[i])
-                bookinglist[i]['product_id']=product_id
-                pickup_date_string=Mustache.render(pickup_date_map,bookinglist[i]).trim()
-                pickup_date=moment(pickup_date_string).format("YYYY-MM-DD")
-                pickup_time_string=Mustache.render(pickup_time_map,bookinglist[i]).trim()
-                pickup_time=moment(pickup_time_string).format("HH:mm:ss")
-                if(pickup_date==="Invalid date"){
-                  pickup_date=pickup_date_string
-                }
-                if(pickup_time==="Invalid date"){
-                  pickup_time=pickup_time_string.trim()
-                }
-                pickup_timestamp_string=pickup_date+" "+pickup_time
-                //console.log(pickup_timestamp_string.trim())
-                pickup_timestamp=moment(pickup_timestamp_string.trim()).utc().format("YYYY-MM-DD HH:mm:ss")
-                if(pickup_timestamp===null){
-                  pickup_timestamp=pickup_timestamp_string.trim()
-                }
-                else{
-                bookinglist[i]['pickup_timestamp']=pickup_timestamp
-              }
-                bookinglist[i]['booking_channel']=booking_channel
-                bookinglist[i]['cust_id']=cust_id
-                bookinglist[i]['drop_location']=Mustache.render(drop_location_map,bookinglist[i])
-                bookinglist[i]['passenger_mobile']=Mustache.render(passenger_mobile_map,bookinglist[i])
-                //console.log(bookinglist[i])
+    for (sheet in dic){
+        rows=rows.concat(dic[sheet])
+        parsed_output=parse_rows(rows)
+        bookinglist=parsed_output;
+        for (i=0;i<bookinglist.length;i++){
+            bookinglist[i]['passenger_detail']=Mustache.render(passenger_detail_map,bookinglist[i])
+            bookinglist[i]['pickup_location']=Mustache.render(pickup_location_map,bookinglist[i])
+            bookinglist[i]['product_id']=product_id
+            pickup_date_string=Mustache.render(pickup_date_map,bookinglist[i]).trim()
+            pickup_date=moment(pickup_date_string).format("YYYY-MM-DD")
+            pickup_time_string=Mustache.render(pickup_time_map,bookinglist[i]).trim()
+            pickup_time=moment(pickup_time_string).format("HH:mm:ss")
+            if(pickup_date==="Invalid date"){
+              pickup_date=pickup_date_string
             }
+            if(pickup_time==="Invalid date"){
+              pickup_time=pickup_time_string.trim()
+            }
+            pickup_timestamp_string=pickup_date+" "+pickup_time
+            pickup_timestamp=moment(pickup_timestamp_string.trim()).utc().format("YYYY-MM-DD HH:mm:ss")
+            if(pickup_timestamp===null){
+              pickup_timestamp=pickup_timestamp_string.trim()
+            }
+            else{
+              bookinglist[i]['pickup_timestamp']=pickup_timestamp
+            }
+            bookinglist[i]['booking_channel']=booking_channel
+            bookinglist[i]['cust_id']=cust_id
+            bookinglist[i]['drop_location']=Mustache.render(drop_location_map,bookinglist[i])
+            bookinglist[i]['passenger_mobile']=Mustache.render(passenger_mobile_map,bookinglist[i])
+          }
         }
         if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(bookinglist,2,2);
-	   else HTMLOUT.innerText = JSON.stringify(bookinglist,2,2);
-    //}
-    //catch(err){
-    //    alert("Something went wrong!")
-    //}
-$("#loader").hide()
+	      else HTMLOUT.innerText = JSON.stringify(bookinglist,2,2);
+        $("#loader").hide()
+        alert("Processed "+bookinglist.length+" rows")
 }
 
 var addTextToTemplate=function(text){
@@ -496,32 +489,6 @@ var process_wb = (function() {
 		});
 		return JSON.stringify(result, 2, 2);
 	};
-/*
-	var to_csv = function to_csv(workbook) {
-		var result = [];
-		workbook.SheetNames.forEach(function(sheetName) {
-			var csv = X.utils.sheet_to_csv(workbook.Sheets[sheetName]);
-			if(csv.length){
-				result.push("SHEET: " + sheetName);
-				result.push("");
-				result.push(csv);
-			}
-		});
-		return result.join("\n");
-	};
-
-	var to_fmla = function to_fmla(workbook) {
-		var result = [];
-		workbook.SheetNames.forEach(function(sheetName) {
-			var formulae = X.utils.get_formulae(workbook.Sheets[sheetName]);
-			if(formulae.length){
-				result.push("SHEET: " + sheetName);
-				result.push("");
-				result.push(formulae.join("\n"));
-			}
-		});
-		return result.join("\n");
-	};
 
 	var to_html = function to_html(workbook) {
 		HTMLOUT.innerHTML = "";
@@ -531,7 +498,7 @@ var process_wb = (function() {
 		});
 		return "";
 	};
-*/
+
 	return function process_wb(wb) {
     console.log(wb)
     for (sheet in wb.Sheets){
@@ -548,19 +515,15 @@ var process_wb = (function() {
 		global_wb = wb;
 		var output = "";
 		switch(get_format()) {
-			//case "form": output = to_fmla(wb); break;
-			//case "html": output = to_html(wb); break;
 			case "json": output = to_json(wb); break;
 			default: output = to_json(wb);
 		}
         global_output=output
         dic=JSON.parse(output)
-        //console.log(dic)
         colnames=[]
         for(sheet in dic){
-            //console.log(dic[sheet][0])
             colnames=colnames.concat(dic[sheet][0])
-            //console.log(colnames)
+
         }
         colnameshtml=""
         for (i=0;i<colnames.length;i++){
@@ -662,7 +625,6 @@ var do_file = (function() {
      else
      {
         var table=$('#bookinglist').DataTable({
-            select: true,
             responsive: true,
             ajax: {
                 url: 'http://'+serverip+':5000/booking',
@@ -673,12 +635,15 @@ var do_file = (function() {
                             className: 'select-checkbox',
                             targets:   0,
                             checkboxes: {
-                              'selectRow': true
+                              'selectRow': true,
+                              selectAllPages: false //fixes  #314
+
                               }
                         } ],
              select: {
                             style:    'multi',
-                            selector: 'td:first-child'
+                            selector: 'td:first-child',
+
                         },
             columns: [
                 //{ data: function (row){'value.meta.first_name' + "value.meta.last_name" }}
@@ -735,9 +700,6 @@ var do_file = (function() {
     })
 
 
-
-
-
     //kj-v1.1(feedback)-new lines end here
       $("#deleteselectedbookings").on("click", function(){
         var delvids=[]
@@ -770,7 +732,6 @@ var do_file = (function() {
         }
         http.send(params);
       })
-
     updateassignmentbookinglist()
 </script>
 </body>
