@@ -7,11 +7,9 @@ Created on Sat Sep  8 21:52:07 2018
 @author: arjun
 """
 
-import sys
 import datetime
 import json
 import mongoengine
-sys.path.append("/opt/xetrapal")
 import xetrapal
 import pandas
 from sakhacabs import documents, utils
@@ -20,25 +18,11 @@ sakhacabsxpal = xetrapal.Xetrapal(
     configfile="/opt/sakhacabs-appdata/sakhacabsxpal.conf")
 sakhacabsgd = sakhacabsxpal.get_googledriver()
 sms = sakhacabsxpal.get_sms_astra()
-'''
-try:
-    datasheet = sakhacabsgd.open_by_key(
-        sakhacabsxpal.config.get("SakhaCabs", "datasheetkey"))
-    bookingsheet = datasheet.worksheet_by_title("bookings")
-    custsheet = datasheet.worksheet_by_title("customers")
-    carsheet = datasheet.worksheet_by_title("cars")
-    driversheet = datasheet.worksheet_by_title("drivers")
-    prodsheet = datasheet.worksheet_by_title("product")
-except Exception as e:
-    sakhacabsxpal.logger.error(
-        "Error connecting to Google Drive, check connectivity - {} {}".format(repr(e), str(e)))
-'''
+
 # Setting up mongoengine connections
 sakhacabsxpal.logger.info("Setting up MongoEngine")
 mongoengine.connect('sakhacabs', alias='default')
 
-
-# Remote sync functionality
 
 def validate_vehicle_dict(vehicledict, new=True):
     validation = {}
@@ -221,9 +205,6 @@ def validate_assignment_dict(assignmentdict, new=True):
     return validation
 
 
-
-
-
 def new_locationupdate(driver, timestamp, checkin=True, location=None, vehicle=None, handoff=None, logger=xetrapal.astra.baselogger, **kwargs):
     """
     Creates a new location update, location updates once created are not deleted as they are equivalent to log entries.
@@ -245,13 +226,9 @@ def new_locationupdate(driver, timestamp, checkin=True, location=None, vehicle=N
                 vh.save()
                 vehicle_id = vh.vehicle_id
     driver.save()
-    # UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
-    # timestamp + UTC_OFFSET_TIMEDELTA
     adjtimestamp = utils.get_utc_ts(timestamp)
-    # Get new location update and save it
     locationupdate = documents.LocationUpdate(
         driver_id=driver.driver_id, timestamp=adjtimestamp, location=location, checkin=checkin, handoff=handoff, vehicle_id=vehicle_id)
-    # Tell the user what happened
     if checkin is True:
         logger.info(u"New checkin from driver with id {} at {} from {}".format(
             locationupdate.driver_id, locationupdate.timestamp, locationupdate.location))
@@ -434,6 +411,7 @@ def delete_booking(booking_id):
 '''
 Assignment CRUD
 '''
+
 
 def save_assignment(assignmentdict, assignment_id=None):
     '''Creates a new assignment/Updates an existing assignment with the provided bookings and duty slips
@@ -1066,7 +1044,6 @@ def export_invoice(invoice_id):
     duedatecel = invoicesheet.cell("F11")
     duedatecel.value = invoice.invoice_date.strftime("%Y-%d-%m")
     return cur.url
-
 
 
 '''

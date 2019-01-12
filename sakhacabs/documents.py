@@ -57,8 +57,9 @@ class Customer(PPrintMixin, DynamicDocument):
 class Vehicle(PPrintMixin, DynamicDocument):
     vehicle_id = fields.StringField(unique=True, required=True)
     driver_id = fields.StringField()
-    vehicle_cat=fields.StringField()
-    vehicle_name=fields.StringField()
+    vehicle_cat = fields.StringField()
+    vehicle_name = fields.StringField()
+
     def __repr__(self):
         return "Vehicle (%r)" % (self.vehicle_id)
 
@@ -90,6 +91,7 @@ class Product(PPrintMixin, DynamicDocument):
     extra_hrs_rate = fields.FloatField(required=True, default=0.0)  # CHANGELOG - Will invalidate existing product data
     extra_kms_rate = fields.FloatField(required=True, default=0.0)  # CHANGELOG - Will invalidate existing product data
     price = fields.FloatField(required=True, default=0.0)
+
 
 class LocationUpdate(PPrintMixin, Document):
     driver_id = fields.StringField(required=True)
