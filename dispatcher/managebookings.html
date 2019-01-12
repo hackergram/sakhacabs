@@ -363,7 +363,18 @@ var submit_output=function(){
 
             }
             else{
-                alert("Something went wrong!")
+                  console.log(response.resp)
+                  success=[]
+                  failed=[]
+                  for(i=0;i<response.resp.length;i++){
+                    if (response.resp[i]['status'].includes("error")){
+                      failed.push(response.resp[i])
+                    }
+                    else{
+                      success.push(response.resp[i])
+                    }
+                  }
+                alert(success.length+" records imported correctly, "+failed.length+" records failed to import")
             }
             if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
 	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
@@ -724,6 +735,7 @@ var do_file = (function() {
 
                 }
                 else{
+
                     alert("Something went wrong!")
                 }
 
