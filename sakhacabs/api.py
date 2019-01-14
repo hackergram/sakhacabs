@@ -59,6 +59,9 @@ class DriverResource(Resource):
             status = "success"
         else:
             status = "error"
+        if resp == []:
+            resp = "No records found"
+
         return jsonify({"resp": resp, "status": status})
 
     def post(self, command=None):
