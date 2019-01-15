@@ -831,7 +831,7 @@ var sakha={
       productdict.included_hrs=$("#inclu_hrs").val()
       productdict.extra_hrs_rate=$("#ext_hrs").val()
       productdict.included_kms=$("#incl_kms").val()
-      productdict.extra_hrs_rate=$("#ext_hrs").val()
+      productdict.extra_kms_rate=$("#ext_kms").val()
       productdict.price=$("#pri").val()
 
 
@@ -839,6 +839,7 @@ var sakha={
       var http = new XMLHttpRequest();
       if(productid==="newproduct"){
           //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+          alert("Do you want a new product?")
           var url = "http://"+serverip+":5000/product";
           http.open("POST", url, true);
       }
