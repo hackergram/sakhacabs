@@ -191,7 +191,13 @@ var sakha={
                 //{ data: function (row){retturn'metadata.first_name' + "metadata.last_name" }},
                 //{ data: 'metadata', render: function (data){return data.first_name +" "+ data.last_name }},
                 //{ data: 'checkedin' },
-                { data: 'vehicle_id', defaultContent: "None"},
+                {data:null, defaultContent:"None", render: function(data){      //
+
+                    var vehicle_id='<a class="nav-link" data-toggle="modal" data-target="#createvehicleform" data-vehicle_id="'+data.vehicle_id+'">\
+                        <i class="material-icons">content_paste</i> '+data.vehicle_id+'\
+                        </a>'
+                    return vehicle_id
+                }},
                 { data: 'driver_id', defaultContent: "None", render:function(data){if(data){return data}else{return "Checked Out"}}  },
                 { data: 'reg_num', defaultContent: "Unknown", render:function(data){return data}  }
 
