@@ -661,6 +661,8 @@ def create_driver(respdict):
     driver = documents.Driver.objects(driver_id=respdict['driver_id'])
     if len(driver) > 0:
         return "Driver with that ID Exists"
+    if len(respdict['driver_id'])<5:
+        return "id should be minmum of 5 charecters"
     if "_id" in respdict.keys():
         respdict.pop('_id')
     try:
@@ -721,6 +723,8 @@ def create_vehicle(respdict):
     vehicle = documents.Vehicle.objects(vehicle_id=respdict['vehicle_id'])
     if len(vehicle) > 0:
         return "Vehicle with that ID Exists"
+    if len(respdict['product_id'])<5:
+        return "id should be minmum of 5 charecters"
     if "_id" in respdict.keys():
         respdict.pop('_id')
     try:
@@ -773,6 +777,8 @@ def create_customer(respdict):
     customer = documents.Customer.objects(cust_id=respdict['cust_id'])
     if len(customer) > 0:
         return "Customer with that ID Exists"
+    if len(respdict['cust_id'])<5:
+        return "id should be minmum of 5 charecters"
     if "_id" in respdict.keys():
         respdict.pop('_id')
     try:
@@ -827,6 +833,8 @@ def create_product(respdict):
         return "Product with that ID Exists"
     if "_id" in respdict.keys():
         respdict.pop('_id')
+    if len(respdict['product_id'])<5:
+        return "id should be minmum of 5 charecters"
     try:
         product = documents.Product(**respdict)
         product.save()

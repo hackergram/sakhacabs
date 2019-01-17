@@ -999,7 +999,7 @@ class ProductResource(Resource):
                 else:
                     status = "success"
                 for product in resp:
-                    if product['product_id'] != product['status']:
+                    if product['product_id'] != product['status'] :
                         status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
