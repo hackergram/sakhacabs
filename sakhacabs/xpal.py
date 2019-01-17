@@ -723,7 +723,7 @@ def create_vehicle(respdict):
     vehicle = documents.Vehicle.objects(vehicle_id=respdict['vehicle_id'])
     if len(vehicle) > 0:
         return "Vehicle with that ID Exists"
-    if len(respdict['product_id'])<5:
+    if len(respdict['vehicle_id'])<5:
         return "id should be minmum of 5 charecters"
     if "_id" in respdict.keys():
         respdict.pop('_id')
