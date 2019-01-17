@@ -1,3 +1,26 @@
+var decodeEntities = (function() {
+  // this prevents any overhead from creating the object each time
+  var element = document.createElement('div');
+
+  function decodeHTMLEntities (str) {
+    if(str && typeof str === 'string') {
+      // strip script/html tags
+      str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '');
+      str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+      element.innerHTML = str;
+      str = element.textContent;
+      element.textContent = '';
+    }
+
+    return str;
+  }
+
+  return decodeHTMLEntities;
+})();
+
+
+
+
 var sakha={
     fillData: function(){
         console.log("Filling data");
@@ -655,10 +678,10 @@ var sakha={
             console.log("editing driver "+driverid)
             $.getJSON('http://'+serverip+':5000/driver/by_driver_id/'+driverid,function(data){
                 console.log(data.resp[0])
-                $("#driverid").val(data.resp[0].driver_id)
-                $("#mobnum").val(data.resp[0].mobile_num)
-                $("#firstname").val(data.resp[0].first_name)
-                $("#lastname").val(data.resp[0].last_name)
+                $("#driverid").val(decodeEntities(data.resp[0].driver_id))
+                $("#mobnum").val(decodeEntities(data.resp[0].mobile_num))
+                $("#firstname").val(decodeEntities(data.resp[0].first_name))
+                $("#lastname").val(decodeEntities(data.resp[0].last_name))
             })
         }
 
@@ -692,14 +715,14 @@ var sakha={
 
                     //'YYYY-MM-DD HH:mm'
                 }     //$("#total_time").text=moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2);
-                $("#open_kms").val(data.resp[0].open_kms)
-                $("#close_kms").val(data.resp[0].close_kms)
+                $("#open_kms").val(decodeEntities(data.resp[0].open_kms))
+                $("#close_kms").val(decodeEntities(data.resp[0].close_kms))
                 $("#total_kms").val(parseFloat(data.resp[0].close_kms)-parseFloat(data.resp[0].open_kms))
-                $("#payment_mode").val(data.resp[0].payment_mode.toUpperCase())
+                $("#payment_mode").val(decodeEntities(data.resp[0].payment_mode.toUpperCase()))
                 $("#parking_charges").val(data.resp[0].parking_charges)
-                $("#toll_charges").val(data.resp[0].toll_charges)
-                $("#amount").val(data.resp[0].amount)
-                $("#ds_remarks").val(data.resp[0].remarks)
+                $("#toll_charges").val(decodeEntities(data.resp[0].toll_charges))
+                $("#amount").val(decodeEntities(data.resp[0].amount))
+                $("#ds_remarks").val(decodeEntities(data.resp[0].remarks))
             })
 
        document.getElementById("savedutyslip").setAttribute("onclick","sakha.saveDutySlip('"+dsid+"')")
@@ -709,18 +732,20 @@ var sakha={
 
 
     fillVehicleModal: function(vehicle_id){
-           console.log("editing vehicle"+vehicle_id)
+           console.log("editing vehicl"+vehicle_id)
            var url = 'http://'+serverip+':5000/vehicle/by_vehicle_id/'+vehicle_id
            console.log("getting url "+url)
 
                 $.getJSON(url,function(data){
                     console.log(data.resp[0])
                   //  $("#vehicle_pickup_timestamp").empty()
-                    $("#vehicle_id").append(data.resp[0].vehicle_id )
-                    $("#vehid").val(data.resp[0].vehicle_id)
+                    $("#vehicle_id").append(data.resp[0].vehical_id )
+                    $("#vehid").val(decodeEntities(data.resp[0].vehical_id))
 
-                    $("#vehcat").val(data.resp[0].vehicle_cat)
-                    $("#vehname").val(data.resp[0].vehicle_name)
+
+
+                    $("#vehcat").val(decodeEntities(data.resp[0].vehicle_cat))
+                    $("#vehname").val(decodeEntities(data.resp[0].vehicle_name))
 
               })
 
@@ -735,7 +760,7 @@ var sakha={
          //    vehicledict.last_name=$("#lastname").val()
              var params = JSON.stringify(vehicledict);
              var http = new XMLHttpRequest();
-             if(vehicle_id==="newvehicle"){
+             if(vehicleid==="newvehicle"){
                  //$.post("http://"+serverip+":5000/assignment",assignmentdict)
                  var url = "http://"+serverip+":5000/vehicle";
                  http.open("POST", url, true);
@@ -759,7 +784,7 @@ var sakha={
                          }
                          if (response.status==="error"){
                              console.log("error")
-                             alert("Failed to Save vehicle!")
+                             alert("Failed to Save   vehicle!")
                               document.getElementById("vehiclelist").innerHTML="<span style='color:red'>"+response.resp+"</span>"
                          }
                          }
@@ -795,7 +820,7 @@ var sakha={
                 console.log(data.resp[0])
               //  $("#customer_pickup_timestamp").empty()
                $("#cust_id").append(data.resp[0].cust_id )
-                $("#customerid").val(data.resp[0].cust_id)
+                $("#customerid").val(decodeEntities(data.resp[0].cust_id))
 
 
             //    $("#customer_product_id").val(data.resp[0].product_id)
@@ -811,8 +836,8 @@ var sakha={
                 //$("#total_time").text=moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2);
               //  $("#customer_cust_meta").val(JSON.stringify(data.resp[0].cust_meta))
             //    $("#customer_remarks").val(data.resp[0].remarks)
-                $("#customermobnum").val(data.resp[0].mobile_num)
-                $("#customerbillingdisplay").val(data.resp[0].cust_billing)
+                $("#customermobnum").val(decodeEntities(data.resp[0].mobile_num))
+                $("#customerbillingdisplay").val(decodeEntities(data.resp[0].cust_billing))
             //    $("#customer_passenger_detail").val(data.resp[0].passenger_detail)
 
               //  $("#customer_pickup_location").val(data.resp[0].pickup_location)
@@ -892,12 +917,12 @@ var sakha={
                   console.log(data.resp[0])
                 //  $("#product_pickup_timestamp").empty()
                   $("#productid").append(data.resp[0].product_id )
-                  $("#productid").val(data.resp[0].product_id)
-                  $("#inclu_hrs").val(data.resp[0].included_hrs )
-                  $("#ext_hrs").val(data.resp[0].extra_hrs_rate )
-                  $("#incl_kms").val(data.resp[0].included_kms)
-                  $("#ext_kms").val(data.resp[0].extra_kms_rate)
-                  $("#pri").val(data.resp[0].price)
+                  $("#productid").val(decodeEntities(data.resp[0].product_id))
+                  $("#inclu_hrs").val(decodeEntities(data.resp[0].included_hrs))
+                  $("#ext_hrs").val(decodeEntities(data.resp[0].extra_hrs_rate ))
+                  $("#incl_kms").val(decodeEntities(data.resp[0].included_kms))
+                  $("#ext_kms").val(decodeEntities(data.resp[0].extra_kms_rate))
+                  $("#pri").val(decodeEntities(data.resp[0].price))
 
                 })
 

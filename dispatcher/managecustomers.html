@@ -301,6 +301,9 @@ var parse_rows=function(rows){
 
 
 var process_output=function(){
+  if(typeof(global_output)!=="string")
+  {alert("Please select a file.");window.location.reload(false)}
+
   $("#loader").show()
   var cust_id_map=$("#cust_id_map").val()
   var cust_billing_map=$("#cust_billing_map").val()

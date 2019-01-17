@@ -422,7 +422,8 @@ var parse_rows=function(rows){
 
 
 var process_output=function(){
-
+  if(typeof(global_output)!=="string")
+  {alert("Please select a file.");window.location.reload(false)}
     $("#loader").show()
     console.log("removing special characters from global output", global_output)
     global_output=clean_blanks(global_output);

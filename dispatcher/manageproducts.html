@@ -320,7 +320,7 @@ var submit_output=function(){
               }
             alert(success.length+" records imported correctly, "+failed.length+" records failed to import")
         }
-            
+
             if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
 	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
         }
@@ -343,6 +343,8 @@ var parse_rows=function(rows){
  var OUT = document.getElementById('out');
     var HTMLOUT = document.getElementById('htmlout');
 var process_output=function(){
+if(typeof(global_output)!=="string")
+{alert("Please select a file.");window.location.reload(false)}
   $("#loader").show()
   var product_id_map=$("#product_id_map").val()
   var hrs_map=$("#hrs_map").val()
@@ -352,6 +354,8 @@ var process_output=function(){
   var price_map=$("#price_map").val()
   var rows=[]
   dic=JSON.parse(global_output)
+
+
  // try{
       for (sheet in dic){
           rows=rows.concat(dic[sheet])

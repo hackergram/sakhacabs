@@ -299,6 +299,9 @@ var parse_rows=function(rows){
 
 
 var process_output=function(){
+  if(typeof(global_output)!=="string")
+  {alert("Please select a file.");window.location.reload(false)}
+
   $("#loader").show()
   var driver_id_map=$("#driver_id_map").val()
   var driver_mobile_map=$("#driver_mobile_map").val()

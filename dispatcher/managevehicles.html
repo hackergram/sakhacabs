@@ -315,6 +315,9 @@ $("#createvehicleform").on('show.bs.modal', function (event) {
 
 
 var process_output=function(){
+  if(typeof(global_output)!=="string")
+  {alert("Please select a file.");window.location.reload(false)}
+
   $("#loader").show()
   var vehicle_id_map=$("#vehicle_id_map").val()
   var vehicle_cat_map=$("#vehicle_cat_map").val()
