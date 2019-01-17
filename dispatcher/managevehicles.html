@@ -254,19 +254,29 @@ var submit_output=function(){
             $("#loader").hide()
             response=JSON.parse(http.responseText)
             console.log(response)
+
             if (response.status==="success"){
                 alert("Successfully imported vehicles!")
-                  window.location.reload(false);
-
+                window.location.reload(false);
             }
             else{
-                alert("Something went wrong!")
-            }
-            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
-	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
-
+              console.log(response.resp)
+              success=[]
+              failed=[]
+              for(i=0;i<response.resp.length;i++){
+                if (response.resp[i]['status']!==response.resp[i]['vehicle_id']){
+                  failed.push(response.resp[i])
+                }
+                else{
+                  success.push(response.resp[i])
+                }
+              }
+            alert(success.length+" records imported correctly, "+failed.length+" records failed to import")
         }
 
+            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
+	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
+        }
     }
     http.send(params);
 }
@@ -292,7 +302,7 @@ $("#createvehicleform").on('hide.bs.modal', function (event) {
 })
 
 $("#createvehicleform").on('show.bs.modal', function (event) {
-    console.log("editing booking in modal")
+    console.log("editing vehicle in modal")
     var eventsrc = $(event.relatedTarget) // Button that triggered the modal
     var vehicle_id = eventsrc.data('vehicle_id') // Extract info from data-* attributes
     console.log(vehicle_id)

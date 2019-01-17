@@ -252,25 +252,34 @@ var submit_output=function(){
     http.open("POST", url, true);
     http.setRequestHeader("Content-type", "application/json");
     http.onreadystatechange = function() {//Call a function when the state changes.
-        if(http.readyState == 4 && http.status == 200) {
-          $("#loader").hide()
-            response=JSON.parse(http.responseText)
-            console.log(response)
-            if (response.status==="success"){
-                alert("Successfully imported customers!")
-                window.location.reload(false);
-
+      if(http.readyState == 4 && http.status == 200) {
+        $("#loader").hide()
+          response=JSON.parse(http.responseText)
+          console.log(response)
+          if (response.status==="success"){
+              alert("Successfully imported customer!")
+              window.location.reload(false);
+          }
+          else{
+            console.log(response.resp)
+            success=[]
+            failed=[]
+            for(i=0;i<response.resp.length;i++){
+              if (response.resp[i]['status']!==response.resp[i]['cust_id']){
+                failed.push(response.resp[i])
+              }
+              else{
+                success.push(response.resp[i])
+              }
             }
-            else{
-                alert("Something went wrong!")
-            }
-            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
-	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
+          alert(success.length+" records imported correctly, "+failed.length+" records failed to import")
+      }
 
-        }
-
-    }
-    http.send(params);
+          if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
+           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
+      }
+  }
+  http.send(params);
 }
 
 var parse_rows=function(rows){

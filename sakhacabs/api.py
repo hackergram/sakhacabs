@@ -219,7 +219,7 @@ class VehicleResource(Resource):
                 else:
                     status = "success"
                 for vehicle in resp:
-                    if "error" in str(vehicle['status']).lower():
+                    if vehicle['status'] != vehicle["vehicle_id"]:
                         status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
@@ -867,7 +867,7 @@ class CustomerResource(Resource):
                 else:
                     status = "success"
                 for customer in resp:
-                    if "error" in customer['status'].lower():
+                    if customer['status']!=customer["cust_id"]:
                         status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
@@ -999,7 +999,7 @@ class ProductResource(Resource):
                 else:
                     status = "success"
                 for product in resp:
-                    if "error" in product['product_id'].lower():
+                    if product['product_id'] != product['status']:
                         status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))

@@ -367,7 +367,7 @@ var submit_output=function(){
                   success=[]
                   failed=[]
                   for(i=0;i<response.resp.length;i++){
-                    if (response.resp[i]['status'].includes("error")){
+                    if (response.resp[i]['status']!==response.resp[i]['booking_id']){
                       failed.push(response.resp[i])
                     }
                     else{
