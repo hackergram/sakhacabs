@@ -706,6 +706,86 @@ var sakha={
 
     },
 
+
+
+    fillVehicleModal: function(vehicle_id){
+           console.log("editing vehicle"+vehicle_id)
+           var url = 'http://'+serverip+':5000/vehicle/by_vehicle_id/'+vehicle_id
+           console.log("getting url "+url)
+
+                $.getJSON(url,function(data){
+                    console.log(data.resp[0])
+                  //  $("#vehicle_pickup_timestamp").empty()
+                    $("#vehicle_id").append(data.resp[0].vehicle_id )
+                    $("#vehid").val(data.resp[0].vehicle_id)
+
+                    $("#vehcat").val(data.resp[0].vehicle_cat)
+                    $("#vehname").val(data.resp[0].vehicle_name)
+
+              })
+
+         document.getElementById("savevehicle").setAttribute("onclick","sakha.savevehicle('"+vehicle_id+"')")
+    },
+        savevehicle: function(vehicle_id){
+             console.log("Trying to save "+vehicle_id)
+             vehicledict={}
+             vehicledict.vehicle_id=$("#vehid").val()
+             vehicledict.vehicle_cat=$("#vehcat").val()
+             vehicledict.vehicle_name=$("#vehname").val()
+         //    vehicledict.last_name=$("#lastname").val()
+             var params = JSON.stringify(vehicledict);
+             var http = new XMLHttpRequest();
+             if(vehicle_id==="newvehicle"){
+                 //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+                 var url = "http://"+serverip+":5000/vehicle";
+                 http.open("POST", url, true);
+             }
+             else{
+                 var url = "http://"+serverip+":5000/vehicle/by_vehicle_id/"+vehicle_id;
+                 http.open("PUT", url, true);
+
+             }
+             if (vehicledict.vehicle_id.length>4){
+                 http.setRequestHeader("Content-type", "application/json");
+                 http.onreadystatechange = function() {//Call a function when the state changes.
+                 if(http.readyState == 4 ) {
+                     if(http.status == 200){
+                         response=JSON.parse(http.responseText)
+                         console.log(response)
+                         if(response.status==="success"){
+                            document.getElementById("vehiclelist").innerHTML="<span style='color:green'>Success!</span>"
+                             alert("Saved vehicle Successfully!")
+                             console.log("success")
+                         }
+                         if (response.status==="error"){
+                             console.log("error")
+                             alert("Failed to Save vehicle!")
+                              document.getElementById("vehiclelist").innerHTML="<span style='color:red'>"+response.resp+"</span>"
+                         }
+                         }
+                         else{
+                         alert("Network Error Saving vehicle.")
+                         }
+                         }
+
+                         }
+                         http.send(params);
+                         }
+                         else{
+                         alert(" vehicle ID must be at least 5 characters")
+                         }
+
+
+
+           },
+
+
+
+
+
+
+
+
     fillCustomerModal: function(cust_id){
        console.log("editing customer "+cust_id)
        var url = 'http://'+serverip+':5000/customer/by_cust_id/'+cust_id
@@ -714,7 +794,7 @@ var sakha={
             $.getJSON(url,function(data){
                 console.log(data.resp[0])
               //  $("#customer_pickup_timestamp").empty()
-                $("#cust_id").append(data.resp[0].customer_id )
+               $("#cust_id").append(data.resp[0].cust_id )
                 $("#customerid").val(data.resp[0].cust_id)
 
 

@@ -21,6 +21,7 @@
 #drop{
 	border:2px dashed #bbb;
 	-moz-border-radius:5px;
+
 	-webkit-border-radius:5px;
 	border-radius:5px;
 	padding:25px;
@@ -236,7 +237,7 @@ var XW = {
 $("#loader").hide()
 var global_wb;
 var global_output;
-var serverip="192.168.56.101"
+var serverip="192.168.56.103"
 var vehiclelist=[]
 var submit_output=function(){
   $("#loader").show()
@@ -290,12 +291,12 @@ $("#createvehicleform").on('hide.bs.modal', function (event) {
         window.location.reload(false);
 })
 
-$("#editvhicleform").on('show.bs.modal', function (event) {
+$("#createvehicleform").on('show.bs.modal', function (event) {
     console.log("editing booking in modal")
     var eventsrc = $(event.relatedTarget) // Button that triggered the modal
     var vehicle_id = eventsrc.data('vehicle_id') // Extract info from data-* attributes
     console.log(vehicle_id)
-    sakha.fillVehiclesModal(vehicle_id)
+    sakha.fillVehicleModal(vehicle_id)
   })
 
 
