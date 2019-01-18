@@ -1,0 +1,860 @@
+{
+	"info": {
+		"_postman_id": "db3fae75-96d4-4286-be08-6d9a37d0fa3d",
+		"name": "SakhaTesting",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SystemWithDataSanityTest",
+			"item": [
+				{
+					"name": "TestDriversExistAndListing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"pm.test(\"Drivers exist and listing is working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/driver",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"driver"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestBookingsExistAndListing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"",
+									"pm.test(\"Bookings exist and listing is working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/booking",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestCustomersExistAndListing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Customers exist and listing is working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/customer",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"customer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestProductsExistAndListing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"pm.test(\"Products exist and listing is working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/product",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestVehiclesExistAndListing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Vehicles exist and listing is working\", function () {",
+									"  var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/vehicle",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"vehicle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestInvoicesExistAndListing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"pm.test(\"Invoices exist and listing is working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/invoice",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"invoice"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestLocationUpdatesExistAndListing",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"pm.test(\"LocationUpdates exist and listing is working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/locupdate",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"locupdate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DriverCRUD",
+			"item": [
+				{
+					"name": "CreateDriver",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1a02d125-4c45-4b6c-a4a7-75e604bd9ece",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"pm.test(\"Create driver working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"driver_id\": \"testdriver\",\n  \"mobile_num\": \"918989161880\",\n  \"first_name\": \"Test\",\n  \"last_name\": \"Driver\"\n}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/driver",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"driver"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestDuplicateDriverIDFail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "30f5d9f8-c228-4e41-997f-97b8031f7f7d",
+								"exec": [
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Duplicate driver fail working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"error\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"driver_id\": \"testdriver\",\n  \"mobile_num\": \"918989161880\",\n  \"first_name\": \"Test\",\n  \"last_name\": \"Driver\"\n}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/driver",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"driver"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestEditDriver",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "30f5d9f8-c228-4e41-997f-97b8031f7f7d",
+								"exec": [
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Editing driver working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"driver_id\": \"testdriver\",\n  \"mobile_num\": \"918989161880\",\n  \"first_name\": \"Test2\",\n  \"last_name\": \"Driver1\"\n}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/driver/by_driver_id/testdriver",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"driver",
+								"by_driver_id",
+								"testdriver"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestDeleteDriver",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "30f5d9f8-c228-4e41-997f-97b8031f7f7d",
+								"exec": [
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Delete driver working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/driver/by_driver_id/testdriver",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"driver",
+								"by_driver_id",
+								"testdriver"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TestAPIUp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "efac73fd-e10c-43d8-a04d-97fc1cc0adfc",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var schema = {",
+							"    \"type\" : \"object\",",
+							"    \"properties\": {",
+							"        \"resp\" : {",
+							"            \"type\" : [\"array\", \"string\"]",
+							"        },",
+							"        \"status\": { ",
+							"            \"type\": \"string\"",
+							"        }",
+							"    }",
+							"};",
+							"",
+							"",
+							"",
+							"pm.test('Response schema is valid', function() {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+							" ",
+							"});  "
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "192.168.56.101:5000/driver",
+					"host": [
+						"192",
+						"168",
+						"56",
+						"101"
+					],
+					"port": "5000",
+					"path": [
+						"driver"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

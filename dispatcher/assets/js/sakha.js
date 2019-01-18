@@ -1035,6 +1035,7 @@ var sakha={
                 }
 
             }
+            console.log(driverdict)
             http.send(params);
         }
         else{

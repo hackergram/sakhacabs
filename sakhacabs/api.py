@@ -310,7 +310,7 @@ class LocationUpdateResource(Resource):
         elif docid:
             resp = [xpal.documents.LocationUpdate.objects.with_id(docid)]
         else:
-            resp = xpal.documents.LocationUpdate.objects.all()
+            resp = list(xpal.documents.LocationUpdate.objects.all())
         if type(resp) == list and resp != []:
             status = "success"
         else:
