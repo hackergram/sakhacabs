@@ -236,10 +236,16 @@ class VehicleResource(Resource):
                     status = "error"
                     resp = "Bulk Delete Expects a list of booking ids"
                 else:
+                    deletedvehicles = []
                     for vehicle_id in respdict:
-                        xpal.delete_vehicle(vehicle_id)
-                    resp = "Deleted vehicles {}".format(respdict)
-                    status = "success"
+                        retval = xpal.delete_vehicle(vehicle_id)
+                        if retval == []:
+                            deletedvehicles.append(vehicle_id)
+                    resp = "Deleted vehicles {} of {}".format(deletedvehicles, respdict)
+                    if deletedvehicles == respdict:
+                        status = "success"
+                    else:
+                        status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
                 status = "error"
@@ -474,7 +480,7 @@ class BookingResource(Resource):
                 else:
                     status = "success"
                 for booking in resp:
-                    if booking['booking_id'] != booking['status']:
+                    if "error" in booking['status'].lower():
                         status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
