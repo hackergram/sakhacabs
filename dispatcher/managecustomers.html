@@ -90,15 +90,15 @@ a { text-decoration: none }
 
         </div>
         <div class="row"><div class="col-md-12">
-        Cust ID Template: <input type="text" size="30" id="cust_id_map"><br>
+        Customer ID Template: <input type="text" size="30" id="cust_id_map"><br>
           </div>
             </div>
             <div class="row"><div class="col-md-12">
-            Cust Billing Template: <input type="text" size="30" id="cust_billing_map"><br>
+            Customer Billing Template: <input type="text" size="30" id="cust_billing_map"><br>
               </div>
                 </div>
                 <div class="row"><div class="col-md-12">
-                Cust Mobile Template: <input type="text" size="30" id="mobile_num_map"><br>
+                Customer Mobile Template: <input type="text" size="30" id="mobile_num_map"><br>
                   </div>
                     </div>
         <div class="row">
@@ -172,7 +172,7 @@ a { text-decoration: none }
                   <div class="col-md-6">
                     <div class="form-group bmd-form-group">
                       <label class="bmd-label-floating">Customer ID</label>
-                      <input type="text" class="form-control" id="customerid" require="true">
+                      <input type="text" readonly class="form-control" id="customerid" require="true">
                     </div>
                   </div>
                   <div class="col-md-6">
@@ -239,7 +239,7 @@ var XW = {
 $("#loader").hide()
 var global_wb;
 var global_output;
-var serverip="192.168.56.101"
+var serverip="192.168.56.103"
 var customerlist=[]
 var submit_output=function(){
   $("#loader").show()
