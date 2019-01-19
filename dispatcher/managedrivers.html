@@ -315,8 +315,8 @@ var process_output=function(){
           console.log(parsed_output)
             driverlist=parsed_output;
           for (i=0;i<driverlist.length;i++){
-              driverlist[i]['driver_id']=Mustache.render(driver_id_map,driverlist[i])
-              driverlist[i]['mobile_num']=Mustache.render(driver_mobile_map,driverlist[i])
+              driverlist[i]['driver_id']=decodeEntities(Mustache.render(driver_id_map,driverlist[i]))
+              driverlist[i]['mobile_num']=decodeEntities(Mustache.render(driver_mobile_map,driverlist[i]))
 
               console.log(driverlist[i])
             }
@@ -494,7 +494,8 @@ var do_file = (function() {
                             className: 'select-checkbox',
                             targets:   0,
                             checkboxes: {
-                              'selectRow': true
+                              'selectRow': true,
+                              selectAllPages: false
                               }
                         } ],
              select: {

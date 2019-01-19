@@ -332,9 +332,9 @@ var process_output=function(){
             vehiclelist=parsed_output;
           for (i=0;i<vehiclelist.length;i++){
 
-              vehiclelist[i]['vehicle_id']=Mustache.render(vehicle_id_map,vehiclelist[i])
-              vehiclelist[i]['vehicle_cat']=Mustache.render(vehicle_cat_map,vehiclelist[i])
-              vehiclelist[i]['vehicle_name']=Mustache.render(vehicle_name_map,vehiclelist[i])
+              vehiclelist[i]['vehicle_id']=decodeEntities(Mustache.render(vehicle_id_map,vehiclelist[i]))
+              vehiclelist[i]['vehicle_cat']=decodeEntities(Mustache.render(vehicle_cat_map,vehiclelist[i]))
+              vehiclelist[i]['vehicle_name']=decodeEntities(Mustache.render(vehicle_name_map,vehiclelist[i]))
 
               console.log(vehiclelist[i])
             }
@@ -495,7 +495,8 @@ var do_file = (function() {
                             className: 'select-checkbox',
                             targets:   0,
                             checkboxes: {
-                              'selectRow': true
+                              'selectRow': true,
+                              selectAllPages: false
                               }
                         } ],
              select: {
