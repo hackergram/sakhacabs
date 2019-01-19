@@ -49,7 +49,7 @@
     <link rel="stylesheet" href="https://rawgit.com/tempusdominus/bootstrap-4/master/build/css/tempusdominus-bootstrap-4.css">
     <link rel="stylesheet" type="text/css" href="assets/css/sakha.css">
     <script>
-        var serverip="192.168.56.103"
+        var serverip="192.168.56.101"
         var assperpage=3
     </script>
 </head>
@@ -431,15 +431,15 @@
                 </div>
               </div>
 
-<script>
-function updateDSTotals(){
-  console.log("Updating time")
+        <script>
+          function updateDSTotals(){
+            console.log("Updating time")
 
-$("#total_time").val(moment($("#close_time").val()).diff(moment($("#open_time").val()),"hours",true).toFixed(2));
-$("#total_kms").val(parseFloat($("#close_kms").val())-parseFloat($("#open_kms").val()))
-}
+          $("#total_time").val(moment($("#close_time").val()).diff(moment($("#open_time").val()),"hours",true).toFixed(2));
+          $("#total_kms").val(parseFloat($("#close_kms").val())-parseFloat($("#open_kms").val()))
+          }
 
-</script>
+        </script>
 
         </div>
         <div class="modal fade" id="editbookingform" tabindex="-1" role="dialog" aria-labelledby="Edit Duty Slip">
@@ -844,27 +844,28 @@ $("#total_kms").val(parseFloat($("#close_kms").val())-parseFloat($("#open_kms").
 
                         </div>
                     </div>
-                </div>
-            </div>
-
-
-            <div class="row" id="mapmyindia">
-                <div class="col-lg-12 col-md-12">
-                    <div class="card">
-                        <div class="card-header card-header-primary">
-                          <h4 class="card-title">Map My India </h4>
-                          <p class="card-category">From their API</p>
-                        </div>
-                         <div class="card-body">
-                             <div class="wrap">
-                                 <iframe class="frame" src="https://fleet.mapmyindia.com"></iframe>
+                    <div class="row" id="mapmyindia">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="card">
+                                <div class="card-header card-header-primary">
+                                  <h4 class="card-title">Map My India </h4>
+                                  <p class="card-category">From their API</p>
                                 </div>
+                                 <div class="card-body">
+                                     <div class="wrap">
+                                         <iframe class="frame" src="https://fleet.mapmyindia.com"></iframe>
+                                        </div>
+                                </div>
+                            </div>
                         </div>
+
+
                     </div>
                 </div>
-
-
             </div>
+
+
+
 
 
 
@@ -1028,6 +1029,10 @@ $("#total_kms").val(parseFloat($("#close_kms").val())-parseFloat($("#open_kms").
                 console.log("closing booking  modal")
                 window.location.reload(false);
             })
+            function scrollTo(hash) {
+              location.hash = "#" + hash;
+            }
+            scrollTo("pablo")
     	});
 	</script>
 </body>
