@@ -6,6 +6,361 @@
 	},
 	"item": [
 		{
+			"name": "Imports",
+			"item": [
+				{
+					"name": "Drivers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6b9f3ccf-2bfd-42d2-a16e-5729faa4edf6",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});",
+									"",
+									"pm.test(\"All drivers imported successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"DiD\": \"driver1\",\n    \"Mobile\": 918989161881,\n    \"Name\": \"A\",\n    \"driver_id\": \"driver1\",\n    \"mobile_num\": \"918989161881\"\n  },\n  {\n    \"DiD\": \"driver2\",\n    \"Mobile\": 918989161882,\n    \"Name\": \"A\",\n    \"driver_id\": \"driver2\",\n    \"mobile_num\": \"918989161882\"\n  },\n  {\n    \"DiD\": \"driver3\",\n    \"Mobile\": 918989161883,\n    \"Name\": \"A\",\n    \"driver_id\": \"driver3\",\n    \"mobile_num\": \"918989161883\"\n  },\n  {\n    \"DiD\": \"driver4\",\n    \"Mobile\": 918989161884,\n    \"Name\": \"A\",\n    \"driver_id\": \"driver4\",\n    \"mobile_num\": \"918989161884\"\n  },\n  {\n    \"DiD\": \"driver5\",\n    \"Mobile\": 918989161885,\n    \"Name\": \"A\",\n    \"driver_id\": \"driver5\",\n    \"mobile_num\": \"918989161885\"\n  }\n]"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/driver/import",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"driver",
+								"import"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vehicles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6b9f3ccf-2bfd-42d2-a16e-5729faa4edf6",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});",
+									"",
+									"pm.test(\"All vehicles imported successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n\t{\n\t\"DIN\": \"D3345\",\n\t\"Name\": \"X\",\n\t\"Blah\": \"Y\",\n\t\"vehicle_id\": \"D3345\",\n\t\"vehicle_cat\": \"X\",\n\t\"vehicle_name\": \"Y\"\n\t},\n\t{\n\t\"DIN\": \"D3346\",\n\t\"Name\": \"X\",\n\t\"Blah\": \"Y\",\n\t\"vehicle_id\": \"D3346\",\n\t\"vehicle_cat\": \"X\",\n\t\"vehicle_name\": \"Y\"\n\t},\n\t{\n\t\"DIN\": \"D3347\",\n\t\"Name\": \"X\",\n\t\"Blah\": \"Y\",\n\t\"vehicle_id\": \"D3347\",\n\t\"vehicle_cat\": \"X\",\n\t\"vehicle_name\": \"Y\"\n\t},\n\t{\n\t\"DIN\": \"D3348\",\n\t\"Name\": \"X\",\n\t\"Blah\": \"Y\",\n\t\"vehicle_id\": \"D3348\",\n\t\"vehicle_cat\": \"X\",\n\t\"vehicle_name\": \"Y\"\n\t},\n\t{\n\t\"DIN\": \"D3349\",\n\t\"Name\": \"X\",\n\t\"Blah\": \"Y\",\n\t\"vehicle_id\": \"D3349\",\n\t\"vehicle_cat\": \"X\",\n\t\"vehicle_name\": \"Y\"\n\t},\n\t{\n\t\"DIN\": \"D3350\",\n\t\"Name\": \"X\",\n\t\"Blah\": \"Y\",\n\t\"vehicle_id\": \"D3350\",\n\t\"vehicle_cat\": \"X\",\n\t\"vehicle_name\": \"Y\"\n\t}\n]"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/vehicle/import",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"vehicle",
+								"import"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6b9f3ccf-2bfd-42d2-a16e-5729faa4edf6",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});",
+									"",
+									"pm.test(\"All products imported successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"CIN\": \"SINGLTRP\",\n    \"Hrs\": 0,\n    \"Kms\": 0,\n    \"Price\": 1200,\n    \"Extra Hrs\": 345,\n    \"Extra Kms\": 1.7,\n    \"product_id\": \"SINGLTRP\",\n    \"included_hrs\": 0,\n    \"included_kms\": 0,\n    \"price\": 1200,\n    \"extra_hrs_rate\": 345,\n    \"extra_kms_rate\": 1.7\n  },\n  {\n    \"CIN\": \"Prod1\",\n    \"Hrs\": 4,\n    \"Kms\": 0,\n    \"Price\": 500,\n    \"Extra Hrs\": 346,\n    \"Extra Kms\": 2.7,\n    \"product_id\": \"Prod1\",\n    \"included_hrs\": 4,\n    \"included_kms\": 0,\n    \"price\": 500,\n    \"extra_hrs_rate\": 346,\n    \"extra_kms_rate\": 2.7\n  },\n  {\n    \"CIN\": \"Prod2\",\n    \"Hrs\": 6,\n    \"Kms\": 60,\n    \"Price\": 900,\n    \"Extra Hrs\": 347,\n    \"Extra Kms\": 3.7,\n    \"product_id\": \"Prod2\",\n    \"included_hrs\": 6,\n    \"included_kms\": 60,\n    \"price\": 900,\n    \"extra_hrs_rate\": 347,\n    \"extra_kms_rate\": 3.7\n  },\n  {\n    \"CIN\": \"Prod3\",\n    \"Hrs\": 3,\n    \"Kms\": 30,\n    \"Price\": 1500,\n    \"Extra Hrs\": 348,\n    \"Extra Kms\": 4.7,\n    \"product_id\": \"Prod3\",\n    \"included_hrs\": 3,\n    \"included_kms\": 30,\n    \"price\": 1500,\n    \"extra_hrs_rate\": 348,\n    \"extra_kms_rate\": 4.7\n  },\n  {\n    \"CIN\": \"Prod4\",\n    \"Hrs\": 4,\n    \"Kms\": 50,\n    \"Price\": 2500,\n    \"Extra Hrs\": 349,\n    \"Extra Kms\": 5.7,\n    \"product_id\": \"Prod4\",\n    \"included_hrs\": 4,\n    \"included_kms\": 50,\n    \"price\": 2500,\n    \"extra_hrs_rate\": 349,\n    \"extra_kms_rate\": 5.7\n  },\n  {\n    \"CIN\": \"Prod5\",\n    \"Hrs\": 5,\n    \"Kms\": 50,\n    \"Price\": 3600,\n    \"Extra Hrs\": 350,\n    \"Extra Kms\": 6.7,\n    \"product_id\": \"Prod5\",\n    \"included_hrs\": 5,\n    \"included_kms\": 50,\n    \"price\": 3600,\n    \"extra_hrs_rate\": 350,\n    \"extra_kms_rate\": 6.7\n  }\n]"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/product/import",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"product",
+								"import"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6b9f3ccf-2bfd-42d2-a16e-5729faa4edf6",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});",
+									"",
+									"pm.test(\"All customers imported successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n\t{\n\t\"CIN\": \"retail\",\n\t\"Name\": \"Retail\",\n\t\"Address\": \"N/A\",\n\t\"Mobile\": 918989161881,\n\t\"cust_id\": \"retail\",\n\t\"cust_billing\": \"Retail N&#x2F;A\",\n\t\"mobile_num\": \"918989161881\"\n\t},\n\t{\n\t\"CIN\": \"Cust1\",\n\t\"Name\": \"Customer 1\",\n\t\"Address\": \"New Delhi\",\n\t\"Mobile\": 918989161881,\n\t\"cust_id\": \"Cust1\",\n\t\"cust_billing\": \"Customer 1 New Delhi\",\n\t\"mobile_num\": \"918989161881\"\n\t},\n\t{\n\t\"CIN\": \"Cust2\",\n\t\"Name\": \"Customer 2\",\n\t\"Address\": \"Mumbai\",\n\t\"Mobile\": 918989161881,\n\t\"cust_id\": \"Cust2\",\n\t\"cust_billing\": \"Customer 2 Mumbai\",\n\t\"mobile_num\": \"918989161881\"\n\t},\n\t{\n\t\"CIN\": \"Cust3\",\n\t\"Name\": \"Customer 3\",\n\t\"Address\": \"Chennai\",\n\t\"Mobile\": 918989161881,\n\t\"cust_id\": \"Cust3\",\n\t\"cust_billing\": \"Customer 3 Chennai\",\n\t\"mobile_num\": \"918989161881\"\n\t},\n\t{\n\t\"CIN\": \"Cust4\",\n\t\"Name\": \"Customer 4\",\n\t\"Address\": \"Bangalore\",\n\t\"Mobile\": 918989161881,\n\t\"cust_id\": \"Cust4\",\n\t\"cust_billing\": \"Customer 4 Bangalore\",\n\t\"mobile_num\": \"918989161881\"\n\t},\n\t{\n\t\"CIN\": \"Cust5\",\n\t\"Name\": \"Customer 5\",\n\t\"Address\": \"Kolkata\",\n\t\"Mobile\": 918989161881,\n\t\"cust_id\": \"Cust5\",\n\t\"cust_billing\": \"Customer 5 Kolkata\",\n\t\"mobile_num\": \"918989161881\"\n\t}\n]"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/customer/import",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"customer",
+								"import"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6b9f3ccf-2bfd-42d2-a16e-5729faa4edf6",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});",
+									"",
+									"pm.test(\"All bookings imported successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"Date\": \"2017-12-31T18:30:00.000Z\",\n    \"drop\": \"a\",\n    \"sd\": \"dsd\",\n    \"ad\": \"ds\",\n    \"Time\": \"1899-12-30T13:00:00.000Z\",\n    \"passenger_detail\": \"dsd\",\n    \"pickup_location\": \"dsd\",\n    \"product_id\": \"SINGLTRP\",\n    \"pickup_timestamp\": \"2018-01-01 12:51:10\",\n    \"booking_channel\": \"bulk\",\n    \"cust_id\": \"retail\",\n    \"drop_location\": \"dsddsd\",\n    \"passenger_mobile\": \"918989161881\"\n  },\n  {\n    \"Date\": \"2018-01-01T18:30:00.000Z\",\n    \"drop\": \"a\",\n    \"sd\": \"dsd\",\n    \"ad\": \"ds\",\n    \"Time\": \"1899-12-31T13:00:00.000Z\",\n    \"passenger_detail\": \"dsd\",\n    \"pickup_location\": \"dsd\",\n    \"product_id\": \"SINGLTRP\",\n    \"pickup_timestamp\": \"2018-01-02 12:51:10\",\n    \"booking_channel\": \"bulk\",\n    \"cust_id\": \"retail\",\n    \"drop_location\": \"dsddsd\",\n    \"passenger_mobile\": \"918989161881\"\n  },\n  {\n    \"Date\": \"2018-01-02T18:30:00.000Z\",\n    \"drop\": \"a\",\n    \"sd\": \"dsd\",\n    \"ad\": \"ds\",\n    \"Time\": \"1900-01-01T13:00:00.000Z\",\n    \"passenger_detail\": \"dsd\",\n    \"pickup_location\": \"dsd\",\n    \"product_id\": \"SINGLTRP\",\n    \"pickup_timestamp\": \"2018-01-03 12:51:10\",\n    \"booking_channel\": \"bulk\",\n    \"cust_id\": \"retail\",\n    \"drop_location\": \"dsddsd\",\n    \"passenger_mobile\": \"918989161881\"\n  },\n  {\n    \"Date\": \"2018-01-03T18:30:00.000Z\",\n    \"drop\": \"a\",\n    \"sd\": \"dsd\",\n    \"ad\": \"ds\",\n    \"Time\": \"1900-01-02T13:00:00.000Z\",\n    \"passenger_detail\": \"dsd\",\n    \"pickup_location\": \"dsd\",\n    \"product_id\": \"SINGLTRP\",\n    \"pickup_timestamp\": \"2018-01-04 12:51:10\",\n    \"booking_channel\": \"bulk\",\n    \"cust_id\": \"retail\",\n    \"drop_location\": \"dsddsd\",\n    \"passenger_mobile\": \"918989161881\"\n  },\n  {\n    \"Date\": \"2018-01-04T18:30:00.000Z\",\n    \"drop\": \"a\",\n    \"sd\": \"dsd\",\n    \"ad\": \"ds\",\n    \"Time\": \"1900-01-03T13:00:00.000Z\",\n    \"passenger_detail\": \"dsd\",\n    \"pickup_location\": \"dsd\",\n    \"product_id\": \"SINGLTRP\",\n    \"pickup_timestamp\": \"2018-01-05 12:51:10\",\n    \"booking_channel\": \"bulk\",\n    \"cust_id\": \"retail\",\n    \"drop_location\": \"dsddsd\",\n    \"passenger_mobile\": \"918989161881\"\n  },\n  {\n    \"Date\": \"2018-01-05T18:30:00.000Z\",\n    \"drop\": \"a\",\n    \"sd\": \"dsd\",\n    \"ad\": \"ds\",\n    \"Time\": \"1900-01-04T13:00:00.000Z\",\n    \"passenger_detail\": \"dsd\",\n    \"pickup_location\": \"dsd\",\n    \"product_id\": \"SINGLTRP\",\n    \"pickup_timestamp\": \"2018-01-06 12:51:10\",\n    \"booking_channel\": \"bulk\",\n    \"cust_id\": \"retail\",\n    \"drop_location\": \"dsddsd\",\n    \"passenger_mobile\": \"918989161881\"\n  },\n  {\n    \"Date\": \"2018-01-06T18:30:00.000Z\",\n    \"drop\": \"a\",\n    \"sd\": \"dsd\",\n    \"ad\": \"ds\",\n    \"Time\": \"1900-01-05T13:00:00.000Z\",\n    \"passenger_detail\": \"dsd\",\n    \"pickup_location\": \"dsd\",\n    \"product_id\": \"SINGLTRP\",\n    \"pickup_timestamp\": \"2018-01-07 12:51:10\",\n    \"booking_channel\": \"bulk\",\n    \"cust_id\": \"retail\",\n    \"drop_location\": \"dsddsd\",\n    \"passenger_mobile\": \"918989161881\"\n  },\n  {\n    \"Date\": \"2018-01-07T18:30:00.000Z\",\n    \"drop\": \"a\",\n    \"sd\": \"dsd\",\n    \"ad\": \"ds\",\n    \"Time\": \"1900-01-06T13:00:00.000Z\",\n    \"passenger_detail\": \"dsd\",\n    \"pickup_location\": \"dsd\",\n    \"product_id\": \"SINGLTRP\",\n    \"pickup_timestamp\": \"2018-01-08 12:51:10\",\n    \"booking_channel\": \"bulk\",\n    \"cust_id\": \"retail\",\n    \"drop_location\": \"dsddsd\",\n    \"passenger_mobile\": \"918989161881\"\n  }\n]"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/booking/import",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"booking",
+								"import"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "SystemWithDataSanityTest",
 			"item": [
 				{
@@ -520,6 +875,309 @@
 			]
 		},
 		{
+			"name": "ProductsCRUD",
+			"item": [
+				{
+					"name": "CreateProduct",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1a02d125-4c45-4b6c-a4a7-75e604bd9ece",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"pm.test(\"Create product working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"product_id\": \"testproduct\",\n  \"mobile_num\": \"918989161880\",\n  \"first_name\": \"Test\",\n  \"last_name\": \"product\"\n}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/product",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestDuplicatProductIDFail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "30f5d9f8-c228-4e41-997f-97b8031f7f7d",
+								"exec": [
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Duplicate product fail working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"error\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"driver_id\": \"testproduct\",\n  \"mobile_num\": \"918989161880\",\n  \"first_name\": \"Test\",\n  \"last_name\": \"product\"\n}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/product",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestEditProduct",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "30f5d9f8-c228-4e41-997f-97b8031f7f7d",
+								"exec": [
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Editing product working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"driver_id\": \"testproduct\",\n  \"mobile_num\": \"918989161880\",\n  \"first_name\": \"Test2\",\n  \"last_name\": \"product1\"\n}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/product/by_product_id/testproduct",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"product",
+								"by_product_id",
+								"testproduct"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestDeleteProduct",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "30f5d9f8-c228-4e41-997f-97b8031f7f7d",
+								"exec": [
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Delete product working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/product/by_product_id/testproduct",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"product",
+								"by_product_id",
+								"testproduct"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4ff184cb-6f3f-4317-afa2-757b17beba45",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8b58c6e0-8f90-411f-91ce-7ddef7181c36",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
 			"name": "DriverCRUD",
 			"item": [
 				{
@@ -793,6 +1451,875 @@
 								"driver",
 								"by_driver_id",
 								"testdriver"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CustomerCRUD",
+			"item": [
+				{
+					"name": "CreateCustomer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1a02d125-4c45-4b6c-a4a7-75e604bd9ece",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"pm.test(\"Create customer working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cust_id\": \"testcustomer\",\n  \"mobile_num\": \"918989161880\",\n  \"first_name\": \"Test\",\n  \"last_name\": \"Driver\"\n}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/customer",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"customer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestDuplicateCustomerIDFail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "30f5d9f8-c228-4e41-997f-97b8031f7f7d",
+								"exec": [
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Duplicate customer fail working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"error\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cust_id\": \"testcustomer\",\n  \"mobile_num\": \"918989161880\",\n  \"first_name\": \"Test\",\n  \"last_name\": \"Driver\"\n}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/customer",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"customer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestEditCustomer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "30f5d9f8-c228-4e41-997f-97b8031f7f7d",
+								"exec": [
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Editing customer working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"driver_id\": \"testdriver\",\n  \"mobile_num\": \"918989161880\",\n  \"first_name\": \"Test2\",\n  \"last_name\": \"Driver1\"\n}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/customer/by_cust_id/testcustomer",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"customer",
+								"by_cust_id",
+								"testcustomer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestDeleteCustomer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "30f5d9f8-c228-4e41-997f-97b8031f7f7d",
+								"exec": [
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Delete customer working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/customer/by_cust_id/testcustomer",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"customer",
+								"by_cust_id",
+								"testcustomer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "VehicleCRUD",
+			"item": [
+				{
+					"name": "Createvehicle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1a02d125-4c45-4b6c-a4a7-75e604bd9ece",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"pm.test(\"Create vehicle working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"vehicle_id\": \"testvehicle\",\n  \"mobile_num\": \"918989161880\",\n  \"first_name\": \"Test\",\n  \"last_name\": \"vehicle\"\n}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/vehicle",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"vehicle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestDuplicateVehicleIDFail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "30f5d9f8-c228-4e41-997f-97b8031f7f7d",
+								"exec": [
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Duplicate vehicle fail working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"error\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"vehicle_id\": \"testvehicle\",\n  \"mobile_num\": \"918989161880\",\n  \"first_name\": \"Test\",\n  \"last_name\": \"vehicle\"\n}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/vehicle",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"vehicle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestEditVehicle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "30f5d9f8-c228-4e41-997f-97b8031f7f7d",
+								"exec": [
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Editing vehicle working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"vehicle_id\": \"testvehicle\",\n  \"mobile_num\": \"918989161880\",\n  \"first_name\": \"Test2\",\n  \"last_name\": \"product1\"\n}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/vehicle/by_vehicle_id/testvehicle",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"vehicle",
+								"by_vehicle_id",
+								"testvehicle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TestDeleteVehicle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "30f5d9f8-c228-4e41-997f-97b8031f7f7d",
+								"exec": [
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Delete vehicle working\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/vehicle/by_vehicle_id/testvehicle",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"vehicle",
+								"by_vehicle_id",
+								"testvehicle"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "4ff184cb-6f3f-4317-afa2-757b17beba45",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8b58c6e0-8f90-411f-91ce-7ddef7181c36",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "BulkDelete",
+			"item": [
+				{
+					"name": "Drivers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b028b58e-334a-4b21-a57f-9b8e83853b5b",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});",
+									"",
+									"pm.test(\"All drivers deleted successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  \"driver1\",\n  \"driver2\",\n  \"driver3\",\n  \"driver4\",\n  \"driver5\"\n]"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/driver/bulkdelete",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"driver",
+								"bulkdelete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vehicles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b028b58e-334a-4b21-a57f-9b8e83853b5b",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});",
+									"",
+									"pm.test(\"All drivers deleted successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  \"D3345\",\n  \"D3346\",\n  \"D3347\",\n  \"D3348\",\n  \"D3349\",\n  \"D3350\"\n]"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/vehicle/bulkdelete",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"vehicle",
+								"bulkdelete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b028b58e-334a-4b21-a57f-9b8e83853b5b",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});",
+									"",
+									"pm.test(\"All drivers deleted successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n\t\"retail\",\n\t\"Cust1\",\n\t\"Cust2\",\n\t\"Cust3\",\n\t\"Cust4\",\n\t\"Cust5\"\n]"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/customer/bulkdelete",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"customer",
+								"bulkdelete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b028b58e-334a-4b21-a57f-9b8e83853b5b",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});",
+									"",
+									"pm.test(\"All products deleted successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  \"SINGLTRP\",\n  \"Prod1\",\n  \"Prod2\",\n  \"Prod3\",\n  \"Prod4\",\n  \"Prod5\"\n]"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/product/bulkdelete",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"product",
+								"bulkdelete"
 							]
 						}
 					},

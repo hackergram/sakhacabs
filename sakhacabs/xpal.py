@@ -1120,10 +1120,11 @@ Bulk Imports of everything
 
 
 def import_bookings(bookinglist):
+    sakhacabsxpal.logger.info("Booking list: {}".format(bookinglist))
     try:
         for booking in bookinglist:
             try:
-                if validate_booking_dict(booking):
+                if validate_booking_dict(booking)['status'] is True:
                     b = new_booking(booking)
 
                     if type(b) == list:
@@ -1136,7 +1137,7 @@ def import_bookings(bookinglist):
                     else:
                         booking['status'] = b
                 else:
-                    booking['status'] = validate_booking_dict(booking)
+                    booking['status'] = validate_booking_dict(booking)['message']
             except Exception as e:
                 booking['status'] = "{} {}".format(type(e), str(e))
         return bookinglist
