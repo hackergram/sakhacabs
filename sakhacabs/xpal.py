@@ -315,9 +315,11 @@ def new_booking(respdict):
                 recipients.append({"type": "mobile", "value": num})
             sms.send_sms({"message": notification, "recipients": recipients})
         sakhacabsxpal.logger.info("{}".format(notification))
+        respdict['booking_id'] = b.booking_id
         return [b]
     except Exception as e:
-        return "{} {}".format(type(e), str(e))
+        respdict['booking_id'] = None
+        return "error: {} {}".format(type(e), str(e))
 
 
 def update_booking_status(booking_id, status):
@@ -1137,12 +1139,12 @@ def import_bookings(bookinglist):
                     else:
                         booking['status'] = b
                 else:
-                    booking['status'] = validate_booking_dict(booking)['message']
+                    booking['status'] = "error: " + validate_booking_dict(booking)['message']
             except Exception as e:
-                booking['status'] = "{} {}".format(type(e), str(e))
+                booking['status'] = "error: {} {}".format(type(e), str(e))
         return bookinglist
     except Exception as e:
-        return "{} {}".format(type(e), str(e))
+        return "error: {} {}".format(type(e), str(e))
 
 
 def import_drivers(driverlist):
