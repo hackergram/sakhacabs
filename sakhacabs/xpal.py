@@ -15,6 +15,7 @@ sys.path.append("/opt/xetrapal")
 import xetrapal
 import pandas
 from sakhacabs import documents, utils
+from copy import deepcopy
 
 sakhacabsxpal = xetrapal.Xetrapal(
     configfile="/opt/sakhacabs-appdata/sakhacabsxpal.conf")
@@ -1127,7 +1128,7 @@ def import_bookings(bookinglist):
         for booking in bookinglist:
             try:
                 if validate_booking_dict(booking)['status'] is True:
-                    b = new_booking(booking)
+                    b = new_booking(deepcopy(booking))
 
                     if type(b) == list:
                         b = b[0]
