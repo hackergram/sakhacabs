@@ -1,3 +1,26 @@
+var decodeEntities = (function() {
+  // this prevents any overhead from creating the object each time
+  var element = document.createElement('div');
+
+  function decodeHTMLEntities (str) {
+    if(str && typeof str === 'string') {
+      // strip script/html tags
+      str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '');
+      str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+      element.innerHTML = str;
+      str = element.textContent;
+      element.textContent = '';
+    }
+
+    return str;
+  }
+
+  return decodeHTMLEntities;
+})();
+
+
+
+
 var sakha={
     fillData: function(){
         console.log("Filling data");
@@ -63,10 +86,8 @@ var sakha={
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
          $("#exportbookings").on("click",function(){
-           $("#loader").show()
              console.log("exporing bookings")
             $.getJSON('http://'+serverip+':5000/booking/export',function(data){
-                $("#loader").hide()
                 window.open(data.resp,"_blank")
             })
         })
@@ -99,9 +120,7 @@ var sakha={
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
           $("#exportlocupdates").on("click",function(){
-            $("#loader").show()
             $.getJSON('http://'+serverip+':5000/locupdate/export',function(data){
-                $("#loader").hide()
                 window.open(data.resp,"_blank")
             })
         })
@@ -152,9 +171,7 @@ var sakha={
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
         $("#exportdrivers").on("click",function(){
-          $("#loader").show()
             $.getJSON('http://'+serverip+':5000/driver/export',function(data){
-              $("#loader").hide()
                 console.log(data.resp)
                 window.open(data.resp,"_blank")
             })
@@ -174,7 +191,13 @@ var sakha={
                 //{ data: function (row){retturn'metadata.first_name' + "metadata.last_name" }},
                 //{ data: 'metadata', render: function (data){return data.first_name +" "+ data.last_name }},
                 //{ data: 'checkedin' },
-                { data: 'vehicle_id', defaultContent: "None"},
+                {data:null, defaultContent:"None", render: function(data){      //
+
+                    var vehicle_id='<a class="nav-link" data-toggle="modal" data-target="#createvehicleform" data-vehicle_id="'+data.vehicle_id+'">\
+                        <i class="material-icons">content_paste</i> '+data.vehicle_id+'\
+                        </a>'
+                    return vehicle_id
+                }},
                 { data: 'driver_id', defaultContent: "None", render:function(data){if(data){return data}else{return "Checked Out"}}  },
                 { data: 'reg_num', defaultContent: "Unknown", render:function(data){return data}  }
 
@@ -191,10 +214,8 @@ var sakha={
                 table.ajax.reload( null, false ); // user paging is not reset on reload
         }, 30000 );
           $("#exportvehicles").on("click",function(){
-            $("#loader").show()
             $.getJSON('http://'+serverip+':5000/vehicle/export',function(data){
                 console.log(data.resp)
-                $("#loader").hide()
                 window.open(data.resp,"_blank")
             })
         })
@@ -663,19 +684,16 @@ var sakha={
             console.log("editing driver "+driverid)
             $.getJSON('http://'+serverip+':5000/driver/by_driver_id/'+driverid,function(data){
                 console.log(data.resp[0])
-                $("#driverid").val(data.resp[0].driver_id)
-                $("#mobnum").val(data.resp[0].mobile_num)
-                $("#firstname").val(data.resp[0].first_name)
-                $("#lastname").val(data.resp[0].last_name)
+                $("#driverid").val(decodeEntities(data.resp[0].driver_id))
+                $("#mobnum").val(decodeEntities(data.resp[0].mobile_num))
+                $("#firstname").val(decodeEntities(data.resp[0].first_name))
+                $("#lastname").val(decodeEntities(data.resp[0].last_name))
             })
         }
 
        document.getElementById("savedriver").setAttribute("onclick","sakha.saveDriver('"+driverid+"')")
 
     },
-
-
-
     fillDutySlipModal: function(dsid){
        console.log("editing dutyslip "+dsid)
        var url = 'http://'+serverip+':5000/dutyslip/by_id/'+dsid
@@ -703,93 +721,97 @@ var sakha={
 
                     //'YYYY-MM-DD HH:mm'
                 }     //$("#total_time").text=moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2);
-                $("#open_kms").val(data.resp[0].open_kms)
-                $("#close_kms").val(data.resp[0].close_kms)
+                $("#open_kms").val(decodeEntities(data.resp[0].open_kms))
+                $("#close_kms").val(decodeEntities(data.resp[0].close_kms))
                 $("#total_kms").val(parseFloat(data.resp[0].close_kms)-parseFloat(data.resp[0].open_kms))
-                $("#payment_mode").val(data.resp[0].payment_mode.toUpperCase())
+                $("#payment_mode").val(decodeEntities(data.resp[0].payment_mode.toUpperCase()))
                 $("#parking_charges").val(data.resp[0].parking_charges)
-                $("#toll_charges").val(data.resp[0].toll_charges)
-                $("#amount").val(data.resp[0].amount)
-                $("#ds_remarks").val(data.resp[0].remarks)
+                $("#toll_charges").val(decodeEntities(data.resp[0].toll_charges))
+                $("#amount").val(decodeEntities(data.resp[0].amount))
+                $("#ds_remarks").val(decodeEntities(data.resp[0].remarks))
             })
 
        document.getElementById("savedutyslip").setAttribute("onclick","sakha.saveDutySlip('"+dsid+"')")
 
     },
-/*    fillVehiclesModal: function(vehicle_id){
-        if(vehicle_id==="newvehicle"){
-            console.log("creating new vehicle")
-            $("#vehid").val("")
-            $("#vehcat").val("")
-            $("#vehname").val("")
-}
-
-        else{
-            console.log("editing vehicle "+vehicle_id)
-            $.getJSON('http://'+serverip+':5000/vehicle/by_vehicle_id/'+vehicle_id,function(data){
-                console.log(data.resp[0])
-                $("#vehid").val(data.resp[0].vehicle_id)
-                $("#vehcat").val(data.resp[0].vehicle_cat)
-                $("#vehnum").val(data.resp[0].vehicle_name)
-
-            })
-        }
-
-       document.getElementById("savevehicle").setAttribute("onclick","sakha.savevehicle('"+vehicle_id+"')")
-
-    },*/
-    savevehicle: function(vehicle_id){
-        console.log("Trying to save "+vehicle_id)
-        vehicledict={}
-        vehicledict.vehicle_id=$("#vehid").val()
-        vehicledict.vehicle_cat=$("#vehcat").val()
-        vehicledict.vehicle_name=$("#vehnum").val()
-    //    vehicledict.last_name=$("#lastname").val()
-        var params = JSON.stringify(vehicledict);
-        var http = new XMLHttpRequest();
-        if(vehicle_id==="newvehicle"){
-            //$.post("http://"+serverip+":5000/assignment",assignmentdict)
-            var url = "http://"+serverip+":5000/vehicle";
-            http.open("POST", url, true);
-        }
-        else{
-            var url = "http://"+serverip+":5000/vehicle/by_vehicle_id/"+vehicle_id;
-            http.open("PUT", url, true);
-
-        }
-        if (vehicledict.vehicle_id.length>4){
-            http.setRequestHeader("Content-type", "application/json");
-            http.onreadystatechange = function() {//Call a function when the state changes.
-            if(http.readyState == 4 ) {
-                if(http.status == 200){
-                    response=JSON.parse(http.responseText)
-                    console.log(response)
-                    if(response.status==="success"){
-                       document.getElementById("vehiclelist").innerHTML="<span style='color:green'>Success!</span>"
-                        alert("Saved vehicle Successfully!")
-                        console.log("success")
-                    }
-                    if (response.status==="error"){
-                        console.log("error")
-                        alert("Failed to Save   vehicle!")
-                         document.getElementById("vehiclelist").innerHTML="<span style='color:red'>"+response.resp+"</span>"
-                    }
-                    }
-                    else{
-                    alert("Network Error Saving vehicle.")
-                    }
-                    }
-
-                    }
-                    http.send(params);
-                    }
-                    else{
-                    alert(" vehicle ID must be at least 5 characters")
-                    }
 
 
 
-      },
+    fillVehicleModal: function(vehicle_id){
+           console.log("editing vehicl"+vehicle_id)
+           var url = 'http://'+serverip+':5000/vehicle/by_vehicle_id/'+vehicle_id
+           console.log("getting url "+url)
+
+                $.getJSON(url,function(data){
+                    console.log(data.resp[0])
+                  //  $("#vehicle_pickup_timestamp").empty()
+                    $("#vehicle_id").append(data.resp[0].vehical_id )
+                    $("#vehid").val(decodeEntities(data.resp[0].vehical_id))
+
+
+
+                    $("#vehcat").val(decodeEntities(data.resp[0].vehicle_cat))
+                    $("#vehname").val(decodeEntities(data.resp[0].vehicle_name))
+
+              })
+
+         document.getElementById("savevehicle").setAttribute("onclick","sakha.savevehicle('"+vehicle_id+"')")
+    },
+        savevehicle: function(vehicle_id){
+             console.log("Trying to save "+vehicle_id)
+             vehicledict={}
+             vehicledict.vehicle_id=$("#vehid").val()
+             vehicledict.vehicle_cat=$("#vehcat").val()
+             vehicledict.vehicle_name=$("#vehname").val()
+         //    vehicledict.last_name=$("#lastname").val()
+             var params = JSON.stringify(vehicledict);
+             var http = new XMLHttpRequest();
+             if(vehicleid==="newvehicle"){
+                 //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+                 var url = "http://"+serverip+":5000/vehicle";
+                 http.open("POST", url, true);
+             }
+             else{
+                 var url = "http://"+serverip+":5000/vehicle/by_vehicle_id/"+vehicle_id;
+                 http.open("PUT", url, true);
+
+             }
+             if (vehicledict.vehicle_id.length>4){
+                 http.setRequestHeader("Content-type", "application/json");
+                 http.onreadystatechange = function() {//Call a function when the state changes.
+                 if(http.readyState == 4 ) {
+                     if(http.status == 200){
+                         response=JSON.parse(http.responseText)
+                         console.log(response)
+                         if(response.status==="success"){
+                            document.getElementById("vehiclelist").innerHTML="<span style='color:green'>Success!</span>"
+                             alert("Saved vehicle Successfully!")
+                             console.log("success")
+                         }
+                         if (response.status==="error"){
+                             console.log("error")
+                             alert("Failed to Save   vehicle!")
+                              document.getElementById("vehiclelist").innerHTML="<span style='color:red'>"+response.resp+"</span>"
+                         }
+                         }
+                         else{
+                         alert("Network Error Saving vehicle.")
+                         }
+                         }
+
+                         }
+                         http.send(params);
+                         }
+                         else{
+                         alert(" vehicle ID must be at least 5 characters")
+                         }
+
+
+
+           },
+
+
+
 
 
 
@@ -803,8 +825,8 @@ var sakha={
             $.getJSON(url,function(data){
                 console.log(data.resp[0])
               //  $("#customer_pickup_timestamp").empty()
-                $("#cust_id").append(data.resp[0].customer_id )
-                $("#customerid").val(data.resp[0].cust_id)
+               $("#cust_id").append(data.resp[0].cust_id )
+                $("#customerid").val(decodeEntities(data.resp[0].cust_id))
 
 
             //    $("#customer_product_id").val(data.resp[0].product_id)
@@ -820,8 +842,8 @@ var sakha={
                 //$("#total_time").text=moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2);
               //  $("#customer_cust_meta").val(JSON.stringify(data.resp[0].cust_meta))
             //    $("#customer_remarks").val(data.resp[0].remarks)
-                $("#customermobnum").val(data.resp[0].mobile_num)
-                $("#customerbillingdisplay").val(data.resp[0].cust_billing)
+                $("#customermobnum").val(decodeEntities(data.resp[0].mobile_num))
+                $("#customerbillingdisplay").val(decodeEntities(data.resp[0].cust_billing))
             //    $("#customer_passenger_detail").val(data.resp[0].passenger_detail)
 
               //  $("#customer_pickup_location").val(data.resp[0].pickup_location)
@@ -831,44 +853,6 @@ var sakha={
           })
 
      document.getElementById("savecustomer").setAttribute("onclick","sakha.saveCustomer('"+cust_id+"')")
-},
-
-     fillVehiclesModal: function(vehicle_id){
-        console.log("editing customer "+vehicle_id)
-        var url = 'http://'+serverip+':5000/vehicle/by_vehicle_id/'+vehicle_id
-        console.log("getting url "+url)
-
-             $.getJSON(url,function(data){
-                 console.log(data.resp[0])
-               //  $("#customer_pickup_timestamp").empty()
-                 $("#vehicle_id").append(data.resp[0].vehicle_id )
-                 $("#vehid").val(data.resp[0].vehicle_id)
-
-
-             //    $("#customer_product_id").val(data.resp[0].product_id)
-             //    $("#customer_status").val(data.resp[0].status).change()
-                 //$("#created_time").val(moment(data.resp[0].created_time.$date).format('MMMM Do YYYY, h:mm:ss a'));
-                 //$("#customer_pickup_timestamp").empty()
-             //    $("#customer_pickup_timestamp").val(moment(data.resp[0].pickup_timestamp.$date+1).format('YYYY-MM-DD HH:mm:ss'))
-
-             //    $("#customer_created_timestamp").empty()
-
-               //  $("#customer_created_timestamp").append(moment(data.resp[0].created_timestamp.$date).format('MMMM Do YYYY, h:mm:ss a'));
-               // $("#customer_channel").val(data.resp[0].customer_channel);
-                 //$("#total_time").text=moment(data.resp[0].close_time.$date).diff(moment(data.resp[0].open_time.$date),"hours",true).toFixed(2);
-               //  $("#customer_cust_meta").val(JSON.stringify(data.resp[0].cust_meta))
-             //    $("#customer_remarks").val(data.resp[0].remarks)
-                 $("#vehcat").val(data.resp[0].vehicle_cat)
-                 $("#vehnum").val(data.resp[0].vehicle_name)
-             //    $("#customer_passenger_detail").val(data.resp[0].passenger_detail)
-
-               //  $("#customer_pickup_location").val(data.resp[0].pickup_location)
-             //    $("#customer_drop_location").val(data.resp[0].drop_location)
-
-
-           })
-
-      document.getElementById("savevehicle").setAttribute("onclick","sakha.savevehicle('"+vehicle_id+"')")
 
 
 
@@ -938,13 +922,13 @@ var sakha={
               $.getJSON(url,function(data){
                   console.log(data.resp[0])
                 //  $("#product_pickup_timestamp").empty()
-                  $("#productid").append(data.resp[0].productomer_id )
-                  $("#productid").val(data.resp[0].product_id)
-                  $("#inclu_hrs").val(data.resp[0].included_hrs )
-                  $("#ext_hrs").val(data.resp[0].extra_hrs_rate )
-                  $("#incl_kms").val(data.resp[0].included_kms)
-                  $("#ext_kms").val(data.resp[0].extra_kms_rate)
-                  $("#pri").val(data.resp[0].price)
+                  $("#productid").append(data.resp[0].product_id )
+                  $("#productid").val(decodeEntities(data.resp[0].product_id))
+                  $("#inclu_hrs").val(decodeEntities(data.resp[0].included_hrs))
+                  $("#ext_hrs").val(decodeEntities(data.resp[0].extra_hrs_rate ))
+                  $("#incl_kms").val(decodeEntities(data.resp[0].included_kms))
+                  $("#ext_kms").val(decodeEntities(data.resp[0].extra_kms_rate))
+                  $("#pri").val(decodeEntities(data.resp[0].price))
 
                 })
 
@@ -958,14 +942,15 @@ var sakha={
       productdict.included_hrs=$("#inclu_hrs").val()
       productdict.extra_hrs_rate=$("#ext_hrs").val()
       productdict.included_kms=$("#incl_kms").val()
-      productdict.extra_hrs_rate=$("#ext_hrs").val()
-      productdict.pri=$("#pri").val()
+      productdict.extra_kms_rate=$("#ext_kms").val()
+      productdict.price=$("#pri").val()
 
 
       var params = JSON.stringify(productdict);
       var http = new XMLHttpRequest();
       if(productid==="newproduct"){
           //$.post("http://"+serverip+":5000/assignment",assignmentdict)
+          alert("Do you want a new product?")
           var url = "http://"+serverip+":5000/product";
           http.open("POST", url, true);
       }
@@ -988,10 +973,11 @@ var sakha={
                   }
                   if (response.status==="error"){
                       console.log("error")
-                      alert("Failed to Save   product!")
+                      alert("Failed to Save product!")
                        document.getElementById("productlist").innerHTML="<span style='color:red'>"+response.resp+"</span>"
                   }
                   }
+
                   else{
                   alert("Network Error Saving product.")
                   }
@@ -1055,6 +1041,7 @@ var sakha={
                 }
 
             }
+            console.log(driverdict)
             http.send(params);
         }
         else{
@@ -1087,6 +1074,7 @@ var sakha={
             alert("Cancelled delete!")
         }
     },
+
     deleteDriver: function(driverid){
         t=confirm("Really Delete Driver with ID "+driverid)
         if (t===true){

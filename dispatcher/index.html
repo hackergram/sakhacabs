@@ -244,7 +244,7 @@
                           <div class="col-md-6">
                             <div class="form-group bmd-form-group">
                               <label class="bmd-label-floating">Driver ID</label>
-                              <input type="text" class="form-control" id="driverid" require="true">
+                              <input type="text" readonly class="form-control" id="driverid" require="true">
                             </div>
                           </div>
                           <div class="col-md-6">
@@ -431,15 +431,15 @@
                 </div>
               </div>
 
-<script>
-function updateDSTotals(){
-  console.log("Updating time")
+        <script>
+          function updateDSTotals(){
+            console.log("Updating time")
 
-$("#total_time").val(moment($("#close_time").val()).diff(moment($("#open_time").val()),"hours",true).toFixed(2));
-$("#total_kms").val(parseFloat($("#close_kms").val())-parseFloat($("#open_kms").val()))
-}
+          $("#total_time").val(moment($("#close_time").val()).diff(moment($("#open_time").val()),"hours",true).toFixed(2));
+          $("#total_kms").val(parseFloat($("#close_kms").val())-parseFloat($("#open_kms").val()))
+          }
 
-</script>
+        </script>
 
         </div>
         <div class="modal fade" id="editbookingform" tabindex="-1" role="dialog" aria-labelledby="Edit Duty Slip">
@@ -476,7 +476,7 @@ $("#total_kms").val(parseFloat($("#close_kms").val())-parseFloat($("#open_kms").
                      <div class="col-md-4">
                         <div class="form-group bmd-form-group">
                           <label class="bmd-label-floating">Customer ID</label>
-                          <input type="text" class="form-control" id="booking_cust_id" readonly require="true">
+                          <input type="text" readonly class="form-control" id="booking_cust_id" readonly require="true">
                         </div>
                       </div>
                     <div class="col-md-4">
@@ -594,23 +594,7 @@ $("#total_kms").val(parseFloat($("#close_kms").val())-parseFloat($("#open_kms").
             <div class="content">
                 <div class="container-fluid">
                     <!-- your content here -->
-                    <div class="row" id="mapmyindia">
-                        <div class="col-lg-12 col-md-12">
-                            <div class="card">
-                                <div class="card-header card-header-primary">
-                                  <h4 class="card-title">Map My India </h4>
-                                  <p class="card-category">From their API</p>
-                                </div>
-                                 <div class="card-body">
-                                     <div class="wrap">
-                                         <iframe class="frame" src="https://fleet.mapmyindia.com"></iframe>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
 
-
-                    </div>
                     <div class="row" id="assignmentsection">
                         <div class="col-lg-12 col-md-12">
                             <div class="card">
@@ -860,8 +844,32 @@ $("#total_kms").val(parseFloat($("#close_kms").val())-parseFloat($("#open_kms").
 
                         </div>
                     </div>
+                    <div class="row" id="mapmyindia">
+                        <div class="col-lg-12 col-md-12">
+                            <div class="card">
+                                <div class="card-header card-header-primary">
+                                  <h4 class="card-title">Map My India </h4>
+                                  <p class="card-category">From their API</p>
+                                </div>
+                                 <div class="card-body">
+                                     <div class="wrap">
+                                         <iframe class="frame" src="https://fleet.mapmyindia.com"></iframe>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
                 </div>
             </div>
+
+
+
+
+
+
+
             <footer class="footer">
                 <div class="container-fluid">
                     <nav class="float-left">
@@ -1021,6 +1029,10 @@ $("#total_kms").val(parseFloat($("#close_kms").val())-parseFloat($("#open_kms").
                 console.log("closing booking  modal")
                 window.location.reload(false);
             })
+            function scrollTo(hash) {
+              location.hash = "#" + hash;
+            }
+            scrollTo("pablo")
     	});
 	</script>
 </body>

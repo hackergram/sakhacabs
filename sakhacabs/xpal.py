@@ -13,6 +13,7 @@ import mongoengine
 import xetrapal
 import pandas
 from sakhacabs import documents, utils
+from copy import deepcopy
 
 sakhacabsxpal = xetrapal.Xetrapal(
     configfile="/opt/sakhacabs-appdata/sakhacabsxpal.conf")
@@ -304,9 +305,11 @@ def new_booking(respdict):
                 recipients.append({"type": "mobile", "value": num})
             sms.send_sms({"message": notification, "recipients": recipients})
         sakhacabsxpal.logger.info("{}".format(notification))
+        respdict['booking_id'] = b.booking_id
         return [b]
     except Exception as e:
-        return "{} {}".format(type(e), str(e))
+        respdict['booking_id'] = None
+        return "error: {} {}".format(type(e), str(e))
 
 
 def update_booking_status(booking_id, status):
@@ -639,6 +642,8 @@ def create_driver(respdict):
     driver = documents.Driver.objects(driver_id=respdict['driver_id'])
     if len(driver) > 0:
         return "Driver with that ID Exists"
+    if len(respdict['driver_id']) < 5:
+        return "id should be minmum of 5 charecters"
     if "_id" in respdict.keys():
         respdict.pop('_id')
     try:
@@ -699,6 +704,8 @@ def create_vehicle(respdict):
     vehicle = documents.Vehicle.objects(vehicle_id=respdict['vehicle_id'])
     if len(vehicle) > 0:
         return "Vehicle with that ID Exists"
+    if len(respdict['vehicle_id'])<5:
+        return "id should be minmum of 5 charecters"
     if "_id" in respdict.keys():
         respdict.pop('_id')
     try:
@@ -751,6 +758,8 @@ def create_customer(respdict):
     customer = documents.Customer.objects(cust_id=respdict['cust_id'])
     if len(customer) > 0:
         return "Customer with that ID Exists"
+    if len(respdict['cust_id']) < 5:
+        return "id should be minmum of 5 charecters"
     if "_id" in respdict.keys():
         respdict.pop('_id')
     try:
@@ -805,6 +814,8 @@ def create_product(respdict):
         return "Product with that ID Exists"
     if "_id" in respdict.keys():
         respdict.pop('_id')
+    if len(respdict['product_id'])<5:
+        return "id should be minmum of 5 charecters"
     try:
         product = documents.Product(**respdict)
         product.save()
@@ -1050,7 +1061,6 @@ def export_invoice(invoice_id):
 Exporting everything
 '''
 
-
 def export_drivers():
     drivers = documents.Driver.objects.to_json()
     drivers = json.loads(drivers)
@@ -1103,11 +1113,12 @@ Bulk Imports of everything
 
 
 def import_bookings(bookinglist):
+    sakhacabsxpal.logger.info("Booking list: {}".format(bookinglist))
     try:
         for booking in bookinglist:
             try:
-                if validate_booking_dict(booking):
-                    b = new_booking(booking)
+                if validate_booking_dict(booking)['status'] is True:
+                    b = new_booking(deepcopy(booking))
 
                     if type(b) == list:
                         b = b[0]
@@ -1119,12 +1130,12 @@ def import_bookings(bookinglist):
                     else:
                         booking['status'] = b
                 else:
-                    booking['status'] = validate_booking_dict(booking)
+                    booking['status'] = "error: " + validate_booking_dict(booking)['message']
             except Exception as e:
-                booking['status'] = "{} {}".format(type(e), str(e))
+                booking['status'] = "error: {} {}".format(type(e), str(e))
         return bookinglist
     except Exception as e:
-        return "{} {}".format(type(e), str(e))
+        return "error: {} {}".format(type(e), str(e))
 
 
 def import_drivers(driverlist):

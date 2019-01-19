@@ -172,6 +172,7 @@ a { text-decoration: none }
                     </div>
 
 <!--kj-v1.01-adding new lines -->
+<!--kj-v1.01-adding new lines -->
 <div class="modal fade" id="editproductsform" tabindex="-1" role="dialog" aria-labelledby="Edit products">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -186,48 +187,46 @@ a { text-decoration: none }
             </div>
             <div class="card-body">
               <form id="driverform">
-                <div class="row">
+
                   <div class="col-md-6">
                     <div class="form-group bmd-form-group">
                       <label class="bmd-label-floating">product ID</label>
-                      <input type="text" class="form-control" id="productid" require="true">
+
+                      <input type="text" readonly class="form-control" id="productid" require="true">
                     </div>
                   </div>
-                  <div class="card-body">
-                    <form id="driverform">
-                      <div class="row">
-                        <div class="col-md-6">
-                          <div class="form-group bmd-form-group">
+
+</div>
+
+               <div class="row">
+                <div class="col-md-6">
+
+                            <div class="form-group bmd-form-group">
                             <label class="bmd-label-floating">Included hrs</label>
-                            <input type="text" class="form-control" id="inclu_hrs" require="true">
-                          </div>
+                          <input type="text" class="form-control" id="inclu_hrs" require="true" >
+</div>
+</div>
+<div class="col-md-6">
+                          <label class="bmd-label-floating">Extra kms</label>
+                         <input type="text" class="form-control" id="ext_kms">
+
+</div>
+</div>
+<div class="row">
+<div class="col-md-6">
+                          <label class="bmd-label-floating">Included kms</label>
+                          <input type="text" class="form-control" id="incl_kms" require="true">
                         </div>
-                        <div class="card-body">
-                          <form id="driverform">
-                            <div class="row">
-                              <div class="col-md-6">
-                                <div class="form-group bmd-form-group">
-                                  <label class="bmd-label-floating">Extra hrs</label>
-                                  <input type="text" class="form-control" id="ext_hrs" require="true">
-                                </div>
-                              </div>
-                  <div class="col-md-6">
-                    <div class="form-group bmd-form-group">
-                      <label class="bmd-label-floating">Included kms</label>
-                      <input type="text" class="form-control" id="incl_kms">
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group bmd-form-group">
-                      <label class="bmd-label-floating">Extra kms</label>
-                      <input type="text" class="form-control" id="ext_kms">
-                    </div>
-                  </div>
-                </div>
-            </form>
-            </div>
+
+<div class="col-md-6">
+                          <label class="bmd-label-floating">Extra hrs</label>
+                          <input type="text" class="form-control" id="ext_hrs">
+</div>
+</div>
+
+
+
+
 
             <div class="row">
               <div class="col-md-6">
@@ -236,6 +235,12 @@ a { text-decoration: none }
                   <input type="text" class="price" id="pri">
                 </div>
               </div>
+
+
+
+
+            </div>
+
             </div>
         </form>
         </div>
@@ -247,6 +252,8 @@ a { text-decoration: none }
           </div>
         </div>
       </div>
+<!-- New code ends here. -->
+
 <!-- New code ends here. -->
 
 <br />
@@ -300,8 +307,20 @@ var submit_output=function(){
                 window.location.reload(false);
             }
             else{
-                alert("Something went wrong!")
-            }
+              console.log(response.resp)
+              success=[]
+              failed=[]
+              for(i=0;i<response.resp.length;i++){
+                if (response.resp[i]['status']!==response.resp[i]['product_id']){
+                  failed.push(response.resp[i])
+                }
+                else{
+                  success.push(response.resp[i])
+                }
+              }
+            alert(success.length+" records imported correctly, "+failed.length+" records failed to import")
+        }
+
             if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
 	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
         }
@@ -324,6 +343,8 @@ var parse_rows=function(rows){
  var OUT = document.getElementById('out');
     var HTMLOUT = document.getElementById('htmlout');
 var process_output=function(){
+if(typeof(global_output)!=="string")
+{alert("Please select a file.");window.location.reload(false)}
   $("#loader").show()
   var product_id_map=$("#product_id_map").val()
   var hrs_map=$("#hrs_map").val()
@@ -333,6 +354,8 @@ var process_output=function(){
   var price_map=$("#price_map").val()
   var rows=[]
   dic=JSON.parse(global_output)
+
+
  // try{
       for (sheet in dic){
           rows=rows.concat(dic[sheet])

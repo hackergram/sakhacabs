@@ -91,7 +91,7 @@ class DriverResource(Resource):
                 else:
                     status = "success"
                 for driver in resp:
-                    if "error" in driver['status'].lower():
+                    if driver['driver_id'] != driver['status']:
                         status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
@@ -102,10 +102,16 @@ class DriverResource(Resource):
                     status = "error"
                     resp = "Bulk Delete Expects a list of driver ids"
                 else:
+                    deleteddrivers = []
                     for driver_id in respdict:
-                        xpal.delete_driver(driver_id)
-                    resp = "Deleted drivers {}".format(respdict)
-                    status = "success"
+                        retval = xpal.delete_driver(driver_id)
+                        if retval == []:
+                            deleteddrivers.append(driver_id)
+                    resp = "Deleted drivers {} of {}".format(deleteddrivers, respdict)
+                    if deleteddrivers == respdict:
+                        status = "success"
+                    else:
+                        status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
                 status = "error"
@@ -222,7 +228,7 @@ class VehicleResource(Resource):
                 else:
                     status = "success"
                 for vehicle in resp:
-                    if "error" in str(vehicle['status']).lower():
+                    if vehicle['status'] != vehicle["vehicle_id"]:
                         status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
@@ -233,10 +239,16 @@ class VehicleResource(Resource):
                     status = "error"
                     resp = "Bulk Delete Expects a list of booking ids"
                 else:
+                    deletedvehicles = []
                     for vehicle_id in respdict:
-                        xpal.delete_vehicle(vehicle_id)
-                    resp = "Deleted vehicles {}".format(respdict)
-                    status = "success"
+                        retval = xpal.delete_vehicle(vehicle_id)
+                        if retval == []:
+                            deletedvehicles.append(vehicle_id)
+                    resp = "Deleted vehicles {} of {}".format(deletedvehicles, respdict)
+                    if deletedvehicles == respdict:
+                        status = "success"
+                    else:
+                        status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
                 status = "error"
@@ -313,7 +325,7 @@ class LocationUpdateResource(Resource):
         elif docid:
             resp = [xpal.documents.LocationUpdate.objects.with_id(docid)]
         else:
-            resp = xpal.documents.LocationUpdate.objects.all()
+            resp = list(xpal.documents.LocationUpdate.objects.all())
         if type(resp) == list and resp != []:
             status = "success"
         else:
@@ -482,10 +494,16 @@ class BookingResource(Resource):
                     status = "error"
                     resp = "Bulk Delete Expects a list of booking ids"
                 else:
+                    deletedbookings = []
                     for booking_id in respdict:
-                        xpal.delete_booking(booking_id)
-                    resp = "Deleted Bookings {}".format(respdict)
-                    status = "success"
+                        retval = xpal.delete_booking(booking_id)
+                        if retval == []:
+                            deletedbookings.append(booking_id)
+                    resp = "Deleted Bookings {} of {}".format(deletedbookings, respdict)
+                    if deletedbookings == respdict:
+                        status = "success"
+                    else:
+                        status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
                 status = "error"
@@ -870,7 +888,7 @@ class CustomerResource(Resource):
                 else:
                     status = "success"
                 for customer in resp:
-                    if "error" in customer['status'].lower():
+                    if customer['status'] != customer["cust_id"]:
                         status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
@@ -881,10 +899,16 @@ class CustomerResource(Resource):
                     status = "error"
                     resp = "Bulk Delete Expects a list of customer ids"
                 else:
+                    deletedcustomers = []
                     for cust_id in respdict:
-                        xpal.delete_customer(cust_id)
-                    resp = "Deleted customers"
-                    status = "success"
+                        retval = xpal.delete_customer(cust_id)
+                        if retval == []:
+                            deletedcustomers.append(cust_id)
+                    resp = "Deleted customers {} of {}".format(deletedcustomers, respdict)
+                    if deletedcustomers == respdict:
+                        status = "success"
+                    else:
+                        status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
                 status = "error"
@@ -1002,7 +1026,7 @@ class ProductResource(Resource):
                 else:
                     status = "success"
                 for product in resp:
-                    if "error" in product['product_id'].lower():
+                    if product['product_id'] != product['status']:
                         status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
@@ -1013,10 +1037,16 @@ class ProductResource(Resource):
                     status = "error"
                     resp = "Bulk Delete Expects a list of booking ids"
                 else:
+                    deletedproducts = []
                     for product_id in respdict:
-                        xpal.delete_product(product_id)
-                    resp = "Deleted products"
-                    status = "success"
+                        retval = xpal.delete_product(product_id)
+                        if retval == []:
+                            deletedproducts.append(product_id)
+                    resp = "Deleted products {} of {}".format(deletedproducts, respdict)
+                    if deletedproducts == respdict:
+                        status = "success"
+                    else:
+                        status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
                 status = "error"
@@ -1147,10 +1177,16 @@ class InvoiceResource(Resource):
                     status = "error"
                     resp = "Bulk Delete Expects a list of invoice ids"
                 else:
+                    deletedinvoices = []
                     for invoice_id in respdict:
-                        xpal.delete_invoice(invoice_id)
-                    resp = "Deleted invoices"
-                    status = "success"
+                        retval = xpal.delete_invoice(invoice_id)
+                        if retval == []:
+                            deletedinvoices.append(invoice_id)
+                    resp = "Deleted invoices {} of {}".format(deletedinvoices, respdict)
+                    if deletedinvoices == respdict:
+                        status = "success"
+                    else:
+                        status = "error"
             except Exception as e:
                 resp = "{} {}".format(type(e), str(e))
                 status = "error"

@@ -255,20 +255,30 @@ var submit_output=function(){
             console.log(response)
             if (response.status==="success"){
                 alert("Successfully imported drivers!")
-
                 window.location.reload(false);
             }
             else{
-                alert("Something went wrong!")
-            }
-            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
-	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
-
+              console.log(response.resp)
+              success=[]
+              failed=[]
+              for(i=0;i<response.resp.length;i++){
+                if (response.resp[i]['status']!==response.resp[i]['driver_id']){
+                  failed.push(response.resp[i])
+                }
+                else{
+                  success.push(response.resp[i])
+                }
+              }
+            alert(success.length+" records imported correctly, "+failed.length+" records failed to import")
         }
 
+            if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(response['resp'],2,2);
+	           else HTMLOUT.innerText = JSON.stringify(response['resp'],2,2);
+        }
     }
     http.send(params);
 }
+
 
 var parse_rows=function(rows){
     cols=rows[0];
@@ -289,6 +299,9 @@ var parse_rows=function(rows){
 
 
 var process_output=function(){
+  if(typeof(global_output)!=="string")
+  {alert("Please select a file.");window.location.reload(false)}
+
   $("#loader").show()
   var driver_id_map=$("#driver_id_map").val()
   var driver_mobile_map=$("#driver_mobile_map").val()
