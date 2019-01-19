@@ -318,9 +318,9 @@ var process_output=function(){
           console.log(parsed_output)
             customerlist=parsed_output;
           for (i=0;i<customerlist.length;i++){
-              customerlist[i]['cust_id']=Mustache.render(cust_id_map,customerlist[i])
-              customerlist[i]['cust_billing']=Mustache.render(cust_billing_map,customerlist[i])
-              customerlist[i]['mobile_num']=Mustache.render(mobile_num_map,customerlist[i])
+              customerlist[i]['cust_id']=decodeEntities(Mustache.render(cust_id_map,customerlist[i]))
+              customerlist[i]['cust_billing']=decodeEntities(Mustache.render(cust_billing_map,customerlist[i]))
+              customerlist[i]['mobile_num']=decodeEntities(Mustache.render(mobile_num_map,customerlist[i]))
               console.log(customerlist[i])
             }
         }
@@ -491,14 +491,16 @@ var do_file = (function() {
                 url: 'http://'+serverip+':5000/customer',
                 dataSrc: 'resp'
             },
-             columnDefs: [ {
-                            orderable: false,
-                            className: 'select-checkbox',
-                            targets:   0,
-                            checkboxes: {
-                              'selectRow': true
-                              }
-                        } ],
+            columnDefs: [ {
+                           orderable: false,
+                           className: 'select-checkbox',
+                           targets:   0,
+                           checkboxes: {
+                             'selectRow': true,
+                             selectAllPages: false //fixes  #314
+
+                             }
+                       } ],
              select: {
                             style:    'multi',
                             selector: 'td:first-child'

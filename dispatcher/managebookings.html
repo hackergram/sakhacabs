@@ -445,7 +445,7 @@ var process_output=function(){
         bookinglist=parsed_output;
         for (i=0;i<bookinglist.length;i++){
             bookinglist[i]['passenger_detail']=decodeEntities(Mustache.render(passenger_detail_map,bookinglist[i]))
-            bookinglist[i]['pickup_location']=Mustache.render(pickup_location_map,bookinglist[i])
+            bookinglist[i]['pickup_location']=decodeEntities(Mustache.render(pickup_location_map,bookinglist[i]))
             bookinglist[i]['product_id']=product_id
             pickup_date_string=Mustache.render(pickup_date_map,bookinglist[i]).trim()
             pickup_date=moment(pickup_date_string).format("YYYY-MM-DD")
@@ -467,8 +467,8 @@ var process_output=function(){
             }
             bookinglist[i]['booking_channel']=booking_channel
             bookinglist[i]['cust_id']=cust_id
-            bookinglist[i]['drop_location']=Mustache.render(drop_location_map,bookinglist[i])
-            bookinglist[i]['passenger_mobile']=Mustache.render(passenger_mobile_map,bookinglist[i])
+            bookinglist[i]['drop_location']=decodeEntities(Mustache.render(drop_location_map,bookinglist[i]))
+            bookinglist[i]['passenger_mobile']=decodeEntities(Mustache.render(passenger_mobile_map,bookinglist[i]))
           }
         }
         if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(bookinglist,2,2);
