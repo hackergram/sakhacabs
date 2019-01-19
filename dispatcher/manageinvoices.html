@@ -537,7 +537,12 @@
           $("#loader").hide();
             current_invoice.url=data.resp
             saveInvoice()
+            if (!current_invoice.url.includes("http")){
+              alert("An error occurred: "+current_invoice.url)
+            }
+            else{
              window.open(data.resp,"_blank")
+           }
          })
 
         }
@@ -768,9 +773,11 @@
                     return data.status.toUpperCase()
                 }}},
                 {width:"20%", data: null, defaultContent:"None", render: function(data){if(data){
+                    if(data.url.includes("http")){
                     link="<a href='"+data.url+"' target='_blank'>See on GDrive</a>"
                     if (data.url){
                     return link
+                    }
                   }
                 }}}
 

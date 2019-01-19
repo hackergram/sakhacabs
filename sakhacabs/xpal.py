@@ -1023,43 +1023,54 @@ def export_invoice(invoice_id):
         return "No such invoice"
     else:
         invoice = invoice[0]
-    cur = sakhacabsgd.create(invoice.invoice_id)
-    template = sakhacabsgd.open("InvoiceTemplate")
-    t = template.worksheet_by_title("Invoice")
-    cur.add_worksheet("Invoice", src_worksheet=t)
-    invoicesheet = cur.worksheet_by_title("Invoice")
-    cur.del_worksheet(cur.worksheet_by_title("Sheet1"))
+    try:
+        sakhacabsxpal.logger.info("Trying to create sheet for invoice in Sakhacabs Google Drive")
+        if not sakhacabsgd:
+            error = "Sakhacabs Google Driver is not Set Up"
+            sakhacabsxpal.logger.error(error)
+            return error
+        cur = sakhacabsgd.create(invoice.invoice_id)
+        template = sakhacabsgd.open("InvoiceTemplate")
+        t = template.worksheet_by_title("Invoice")
+        cur.add_worksheet("Invoice", src_worksheet=t)
+        invoicesheet = cur.worksheet_by_title("Invoice")
+        cur.del_worksheet(cur.worksheet_by_title("Sheet1"))
 
-    n = 15
-    for line in invoice.invoicelines:
-        print n, line
-        invoicesheet.insert_rows(n - 1, 1)
-        invoicesheet.update_row(n, ["", line['date'], line['particulars'],
-                                    line['product'], line['qty'], line['rate'], "=F" + str(n) + "*E" + str(n)])
+        n = 15
+        for line in invoice.invoicelines:
+            print n, line
+            invoicesheet.insert_rows(n - 1, 1)
+            invoicesheet.update_row(n, ["", line['date'], line['particulars'],
+                                        line['product'], line['qty'], line['rate'], "=F" + str(n) + "*E" + str(n)])
+            n += 1
+        totalcell = "G" + str(n + 2)
+        print totalcell
+        n = n + 4
+        for line in invoice.taxes:
+            invoicesheet.insert_rows(n - 1, 1)
+            invoicesheet.update_row(n, ["", "", "", "", "", line['name'] + "(" + str(
+                line['rate'] * 100) + "%)", "=" + totalcell + "*" + str(line['rate'])])
         n += 1
-    totalcell = "G" + str(n + 2)
-    print totalcell
-    n = n + 4
-    for line in invoice.taxes:
-        invoicesheet.insert_rows(n - 1, 1)
-        invoicesheet.update_row(n, ["", "", "", "", "", line['name'] + "(" + str(
-            line['rate'] * 100) + "%)", "=" + totalcell + "*" + str(line['rate'])])
-    n += 1
-    custbil = invoicesheet.cell("B8")
-    cust = documents.Customer.objects(cust_id=invoice.cust_id)[0]
-    custbil.value = cust.cust_billing
-    datecel = invoicesheet.cell("B5")
-    datecel.value = "Submitted on " + invoice.invoice_date.strftime("%Y-%m-%d")
-    idcel = invoicesheet.cell("F8")
-    idcel.value = invoice.invoice_id
-    duedatecel = invoicesheet.cell("F11")
-    duedatecel.value = invoice.invoice_date.strftime("%Y-%d-%m")
-    return cur.url
+        custbil = invoicesheet.cell("B8")
+        cust = documents.Customer.objects(cust_id=invoice.cust_id)[0]
+        custbil.value = cust.cust_billing
+        datecel = invoicesheet.cell("B5")
+        datecel.value = "Submitted on " + invoice.invoice_date.strftime("%Y-%m-%d")
+        idcel = invoicesheet.cell("F8")
+        idcel.value = invoice.invoice_id
+        duedatecel = invoicesheet.cell("F11")
+        duedatecel.value = invoice.invoice_date.strftime("%Y-%d-%m")
+        return cur.url
+    except Exception as e:
+        error = "error: {} {}".format(type(e), str(e))
+        sakhacabsxpal.logger.error(error)
+        return error
 
 
 '''
 Exporting everything
 '''
+
 
 def export_drivers():
     drivers = documents.Driver.objects.to_json()
