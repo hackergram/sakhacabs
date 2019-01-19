@@ -20,19 +20,7 @@ sakhacabsxpal = xetrapal.Xetrapal(
     configfile="/opt/sakhacabs-appdata/sakhacabsxpal.conf")
 sakhacabsgd = sakhacabsxpal.get_googledriver()
 sms = sakhacabsxpal.get_sms_astra()
-'''
-try:
-    datasheet = sakhacabsgd.open_by_key(
-        sakhacabsxpal.config.get("SakhaCabs", "datasheetkey"))
-    bookingsheet = datasheet.worksheet_by_title("bookings")
-    custsheet = datasheet.worksheet_by_title("customers")
-    carsheet = datasheet.worksheet_by_title("cars")
-    driversheet = datasheet.worksheet_by_title("drivers")
-    prodsheet = datasheet.worksheet_by_title("product")
-except Exception as e:
-    sakhacabsxpal.logger.error(
-        "Error connecting to Google Drive, check connectivity - {} {}".format(repr(e), str(e)))
-'''
+
 # Setting up mongoengine connections
 sakhacabsxpal.logger.info("Setting up MongoEngine")
 mongoengine.connect('sakhacabs', alias='default')
@@ -661,7 +649,7 @@ def create_driver(respdict):
     driver = documents.Driver.objects(driver_id=respdict['driver_id'])
     if len(driver) > 0:
         return "Driver with that ID Exists"
-    if len(respdict['driver_id'])<5:
+    if len(respdict['driver_id']) < 5:
         return "id should be minmum of 5 charecters"
     if "_id" in respdict.keys():
         respdict.pop('_id')
@@ -777,7 +765,7 @@ def create_customer(respdict):
     customer = documents.Customer.objects(cust_id=respdict['cust_id'])
     if len(customer) > 0:
         return "Customer with that ID Exists"
-    if len(respdict['cust_id'])<5:
+    if len(respdict['cust_id']) < 5:
         return "id should be minmum of 5 charecters"
     if "_id" in respdict.keys():
         respdict.pop('_id')
@@ -1076,11 +1064,9 @@ def export_invoice(invoice_id):
     return cur.url
 
 
-
 '''
 Exporting everything
 '''
-
 
 def export_drivers():
     drivers = documents.Driver.objects.to_json()

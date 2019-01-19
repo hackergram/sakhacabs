@@ -57,8 +57,9 @@ class Customer(PPrintMixin, DynamicDocument):
 class Vehicle(PPrintMixin, DynamicDocument):
     vehicle_id = fields.StringField(unique=True, required=True)
     driver_id = fields.StringField()
-    vehicle_cat=fields.StringField()
-    vehicle_name=fields.StringField()
+    vehicle_cat = fields.StringField()
+    vehicle_name = fields.StringField()
+
     def __repr__(self):
         return "Vehicle (%r)" % (self.vehicle_id)
 
