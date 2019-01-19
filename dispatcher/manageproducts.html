@@ -363,7 +363,7 @@ if(typeof(global_output)!=="string")
           console.log(parsed_output)
             productlist=parsed_output;
           for (i=0;i<productlist.length;i++){
-              productlist[i]['product_id']=Mustache.render(product_id_map,productlist[i])
+              productlist[i]['product_id']=decodeEntities(Mustache.render(product_id_map,productlist[i]))
               hrs=Mustache.render(hrs_map,productlist[i])
               productlist[i]['included_hrs']=parseFloat(hrs)
               kms=Mustache.render(kms_map,productlist[i])
