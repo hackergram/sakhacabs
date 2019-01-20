@@ -684,7 +684,7 @@ var sakha={
             console.log("editing driver "+driverid)
             $.getJSON('http://'+serverip+':5000/driver/by_driver_id/'+driverid,function(data){
                 console.log(data.resp[0])
-                $("#driverid").val(decodeEntities(data.resp[0].driver_id))
+                $("#driverid").attr("readonly",true).val(decodeEntities(data.resp[0].driver_id))
                 $("#mobnum").val(decodeEntities(data.resp[0].mobile_num))
                 $("#firstname").val(decodeEntities(data.resp[0].first_name))
                 $("#lastname").val(decodeEntities(data.resp[0].last_name))
