@@ -297,6 +297,7 @@ def received_dutyslip_information(bot, update, user_data):
             # user_data['current_duty_slip'].save()
             # user_data['current_duty_slip'].assignment.status = "open"
             # user_data['current_duty_slip'].assignment.save()
+            logger.info("Updating dutyslip Status")
             update_dutyslip_status(user_data['current_duty_slip'].id, "open")
             user_data['current_duty_slip'].save()
             # for booking in user_data['current_duty_slip'].assignment.bookings:
