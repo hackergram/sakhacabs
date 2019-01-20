@@ -611,6 +611,36 @@ var do_file = (function() {
 		e.preventDefault();
 		do_file(e.dataTransfer.files);
 	}
+  function build_notification_prefs(pass_mob,cust_mob){
+    notificationprefs={'new': [], 'assigned': [], 'open': [], 'closed': [], 'cancelled': []}
+    Object.keys(notificationprefs).forEach(function(key){
+      if ($("#np_"+key+"_cust").prop("checked")){
+        notificationprefs[key].push(cust_mob)
+      }
+      if ($("#np_"+key+"_pass").prop("checked")){
+        notificationprefs[key].push(pass_mob)
+      }
+      console.log($("#np_"+key+"_others").prop("value"))
+      if ($("#np_"+key+"_others").prop("value")!=""){
+        addnos=$("#np_"+key+"_others").prop("value").split(",")
+        console.log(addnos)
+        addnos2=[]
+        addnos.forEach(function(num){
+          if(num!=""){
+            if (!num.startsWith("+")){
+              addnos2.push("+"+num)
+            }
+            else{
+              addnos2.push(num)
+            }
+          }
+        })
+        notificationprefs[key]=notificationprefs[key].concat(addnos2)
+      }
+
+    });
+    return notificationprefs
+  }
 
 	function handleDragover(e) {
 		e.stopPropagation();
