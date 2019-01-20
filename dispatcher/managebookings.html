@@ -458,7 +458,8 @@ var process_output=function(){
               pickup_time=pickup_time_string.trim()
             }
             pickup_timestamp_string=pickup_date+" "+pickup_time
-            pickup_timestamp=moment(pickup_timestamp_string.trim()).utc().format("YYYY-MM-DD HH:mm:ss")
+            // pickup_timestamp=moment(pickup_timestamp_string.trim()).utc().format("YYYY-MM-DD HH:mm:ss")
+            pickup_timestamp=moment(pickup_timestamp_string.trim()).format("YYYY-MM-DD HH:mm:ss")
             if(pickup_timestamp===null){
               pickup_timestamp=pickup_timestamp_string.trim()
             }

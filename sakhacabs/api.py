@@ -415,29 +415,18 @@ class BookingResource(Resource):
                 resp = "Unrecognized command"
                 status = "error"
         elif docid is not None:
-            app.logger.info(
-                "BookingResource: Booking Get By Doc ID {}".format(docid))
-            if xpal.documents.Booking.objects.with_id(docid):
-                resp = json.loads(
-                    xpal.documents.Booking.objects.with_id(docid).to_json())
-                status = "success"
-            else:
-                resp = "No booking with that id"
-                status = "error"
+            app.logger.info("BookingResource: Booking Get By Doc ID {}".format(docid))
+            resp = [xpal.documents.Booking.objects.with_id(docid)]
         elif booking_id is not None:
-            app.logger.info(
-                "BookingResource: Booking Get By Booking ID {}".format(booking_id))
-            if xpal.documents.Booking.objects(booking_id=booking_id) != []:
-                resp = json.loads(xpal.documents.Booking.objects(
-                    booking_id=booking_id).to_json())
-                status = "success"
-            else:
-                resp = "No booking with that id"
-                status = "error"
+            app.logger.info("BookingResource: Booking Get By Booking ID {}".format(booking_id))
+            resp = list(xpal.documents.Booking.objects(booking_id=booking_id))
         else:
             app.logger.info("BookingResource: Getting all Bookings")
-            resp = xpal.documents.Booking.objects.all()
+            resp = list(xpal.documents.Booking.objects.all())
+        if type(resp) == list and resp != []:
             status = "success"
+        else:
+            status = "error"
         return jsonify({"resp": resp, "status": status})
 
     def post(self, command=None):
