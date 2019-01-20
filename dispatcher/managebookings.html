@@ -98,7 +98,58 @@ a { text-decoration: none }
         Drop Location Template: <input type="text"  size="30" id="drop_location_map"><br>
         Passenger Mobile Number Template: <input type="text"  size="30" id="passenger_mobile_map"><br>
             </div>
+          </div>
+
+          <div class="row">
+            <div id="notification_prefs" class = "form-group clearfix">
+              <div class="row">
+
+              <div class="row">
+                  <div class="col-sm-12 small-cols">
+                      <input type="text" name="remarks" id="remarks" class="form-control" placeholder="Remark">
+                  </div>
+              </div>
+              <div class="col-sm-12 small-cols">
+                  <label>Notification Configuration</label>
+              </div>
+          </div>
+              <div class="row">
+                <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                  <p> When Booking is Created notify - </p>
+                  <p><input type="checkbox" id="np_new_cust" checked>Customer</p>
+                  <p><input type="checkbox" id="np_new_pass" checked>Passenger</p>
+                  <p>Others<br><textarea id="np_new_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                </div>
+                <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                  <p> When Booking is Assigned notify - </p>
+                  <p><input type="checkbox" id="np_assigned_cust">Customer</p>
+                  <p><input type="checkbox" id="np_assigned_pass" checked>Passenger</p>
+                  <p>Others<br><textarea id="np_assigned_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                </div>
+                <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                  <p> When Booking is In Progress notify - </p>
+                  <p><input type="checkbox" id="np_open_cust">Customer</p>
+                  <p><input type="checkbox" id="np_open_pass" checked>Passenger</p>
+                  <p>Others<br><textarea id="np_open_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                  </div>
+                <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                  <p> When Booking is Completed notify - </p>
+                  <p><input type="checkbox" id="np_closed_cust">Customer</p>
+                  <p><input type="checkbox" id="np_closed_pass" checked>Passenger</p>
+                  <p>Others<br><textarea id="np_closed_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                  </div>
+                <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                  <p> When Booking is Cancelled notify - </p>
+                  <p><input type="checkbox" id="np_cancelled_cust" checked>Customer</p>
+                  <p><input type="checkbox" id="np_cancelled_pass" checked>Passenger</p>
+                  <p>Others<br><textarea id="np_cancelled_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                  </div>
+              </div>
             </div>
+          </div>
+
+
+
         <div class="row">
 
 
