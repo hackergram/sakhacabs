@@ -760,7 +760,7 @@
                 { width:"10%",data: 'invoice_date',defaultContent:"None",render: function(data){
 
                     //console.log(data)
-                    return moment(data.$date).format("YYYY-MMM-DD HH:mm:ss")
+                    return moment(data.$date).format("YYYY-MMM-DD HH:mm")
                     }},
                 {width:"20%", data: 'cust_id',defaultContent:"None",render: function(data){if(data){
                     return data
@@ -830,8 +830,8 @@
     <script src="dist/js/pagination.js"></script>
 
     <script>
-        $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
-        $('#datetimepicker2').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
+        $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:mm'});
+        $('#datetimepicker2').datetimepicker({format: 'YYYY-MM-DD HH:mm'});
         $('#datetimepicker3').datetimepicker({format: 'YYYY-MM-DD HH:mm'});
     </script>
 </body>

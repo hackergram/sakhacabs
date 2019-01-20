@@ -450,7 +450,7 @@ var process_output=function(){
             pickup_date_string=Mustache.render(pickup_date_map,bookinglist[i]).trim()
             pickup_date=moment(pickup_date_string).format("YYYY-MM-DD")
             pickup_time_string=Mustache.render(pickup_time_map,bookinglist[i]).trim()
-            pickup_time=moment(pickup_time_string).format("HH:mm:ss")
+            pickup_time=moment(pickup_time_string).format("HH:mm")
             if(pickup_date==="Invalid date"){
               pickup_date=pickup_date_string
             }
@@ -459,7 +459,7 @@ var process_output=function(){
             }
             pickup_timestamp_string=pickup_date+" "+pickup_time
             // pickup_timestamp=moment(pickup_timestamp_string.trim()).utc().format("YYYY-MM-DD HH:mm:ss")
-            pickup_timestamp=moment(pickup_timestamp_string.trim()).format("YYYY-MM-DD HH:mm:ss")
+            pickup_timestamp=moment(pickup_timestamp_string.trim()).format("YYYY-MM-DD HH:mm")
             if(pickup_timestamp===null){
               pickup_timestamp=pickup_timestamp_string.trim()
             }

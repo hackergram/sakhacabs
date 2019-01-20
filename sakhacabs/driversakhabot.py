@@ -289,9 +289,9 @@ def received_dutyslip_information(bot, update, user_data):
                     "Numbers only for open kms\nOpen Kms?")
                 return DUTYSLIP_FORM
             user_data['current_duty_slip'].open_kms = float(text)
-            # user_data['current_duty_slip'].open_time = utils.get_utc_ts(
-            #    update.message.date)
-            user_data['current_duty_slip'].open_time = update.message.date
+            user_data['current_duty_slip'].open_time = utils.get_utc_ts(
+                update.message.date)
+            # user_data['current_duty_slip'].open_time = update.message.date
 
             # user_data['current_duty_slip'].status = "open"
             # user_data['current_duty_slip'].save()
@@ -328,9 +328,8 @@ def received_dutyslip_information(bot, update, user_data):
                 update.message.reply_text(
                     "Close kms cant be less than open kms, please start over")
                 return DUTYSLIP_OPEN
-            # user_data['current_duty_slip'].close_time = utils.get_utc_ts(
-            #    update.message.date)
-            user_data['current_duty_slip'].close_time = update.message.date
+            user_data['current_duty_slip'].close_time = utils.get_utc_ts(update.message.date)
+            # user_data['current_duty_slip'].close_time = update.message.date
             user_data['field'] = "parking"
             logger.info("{}".format(user_data))
             update.message.reply_text("Parking Charges? Enter 0 if none")
