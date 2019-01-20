@@ -774,9 +774,10 @@
                     return data.status.toUpperCase()
                 }}},
                 {width:"20%", data: null, defaultContent:"None", render: function(data){if(data){
+                  if (data.url){
                     if(data.url.includes("http")){
                     link="<a href='"+data.url+"' target='_blank'>See on GDrive</a>"
-                    if (data.url){
+
                     return link
                     }
                   }
