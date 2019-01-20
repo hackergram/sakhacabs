@@ -2,9 +2,12 @@
 #
 # Simple Bot to reply to Telegram messages
 # This program is dedicated to the public domain under the CC0 license.
-from sakhacabs.xpal import *
+# from sakhacabs.xpal import *
+from sakhacabs import xpal
 from sakhacabs import utils
-from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
+# from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
+#                          ConversationHandler)
+from telegram.ext import (CommandHandler, MessageHandler, Filters, RegexHandler,
                           ConversationHandler)
 from telegram import ReplyKeyboardMarkup
 import xetrapal
@@ -41,7 +44,7 @@ payment_mode_keyboard = [[cash_text], [credit_text]]
 driverbotconfig = xetrapal.karma.load_config(
     configfile="/opt/sakhacabs-appdata/driversakhabot.conf")
 driversakhabot = xetrapal.telegramastras.XetrapalTelegramBot(
-    config=driverbotconfig, logger=sakhacabsxpal.logger)
+    config=driverbotconfig, logger=xpal.sakhacabsxpal.logger)
 
 logger = driversakhabot.logger
 GETMOBILE, MENU_CHOICE, TYPING_REPLY, TYPING_CHOICE, LOCATION_CHOICE, DUTYSLIP_CHOICE, DUTYSLIP_MENU, DUTYSLIP_OPEN, DUTYSLIP_FORM = range(
@@ -60,7 +63,7 @@ def facts_to_str(user_data):
 def main_menu(bot, update):
     user_data = {}
     try:
-        user_data['driver'] = get_driver_by_tgid(update.message.from_user.id)
+        user_data['driver'] = xpal.get_driver_by_tgid(update.message.from_user.id)
         logger.info(u"{}".format(user_data))
         if user_data['driver'] is None:
             update.message.reply_text(
@@ -89,7 +92,7 @@ def open_duty_slip(bot, update, user_data):
             update.message.text.split(" ")[1], user_data))
         markup = ReplyKeyboardMarkup(
             dutyslip_start_keyboard, one_time_keyboard=True)
-        dutyslip = documents.DutySlip.objects.with_id(
+        dutyslip = xpal.documents.DutySlip.objects.with_id(
             update.message.text.split(" ")[1])
         user_data['current_duty_slip'] = dutyslip
         logger.info("Curr DS ={}".format(dutyslip))
@@ -118,14 +121,14 @@ def open_duty_slip(bot, update, user_data):
 
 
 def get_duty_slips(bot, update, user_data):
-    user_data['driver'] = get_driver_by_tgid(update.message.from_user.id)
+    user_data['driver'] = xpal.get_driver_by_tgid(update.message.from_user.id)
     user_data['vehicle'] = None
     user_data['handoff'] = None
     user_data['location'] = None
     # text=update.message.tex
     logger.info("Fetching Duty Slips {}".format(user_data))
     try:
-        user_data['duties'] = get_duties_for_driver(
+        user_data['duties'] = xpal.get_duties_for_driver(
             user_data['driver'].driver_id)
         if not user_data['duties'] or user_data['duties'] == []:
             update.message.reply_text("No Assignments As of Now")
@@ -151,7 +154,7 @@ def get_duty_slips(bot, update, user_data):
 
 
 def location_update_menu(bot, update, user_data):
-    user_data['driver'] = get_driver_by_tgid(update.message.from_user.id)
+    user_data['driver'] = xpal.get_driver_by_tgid(update.message.from_user.id)
     user_data['vehicle'] = None
     user_data['handoff'] = None
     user_data['location'] = None
@@ -196,7 +199,7 @@ def get_location(bot, update, user_data):
 
 def set_mobile(bot, update, user_data):
     logger.info(u"{}".format(update.message.contact))
-    driver = get_driver_by_mobile(
+    driver = xpal.get_driver_by_mobile(
         update.message.contact.phone_number.lstrip("+"))
     if driver:
         driver.tgid = update.message.contact.user_id
@@ -233,9 +236,7 @@ def submit_location_update(bot, update, user_data):
         location = user_data['location']
         handoff = user_data['handoff']
         logger.info(u"{} {}".format(update.message.date, user_data))
-        location_update = new_locationupdate(user_data['driver'], update.message.date,
-                                             user_data['checkin'], location=location,
-                                             vehicle=user_data['vehicle'], handoff=handoff)
+        location_update = xpal.new_locationupdate(user_data['driver'], update.message.date, user_data['checkin'], location=location, vehicle=user_data['vehicle'], handoff=handoff)
         location_update.save()
         update.message.reply_text(u"Saved!"
                                   u"{}"
@@ -298,7 +299,7 @@ def received_dutyslip_information(bot, update, user_data):
             # user_data['current_duty_slip'].assignment.status = "open"
             # user_data['current_duty_slip'].assignment.save()
             logger.info("Updating dutyslip Status")
-            update_dutyslip_status(user_data['current_duty_slip'].id, "open")
+            xpal.update_dutyslip_status(user_data['current_duty_slip'].id, "open")
             user_data['current_duty_slip'].save()
             # for booking in user_data['current_duty_slip'].assignment.bookings:
             #    booking.status = "open"
@@ -453,7 +454,7 @@ def received_location_information(bot, update, user_data):
             logger.info("Adding vehicle")
             if update.message.text:
                 text = update.message.text
-                vehicle = get_vehicle_by_vid(text)
+                vehicle = xpal.get_vehicle_by_vid(text)
                 try:
                     if vehicle.driver_id is None or vehicle.driver_id == user_data['driver'].id:
                         user_data["vehicle"] = vehicle
@@ -493,7 +494,7 @@ def received_location_information(bot, update, user_data):
 
 def start_duty(bot, update, user_data):
     try:
-        sakhacabsxpal.logger.info("Starting Duty {}".format(
+        xpal.sakhacabsxpal.logger.info("Starting Duty {}".format(
             user_data['current_duty_slip'].to_json()))
         markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard)
         # update.message.reply_text("Trip in progress",
@@ -513,7 +514,7 @@ def start_duty(bot, update, user_data):
 
 def stop_duty(bot, update, user_data):
     try:
-        sakhacabsxpal.logger.info("Stopping Duty {}".format(user_data['current_duty_slip'].to_json()))
+        xpal.sakhacabsxpal.logger.info("Stopping Duty {}".format(user_data['current_duty_slip'].to_json()))
         # markup = ReplyKeyboardMarkup(dutyslip_stop_keyboard)
         # update.message.reply_text("Trip in progress",
         #    reply_markup=markup)
@@ -532,11 +533,11 @@ def stop_duty(bot, update, user_data):
 def submit_duty(bot, update, user_data):
     markup = ReplyKeyboardMarkup(driver_base_keyboard)
     try:
-        sakhacabsxpal.logger.info(
+        xpal.sakhacabsxpal.logger.info(
             "Submitting Duty {}".format(user_data['current_duty_slip']))
         # user_data['current_duty_slip'].status = "closed"
         # user_data['current_duty_slip'].save()
-        update_dutyslip_status(user_data['current_duty_slip'].id, "closed")
+        xpal.update_dutyslip_status(user_data['current_duty_slip'].id, "closed")
         user_data['current_duty_slip'].save()
         update.message.reply_text("Trip Saved", reply_markup=markup)
     except Exception as e:
