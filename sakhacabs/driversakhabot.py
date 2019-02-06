@@ -3,6 +3,7 @@
 # Simple Bot to reply to Telegram messages
 # This program is dedicated to the public domain under the CC0 license.
 from sakhacabs.xpal import *
+from sakhacabs import utils
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
                           ConversationHandler)
 from telegram import ReplyKeyboardMarkup
@@ -457,7 +458,8 @@ def received_location_information(bot, update, user_data):
                         update.message.reply_text(
                             "That vehicle is assigned to someone else")
                         return LOCATION_CHOICE
-                except:
+                except Exception as e:
+                    logger.error("Exception occurred, assigning vehicle as is")
                     user_data["vehicle"] = vehicle
             else:
                 user_data["vehicle"] = None

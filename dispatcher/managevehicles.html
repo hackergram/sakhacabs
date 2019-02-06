@@ -92,7 +92,7 @@ a { text-decoration: none }
 
         </div>
         <div class="row"><div class="col-md-12">
-        Vehicle ID Template: <input type="text" size="30" id="vehicle_id_map"><br>
+        Vehicle ID Template: <br><input type="text" size="30" id="vehicle_id_map"><br>
           </div>
             </div>
             <div class="row"><div class="col-md-12">
@@ -237,7 +237,7 @@ var XW = {
 $("#loader").hide()
 var global_wb;
 var global_output;
-var serverip="192.168.56.101"
+var serverip="192.168.56.103"
 var vehiclelist=[]
 var submit_output=function(){
   $("#loader").show()
@@ -332,9 +332,9 @@ var process_output=function(){
             vehiclelist=parsed_output;
           for (i=0;i<vehiclelist.length;i++){
 
-              vehiclelist[i]['vehicle_id']=Mustache.render(vehicle_id_map,vehiclelist[i])
-              vehiclelist[i]['vehicle_cat']=Mustache.render(vehicle_cat_map,vehiclelist[i])
-              vehiclelist[i]['vehicle_name']=Mustache.render(vehicle_name_map,vehiclelist[i])
+              vehiclelist[i]['vehicle_id']=decodeEntities(Mustache.render(vehicle_id_map,vehiclelist[i]))
+              vehiclelist[i]['vehicle_cat']=decodeEntities(Mustache.render(vehicle_cat_map,vehiclelist[i]))
+              vehiclelist[i]['vehicle_name']=decodeEntities(Mustache.render(vehicle_name_map,vehiclelist[i]))
 
               console.log(vehiclelist[i])
             }
@@ -495,7 +495,8 @@ var do_file = (function() {
                             className: 'select-checkbox',
                             targets:   0,
                             checkboxes: {
-                              'selectRow': true
+                              'selectRow': true,
+                              selectAllPages: false
                               }
                         } ],
              select: {

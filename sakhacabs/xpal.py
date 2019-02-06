@@ -7,11 +7,9 @@ Created on Sat Sep  8 21:52:07 2018
 @author: arjun
 """
 
-import sys
 import datetime
 import json
 import mongoengine
-sys.path.append("/opt/xetrapal")
 import xetrapal
 import pandas
 from sakhacabs import documents, utils
@@ -26,8 +24,6 @@ sms = sakhacabsxpal.get_sms_astra()
 sakhacabsxpal.logger.info("Setting up MongoEngine")
 mongoengine.connect('sakhacabs', alias='default')
 
-
-# Remote sync functionality
 
 def validate_vehicle_dict(vehicledict, new=True):
     validation = {}
@@ -210,9 +206,6 @@ def validate_assignment_dict(assignmentdict, new=True):
     return validation
 
 
-
-
-
 def new_locationupdate(driver, timestamp, checkin=True, location=None, vehicle=None, handoff=None, logger=xetrapal.astra.baselogger, **kwargs):
     """
     Creates a new location update, location updates once created are not deleted as they are equivalent to log entries.
@@ -234,13 +227,9 @@ def new_locationupdate(driver, timestamp, checkin=True, location=None, vehicle=N
                 vh.save()
                 vehicle_id = vh.vehicle_id
     driver.save()
-    # UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
-    # timestamp + UTC_OFFSET_TIMEDELTA
     adjtimestamp = utils.get_utc_ts(timestamp)
-    # Get new location update and save it
     locationupdate = documents.LocationUpdate(
         driver_id=driver.driver_id, timestamp=adjtimestamp, location=location, checkin=checkin, handoff=handoff, vehicle_id=vehicle_id)
-    # Tell the user what happened
     if checkin is True:
         logger.info(u"New checkin from driver with id {} at {} from {}".format(
             locationupdate.driver_id, locationupdate.timestamp, locationupdate.location))
@@ -425,6 +414,7 @@ def delete_booking(booking_id):
 '''
 Assignment CRUD
 '''
+
 
 def save_assignment(assignmentdict, assignment_id=None):
     '''Creates a new assignment/Updates an existing assignment with the provided bookings and duty slips
@@ -653,7 +643,7 @@ def create_driver(respdict):
     if len(driver) > 0:
         return "Driver with that ID Exists"
     if len(respdict['driver_id']) < 5:
-        return "id should be minmum of 5 charecters"
+        return "id should be minimum of 5 characters"
     if "_id" in respdict.keys():
         respdict.pop('_id')
     try:
@@ -715,7 +705,7 @@ def create_vehicle(respdict):
     if len(vehicle) > 0:
         return "Vehicle with that ID Exists"
     if len(respdict['vehicle_id'])<5:
-        return "id should be minmum of 5 charecters"
+        return "id should be minimum of 5 characters"
     if "_id" in respdict.keys():
         respdict.pop('_id')
     try:
@@ -769,7 +759,7 @@ def create_customer(respdict):
     if len(customer) > 0:
         return "Customer with that ID Exists"
     if len(respdict['cust_id']) < 5:
-        return "id should be minmum of 5 charecters"
+        return "id should be minimum of 5 characters"
     if "_id" in respdict.keys():
         respdict.pop('_id')
     try:
@@ -825,7 +815,7 @@ def create_product(respdict):
     if "_id" in respdict.keys():
         respdict.pop('_id')
     if len(respdict['product_id'])<5:
-        return "id should be minmum of 5 charecters"
+        return "id should be minimum of 5 characters"
     try:
         product = documents.Product(**respdict)
         product.save()
@@ -1033,43 +1023,54 @@ def export_invoice(invoice_id):
         return "No such invoice"
     else:
         invoice = invoice[0]
-    cur = sakhacabsgd.create(invoice.invoice_id)
-    template = sakhacabsgd.open("InvoiceTemplate")
-    t = template.worksheet_by_title("Invoice")
-    cur.add_worksheet("Invoice", src_worksheet=t)
-    invoicesheet = cur.worksheet_by_title("Invoice")
-    cur.del_worksheet(cur.worksheet_by_title("Sheet1"))
+    try:
+        sakhacabsxpal.logger.info("Trying to create sheet for invoice in Sakhacabs Google Drive")
+        if not sakhacabsgd:
+            error = "Sakhacabs Google Driver is not Set Up"
+            sakhacabsxpal.logger.error(error)
+            return error
+        cur = sakhacabsgd.create(invoice.invoice_id)
+        template = sakhacabsgd.open("InvoiceTemplate")
+        t = template.worksheet_by_title("Invoice")
+        cur.add_worksheet("Invoice", src_worksheet=t)
+        invoicesheet = cur.worksheet_by_title("Invoice")
+        cur.del_worksheet(cur.worksheet_by_title("Sheet1"))
 
-    n = 15
-    for line in invoice.invoicelines:
-        print n, line
-        invoicesheet.insert_rows(n - 1, 1)
-        invoicesheet.update_row(n, ["", line['date'], line['particulars'],
-                                    line['product'], line['qty'], line['rate'], "=F" + str(n) + "*E" + str(n)])
+        n = 15
+        for line in invoice.invoicelines:
+            print n, line
+            invoicesheet.insert_rows(n - 1, 1)
+            invoicesheet.update_row(n, ["", line['date'], line['particulars'],
+                                        line['product'], line['qty'], line['rate'], "=F" + str(n) + "*E" + str(n)])
+            n += 1
+        totalcell = "G" + str(n + 2)
+        print totalcell
+        n = n + 4
+        for line in invoice.taxes:
+            invoicesheet.insert_rows(n - 1, 1)
+            invoicesheet.update_row(n, ["", "", "", "", "", line['name'] + "(" + str(
+                line['rate'] * 100) + "%)", "=" + totalcell + "*" + str(line['rate'])])
         n += 1
-    totalcell = "G" + str(n + 2)
-    print totalcell
-    n = n + 4
-    for line in invoice.taxes:
-        invoicesheet.insert_rows(n - 1, 1)
-        invoicesheet.update_row(n, ["", "", "", "", "", line['name'] + "(" + str(
-            line['rate'] * 100) + "%)", "=" + totalcell + "*" + str(line['rate'])])
-    n += 1
-    custbil = invoicesheet.cell("B8")
-    cust = documents.Customer.objects(cust_id=invoice.cust_id)[0]
-    custbil.value = cust.cust_billing
-    datecel = invoicesheet.cell("B5")
-    datecel.value = "Submitted on " + invoice.invoice_date.strftime("%Y-%m-%d")
-    idcel = invoicesheet.cell("F8")
-    idcel.value = invoice.invoice_id
-    duedatecel = invoicesheet.cell("F11")
-    duedatecel.value = invoice.invoice_date.strftime("%Y-%d-%m")
-    return cur.url
+        custbil = invoicesheet.cell("B8")
+        cust = documents.Customer.objects(cust_id=invoice.cust_id)[0]
+        custbil.value = cust.cust_billing
+        datecel = invoicesheet.cell("B5")
+        datecel.value = "Submitted on " + invoice.invoice_date.strftime("%Y-%m-%d")
+        idcel = invoicesheet.cell("F8")
+        idcel.value = invoice.invoice_id
+        duedatecel = invoicesheet.cell("F11")
+        duedatecel.value = invoice.invoice_date.strftime("%Y-%d-%m")
+        return cur.url
+    except Exception as e:
+        error = "error: {} {}".format(type(e), str(e))
+        sakhacabsxpal.logger.error(error)
+        return error
 
 
 '''
 Exporting everything
 '''
+
 
 def export_drivers():
     drivers = documents.Driver.objects.to_json()

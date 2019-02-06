@@ -11,7 +11,7 @@ import datetime
 import re
 charstring = "ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"
 UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
-nospec = re.compile(r"[^A-Za-z0-9\n @.'-,\/]+")
+nospec = re.compile(r"[^A-Za-z0-9\n @.'\-,\/\(\)_:'#&]+")
 notnum = re.compile(r"[^0-9]+")
 validstatuses = ['new', 'assigned', 'open', 'closed', 'cancelled', 'verified']
 defaultnotificationprefs = {'new': [], 'assigned': [], 'open': [], 'closed': [], 'cancelled': []}

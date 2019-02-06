@@ -684,7 +684,7 @@ var sakha={
             console.log("editing driver "+driverid)
             $.getJSON('http://'+serverip+':5000/driver/by_driver_id/'+driverid,function(data){
                 console.log(data.resp[0])
-                $("#driverid").val(decodeEntities(data.resp[0].driver_id))
+                $("#driverid").attr("readonly",true).val(decodeEntities(data.resp[0].driver_id))
                 $("#mobnum").val(decodeEntities(data.resp[0].mobile_num))
                 $("#firstname").val(decodeEntities(data.resp[0].first_name))
                 $("#lastname").val(decodeEntities(data.resp[0].last_name))
@@ -745,8 +745,8 @@ var sakha={
                 $.getJSON(url,function(data){
                     console.log(data.resp[0])
                   //  $("#vehicle_pickup_timestamp").empty()
-                    $("#vehicle_id").append(data.resp[0].vehical_id )
-                    $("#vehid").val(decodeEntities(data.resp[0].vehical_id))
+                    $("#vehicle_id").append(data.resp[0].vehicle_id )
+                    $("#vehid").val(decodeEntities(data.resp[0].vehicle_id))
 
 
 
@@ -766,7 +766,7 @@ var sakha={
          //    vehicledict.last_name=$("#lastname").val()
              var params = JSON.stringify(vehicledict);
              var http = new XMLHttpRequest();
-             if(vehicleid==="newvehicle"){
+             if(vehicle_id==="newvehicle"){
                  //$.post("http://"+serverip+":5000/assignment",assignmentdict)
                  var url = "http://"+serverip+":5000/vehicle";
                  http.open("POST", url, true);

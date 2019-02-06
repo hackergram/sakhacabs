@@ -59,6 +59,7 @@ class DriverResource(Resource):
             status = "success"
         else:
             status = "error"
+
         return jsonify({"resp": resp, "status": status})
 
     def post(self, command=None):

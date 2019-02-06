@@ -148,8 +148,8 @@ h5 .card-title{
   border-top: 16px solid blue;
   border-right: 16px solid green;
   border-bottom: 16px solid red;
-  width: 500px;
-  height: 500px;
+  width: 1000px;
+  height: 1000px;
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
   margin: auto;
@@ -170,8 +170,8 @@ h5 .card-title{
   width: 25%;
   font-size: 2em;
   background: black;
-  height: 500px;
-  width: 500px;
+  height: 1000px;
+  width: 1000px;
   vertical-align: middle;
   text-align: center;
   padding-top: 220px;

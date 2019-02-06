@@ -59,7 +59,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n  {\n    \"DiD\": \"driver1\",\n    \"Mobile\": 918989161881,\n    \"Name\": \"A\",\n    \"driver_id\": \"driver1\",\n    \"mobile_num\": \"918989161881\"\n  },\n  {\n    \"DiD\": \"driver2\",\n    \"Mobile\": 918989161882,\n    \"Name\": \"A\",\n    \"driver_id\": \"driver2\",\n    \"mobile_num\": \"918989161882\"\n  },\n  {\n    \"DiD\": \"driver3\",\n    \"Mobile\": 918989161883,\n    \"Name\": \"A\",\n    \"driver_id\": \"driver3\",\n    \"mobile_num\": \"918989161883\"\n  },\n  {\n    \"DiD\": \"driver4\",\n    \"Mobile\": 918989161884,\n    \"Name\": \"A\",\n    \"driver_id\": \"driver4\",\n    \"mobile_num\": \"918989161884\"\n  },\n  {\n    \"DiD\": \"driver5\",\n    \"Mobile\": 918989161885,\n    \"Name\": \"A\",\n    \"driver_id\": \"driver5\",\n    \"mobile_num\": \"918989161885\"\n  }\n]"
+							"raw": "[\n{\n\"DiD\": \"alskjd1\",\n\"Mobile\": 918989161881,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd1\",\n\"mobile_num\": \"918989161881\"\n},\n{\n\"DiD\": \"alskjd2\",\n\"Mobile\": 918989161882,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd2\",\n\"mobile_num\": \"918989161882\"\n},\n{\n\"DiD\": \"alskjd3\",\n\"Mobile\": 918989161883,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd3\",\n\"mobile_num\": \"918989161883\"\n},\n{\n\"DiD\": \"alskjd4\",\n\"Mobile\": 918989161884,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd4\",\n\"mobile_num\": \"918989161884\"\n},\n{\n\"DiD\": \"alskjd5\",\n\"Mobile\": 918989161885,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd5\",\n\"mobile_num\": \"918989161885\"\n},\n{\n\"DiD\": \"alskjd6\",\n\"Mobile\": 918989161886,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd6\",\n\"mobile_num\": \"918989161886\"\n},\n{\n\"DiD\": \"alskjd7\",\n\"Mobile\": 918989161887,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd7\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"DiD\": \"alskjd8\",\n\"Mobile\": 918989161888,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd8\",\n\"mobile_num\": \"918989161888\"\n},\n{\n\"DiD\": \"alskjd9\",\n\"Mobile\": 918989161889,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd9\",\n\"mobile_num\": \"918989161889\"\n},\n{\n\"DiD\": \"alskjd10\",\n\"Mobile\": 918989161890,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd10\",\n\"mobile_num\": \"918989161890\"\n},\n{\n\"DiD\": \"alskjd11\",\n\"Mobile\": 918989161891,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd11\",\n\"mobile_num\": \"918989161891\"\n},\n{\n\"DiD\": \"alskjd12\",\n\"Mobile\": 918989161892,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd12\",\n\"mobile_num\": \"918989161892\"\n},\n{\n\"DiD\": \"alskjd13\",\n\"Mobile\": 918989161893,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd13\",\n\"mobile_num\": \"918989161893\"\n},\n{\n\"DiD\": \"alskjd14\",\n\"Mobile\": 918989161894,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd14\",\n\"mobile_num\": \"918989161894\"\n},\n{\n\"DiD\": \"alskjd15\",\n\"Mobile\": 918989161895,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd15\",\n\"mobile_num\": \"918989161895\"\n},\n{\n\"DiD\": \"alskjd16\",\n\"Mobile\": 918989161896,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd16\",\n\"mobile_num\": \"918989161896\"\n},\n{\n\"DiD\": \"alskjd17\",\n\"Mobile\": 918989161897,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd17\",\n\"mobile_num\": \"918989161897\"\n},\n{\n\"DiD\": \"alskjd18\",\n\"Mobile\": 918989161898,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd18\",\n\"mobile_num\": \"918989161898\"\n},\n{\n\"DiD\": \"alskjd19\",\n\"Mobile\": 918989161899,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd19\",\n\"mobile_num\": \"918989161899\"\n},\n{\n\"DiD\": \"alskjd20\",\n\"Mobile\": 918989161900,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd20\",\n\"mobile_num\": \"918989161900\"\n},\n{\n\"DiD\": \"alskjd21\",\n\"Mobile\": 918989161901,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd21\",\n\"mobile_num\": \"918989161901\"\n},\n{\n\"DiD\": \"alskjd22\",\n\"Mobile\": 918989161902,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd22\",\n\"mobile_num\": \"918989161902\"\n},\n{\n\"DiD\": \"alskjd23\",\n\"Mobile\": 918989161903,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd23\",\n\"mobile_num\": \"918989161903\"\n},\n{\n\"DiD\": \"alskjd24\",\n\"Mobile\": 918989161904,\n\"Name\": \"A\",\n\"driver_id\": \"alskjd24\",\n\"mobile_num\": \"918989161904\"\n},\n{\n\"DiD\": \",d4l#_@3\",\n\"Mobile\": 918989161905,\n\"Name\": \"A\",\n\"driver_id\": \",d4l#_@3\",\n\"mobile_num\": \"918989161905\"\n},\n{\n\"DiD\": \"d27#@4\",\n\"Mobile\": 918989161906,\n\"Name\": \"A\",\n\"driver_id\": \"d27#@4\",\n\"mobile_num\": \"918989161906\"\n},\n{\n\"DiD\": \"d27#@5\",\n\"Mobile\": 918989161907,\n\"Name\": \"A\",\n\"driver_id\": \"d27#@5\",\n\"mobile_num\": \"918989161907\"\n},\n{\n\"DiD\": \")d45,,,\",\n\"Mobile\": 918989161908,\n\"Name\": \"A\",\n\"driver_id\": \")d45,,,\",\n\"mobile_num\": \"918989161908\"\n}\n]"
 						},
 						"url": {
 							"raw": "192.168.56.101:5000/driver/import",
@@ -129,7 +129,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n\t{\n\t\"DIN\": \"D3345\",\n\t\"Name\": \"X\",\n\t\"Blah\": \"Y\",\n\t\"vehicle_id\": \"D3345\",\n\t\"vehicle_cat\": \"X\",\n\t\"vehicle_name\": \"Y\"\n\t},\n\t{\n\t\"DIN\": \"D3346\",\n\t\"Name\": \"X\",\n\t\"Blah\": \"Y\",\n\t\"vehicle_id\": \"D3346\",\n\t\"vehicle_cat\": \"X\",\n\t\"vehicle_name\": \"Y\"\n\t},\n\t{\n\t\"DIN\": \"D3347\",\n\t\"Name\": \"X\",\n\t\"Blah\": \"Y\",\n\t\"vehicle_id\": \"D3347\",\n\t\"vehicle_cat\": \"X\",\n\t\"vehicle_name\": \"Y\"\n\t},\n\t{\n\t\"DIN\": \"D3348\",\n\t\"Name\": \"X\",\n\t\"Blah\": \"Y\",\n\t\"vehicle_id\": \"D3348\",\n\t\"vehicle_cat\": \"X\",\n\t\"vehicle_name\": \"Y\"\n\t},\n\t{\n\t\"DIN\": \"D3349\",\n\t\"Name\": \"X\",\n\t\"Blah\": \"Y\",\n\t\"vehicle_id\": \"D3349\",\n\t\"vehicle_cat\": \"X\",\n\t\"vehicle_name\": \"Y\"\n\t},\n\t{\n\t\"DIN\": \"D3350\",\n\t\"Name\": \"X\",\n\t\"Blah\": \"Y\",\n\t\"vehicle_id\": \"D3350\",\n\t\"vehicle_cat\": \"X\",\n\t\"vehicle_name\": \"Y\"\n\t}\n]"
+							"raw": "[\n{\n\"DIN\": \"D3345\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3345\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3346)(\",\n\"Name\": \"#FFR\",\n\"Blah\": \"Y--\",\n\"vehicle_id\": \"D3346)(\",\n\"vehicle_cat\": \"#FFR\",\n\"vehicle_name\": \"Y--\"\n},\n{\n\"DIN\": \"D3347\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3347\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3348\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3348\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3349\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3349\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3350\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3350\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3351/\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3351/\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3352\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3352\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3353\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3353\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3354\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3354\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3355\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3355\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3356\",\n\"Name\": \",44\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3356\",\n\"vehicle_cat\": \",44\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3357\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3357\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3358\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3358\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3359\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3359\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3360\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3360\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3361\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3361\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3362\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3362\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n},\n{\n\"DIN\": \"D3363\",\n\"Name\": \"X\",\n\"Blah\": \"Y\",\n\"vehicle_id\": \"D3363\",\n\"vehicle_cat\": \"X\",\n\"vehicle_name\": \"Y\"\n}\n]"
 						},
 						"url": {
 							"raw": "192.168.56.101:5000/vehicle/import",
@@ -199,7 +199,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n  {\n    \"CIN\": \"SINGLTRP\",\n    \"Hrs\": 0,\n    \"Kms\": 0,\n    \"Price\": 1200,\n    \"Extra Hrs\": 345,\n    \"Extra Kms\": 1.7,\n    \"product_id\": \"SINGLTRP\",\n    \"included_hrs\": 0,\n    \"included_kms\": 0,\n    \"price\": 1200,\n    \"extra_hrs_rate\": 345,\n    \"extra_kms_rate\": 1.7\n  },\n  {\n    \"CIN\": \"Prod1\",\n    \"Hrs\": 4,\n    \"Kms\": 0,\n    \"Price\": 500,\n    \"Extra Hrs\": 346,\n    \"Extra Kms\": 2.7,\n    \"product_id\": \"Prod1\",\n    \"included_hrs\": 4,\n    \"included_kms\": 0,\n    \"price\": 500,\n    \"extra_hrs_rate\": 346,\n    \"extra_kms_rate\": 2.7\n  },\n  {\n    \"CIN\": \"Prod2\",\n    \"Hrs\": 6,\n    \"Kms\": 60,\n    \"Price\": 900,\n    \"Extra Hrs\": 347,\n    \"Extra Kms\": 3.7,\n    \"product_id\": \"Prod2\",\n    \"included_hrs\": 6,\n    \"included_kms\": 60,\n    \"price\": 900,\n    \"extra_hrs_rate\": 347,\n    \"extra_kms_rate\": 3.7\n  },\n  {\n    \"CIN\": \"Prod3\",\n    \"Hrs\": 3,\n    \"Kms\": 30,\n    \"Price\": 1500,\n    \"Extra Hrs\": 348,\n    \"Extra Kms\": 4.7,\n    \"product_id\": \"Prod3\",\n    \"included_hrs\": 3,\n    \"included_kms\": 30,\n    \"price\": 1500,\n    \"extra_hrs_rate\": 348,\n    \"extra_kms_rate\": 4.7\n  },\n  {\n    \"CIN\": \"Prod4\",\n    \"Hrs\": 4,\n    \"Kms\": 50,\n    \"Price\": 2500,\n    \"Extra Hrs\": 349,\n    \"Extra Kms\": 5.7,\n    \"product_id\": \"Prod4\",\n    \"included_hrs\": 4,\n    \"included_kms\": 50,\n    \"price\": 2500,\n    \"extra_hrs_rate\": 349,\n    \"extra_kms_rate\": 5.7\n  },\n  {\n    \"CIN\": \"Prod5\",\n    \"Hrs\": 5,\n    \"Kms\": 50,\n    \"Price\": 3600,\n    \"Extra Hrs\": 350,\n    \"Extra Kms\": 6.7,\n    \"product_id\": \"Prod5\",\n    \"included_hrs\": 5,\n    \"included_kms\": 50,\n    \"price\": 3600,\n    \"extra_hrs_rate\": 350,\n    \"extra_kms_rate\": 6.7\n  }\n]"
+							"raw": "[\n{\n\"CIN\": \"SINGLTRP\",\n\"Hrs\": 0,\n\"Kms\": 0,\n\"Price\": 1200,\n\"Extra Hrs\": 345,\n\"Extra Kms\": 1.7,\n\"product_id\": \"SINGLTRP\",\n\"included_hrs\": 0,\n\"included_kms\": 0,\n\"price\": 1200,\n\"extra_hrs_rate\": 345,\n\"extra_kms_rate\": 1.7\n},\n{\n\"CIN\": \"Prod1\",\n\"Hrs\": 4,\n\"Kms\": 0,\n\"Price\": 500,\n\"Extra Hrs\": 346,\n\"Extra Kms\": 2.7,\n\"product_id\": \"Prod1\",\n\"included_hrs\": 4,\n\"included_kms\": 0,\n\"price\": 500,\n\"extra_hrs_rate\": 346,\n\"extra_kms_rate\": 2.7\n},\n{\n\"CIN\": \"Prod2\",\n\"Hrs\": 6,\n\"Kms\": 60,\n\"Price\": 900,\n\"Extra Hrs\": 347,\n\"Extra Kms\": 3.7,\n\"product_id\": \"Prod2\",\n\"included_hrs\": 6,\n\"included_kms\": 60,\n\"price\": 900,\n\"extra_hrs_rate\": 347,\n\"extra_kms_rate\": 3.7\n},\n{\n\"CIN\": \"Prod3\",\n\"Hrs\": 3,\n\"Kms\": 30,\n\"Price\": 1500,\n\"Extra Hrs\": 348,\n\"Extra Kms\": 4.7,\n\"product_id\": \"Prod3\",\n\"included_hrs\": 3,\n\"included_kms\": 30,\n\"price\": 1500,\n\"extra_hrs_rate\": 348,\n\"extra_kms_rate\": 4.7\n},\n{\n\"CIN\": \"Prod4\",\n\"Hrs\": 4,\n\"Kms\": 50,\n\"Price\": 2500,\n\"Extra Hrs\": 349,\n\"Extra Kms\": 5.7,\n\"product_id\": \"Prod4\",\n\"included_hrs\": 4,\n\"included_kms\": 50,\n\"price\": 2500,\n\"extra_hrs_rate\": 349,\n\"extra_kms_rate\": 5.7\n},\n{\n\"CIN\": \"Prod5\",\n\"Hrs\": 5,\n\"Kms\": 50,\n\"Price\": 3600,\n\"Extra Hrs\": 350,\n\"Extra Kms\": 6.7,\n\"product_id\": \"Prod5\",\n\"included_hrs\": 5,\n\"included_kms\": 50,\n\"price\": 3600,\n\"extra_hrs_rate\": 350,\n\"extra_kms_rate\": 6.7\n},\n{\n\"CIN\": \"Prod6\",\n\"Hrs\": 6,\n\"Kms\": 51,\n\"Price\": 3601,\n\"Extra Hrs\": 351,\n\"Extra Kms\": 7.7,\n\"product_id\": \"Prod6\",\n\"included_hrs\": 6,\n\"included_kms\": 51,\n\"price\": 3601,\n\"extra_hrs_rate\": 351,\n\"extra_kms_rate\": 7.7\n},\n{\n\"CIN\": \"Prod7\",\n\"Hrs\": 7,\n\"Kms\": 52,\n\"Price\": 3602,\n\"Extra Hrs\": 352,\n\"Extra Kms\": 8.7,\n\"product_id\": \"Prod7\",\n\"included_hrs\": 7,\n\"included_kms\": 52,\n\"price\": 3602,\n\"extra_hrs_rate\": 352,\n\"extra_kms_rate\": 8.7\n},\n{\n\"CIN\": \"Prod8\",\n\"Hrs\": 8,\n\"Kms\": 53,\n\"Price\": 3603,\n\"Extra Hrs\": 353,\n\"Extra Kms\": 9.7,\n\"product_id\": \"Prod8\",\n\"included_hrs\": 8,\n\"included_kms\": 53,\n\"price\": 3603,\n\"extra_hrs_rate\": 353,\n\"extra_kms_rate\": 9.7\n},\n{\n\"CIN\": \"Prod9\",\n\"Hrs\": 9,\n\"Kms\": 54,\n\"Price\": 3604,\n\"Extra Hrs\": 354,\n\"Extra Kms\": 10.7,\n\"product_id\": \"Prod9\",\n\"included_hrs\": 9,\n\"included_kms\": 54,\n\"price\": 3604,\n\"extra_hrs_rate\": 354,\n\"extra_kms_rate\": 10.7\n},\n{\n\"CIN\": \"Prod10\",\n\"Hrs\": 10,\n\"Kms\": 55,\n\"Price\": 3605,\n\"Extra Hrs\": 355,\n\"Extra Kms\": 11.7,\n\"product_id\": \"Prod10\",\n\"included_hrs\": 10,\n\"included_kms\": 55,\n\"price\": 3605,\n\"extra_hrs_rate\": 355,\n\"extra_kms_rate\": 11.7\n},\n{\n\"CIN\": \"Prod11\",\n\"Hrs\": 11,\n\"Kms\": 56,\n\"Price\": 3606,\n\"Extra Hrs\": 356,\n\"Extra Kms\": 12.7,\n\"product_id\": \"Prod11\",\n\"included_hrs\": 11,\n\"included_kms\": 56,\n\"price\": 3606,\n\"extra_hrs_rate\": 356,\n\"extra_kms_rate\": 12.7\n},\n{\n\"CIN\": \"Prod12\",\n\"Hrs\": 12,\n\"Kms\": 57,\n\"Price\": 3607,\n\"Extra Hrs\": 357,\n\"Extra Kms\": 13.7,\n\"product_id\": \"Prod12\",\n\"included_hrs\": 12,\n\"included_kms\": 57,\n\"price\": 3607,\n\"extra_hrs_rate\": 357,\n\"extra_kms_rate\": 13.7\n},\n{\n\"CIN\": \"Prod13\",\n\"Hrs\": 13,\n\"Kms\": 58,\n\"Price\": 3608,\n\"Extra Hrs\": 358,\n\"Extra Kms\": 14.7,\n\"product_id\": \"Prod13\",\n\"included_hrs\": 13,\n\"included_kms\": 58,\n\"price\": 3608,\n\"extra_hrs_rate\": 358,\n\"extra_kms_rate\": 14.7\n},\n{\n\"CIN\": \"Prod14\",\n\"Hrs\": 14,\n\"Kms\": 59,\n\"Price\": 3609,\n\"Extra Hrs\": 359,\n\"Extra Kms\": 15.7,\n\"product_id\": \"Prod14\",\n\"included_hrs\": 14,\n\"included_kms\": 59,\n\"price\": 3609,\n\"extra_hrs_rate\": 359,\n\"extra_kms_rate\": 15.7\n},\n{\n\"CIN\": \"Prod15,\",\n\"Hrs\": 15,\n\"Kms\": 60,\n\"Price\": 3610,\n\"Extra Hrs\": 360,\n\"Extra Kms\": 16.7,\n\"product_id\": \"Prod15,\",\n\"included_hrs\": 15,\n\"included_kms\": 60,\n\"price\": 3610,\n\"extra_hrs_rate\": 360,\n\"extra_kms_rate\": 16.7\n},\n{\n\"CIN\": \"Prod16#\",\n\"Hrs\": 16,\n\"Kms\": 61,\n\"Price\": 3611,\n\"Extra Hrs\": 361,\n\"Extra Kms\": 17.7,\n\"product_id\": \"Prod16#\",\n\"included_hrs\": 16,\n\"included_kms\": 61,\n\"price\": 3611,\n\"extra_hrs_rate\": 361,\n\"extra_kms_rate\": 17.7\n},\n{\n\"CIN\": \"Prod17-\",\n\"Hrs\": 17,\n\"Kms\": 62,\n\"Price\": 3612,\n\"Extra Hrs\": 362,\n\"Extra Kms\": 18.7,\n\"product_id\": \"Prod17-\",\n\"included_hrs\": 17,\n\"included_kms\": 62,\n\"price\": 3612,\n\"extra_hrs_rate\": 362,\n\"extra_kms_rate\": 18.7\n},\n{\n\"CIN\": \"Prod18)\",\n\"Hrs\": 18,\n\"Kms\": 63,\n\"Price\": 3613,\n\"Extra Hrs\": 363,\n\"Extra Kms\": 19.7,\n\"product_id\": \"Prod18)\",\n\"included_hrs\": 18,\n\"included_kms\": 63,\n\"price\": 3613,\n\"extra_hrs_rate\": 363,\n\"extra_kms_rate\": 19.7\n},\n{\n\"CIN\": \"Prod19/\",\n\"Hrs\": 19,\n\"Kms\": 64,\n\"Price\": 3614,\n\"Extra Hrs\": 364,\n\"Extra Kms\": 20.7,\n\"product_id\": \"Prod19/\",\n\"included_hrs\": 19,\n\"included_kms\": 64,\n\"price\": 3614,\n\"extra_hrs_rate\": 364,\n\"extra_kms_rate\": 20.7\n}\n]"
 						},
 						"url": {
 							"raw": "192.168.56.101:5000/product/import",
@@ -269,7 +269,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n\t{\n\t\"CIN\": \"retail\",\n\t\"Name\": \"Retail\",\n\t\"Address\": \"N/A\",\n\t\"Mobile\": 918989161881,\n\t\"cust_id\": \"retail\",\n\t\"cust_billing\": \"Retail N&#x2F;A\",\n\t\"mobile_num\": \"918989161881\"\n\t},\n\t{\n\t\"CIN\": \"Cust1\",\n\t\"Name\": \"Customer 1\",\n\t\"Address\": \"New Delhi\",\n\t\"Mobile\": 918989161881,\n\t\"cust_id\": \"Cust1\",\n\t\"cust_billing\": \"Customer 1 New Delhi\",\n\t\"mobile_num\": \"918989161881\"\n\t},\n\t{\n\t\"CIN\": \"Cust2\",\n\t\"Name\": \"Customer 2\",\n\t\"Address\": \"Mumbai\",\n\t\"Mobile\": 918989161881,\n\t\"cust_id\": \"Cust2\",\n\t\"cust_billing\": \"Customer 2 Mumbai\",\n\t\"mobile_num\": \"918989161881\"\n\t},\n\t{\n\t\"CIN\": \"Cust3\",\n\t\"Name\": \"Customer 3\",\n\t\"Address\": \"Chennai\",\n\t\"Mobile\": 918989161881,\n\t\"cust_id\": \"Cust3\",\n\t\"cust_billing\": \"Customer 3 Chennai\",\n\t\"mobile_num\": \"918989161881\"\n\t},\n\t{\n\t\"CIN\": \"Cust4\",\n\t\"Name\": \"Customer 4\",\n\t\"Address\": \"Bangalore\",\n\t\"Mobile\": 918989161881,\n\t\"cust_id\": \"Cust4\",\n\t\"cust_billing\": \"Customer 4 Bangalore\",\n\t\"mobile_num\": \"918989161881\"\n\t},\n\t{\n\t\"CIN\": \"Cust5\",\n\t\"Name\": \"Customer 5\",\n\t\"Address\": \"Kolkata\",\n\t\"Mobile\": 918989161881,\n\t\"cust_id\": \"Cust5\",\n\t\"cust_billing\": \"Customer 5 Kolkata\",\n\t\"mobile_num\": \"918989161881\"\n\t}\n]"
+							"raw": "[\n{\n\"CIN\": \"retail\",\n\"Name\": \"Retail\",\n\"Address\": \"N/A\",\n\"Mobile\": 918989161881,\n\"cust_id\": \"retail\",\n\"cust_billing\": \"Retail N/A\",\n\"mobile_num\": \"918989161881\"\n},\n{\n\"CIN\": \"Cust/1\",\n\"Name\": \"Customer 1\",\n\"Address\": \"New Delhi\",\n\"Mobile\": 918989161881,\n\"cust_id\": \"Cust/1\",\n\"cust_billing\": \"Customer 1 New Delhi\",\n\"mobile_num\": \"918989161881\"\n},\n{\n\"CIN\": \"Cust#2\",\n\"Name\": \"Customer 2\",\n\"Address\": \"Mumbai\",\n\"Mobile\": 918989161881,\n\"cust_id\": \"Cust#2\",\n\"cust_billing\": \"Customer 2 Mumbai\",\n\"mobile_num\": \"918989161881\"\n},\n{\n\"CIN\": \"Cust-3\",\n\"Name\": \"Customer 3\",\n\"Address\": \"Chennai\",\n\"Mobile\": 918989161881,\n\"cust_id\": \"Cust-3\",\n\"cust_billing\": \"Customer 3 Chennai\",\n\"mobile_num\": \"918989161881\"\n},\n{\n\"CIN\": \"Cust(4)\",\n\"Name\": \"Customer 4\",\n\"Address\": \"Bangalore\",\n\"Mobile\": 918989161881,\n\"cust_id\": \"Cust(4)\",\n\"cust_billing\": \"Customer 4 Bangalore\",\n\"mobile_num\": \"918989161881\"\n},\n{\n\"CIN\": \"Cust5\",\n\"Name\": \"Customer 5\",\n\"Address\": \"Kolkata\",\n\"Mobile\": 918989161881,\n\"cust_id\": \"Cust5\",\n\"cust_billing\": \"Customer 5 Kolkata\",\n\"mobile_num\": \"918989161881\"\n},\n{\n\"CIN\": \"Cust6\",\n\"Name\": \"Customer 6\",\n\"Address\": \"Kolkata\",\n\"Mobile\": 918989161882,\n\"cust_id\": \"Cust6\",\n\"cust_billing\": \"Customer 6 Kolkata\",\n\"mobile_num\": \"918989161882\"\n},\n{\n\"CIN\": \"Cust7\",\n\"Name\": \"Customer 7\",\n\"Address\": \"Kolkata\",\n\"Mobile\": 918989161883,\n\"cust_id\": \"Cust7\",\n\"cust_billing\": \"Customer 7 Kolkata\",\n\"mobile_num\": \"918989161883\"\n},\n{\n\"CIN\": \"Cust8\",\n\"Name\": \"Customer 8\",\n\"Address\": \"Kolkata\",\n\"Mobile\": 918989161884,\n\"cust_id\": \"Cust8\",\n\"cust_billing\": \"Customer 8 Kolkata\",\n\"mobile_num\": \"918989161884\"\n},\n{\n\"CIN\": \"Cust9\",\n\"Name\": \"Customer 9\",\n\"Address\": \"Kolkata\",\n\"Mobile\": 918989161885,\n\"cust_id\": \"Cust9\",\n\"cust_billing\": \"Customer 9 Kolkata\",\n\"mobile_num\": \"918989161885\"\n},\n{\n\"CIN\": \"Cust10\",\n\"Name\": \"Customer 10\",\n\"Address\": \"Kolkata\",\n\"Mobile\": 918989161886,\n\"cust_id\": \"Cust10\",\n\"cust_billing\": \"Customer 10 Kolkata\",\n\"mobile_num\": \"918989161886\"\n},\n{\n\"CIN\": \"Cust11\",\n\"Name\": \"Customer 11\",\n\"Address\": \"Kolkata\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust11\",\n\"cust_billing\": \"Customer 11 Kolkata\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"CIN\": \"Cust12\",\n\"Name\": \"Customer 12\",\n\"Address\": \"Kolkata\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust12\",\n\"cust_billing\": \"Customer 12 Kolkata\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"CIN\": \"Cust13\",\n\"Name\": \"Customer 13\",\n\"Address\": \"Kolkata\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust13\",\n\"cust_billing\": \"Customer 13 Kolkata\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"CIN\": \"Cust14\",\n\"Name\": \"Customer 14\",\n\"Address\": \"Kolkata\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust14\",\n\"cust_billing\": \"Customer 14 Kolkata\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"CIN\": \"Cust15\",\n\"Name\": \"Customer 15\",\n\"Address\": \"Kolkata\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust15\",\n\"cust_billing\": \"Customer 15 Kolkata\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"CIN\": \"Cust16\",\n\"Name\": \"Customer 16\",\n\"Address\": \"Bangalore\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust16\",\n\"cust_billing\": \"Customer 16 Bangalore\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"CIN\": \"Cust17\",\n\"Name\": \"Customer 17\",\n\"Address\": \"Bangalore\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust17\",\n\"cust_billing\": \"Customer 17 Bangalore\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"CIN\": \"Cust18\",\n\"Name\": \"Customer 18\",\n\"Address\": \"Bangalore\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust18\",\n\"cust_billing\": \"Customer 18 Bangalore\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"CIN\": \"Cust19\",\n\"Name\": \"Customer 19\",\n\"Address\": \"Bangalore\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust19\",\n\"cust_billing\": \"Customer 19 Bangalore\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"CIN\": \"Cust20\",\n\"Name\": \"Customer 20\",\n\"Address\": \"Bangalore\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust20\",\n\"cust_billing\": \"Customer 20 Bangalore\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"CIN\": \"Cust21\",\n\"Name\": \"Customer 21\",\n\"Address\": \"Bangalore\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust21\",\n\"cust_billing\": \"Customer 21 Bangalore\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"CIN\": \"Cust22\",\n\"Name\": \"Customer 22\",\n\"Address\": \"Bangalore\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust22\",\n\"cust_billing\": \"Customer 22 Bangalore\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"CIN\": \"Cust23\",\n\"Name\": \"Customer 23\",\n\"Address\": \"Bangalore\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust23\",\n\"cust_billing\": \"Customer 23 Bangalore\",\n\"mobile_num\": \"918989161887\"\n},\n{\n\"CIN\": \"Cust24\",\n\"Name\": \"Customer 24\",\n\"Address\": \"Bangalore\",\n\"Mobile\": 918989161887,\n\"cust_id\": \"Cust24\",\n\"cust_billing\": \"Customer 24 Bangalore\",\n\"mobile_num\": \"918989161887\"\n}\n]"
 						},
 						"url": {
 							"raw": "192.168.56.101:5000/customer/import",
@@ -2017,6 +2017,62 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "TestAPIUp",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "efac73fd-e10c-43d8-a04d-97fc1cc0adfc",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  "
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/driver",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"driver"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"event": [
@@ -2043,8 +2099,406 @@
 			]
 		},
 		{
+			"name": "CreateAssignment",
+			"item": [
+				{
+					"name": "GetDrivers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"pm.test('Response schema is valid', function() {",
+									"   ",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"pm.test(\"Drivers exist and listing is working\", function () {",
+									"   ",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});",
+									"pm.environment.set(\"driverlist\", JSON.stringify(jsonData.resp));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/driver",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"driver"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetVehicles",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"  ",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"pm.test(\"Vehicles exist and listing is working\", function () {",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});",
+									"pm.environment.set(\"vehiclelist\", JSON.stringify(jsonData.resp));",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/vehicle",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"vehicle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetBookings",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"  var jsonData = pm.response.json();",
+									"pm.test('Response schema is valid', function() {",
+									"  ",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"",
+									"pm.test(\"Bookings exist and listing is working\", function () {",
+									"    ",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});",
+									"pm.environment.set(\"bookinglist\",JSON.stringify(jsonData.resp));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/booking",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateAssignment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6b9f3ccf-2bfd-42d2-a16e-5729faa4edf6",
+								"exec": [
+									"console.log(pm.request)",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});",
+									"",
+									"pm.test(\"Assignment created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "c2d64f53-c95f-4bc5-9e12-bda44b5bc103",
+								"exec": [
+									"drivers = JSON.parse(pm.environment.get(\"driverlist\"));",
+									"vehicles = JSON.parse(pm.environment.get(\"vehiclelist\")); ",
+									"bookings = JSON.parse(pm.environment.get(\"bookinglist\")); ",
+									"console.log(drivers,vehicles);",
+									"assignmentdict = {\"assignment\":{\"bookings\":[], \"cust_id\":\"retail\"},\"dutyslips\":[]};",
+									"assignmentdict.assignment.bookings.push(bookings[0])",
+									"assignmentdict.assignment.bookings.push(bookings[1])",
+									"ds1={}",
+									"ds1.driver=drivers[0].driver_id",
+									"ds1.vehicle=vehicles[0].vehicle_id",
+									"assignmentdict.dutyslips.push(ds1)",
+									"var assignment = JSON.stringify(assignmentdict)",
+									"pm.environment.set(\"assignment\", assignment);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{assignment}}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/assignment",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"assignment"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "BulkDelete",
 			"item": [
+				{
+					"name": "GetDriverIDs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"",
+									"pm.test(\"Drivers exist and listing is working\", function () {",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});",
+									"",
+									"driverlist=jsonData.resp",
+									"driverids=[]",
+									"for (i=0;i<driverlist.length;i++){",
+									"   driverids.push(driverlist[i].driver_id)   ",
+									"}",
+									"",
+									"pm.environment.set(\"driverids\", JSON.stringify(driverids));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/driver",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"driver"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "Drivers",
 					"event": [
@@ -2096,7 +2550,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n  \"driver1\",\n  \"driver2\",\n  \"driver3\",\n  \"driver4\",\n  \"driver5\"\n]"
+							"raw": "{{driverids}}"
 						},
 						"url": {
 							"raw": "192.168.56.101:5000/driver/bulkdelete",
@@ -2110,6 +2564,86 @@
 							"path": [
 								"driver",
 								"bulkdelete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetVehicleIDs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"",
+									"pm.test(\"Vehicles exist and listing is working\", function () {",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});",
+									"",
+									"vehiclelist=jsonData.resp",
+									"vehicleids=[]",
+									"for (i=0;i<vehiclelist.length;i++){",
+									"   vehicleids.push(vehiclelist[i].vehicle_id)   ",
+									"}",
+									"",
+									"pm.environment.set(\"vehicleids\", JSON.stringify(vehicleids));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/vehicle",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"vehicle"
 							]
 						}
 					},
@@ -2145,7 +2679,7 @@
 									" ",
 									"});",
 									"",
-									"pm.test(\"All drivers deleted successfully\", function () {",
+									"pm.test(\"All Vehicles deleted successfully\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.status).to.eql(\"success\");",
 									"});"
@@ -2166,7 +2700,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n  \"D3345\",\n  \"D3346\",\n  \"D3347\",\n  \"D3348\",\n  \"D3349\",\n  \"D3350\"\n]"
+							"raw": "{{vehicleids}}"
 						},
 						"url": {
 							"raw": "192.168.56.101:5000/vehicle/bulkdelete",
@@ -2180,6 +2714,86 @@
 							"path": [
 								"vehicle",
 								"bulkdelete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCustomerIDs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"",
+									"pm.test(\"Customers exist and listing is working\", function () {",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});",
+									"",
+									"custlist=jsonData.resp",
+									"custids=[]",
+									"for (i=0;i<custlist.length;i++){",
+									"   custids.push(custlist[i].cust_id)   ",
+									"}",
+									"",
+									"pm.environment.set(\"custids\", JSON.stringify(custids));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/customer",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"customer"
 							]
 						}
 					},
@@ -2215,7 +2829,7 @@
 									" ",
 									"});",
 									"",
-									"pm.test(\"All drivers deleted successfully\", function () {",
+									"pm.test(\"All customers deleted successfully\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.status).to.eql(\"success\");",
 									"});"
@@ -2236,7 +2850,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n\t\"retail\",\n\t\"Cust1\",\n\t\"Cust2\",\n\t\"Cust3\",\n\t\"Cust4\",\n\t\"Cust5\"\n]"
+							"raw": "{{custids}}"
 						},
 						"url": {
 							"raw": "192.168.56.101:5000/customer/bulkdelete",
@@ -2256,6 +2870,86 @@
 					"response": []
 				},
 				{
+					"name": "GetProductIDs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"",
+									"pm.test(\"Products exist and listing is working\", function () {",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});",
+									"",
+									"productlist=jsonData.resp",
+									"productids=[]",
+									"for (i=0;i<productlist.length;i++){",
+									"   productids.push(productlist[i].product_id)   ",
+									"}",
+									"",
+									"pm.environment.set(\"productids\", JSON.stringify(productids));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/product",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Product",
 					"event": [
 						{
@@ -2263,6 +2957,8 @@
 							"script": {
 								"id": "b028b58e-334a-4b21-a57f-9b8e83853b5b",
 								"exec": [
+									"console.log(request)",
+									"",
 									"tests[\"Status code is 200\"] = responseCode.code === 200;",
 									"",
 									"var schema = {",
@@ -2292,6 +2988,16 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "48a691f6-3f93-49af-b995-61701d653166",
+								"exec": [
+									"console.log(pm.request)"
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -2306,7 +3012,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n  \"SINGLTRP\",\n  \"Prod1\",\n  \"Prod2\",\n  \"Prod3\",\n  \"Prod4\",\n  \"Prod5\"\n]"
+							"raw": "{{productids}}"
 						},
 						"url": {
 							"raw": "192.168.56.101:5000/product/bulkdelete",
@@ -2324,64 +3030,168 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "GetBookingIDs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fdb3393e-7fc0-4d99-81e2-d31338f55168",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});  ",
+									"",
+									"",
+									"pm.test(\"Bookings exist and listing is working\", function () {",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});",
+									"",
+									"bookinglist=jsonData.resp",
+									"bookings=[]",
+									"for (i=0;i<bookinglist.length;i++){",
+									"    bookings.push(bookinglist[i].booking_id)   ",
+									"}",
+									"",
+									"pm.environment.set(\"bookings\", JSON.stringify(bookings));",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://192.168.56.101:5000/booking",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Booking",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b028b58e-334a-4b21-a57f-9b8e83853b5b",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var schema = {",
+									"    \"type\" : \"object\",",
+									"    \"properties\": {",
+									"        \"resp\" : {",
+									"            \"type\" : [\"array\", \"string\"]",
+									"        },",
+									"        \"status\": { ",
+									"            \"type\": \"string\"",
+									"        }",
+									"    }",
+									"};",
+									"",
+									"",
+									"",
+									"pm.test('Response schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									" ",
+									"});",
+									"",
+									"pm.test(\"All bookings deleted successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "fabad4b0-c0ea-474c-9a96-f3b0f53972eb",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{{bookings}}"
+						},
+						"url": {
+							"raw": "192.168.56.101:5000/booking/bulkdelete",
+							"host": [
+								"192",
+								"168",
+								"56",
+								"101"
+							],
+							"port": "5000",
+							"path": [
+								"booking",
+								"bulkdelete"
+							]
+						}
+					},
+					"response": []
 				}
 			]
-		},
-		{
-			"name": "TestAPIUp",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "efac73fd-e10c-43d8-a04d-97fc1cc0adfc",
-						"exec": [
-							"tests[\"Status code is 200\"] = responseCode.code === 200;",
-							"var schema = {",
-							"    \"type\" : \"object\",",
-							"    \"properties\": {",
-							"        \"resp\" : {",
-							"            \"type\" : [\"array\", \"string\"]",
-							"        },",
-							"        \"status\": { ",
-							"            \"type\": \"string\"",
-							"        }",
-							"    }",
-							"};",
-							"",
-							"",
-							"",
-							"pm.test('Response schema is valid', function() {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
-							" ",
-							"});  "
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "192.168.56.101:5000/driver",
-					"host": [
-						"192",
-						"168",
-						"56",
-						"101"
-					],
-					"port": "5000",
-					"path": [
-						"driver"
-					]
-				}
-			},
-			"response": []
 		}
 	]
 }
