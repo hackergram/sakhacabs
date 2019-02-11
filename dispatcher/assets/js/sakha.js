@@ -69,7 +69,7 @@ var sakha={
                 { width:"15%",data: 'pickup_timestamp',defaultContent:"None",render: function(data){
 
                     //console.log(data)
-                    return moment(data.$date).format("YYYY-MMM-DD HH:mm:ss")
+                    return moment(data.$date+1).format("YYYY-MMM-DD HH:mm:ss")
                     }},
                 {width:"25%", data: 'pickup_location',defaultContent:"None",render: function(data){if(data){
                     return data
@@ -534,7 +534,7 @@ var sakha={
                  {width:"5%", defaultContent:""},
                 { width:"15%",data: 'pickup_timestamp',defaultContent:"None",render: function(data){
 
-                    return new moment(data['$date']).format('MMMM Do YYYY, h:mm:ss a')
+                    return new moment(data['$date']+1).format('MMMM Do YYYY, h:mm:ss a')
                 }},
                 {width:"15%", data: 'pickup_location',defaultContent:"None",render: function(data){if(data){return data}}},
                  {width:"15%", data: 'drop_location',defaultContent:"None",render: function(data){if(data){return data}}},
@@ -576,9 +576,13 @@ var sakha={
         }
         var createassign=true;
         console.log(assignmentdict)
-        if( moment(assignmentdict.assignment.bookings[0].pickup_timestamp).valueOf() < moment().valueOf()){
+        if(assignmentdict.assignment.bookings[0].pickup_timestamp.$date.valueOf() < moment().valueOf()){
           createassign=confirm("Pickup Time Has Already Passed! Still create assignment?")
+          console.log(moment(assignmentdict.assignment.bookings[0].pickup_timestamp).valueOf())
+         console.log(moment().valueOf())
+
         }
+
         var http = new XMLHttpRequest(); //$.post("http://"+serverip+":5000/assignment",assignmentdict)
         var url = "http://"+serverip+":5000/assignment";
         var params = JSON.stringify(assignmentdict);
