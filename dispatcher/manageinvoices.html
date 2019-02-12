@@ -391,7 +391,7 @@
         </center>
     <div>
     <script>
-        var serverip="192.168.56.101"
+        var serverip="192.168.56.103"
         var assignments=[]
         var assperpage=2
         var sort_field="created_timestamp"
@@ -533,11 +533,13 @@
         var exportInvoice=function(){
           console.log("Exporting invoice to Google drive")
           invoice_id=current_invoice.invoice_id
+          if(!current_invoice.invoice_id){alert("Please save invoice first.");window.location.reload(false)}
           $("#loader").show()
          $.getJSON('http://'+serverip+':5000/invoice/export/'+invoice_id,function(data){
           $("#loader").hide();
+
             current_invoice.url=data.resp
-            saveInvoice()
+            //saveInvoice()
             if (!current_invoice.url.includes("http")){
               alert("An error occurred: "+current_invoice.url)
             }
