@@ -58,7 +58,26 @@ sudo ln -s /opt/sakhacabs/bookingweb /var/www/html/bookingweb
    ```
    sudo ln -s /opt/sakhacabs/sakhadispatcher /var/www/html/sakhadispatcher
    ```
-      
+ 
+## For setting up SMS Notification:
+
+```
+sudo nano /opt/sakhacabs-appdata/sakhacabsxpal.conf
+```
+at these files in the last lines of the file
+```
+[SMSAstra]
+service = tester
+# apikeyfile = /opt/sakhacabs-appdata/xetrapal-auth/sakhaflsms.api
+# apiurl = https://cloud.frontlinesms.com/api/1/webhook
+```
+since we are on testing mode so the ``` service = tester ``` if you want to check the notifications going from the system then change the line to ```service = flsms```
+
+Setup a account on [frontline sms](https://cloud.frontlinesms.com/login/auth) and generate the api key from there:
+
+now copy the api-key of frontline sms account and paste it in the file:
+```/opt/sakhacabs-appdata/xetrapal-auth/sakhaflsms.api```
+
 ## Now deploy the ip address:
 
 ```cd /home/username/sakhacabs
