@@ -82,6 +82,13 @@ class Booking(PPrintMixin, DynamicDocument):
     cust_meta = fields.DictField(unique=True)
     notification_prefs = fields.DictField(default=utils.defaultnotificationprefs)
 
+    def __repr__(self):
+        if self.pickup_timestamp:
+            ts = utils.get_local_ts(self.pickup_timestamp).strftime("%Y-%m-%d %H:%M")
+        else:
+            ts = "Not Set"
+        return "\nBooking ID #{}\nPickup Time: {}\nPickup Location: {}\nCust ID: {}\nPassenger Details: {}\n".format(self.booking_id, ts, self.pickup_location, self.cust_id, self.passenger_detail)
+
 
 class Product(PPrintMixin, DynamicDocument):
     product_id = fields.StringField(unique=True, required=True)

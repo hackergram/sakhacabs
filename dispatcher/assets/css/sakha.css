@@ -145,24 +145,24 @@ h5 .card-title{
 .loader {
   border: 16px solid #f3f3f3;
   border-radius: 50%;
-  border-top: 16px solid blue;
-  border-right: 16px solid green;
-  border-bottom: 16px solid red;
-  width: 1000px;
-  height: 1000px;
+  border-top: 16px solid #2be2c7;
+
+  width: 500px;
+  height: 500px;
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
   margin: auto;
   z-index: 6;
     position : absolute;
-    bottom: 0%
+    right: 30%;
+    bottom: 35%;
 }
 
 .loader_container {
   z-index: 5;
   position : absolute;
-  bottom: 10%;
-  left: 30%;
+  bottom: 50%;
+  left: 0%;
   top: 50%;
   align-items: center;
   vertical-align: middle;
@@ -170,13 +170,13 @@ h5 .card-title{
   width: 25%;
   font-size: 2em;
   background: black;
-  height: 1000px;
-  width: 1000px;
+  height: 3500px;
+  width:  1400px;
   vertical-align: middle;
   text-align: center;
   padding-top: 220px;
   opacity: .75;
-  border-radius: 50%;
+
 }
 @-webkit-keyframes spin {
   0% { -webkit-transform: rotate(0deg); }

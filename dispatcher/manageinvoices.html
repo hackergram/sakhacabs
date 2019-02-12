@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style="" lang="en-US">
+<html lang="en-US">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="UTF-8"><meta name="description" content="">
@@ -391,7 +391,7 @@
         </center>
     <div>
     <script>
-        var serverip="192.168.56.103"
+        var serverip="192.168.56.101"
         var assignments=[]
         var assperpage=2
         var sort_field="created_timestamp"
@@ -760,7 +760,7 @@
                 { width:"10%",data: 'invoice_date',defaultContent:"None",render: function(data){
 
                     //console.log(data)
-                    return moment(data.$date).format("YYYY-MMM-DD HH:mm:ss")
+                    return moment(data.$date).format("YYYY-MMM-DD HH:mm")
                     }},
                 {width:"20%", data: 'cust_id',defaultContent:"None",render: function(data){if(data){
                     return data
@@ -774,9 +774,10 @@
                     return data.status.toUpperCase()
                 }}},
                 {width:"20%", data: null, defaultContent:"None", render: function(data){if(data){
+                  if (data.url){
                     if(data.url.includes("http")){
                     link="<a href='"+data.url+"' target='_blank'>See on GDrive</a>"
-                    if (data.url){
+
                     return link
                     }
                   }
@@ -830,8 +831,8 @@
     <script src="dist/js/pagination.js"></script>
 
     <script>
-        $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
-        $('#datetimepicker2').datetimepicker({format: 'YYYY-MM-DD HH:mm:ss'});
+        $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD HH:mm'});
+        $('#datetimepicker2').datetimepicker({format: 'YYYY-MM-DD HH:mm'});
         $('#datetimepicker3').datetimepicker({format: 'YYYY-MM-DD HH:mm'});
     </script>
 </body>

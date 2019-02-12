@@ -87,6 +87,7 @@ a { text-decoration: none }
         </div>
         <div class="row"><div class="col-md-12">Customer ID: <select name="customer" id="customer"></select><br/></div>
         </div>
+        <div class="row"><div class="col-md-12">Customer Mobile:  <input type="text" readonly id="cust_mobile"></div></div>
         <div class="row"> <div class="col-md-12">Product ID: <select name="product" id="product"></select><br/></div>
        </div>
         <div class="row"><div class="col-md-12">
@@ -98,7 +99,58 @@ a { text-decoration: none }
         Drop Location Template: <input type="text"  size="30" id="drop_location_map"><br>
         Passenger Mobile Number Template: <input type="text"  size="30" id="passenger_mobile_map"><br>
             </div>
+          </div>
+
+          <div class="row">
+            <div id="notification_prefs" class = "form-group clearfix">
+              <div class="row">
+
+              <div class="row">
+                  <div class="col-sm-12 small-cols">
+                      <input type="text" name="remarks" id="remarks" class="form-control" placeholder="Remark">
+                  </div>
+              </div>
+              <div class="col-sm-12 small-cols">
+                  <label>Notification Configuration</label>
+              </div>
+          </div>
+              <div class="row">
+                <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                  <p> When Booking is Created notify - </p>
+                  <p><input type="checkbox" id="np_new_cust" checked>Customer</p>
+                  <p><input type="checkbox" id="np_new_pass" checked>Passenger</p>
+                  <p>Others<br><textarea id="np_new_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                </div>
+                <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                  <p> When Booking is Assigned notify - </p>
+                  <p><input type="checkbox" id="np_assigned_cust">Customer</p>
+                  <p><input type="checkbox" id="np_assigned_pass" checked>Passenger</p>
+                  <p>Others<br><textarea id="np_assigned_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                </div>
+                <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                  <p> When Booking is In Progress notify - </p>
+                  <p><input type="checkbox" id="np_open_cust">Customer</p>
+                  <p><input type="checkbox" id="np_open_pass" checked>Passenger</p>
+                  <p>Others<br><textarea id="np_open_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                  </div>
+                <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                  <p> When Booking is Completed notify - </p>
+                  <p><input type="checkbox" id="np_closed_cust">Customer</p>
+                  <p><input type="checkbox" id="np_closed_pass" checked>Passenger</p>
+                  <p>Others<br><textarea id="np_closed_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                  </div>
+                <div class="col-sm-2" style="padding: 5px; margin: 5px">
+                  <p> When Booking is Cancelled notify - </p>
+                  <p><input type="checkbox" id="np_cancelled_cust" checked>Customer</p>
+                  <p><input type="checkbox" id="np_cancelled_pass" checked>Passenger</p>
+                  <p>Others<br><textarea id="np_cancelled_others" rows=5 cols=14 placeholder="Comma separated mob numbers with +XX country code prefix"></textarea></p>
+                  </div>
+              </div>
             </div>
+          </div>
+
+
+
         <div class="row">
 
 
@@ -322,8 +374,19 @@ var get_cust_list=function(){
                     $("#customer").append('<option>' + data.resp[i].cust_id + '</option>');
                 }
                 $("#customer").append('<option>retail</option>');
-            })
-}
+                $("#customer").on("change", function(event) {
+                    var custdata="No Customer Data"
+                    var custmobile=""
+                    for (i=0;i<data.resp.length;i++){
+                      if (data.resp[i].cust_id===this.value){
+                        custmobile=data.resp[i].mobile_num
+                      }
+                    }
+                    $("#cust_mobile").val(custmobile)
+
+                  })
+              })
+        }
 
 
 var get_prod_list=function(){
@@ -338,7 +401,7 @@ var get_prod_list=function(){
 var global_wb;
 var global_output;
 $("#loader").hide()
-var serverip="192.168.56.103"
+var serverip="192.168.56.101"
 var bookinglist=[]
 get_cust_list();
     get_prod_list();
@@ -420,6 +483,38 @@ var parse_rows=function(rows){
  var OUT = document.getElementById('out');
     var HTMLOUT = document.getElementById('htmlout');
 
+var build_notification_prefs =  function(pass_mob,cust_mob){
+      notificationprefs={'new': [], 'assigned': [], 'open': [], 'closed': [], 'cancelled': []}
+      Object.keys(notificationprefs).forEach(function(key){
+        if ($("#np_"+key+"_cust").prop("checked")){
+          notificationprefs[key].push(cust_mob)
+        }
+        if ($("#np_"+key+"_pass").prop("checked")){
+          notificationprefs[key].push(pass_mob)
+        }
+        console.log($("#np_"+key+"_others").prop("value"))
+        if ($("#np_"+key+"_others").prop("value")!=""){
+          addnos=$("#np_"+key+"_others").prop("value").split(",")
+          console.log(addnos)
+          addnos2=[]
+          addnos.forEach(function(num){
+            if(num!=""){
+              if (!num.startsWith("+")){
+                addnos2.push("+"+num)
+              }
+              else{
+                addnos2.push(num)
+              }
+            }
+          })
+          notificationprefs[key]=notificationprefs[key].concat(addnos2)
+        }
+
+      });
+      return notificationprefs
+    }
+
+
 
 var process_output=function(){
   if(typeof(global_output)!=="string")
@@ -450,7 +545,7 @@ var process_output=function(){
             pickup_date_string=Mustache.render(pickup_date_map,bookinglist[i]).trim()
             pickup_date=moment(pickup_date_string).format("YYYY-MM-DD")
             pickup_time_string=Mustache.render(pickup_time_map,bookinglist[i]).trim()
-            pickup_time=moment(pickup_time_string).format("HH:mm:ss")
+            pickup_time=moment(pickup_time_string).format("HH:mm")
             if(pickup_date==="Invalid date"){
               pickup_date=pickup_date_string
             }
@@ -458,7 +553,8 @@ var process_output=function(){
               pickup_time=pickup_time_string.trim()
             }
             pickup_timestamp_string=pickup_date+" "+pickup_time
-            pickup_timestamp=moment(pickup_timestamp_string.trim()).utc().format("YYYY-MM-DD HH:mm:ss")
+            // pickup_timestamp=moment(pickup_timestamp_string.trim()).utc().format("YYYY-MM-DD HH:mm:ss")
+            pickup_timestamp=moment(pickup_timestamp_string.trim()).format("YYYY-MM-DD HH:mm")
             if(pickup_timestamp===null){
               pickup_timestamp=pickup_timestamp_string.trim()
             }
@@ -469,6 +565,20 @@ var process_output=function(){
             bookinglist[i]['cust_id']=cust_id
             bookinglist[i]['drop_location']=decodeEntities(Mustache.render(drop_location_map,bookinglist[i]))
             bookinglist[i]['passenger_mobile']=decodeEntities(Mustache.render(passenger_mobile_map,bookinglist[i]))
+            var pass_mob = bookinglist[i]['passenger_mobile']
+            var cust_mob = $("#cust_mobile").val()
+            if (cust_mob!=""){
+              if (!cust_mob.startsWith("+")){
+                cust_mob="+"+cust_mob
+              }
+            }
+            if (pass_mob!=""){
+              if (!pass_mob.startsWith("+")){
+                pass_mob="+"+pass_mob
+              }
+            }
+
+            bookinglist[i]['notification_prefs']= build_notification_prefs(pass_mob,cust_mob)
           }
         }
         if(HTMLOUT.innerText === undefined) HTMLOUT.textContent = JSON.stringify(bookinglist,2,2);
@@ -610,7 +720,6 @@ var do_file = (function() {
 		e.preventDefault();
 		do_file(e.dataTransfer.files);
 	}
-
 	function handleDragover(e) {
 		e.stopPropagation();
 		e.preventDefault();
