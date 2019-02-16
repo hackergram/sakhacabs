@@ -578,7 +578,7 @@ var sakha={
         console.log(assignmentdict)
         if(assignmentdict.assignment.bookings[0].pickup_timestamp.$date.valueOf() < moment().valueOf()){
           createassign=confirm("Pickup Time Has Already Passed! Still create assignment?")
-          console.log(moment(assignmentdict.assignment.bookings[0].pickup_timestamp).valueOf())
+          console.log(assignmentdict.assignment.bookings[0].pickup_timestamp.valueOf())
          console.log(moment().valueOf())
 
         }
