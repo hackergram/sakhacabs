@@ -11,7 +11,7 @@ import datetime
 import re
 charstring = "ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"
 UTC_OFFSET_TIMEDELTA = datetime.datetime.utcnow() - datetime.datetime.now()
-nospec = re.compile(r"[^A-Za-z0-9\n @.'\-,\/\(\)_:'#&]+")
+nospec = re.compile(r"[^A-Za-z0-9\n @.'\-,\/\(\)_:'#&^\s*-]+")
 notnum = re.compile(r"[^0-9]+")
 validstatuses = ['new', 'assigned', 'open', 'closed', 'cancelled', 'verified']
 defaultnotificationprefs = {'new': [], 'assigned': [], 'open': [], 'closed': [], 'cancelled': []}
@@ -39,7 +39,7 @@ def validate_dict(dictionary, required_keys=[], string_keys=[], mobile_nums=[], 
             if dictionary[key] == "":
                 validation['message'] = "Empty mobile number"
                 validation['status'] = False
-            if len(dictionary[key]) > 12:
+            if len(dictionary[key]) > 16:
                 validation['message'] = "{} too long a mobile number".format(dictionary[key])
                 validation['status'] = False
             if notnum.search(dictionary[key]):
