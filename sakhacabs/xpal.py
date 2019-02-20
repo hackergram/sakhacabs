@@ -1137,7 +1137,7 @@ def import_bookings(bookinglist):
                             b.pickup_timestamp)
                         b.save()
                         b.reload()
-                        booking['booking_id']=b.booking_id
+                        booking['booking_id'] = b.booking_id
                         booking['status'] = b.booking_id
                     else:
                         booking['status'] = b
