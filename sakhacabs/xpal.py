@@ -14,10 +14,15 @@ import xetrapal
 import pandas
 from sakhacabs import documents, utils
 from copy import deepcopy
+from xetrapal import gdkarmas
 
-sakhacabsxpal = xetrapal.Xetrapal(
-    configfile="/opt/sakhacabs-appdata/sakhacabsxpal.conf")
-sakhacabsgd = sakhacabsxpal.get_googledriver()
+a=xetrapal.karma.load_xpal_smriti("/opt/sakhacabs-appdata/sakhacabsxpal.conf")
+a.save()
+a.reload()
+
+sakhacabsxpal = xetrapal.Xetrapal(a)
+sakhacabsxpal1 =sakhacabsxpal.dhaarana(gdkarmas)
+sakhacabsgd = sakhacabsxpal1.get_googledriver()
 sms = sakhacabsxpal.get_sms_astra()
 
 # Setting up mongoengine connections
@@ -892,7 +897,7 @@ def generate_invoice(to_settle):
             consumed_hrs = 0
             consumed_kms = 0
             for ds in documents.DutySlip.objects(assignment=ass):
-                print repr(ds)
+                print(repr(ds))
                 kms = ds.close_kms - ds.open_kms
                 consumed_kms += kms
                 hrs = ds.close_time - ds.open_time
@@ -1038,13 +1043,13 @@ def export_invoice(invoice_id):
 
         n = 15
         for line in invoice.invoicelines:
-            print n, line
+            print(n), line
             invoicesheet.insert_rows(n - 1, 1)
             invoicesheet.update_row(n, ["", line['date'], line['particulars'],
                                         line['product'], line['qty'], line['rate'], "=F" + str(n) + "*E" + str(n)])
             n += 1
         totalcell = "G" + str(n + 2)
-        print totalcell
+        print(totalcell)
         n = n + 4
         for line in invoice.taxes:
             invoicesheet.insert_rows(n - 1, 1)

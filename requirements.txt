@@ -8,7 +8,6 @@ flask_mongoengine<=0.9.5
 Flask_RESTful<=0.3.6
 pandas<=0.17.1
 mongoengine<=0.15.3
-couchdbkit<=0.6.5
 python-telegram-bot<=11.1.0
 configparser<=3.5.0
 oauth2client<=4.1.3
