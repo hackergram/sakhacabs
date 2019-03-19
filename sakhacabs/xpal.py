@@ -14,15 +14,15 @@ import xetrapal
 import pandas
 from sakhacabs import documents, utils
 from copy import deepcopy
-from xetrapal import gdkarmas
-
+from xetrapal import gdastras
+from xetrapal import smsastras
 a=xetrapal.karma.load_xpal_smriti("/opt/sakhacabs-appdata/sakhacabsxpal.conf")
 a.save()
 a.reload()
-
 sakhacabsxpal = xetrapal.Xetrapal(a)
-sakhacabsxpal1 =sakhacabsxpal.dhaarana(gdkarmas)
-sakhacabsgd = sakhacabsxpal1.get_googledriver()
+sakhacabsxpal.dhaarana(gdastras)
+sakhacabsxpal.dhaarana(smsastras)
+sakhacabsgd = sakhacabsxpal.get_googledriver()
 sms = sakhacabsxpal.get_sms_astra()
 
 # Setting up mongoengine connections
@@ -1043,7 +1043,7 @@ def export_invoice(invoice_id):
 
         n = 15
         for line in invoice.invoicelines:
-            print(n), line
+            print(n, line)
             invoicesheet.insert_rows(n - 1, 1)
             invoicesheet.update_row(n, ["", line['date'], line['particulars'],
                                         line['product'], line['qty'], line['rate'], "=F" + str(n) + "*E" + str(n)])
