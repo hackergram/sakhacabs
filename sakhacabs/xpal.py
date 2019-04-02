@@ -22,7 +22,7 @@ a.reload()
 sakhacabsxpal = xetrapal.Xetrapal(a)
 sakhacabsxpal.dhaarana(gdastras)
 sakhacabsxpal.dhaarana(smsastras)
-sakhacabsgd = sakhacabsxpal.get_googledriver()
+sakhacabsgd = sakhacabsxpal.gd_get_googledriver()
 sms = sakhacabsxpal.get_sms_astra()
 
 # Setting up mongoengine connections
